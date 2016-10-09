@@ -4,7 +4,7 @@ class Base extends Component {
     render () {
         return (
             <div>
-                基地设置
+                基地设置页面
             </div>
         )
     }
