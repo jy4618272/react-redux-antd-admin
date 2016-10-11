@@ -12,11 +12,12 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
-import actionFinance from 'ACTION/finance/'
+import actionFinance from 'ACTION/finance/index.js'
 
 import Error from 'COMPONENT/Error'
 import InnerForm from 'COMPONENT/DBTable/InnerForm'
 import InnerTable from 'COMPONENT/DBTable/InnerTable'
+import InnerPagination from 'COMPONENT/DBTable/InnerPagination'
 
 const mapDispatchToProps = (dispatch) => ({
     actionFinance: bindActionCreators(actionFinance, dispatch)
@@ -29,16 +30,14 @@ const mapDispatchToProps = (dispatch) => ({
 class Finance extends Component {
     constructor(props) {
         super(props)
+        console.log('111', this.props)
+
         // 组件初始化时尝试获取schema
-        console.log('init-------finance', this.props);
+        this.status = "未确认"
         this.initFetchSchema(this.props)
         this.state = {
-            // 查询条件
-            queryObj: {
-                status: "未确认"
-            },
             pageSize: 10,
-            skipCount: 0,
+            skipCount: 0
         }
     }
 
@@ -48,19 +47,14 @@ class Finance extends Component {
      * @param 
      */
     handlerTabs = (activeKey) => {
-        if (activeKey === 1) {
-            this.setState({
-                queryObj: {
-                    status: "未确认"
-                }
-            })
-        } else if (activeKey === 2) {
-            this.setState({
-                queryObj: {
-                    status: "已到账"
-                }
-            })
+        if (activeKey == '1') {
+            this.status = "未确认"
+        } else if (activeKey == '2') {
+            this.status = "已到账"
         }
+
+        this.refs.form.resetFields()
+        this.refresh()
     }
 
     /**
@@ -109,46 +103,104 @@ class Finance extends Component {
     }
 
     /**
-     * 点击提交按钮时触发查询
+     * 点击查询按钮时触发查询
      *
-     * @param queryObj
+     * @param 
      */
     handleFormSubmit = (newObj) => {
-        // alert(JSON.stringify(newObj))
-        const tmpObj = Object.assign({}, this.state.queryObj, newObj)
-        // alert(JSON.stringify(tmpObj))
-        this.select(tmpObj, 10, 0)
+        const tmpObj = Object.assign({}, newObj)
+        const {pageSize, skipCount} = this.state
+
+        this.select(tmpObj, pageSize, skipCount)
     }
 
     /**
      * 向服务端发送select请求, 会返回一个promise对象
      *
-     * @param queryObj 包含了form中所有的查询条件, 再加上page和pageSize, 后端就能拼成完整的sql
+     * @param  包含了form中所有的查询条件, 再加上page和pageSize, 后端就能拼成完整的sql
      * @param page
      * @param pageSize
      * @returns {Promise}
      */
     select = (queryObj, pageSize, skipCount) => {
+        const {actionFinance} = this.props
+
         const hide = message.loading('正在查询...', 0)
         const tmpObj = Object.assign({}, queryObj)
 
+        tmpObj.status = this.status
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
 
-        const {actionFinance} = this.props
-        // alert(JSON.stringify(tmpObj))
         actionFinance.fetchFinanceTable(tmpObj)
-        hide()
+        setTimeout(() => {
+            hide()
+        }, 2000)
     }
 
     /**
      * 按当前的查询条件重新查询一次
      */
-    refresh = () => {
-        const {queryObj,pageSize, skipCount} = this.state
-
-        this.select(queryObj,pageSize, skipCount)
+    refresh = (queryObj = {}) => {
+        const {pageSize, skipCount} = this.state
+        this.select(queryObj, pageSize, skipCount)
     }
+    /**
+     * 获取所有选中项的数据
+     */
+    handleSelected = (data) => {
+        // 是否选择了多项
+        const multiSelected = data.length > 1
+        if (!multiSelected) {
+            const tmpObj = data.pop()
+            return tmpObj.financecollectionid
+        } else {
+            let tmpObj = []
+            data.map((item) => {
+                tmpObj.push(item.financecollectionid)
+            })
+            return tmpObj.join(',')
+        }
+    }
+
+
+    /**
+     * 点击确认收款按钮
+     */
+    parentHandleReceive = (data) => {
+        const {actionFinance} = this.props
+        const tmpObj = Object.assign({}, {
+            financeCollectionIds: this.handleSelected(data)
+        })
+        actionFinance.fetchReceive(tmpObj)
+    }
+
+    /**
+     * 点击确认退款按钮
+     */
+    parentHandleRefund = (data) => {
+        const {actionFinance} = this.props
+        const tmpObj = Object.assign({}, {
+            financeCollectionIds: this.handleSelected(data)
+        })
+
+        actionFinance.fetchRefund(tmpObj)
+    }
+
+    /**
+     * 点击批量按钮
+     * @param 关键字或类型，在点击之后
+     */
+    parentHandleExport = () => {
+        const {actionFinance} = this.props.finance
+        const tmpObj = Object.assign({}, {
+
+        })
+
+        // actionFinance.fetchExport(tmpObj)
+    }
+
+    HandlePageChange = () => {}
 
     /**
      * 刚进入页面时触发一次查询
@@ -171,8 +223,9 @@ class Finance extends Component {
                 <Tabs defaultActiveKey="1" animated="false" type="card" onChange={this.handlerTabs}>
                     <TabPane tab="未确认" key="1">
                         <InnerForm
-                            parentHandleSubmit = {this.handleFormSubmit}
-                            schema={this.querySchema}>
+                            ref="form"
+                            schema={this.querySchema}
+                            parentHandleSubmit = {this.handleFormSubmit}>
                             <Row>
                                 <Col span={12} offset={12} style={{ textAlign: 'right' }}>
                                     <Button type="primary"><Icon type="search"/>查询</Button>
@@ -180,17 +233,29 @@ class Finance extends Component {
                                 </Col>
                             </Row>
                         </InnerForm>
-                        <InnerTable 
-                            schema = {this.controlSchema}
-                            loading={finance.tableLoading}                             
-                            columns={finance.tableColumns} 
-                            dataSource={finance.tableData} 
+
+                        <InnerTable
+                            loading={finance.tableLoading}
+                            columns={finance.tableColumns}
+                            dataSource={finance.tableData}
                             isRowSelection={true}
-                            pagination={false} />
+                            pagination={false}
+                            schema = {this.controlSchema}
+                            parentHandleReceive={this.parentHandleReceive}
+                            parentHandleRefund={this.parentHandleRefund}
+                            parentHandleExport={this.parentHandleExport}
+                            size={finance.tableControl.pageSize} />
+                        <InnerPagination
+                            total = {finance.tableControl.total}
+                            pageSize = {finance.tableControl.pageSize}
+                            skipCount = {finance.tableControl.skipCount}
+                            parentHandlePageChange={this.HandlePageChange}
+                         />
                     </TabPane>
 
                     <TabPane tab="已到账" key="2">
                         <InnerForm
+                            ref="form"
                             parentHandleSubmit = {this.handleFormSubmit}
                             schema={this.querySchema}>
                             <Row>
@@ -200,6 +265,18 @@ class Finance extends Component {
                                 </Col>
                             </Row>
                         </InnerForm>
+
+                        <InnerTable
+                            schema = {this.controlSchema}
+                            loading={finance.tableLoading}
+                            columns={finance.tableColumns}
+                            dataSource={finance.tableData}
+                            isRowSelection={true}
+                            pagination={false}
+                            parentHandleReceive={this.parentHandleReceive}
+                            parentHandleRefund={this.parentHandleRefund}
+                            parentHandleExport={this.parentHandleExport}
+                            size={finance.tableControl.pageSize} />
                     </TabPane>
                 </Tabs>
             </section>

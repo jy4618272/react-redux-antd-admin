@@ -14,7 +14,7 @@ import {
 	Busi,
 	RoomState,
 	Finance,
-	FinanceState,
+	FinanceDetail,
 	ConfigBase,
 	ConfigRights,
 	ConfigLease
@@ -29,15 +29,14 @@ const routes = (
 			<Route path="busi">
 				<IndexRoute path="busi" component={Finance}/>
 				<Route path="busi_lease" tableName="busi" component={RoomState} />,
-				<Route path="busi_finance" tableName="busi" component={Finance}>
-				</Route>
+				<Route path="busi_finance" tableName="busi" component={Finance} />
+				<Route path="busi_finance/:id" component={FinanceDetail} />
 			</Route>
 
 			<Route path="config">
 				<Route path="config_base" component={ConfigBase}/>
 				<Route path="config_rights" component={ConfigRights} />,
-				<Route path="config_lease" component={ConfigLease}>
-				</Route>
+				<Route path="config_lease" component={ConfigLease} />
 			</Route>
 		</Route>
 

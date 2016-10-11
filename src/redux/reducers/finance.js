@@ -36,8 +36,8 @@ const initialState = {
         },
         {
             title: '收退款',
-            dataIndex: 'payType',
-            key: 'payType'
+            dataIndex: 'paytype',
+            key: 'paytype'
         },
         {
             title: '提交人',
@@ -53,8 +53,9 @@ const initialState = {
     tableData: [],
     tableControl: {        // 查询条件   
         skipCount: 0,      // 默认是第 0 页
+        currentPage: 1,     // 当前页
         pageSize: 10,      // 默认每页显示 10 条记录
-        count:0            // 总共有多少条数据
+        count: 0            // 总共有多少条数据
     }
 }
 

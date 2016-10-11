@@ -96,7 +96,10 @@ export const ACTION_HANDLERS = {
     [RECEIVE_FINANCE_TABLE]: (finance, {payload: res}) => ({
         ...finance,
         tableLoading: false,
-        tableData: res.data
+        tableData: res.data,
+        tableControl:{
+            total: res.count
+        }
     }),
     [RECEIVE_RECEIVE]: (finance, {payload: res}) => ({
         ...finance,

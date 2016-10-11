@@ -287,7 +287,7 @@ class InnerForm extends Component {
         const newObj = this.filterQueryObj(oldObj)
         console.log('oldObj', oldObj)
         console.log('newObj', newObj)
-        // 还是要交给上层组件处理, 因为要触发table组件的状态变化...
+        // 还是要交给上层组件处理, 因为要触发table组件的状态变化...        
         parentHandleSubmit(newObj)
     }
 

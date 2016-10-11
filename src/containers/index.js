@@ -2,7 +2,7 @@ import Layout from './Layout'
 import Home from './Home'
 import Busi from './Busi'
 import Finance from './Busi/Finance'
-import FinanceState from './Busi/FinanceState'
+import FinanceDetail from './Busi/FinanceDetail'
 import RoomState from './Busi/RoomState'
 import ConfigBase from './Config/Base'
 import ConfigRights from './Config/Rights'
@@ -14,7 +14,7 @@ export {
     Home,
     Busi,
     Finance,
-    FinanceState,
+    FinanceDetail,
     RoomState,
     ConfigBase,
 	ConfigRights,
