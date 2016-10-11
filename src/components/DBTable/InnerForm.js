@@ -16,6 +16,8 @@ import {
     Icon
 } from 'antd'
 
+import './dbTable.less'
+
 const FormItem = Form.Item
 const Option = Select.Option
 const RadioGroup = Radio.Group
@@ -30,10 +32,13 @@ class InnerForm extends Component {
      * @returns {XML}
      */
     colWrapper = (formItem, field) => {
+        const {getFieldDecorator} = this.props.form
         return (
             <Col key={field.key} sm={8}>
                 <FormItem key={field.key} label={field.title} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-                    {formItem}
+                    {getFieldDecorator(field.key)(
+                        formItem
+                    ) }
                 </FormItem>
             </Col>
         )
@@ -50,11 +55,11 @@ class InnerForm extends Component {
 
         console.debug('transform field %o to Select component', field)
         field.options.map((option) => {
-            options.push(<Option key={option.key} value={option.value}>{option.value}</Option>)
+            options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
 
         return this.colWrapper((
-            <Select placeholder={field.placeholder || '请选择'} size="default" {...getFieldDecorator(field.key) }>
+            <Select placeholder={field.placeholder || '请选择'} size="default">
                 {options}
             </Select>
         ), field)
@@ -75,7 +80,7 @@ class InnerForm extends Component {
         })
 
         return this.colWrapper((
-            <RadioGroup {...getFieldDecorator(field.key) }>
+            <RadioGroup>
                 {options}
             </RadioGroup>
         ), field)
@@ -96,7 +101,7 @@ class InnerForm extends Component {
         })
 
         return this.colWrapper((
-            <CheckboxGroup options={options} {...getFieldDecorator(field.key) } />
+            <CheckboxGroup options={options} />
         ), field)
     }
 
@@ -116,7 +121,7 @@ class InnerForm extends Component {
         })
 
         return this.colWrapper((
-            <Select multiple placeholder={field.placeholder || '请选择'} size="default" {...getFieldDecorator(field.key) }>
+            <Select multiple placeholder={field.placeholder || '请选择'} size="default">
                 {options}
             </Select>
         ), field)
@@ -133,18 +138,22 @@ class InnerForm extends Component {
     betweenColWrapper = (beginFormItem, endFormItem, field) => {
         // 布局真是个麻烦事
         // col内部又用了一个row做布局
-        // const {getFieldDecorator} = this.props.form
+        const {getFieldDecorator} = this.props.form
         return (
             <Col key={`${field.key}Begin`} sm={8}>
                 <Row>
                     <Col span={16}>
                         <FormItem key={`${field.key}Begin`} label={field.title} labelCol={{ span: 15 }} wrapperCol={{ span: 9 }}>
-                            {beginFormItem}
+                            {getFieldDecorator(`${field.key}Begin`)(
+                                beginFormItem
+                            ) }
                         </FormItem>
                     </Col>
                     <Col span={7} offset={1}>
                         <FormItem key={`${field.key}End`} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-                            {endFormItem}
+                            {getFieldDecorator(`${field.key}End`)(
+                                endFormItem
+                            ) }
                         </FormItem>
                     </Col>
                 </Row>
@@ -169,17 +178,17 @@ class InnerForm extends Component {
             case 'int':
                 console.debug('transform field %o to integer BETWEEN component', field)
                 beginFormItem = (<InputNumber size="default"
-                    placeholder={field.placeholderBegin || '最小值'} {...getFieldDecorator(`${field.key}Begin`) }/>)
+                    placeholder={field.placeholderBegin || '最小值'} />)
                 endFormItem = (<InputNumber size="default"
-                    placeholder={field.placeholderEnd || '最大值'} {...getFieldDecorator(`${field.key}End`) }/>)
+                    placeholder={field.placeholderEnd || '最大值'} />)
                 cols.push(this.betweenColWrapper(beginFormItem, endFormItem, field))
                 break
             case 'float':
                 console.debug('transform field %o to float BETWEEN component', field)
                 beginFormItem = (<InputNumber step={0.01} size="default"
-                    placeholder={field.placeholderBegin || '最小值'} {...getFieldDecorator(`${field.key}Begin`) }/>)
+                    placeholder={field.placeholderBegin || '最小值'} />)
                 endFormItem = (<InputNumber step={0.01} size="default"
-                    placeholder={field.placeholderEnd || '最大值'} {...getFieldDecorator(`${field.key}End`) }/>)
+                    placeholder={field.placeholderEnd || '最大值'} />)
                 cols.push(this.betweenColWrapper(beginFormItem, endFormItem, field))
                 break
             // datetime类型的between要占用两个Col
@@ -189,15 +198,17 @@ class InnerForm extends Component {
                 cols.push(
                     <Col key={`${field.key}Begin`} sm={8}>
                         <FormItem key={`${field.key}Begin`} label={field.title} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-                            <DatePicker showTime format="yyyy-MM-dd HH:mm:ss"
-                                placeholder={field.placeholderBegin || '开始日期'} {...getFieldDecorator(`${field.key}Begin`) }/>
+                            {getFieldDecorator(`${field.key}Begin`)(
+                                <DatePicker format="YYYY/MM/DD HH:mm:ss" showTime placeholder={field.placeholderBegin || '开始日期'} />
+                            ) }
                         </FormItem>
                     </Col>
                 )
                 cols.push(<Col key={`${field.key}End`} sm={8}>
                     <FormItem key={`${field.key}End`} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-                        <DatePicker showTime format="yyyy-MM-dd HH:mm:ss"
-                            placeholder={field.placeholderEnd || '结束日期'} {...getFieldDecorator(`${field.key}End`) }/>
+                        {getFieldDecorator(`${field.key}End`)(
+                            <DatePicker format="YYYY/MM/DD HH:mm:ss" showTime placeholder={field.placeholderEnd || '结束日期'} />
+                        ) }
                     </FormItem>
                 </Col>)
                 break
@@ -220,23 +231,22 @@ class InnerForm extends Component {
             case 'int':
                 console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber size="default" {...getFieldDecorator(field.key) }/>
+                    <InputNumber size="default" />
                 ), field)
             case 'float':
                 console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber step={0.01} size="default" {...getFieldDecorator(field.key) }/>
+                    <InputNumber step={0.01} size="default" />
                 ), field)
             case 'datetime':
                 console.debug('transform field %o to datetime input component', field)
                 return this.colWrapper((
-                    <DatePicker showTime format="yyyy-MM-dd HH:mm:ss"
-                        placeholder={field.placeholder || '请选择日期'} {...getFieldDecorator(field.key) }/>
+                    <DatePicker />
                 ), field)
             default:  // 默认就是普通的输入框
                 console.debug('transform field %o to varchar input component', field)
-                return this.colWrapper((               
-                    <Input placeholder={field.placeholder} size="default" {...getFieldDecorator(field.key)} />
+                return this.colWrapper((
+                    <Input placeholder={field.placeholder || '请填写'} size="default" />
                 ), field)
         }
     }
@@ -255,7 +265,7 @@ class InnerForm extends Component {
             if (oldObj[key]) {
                 // 对于js的日期类型, 要转换成字符串再传给后端
                 if (oldObj[key] instanceof Date) {
-                    newObj[key] = oldObj[key].format('yyyy-MM-dd HH:mm:ss')
+                    newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
                 } else {
                     newObj[key] = oldObj[key]
                 }
@@ -279,9 +289,9 @@ class InnerForm extends Component {
         console.log('newObj', newObj)
         // 还是要交给上层组件处理, 因为要触发table组件的状态变化...
         parentHandleSubmit(newObj)
-
     }
 
+    // 清除查询条件
     handleReset = (e) => {
         e.preventDefault()
         this.props.form.resetFields()
@@ -339,19 +349,17 @@ class InnerForm extends Component {
 
         // 别忘了最后一行
         if (cols.length > 0) {
+            cols.push(
+                <Col sm={8} className="button-group form-button-group">
+                    <Button type="primary" onClick={this.handleSubmit}><Icon type="search"/>查询</Button>
+                    <Button onClick={this.handleReset}><Icon type="cross"/>清除条件</Button>
+                </Col>
+            )
             rows.push(<Row key={rows.length} gutter={16}>{cols}</Row>)
         }
-
-
         return (
-            <Form horizontal className="m-advanced-search-form">
+            <Form horizontal className="g-mb20 m-advanced-search-form">
                 {rows}
-                <Row>
-                    <Col span={12} offset={12} style={{ textAlign: 'right' }}>
-                        <Button type="primary" onClick={this.handleSubmit}><Icon type="search"/>查询</Button>
-                        <Button onClick={this.handleReset}><Icon type="cross"/>清除条件</Button>
-                    </Col>
-                </Row>
             </Form>
         )
     }

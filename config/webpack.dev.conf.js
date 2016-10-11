@@ -1,6 +1,7 @@
 var webpack = require('webpack'),
     config = require('./webpack.base.conf');
     HtmlWebpackPlugin = require('html-webpack-plugin'),
+    OpenBrowserPlugin = require('open-browser-webpack-plugin'),
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
     // SOURCE_MAP = true; // 大多数情况下用不到
     SOURCE_MAP = false;
@@ -13,7 +14,7 @@ config.output.chunkFilename = '[id].js';
 // // add hot-reload related code to entry chunk
 config.entry.app = [
     'babel-polyfill',  // 可以使用完整的ES6特性, 大概增加100KB
-		'webpack-dev-server/client?http://0.0.0.0:8080', // WebpackDevServer host and port
+		'webpack-dev-server/client?http://localhost:3000', // WebpackDevServer host and port
 		'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
     config.entry.app
 ];
@@ -28,6 +29,7 @@ function generateExtractLoaders(loaders) {
 // // config.output.publicPath = '/';
 
 config.plugins = (config.plugins || []).concat([
+  new OpenBrowserPlugin({ url: 'http://localhost:3000' }),
   new webpack.optimize.OccurenceOrderPlugin(),
   new webpack.NoErrorsPlugin(),
   new ExtractTextPlugin('[name].css'),

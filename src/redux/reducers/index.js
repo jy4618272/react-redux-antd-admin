@@ -4,6 +4,7 @@ import store from 'STORE'
 import layout from 'REDUCER/layout'
 import userInfo from 'REDUCER/userInfo'
 import menuList from 'REDUCER/menuList'
+import finance from 'REDUCER/finance'
 
 // ================================
 // 同步的 Reducers（即应用初始化所必需的）
@@ -12,7 +13,8 @@ const syncReducers = {
   router: routerReducer,
   layout: layout,
   userInfo: userInfo,
-  menuList: menuList
+  menuList: menuList,
+  finance: finance
 }
 
 // ================================

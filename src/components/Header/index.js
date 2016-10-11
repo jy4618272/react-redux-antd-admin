@@ -1,49 +1,35 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
 import {connect} from 'react-redux'
-import { Icon } from 'antd'
+import { Icon, message } from 'antd'
+import actionUserInfo from 'ACTION/userInfo'
+
+
 // import xhr from 'SERVICE/xhr'
 
 import hideMenu from './img/hide_menu.png'
 import './index.less'
 
+const mapDispatchToProps = (dispatch) => ({
+	actionUserInfo: bindActionCreators(actionUserInfo, dispatch) 
+})
+
 @connect(
 	({ userInfo }) => ({ userInfo }),
-	require('ACTION/userInfo').default
+	mapDispatchToProps
 )
 export default class Header extends Component {
-	constructor(props, context) {
-		super(props, context)
+	constructor(props) {
+		super(props)
 	}
 
 	componentDidMount() {
-		// $.ajax({
-		// 	type: 'post',
-		// 	url: 'http://dev.jttest.tf56.com/financeParkAdmin/maincs/getUserInfo',
-		// 	dataType: 'json',
-		// 	data: {}
-		// }).done(function (res) {
-		// 	console.log('请求结果', res)
-		// }).fail(function (e) {
-		// 	console.log('请求结果', e)
-		// })
-
-		// $.when($.ajax({
-		// 	url: 'http://jttest.tf56.com/financeParkAdmin/maincs/getUserInfoByGet',
-		// 	dataType: 'jsonp',
-		// 	jsonp: 'callback',
-		// 	jsonpCallback: 'success_jsonpCallback',
-		// 	data: {}
-		// })).done(function (res) {
-		// 	console.log(JSON.stringify(res))
-		// }).fail(function () {
-		// 	console.log('打点数据繁忙，请稍后再试')
-		// })
-		// xhr('/financeParkAdmin/maincs/getUserInfoByGet', {}, 'get')
-		// const hide = message.loading('正在获取用户信息...', 0)
+		const {actionUserInfo} = this.props
+		actionUserInfo.fetchUser()
 	}
 
 	render() {
-		const {layout, slideBarToggle} = this.props
+		const {layout, userInfo, slideBarToggle} = this.props
 		const menuStyle = layout.slideBar ? 'u-arrow' : 'u-arrow u-arrow-right'
 		return (
 			<header className="m-header clearfix">
@@ -53,7 +39,7 @@ export default class Header extends Component {
 				<div className="g-fr">
 					<ul className="m-header-menu clearfix">
 						<li>
-							<Icon type="user" />用户名称
+							<Icon type="user" />{userInfo.userName}
 						</li>
 					</ul>
 				</div>

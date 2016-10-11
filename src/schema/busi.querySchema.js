@@ -4,9 +4,8 @@
 
 module.exports = [
 	{
-		key: 'busiType',  // 传递给后端的字段名
+		key: 'type',  // 传递给后端的字段名
 		title: '业务类型',  // 前端显示的名称
-		placeholder: '请输入用户名',  // 提示语, 可选
 
 		// 数据类型, 前端会根据数据类型展示不同的输入框
 		// 目前可用的dataType: int/float/varchar/datetime
@@ -19,6 +18,7 @@ module.exports = [
 		// between只能用于int/float/datetime, 会显示2个输入框, 用于范围查询
 		showType: 'select',
 		options: [
+			{ key: '', value: '不选' },
 			{ key: '租赁合同', value: '租赁合同' },
 			{ key: '临时摊位', value: '临时摊位' },
 			{ key: '水电', value: '水电' },
@@ -29,7 +29,7 @@ module.exports = [
 		]
 	},
 	{
-		key: 'keyWord',
+		key: 'name',
 		title: '关键字',
 		dataType: 'varchar',
 		placeholder: '请输入客户名称'

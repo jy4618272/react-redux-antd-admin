@@ -1,3 +1,5 @@
+import xhr from 'SERVICE'
+
 // import xhr from 'SERVICE/xhr'
 // ================================
 // Action Type
@@ -14,20 +16,15 @@ const requestUser = () => ({
 
 const receiveUser = (res) => ({
     type: RECEIVE_USER,
-    preload: res
+    payload: res
 })
 
 const fetchUser = () => {
-    // const url = 'http://jttest.tf56.com/financeParkAdmin/maincs/getUserInfo'
-    // return dispatch => {
-    //     dispatch(requestUser())
-    //     return xhr(url, {}, 'post')
-    //         .then((res) => {
-    //             if (res.status === 200) {
-    //                 dispatch(receiveUser(res))
-    //             }
-    //         })
-    // }
+    return dispatch => {
+        xhr('post', '/financeParkAdmin/maincs/getUserInfo', {}, function (res) {
+            dispatch(receiveUser(res))
+        })
+    }
 }
 
 /* default 导出所有 Actions Creator */
@@ -44,6 +41,8 @@ export default {
 // 故在此直接给出处理逻辑
 // ================================
 export const ACTION_HANDLERS = {
-    [REQUEST_USER]: () => [],
-    [RECEIVE_USER]: () => []
+    [REQUEST_USER]: () => null,
+    [RECEIVE_USER]: (userInfo, {payload: res}) => (
+        userInfo = res.data
+    )
 }   

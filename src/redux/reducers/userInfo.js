@@ -2,7 +2,7 @@ import createReducer from 'UTIL/createReducer'
 import { ACTION_HANDLERS } from 'ACTION/userInfo'
 
 const initialState = {
-    name: '张三'
+    userName: '用户名称'
 }
 
 export default createReducer(initialState, ACTION_HANDLERS)

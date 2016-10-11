@@ -5,11 +5,9 @@
 import React from 'react'
 import { render} from 'react-dom'
 import { Provider } from 'react-redux'
-import { Router, hashHistory } from 'react-router'
 import store from 'STORE'
 
 import routes from 'ROUTE'
-
 
 /**
  * 下面这货用于检测不必要的重新渲染，详情请看其项目地址：
@@ -35,7 +33,7 @@ const MOUNT_NODE = document.getElementById('root')
 
 render(
     <Provider store={store}>
-        <Router history={hashHistory} children={routes} />
+        {routes}
     </Provider>,
     MOUNT_NODE
 )

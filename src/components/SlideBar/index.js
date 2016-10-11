@@ -8,9 +8,6 @@ const MenuItem = Menu.Item
 
 import './index.less'
 
-@connect(
-    ({ menuList }) => ({ menuList })
-)
 class SlideNav extends Component {
     constructor(props) {
         super(props)
@@ -100,13 +97,14 @@ class SlideNav extends Component {
     }
 
     render() {
+        const {mode} = this.props
         return (
             <nav>
                 <Menu
                     onClick={this.handleClick}
                     defaultOpenKeys={this.defaultOpenKeys}
                     selectedKeys={[this.state.current]}
-                    mode="inline"
+                    mode={mode}
                     >
                     {this.menuStr}
                 </Menu>

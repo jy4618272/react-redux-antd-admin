@@ -38,8 +38,7 @@ class Bread extends Component {
     }
 
     componentDidMount() {
-        console.log('路由：', this.props.routes)
-        console.log('面包屑：', this.props)
+        
     }
 
     render() {
