@@ -35,12 +35,66 @@ class InnerForm extends Component {
         const {getFieldDecorator} = this.props.form
         return (
             <Col key={field.key} sm={8}>
-                <FormItem key={field.key} label={field.title} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
+                <FormItem key={field.key} label={field.title} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
                     {getFieldDecorator(field.key)(
                         formItem
                     ) }
                 </FormItem>
             </Col>
+        )
+    }
+
+    /**
+     * 也是个辅助函数, 由于是范围查询, 输入的formItem是两个, 一个用于begin一个用于end
+     *
+     * @param beginFormItem
+     * @param endFormItem
+     * @param field
+     * @returns {XML}
+     */
+    betweenColWrapper = (beginFormItem, endFormItem, field) => {
+        // 布局真是个麻烦事
+        // col内部又用了一个row做布局
+        const {getFieldDecorator} = this.props.form
+        return (
+            <Col key={`${field.key}Begin`} sm={8}>
+                <Row>
+                    <Col span={16}>
+                        <FormItem key={`${field.key}Begin`} label={field.title} labelCol={{ span: 15 }} wrapperCol={{ span: 9 }}>
+                            {getFieldDecorator(`${field.key}Begin`)(
+                                beginFormItem
+                            ) }
+                        </FormItem>
+                    </Col>
+                    <Col span={7} offset={1}>
+                        <FormItem key={`${field.key}End`} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
+                            {getFieldDecorator(`${field.key}End`)(
+                                endFormItem
+                            ) }
+                        </FormItem>
+                    </Col>
+                </Row>
+            </Col>
+        )
+    }
+
+    /**
+     * 辅助函数, 将一个input元素包装下
+     *
+     * @param formItem
+     * @param field
+     * @returns {XML}
+     */
+    colWrapperFull = (formItem, field) => {
+        const {getFieldDecorator} = this.props.form
+        return (
+            <Row key={field.key} sm={24}>
+                <FormItem key={field.key} label={field.title} labelCol={{ span:2 }} wrapperCol={{ span: 22 }}>
+                    {getFieldDecorator(field.key)(
+                        formItem
+                    ) }
+                </FormItem>
+            </Row>
         )
     }
 
@@ -128,46 +182,45 @@ class InnerForm extends Component {
     }
 
     /**
-     * 也是个辅助函数, 由于是范围查询, 输入的formItem是两个, 一个用于begin一个用于end
-     *
-     * @param beginFormItem
-     * @param endFormItem
-     * @param field
-     * @returns {XML}
-     */
-    betweenColWrapper = (beginFormItem, endFormItem, field) => {
-        // 布局真是个麻烦事
-        // col内部又用了一个row做布局
+    * 将schema中的一列转换为普通输入框
+    *
+    * @param field
+    * @returns {XML}
+    */
+    transformFull = (field) => {
         const {getFieldDecorator} = this.props.form
-        return (
-            <Col key={`${field.key}Begin`} sm={8}>
-                <Row>
-                    <Col span={16}>
-                        <FormItem key={`${field.key}Begin`} label={field.title} labelCol={{ span: 15 }} wrapperCol={{ span: 9 }}>
-                            {getFieldDecorator(`${field.key}Begin`)(
-                                beginFormItem
-                            ) }
-                        </FormItem>
-                    </Col>
-                    <Col span={7} offset={1}>
-                        <FormItem key={`${field.key}End`} labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-                            {getFieldDecorator(`${field.key}End`)(
-                                endFormItem
-                            ) }
-                        </FormItem>
-                    </Col>
-                </Row>
-            </Col>
-        )
+
+        switch (field.dataType) {
+            case 'int':
+                console.debug('transform field %o to integer input component', field)
+                return this.colWrapperFull((
+                    <InputNumber size="default" />
+                ), field)
+            case 'float':
+                console.debug('transform field %o to float input component', field)
+                return this.colWrapperFull((
+                    <InputNumber step={0.01} size="default" />
+                ), field)
+            case 'datetime':
+                console.debug('transform field %o to datetime input component', field)
+                return this.colWrapperFull((
+                    <DatePicker />
+                ), field)
+            default:  // 默认就是普通的输入框
+                console.debug('transform field %o to varchar input component', field)
+                return this.colWrapperFull((
+                    <Input placeholder={field.placeholder || '请填写'} size="default" />
+                ), field)
+        }
     }
 
     /**
-   * between类型比较特殊, 普通元素每个宽度是8, int和float的between元素宽度也是8, 但datetime类型的between元素宽度是16
-   * 否则排版出来不能对齐, 太丑了, 逼死强迫症
-   * 而且普通的transform函数返回是一个object, 而这个函数返回是一个array, 就是因为datetime的between要占用两列
-   *
-   * @param field
-   */
+     * between类型比较特殊, 普通元素每个宽度是8, int和float的between元素宽度也是8, 但datetime类型的between元素宽度是16
+     * 否则排版出来不能对齐, 太丑了, 逼死强迫症
+     * 而且普通的transform函数返回是一个object, 而这个函数返回是一个array, 就是因为datetime的between要占用两列
+     *
+     * @param field
+     */
     transformBetween = (field) => {
         const cols = []
         let beginFormItem
@@ -299,7 +352,7 @@ class InnerForm extends Component {
 
     render() {
         const {schema} = this.props
-
+        const {formStyle} = this.props
         const rows = []
         let cols = []
 
@@ -311,6 +364,10 @@ class InnerForm extends Component {
             let spaceNeed = 8
             if (field.showType === 'between' && field.dataType === 'datetime') {
                 spaceNeed = 16
+            }
+
+            if (field.showType === 'full') {
+                spaceNeed = 24
             }
 
             // 如果当前行空间不足, 就换行
@@ -340,6 +397,9 @@ class InnerForm extends Component {
                         cols.push(col)
                     }
                     break
+                case 'full':
+                    cols.push(this.transformFull(field))
+                    break
                 default:
                     cols.push(this.transformNormal(field))
             }
@@ -348,19 +408,23 @@ class InnerForm extends Component {
         })
 
         // 别忘了最后一行
-        if (cols.length > 0) {
+        if (this.props.showSearch) {
             cols.push(
                 <Col sm={8} className="button-group form-button-group">
                     <Button type="primary" onClick={this.handleSubmit}><Icon type="search"/>查询</Button>
                     <Button onClick={this.handleReset}><Icon type="cross"/>清除条件</Button>
                 </Col>
             )
-            rows.push(<Row key={rows.length} gutter={16}>{cols}</Row>)
         }
+
+        rows.push(<Row key={rows.length} gutter={16}>{cols}</Row>)
+
         return (
-            <Form horizontal className="g-mb20 m-advanced-search-form">
-                {rows}
-            </Form>
+            <section className={formStyle}>
+                <Form horizontal>
+                    {rows}
+                </Form>
+            </section>
         )
     }
 }

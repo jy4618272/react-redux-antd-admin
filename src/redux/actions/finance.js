@@ -27,9 +27,13 @@ const fetchFinanceTable = (data) => {
     return dispatch => {
         dispatch(requestFinanceTable())
         xhr('post', '/financeParkAdmin/financecollectioncs/selectFinanceCollectionByTypeAndName', data, function (res) {
-            console.log('表格数据', res)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            
+            console.log('表格数据111', newRes)
             if (res.result === 'success') {
-                dispatch(receiveFinanceTable(res))
+                dispatch(receiveFinanceTable(newRes))
             } else {
                 dispatch(receiveFinanceTable({}))
                 errHandler(res.result)
@@ -97,9 +101,9 @@ export const ACTION_HANDLERS = {
         ...finance,
         tableLoading: false,
         tableData: res.data,
-        tableControl:{
-            total: res.count
-        }
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) + 1)/10 + 1
     }),
     [RECEIVE_RECEIVE]: (finance, {payload: res}) => ({
         ...finance,

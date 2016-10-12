@@ -7,6 +7,9 @@ import RoomState from './Busi/RoomState'
 import ConfigBase from './Config/Base'
 import ConfigRights from './Config/Rights'
 import ConfigLease from './Config/Lease'
+import LeaseRoomAdd from './Config/LeaseRoomAdd'
+import LeaseRoomDetail from './Config/LeaseRoomDetail'
+import LeaseRoomEdit from './Config/LeaseRoomEdit'
 import Err from './Err'
 
 export {
@@ -19,5 +22,8 @@ export {
     ConfigBase,
 	ConfigRights,
 	ConfigLease,
+    LeaseRoomAdd,
+    LeaseRoomDetail,
+    LeaseRoomEdit,
     Err    
 }

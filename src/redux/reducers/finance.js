@@ -1,5 +1,5 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/finance/index.js'
+import { ACTION_HANDLERS } from 'ACTION/finance'
 
 const initialState = {
     tableLoading: true,
@@ -51,12 +51,9 @@ const initialState = {
         }
     ],
     tableData: [],
-    tableControl: {        // 查询条件   
-        skipCount: 0,      // 默认是第 0 页
-        currentPage: 1,     // 当前页
-        pageSize: 10,      // 默认每页显示 10 条记录
-        count: 0            // 总共有多少条数据
-    }
+    skipCount: 1,      // 默认是第 0 页
+    pageSize: 10,      // 默认每页显示 10 条记录
+    count: 0            // 总共有多少条数据
 }
 
 export default createReducer(initialState, ACTION_HANDLERS)

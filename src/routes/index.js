@@ -17,7 +17,10 @@ import {
 	FinanceDetail,
 	ConfigBase,
 	ConfigRights,
-	ConfigLease
+	ConfigLease,
+	LeaseRoomAdd,
+	LeaseRoomDetail,
+	LeaseRoomEdit
 } from 'CONTAINER'
 
 /* react router 2.x 必须配置 browserHistory */
@@ -25,7 +28,7 @@ const routes = (
 	<Router history={hashHistory}>
 		<Route path="/" component={Layout}>
 			<IndexRoute component={Home} />
-			
+
 			<Route path="busi">
 				<IndexRoute path="busi" component={Finance}/>
 				<Route path="busi_lease" tableName="busi" component={RoomState} />,
@@ -36,7 +39,10 @@ const routes = (
 			<Route path="config">
 				<Route path="config_base" component={ConfigBase}/>
 				<Route path="config_rights" component={ConfigRights} />,
-				<Route path="config_lease" component={ConfigLease} />
+				<Route path="config_lease" tableName="lease" component={ConfigLease} />
+				<Route path="config_lease/room/add" tableName="lease" component={LeaseRoomAdd} />
+				<Route path="config_lease/room/:id" tableName="lease" component={LeaseRoomDetail} />
+				<Route path="config_lease/room/edit/:id" tableName="lease" component={LeaseRoomEdit} />
 			</Route>
 		</Route>
 

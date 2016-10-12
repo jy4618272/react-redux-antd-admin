@@ -12,7 +12,7 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
-import actionFinance from 'ACTION/finance/index.js'
+import actionFinance from 'ACTION/finance'
 
 import Error from 'COMPONENT/Error'
 import InnerForm from 'COMPONENT/DBTable/InnerForm'
@@ -30,15 +30,19 @@ const mapDispatchToProps = (dispatch) => ({
 class Finance extends Component {
     constructor(props) {
         super(props)
-        console.log('111', this.props)
+
+        /** 
+         * 导出按钮，点击查询后且查询数据有值
+         * 
+        this.state = {
+            exportData: {
+                button: true
+            }
+        } */
 
         // 组件初始化时尝试获取schema
         this.status = "未确认"
         this.initFetchSchema(this.props)
-        this.state = {
-            pageSize: 10,
-            skipCount: 0
-        }
     }
 
     /**
@@ -52,6 +56,13 @@ class Finance extends Component {
         } else if (activeKey == '2') {
             this.status = "已到账"
         }
+
+        /* 查询导出
+        this.setState({
+            exportData: {
+                button: true
+            }
+        })*/
 
         this.refs.form.resetFields()
         this.refresh()
@@ -107,11 +118,20 @@ class Finance extends Component {
      *
      * @param 
      */
+    
     handleFormSubmit = (newObj) => {
         const tmpObj = Object.assign({}, newObj)
-        const {pageSize, skipCount} = this.state
+        const {finance} = this.props
+        
+        /* 查询导出
+        this.setState({
+            exportData: {
+                button: false,
+                newObj
+            }
+        })*/
 
-        this.select(tmpObj, pageSize, skipCount)
+        this.select(tmpObj, finance.pageSize, 0)
     }
 
     /**
@@ -132,6 +152,7 @@ class Finance extends Component {
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
 
+        this.queryObj = tmpObj
         actionFinance.fetchFinanceTable(tmpObj)
         setTimeout(() => {
             hide()
@@ -142,9 +163,23 @@ class Finance extends Component {
      * 按当前的查询条件重新查询一次
      */
     refresh = (queryObj = {}) => {
-        const {pageSize, skipCount} = this.state
-        this.select(queryObj, pageSize, skipCount)
+        const {finance} = this.props
+        this.select(queryObj, finance.pageSize, 0)
     }
+
+    /**
+     * 切换分页时触发查询
+     *
+     * @param page
+     */
+    handlePageChange = (page) => {
+        const {finance} = this.props
+        console.debug('handlePageChange, page = %d', page);
+
+        page = (page <= 1) ? 0 : (page - 1) * 10 - 1
+        this.select(this.queryObj, finance.pageSize, page)
+    }
+
     /**
      * 获取所有选中项的数据
      */
@@ -188,21 +223,6 @@ class Finance extends Component {
     }
 
     /**
-     * 点击批量按钮
-     * @param 关键字或类型，在点击之后
-     */
-    parentHandleExport = () => {
-        const {actionFinance} = this.props.finance
-        const tmpObj = Object.assign({}, {
-
-        })
-
-        // actionFinance.fetchExport(tmpObj)
-    }
-
-    HandlePageChange = () => {}
-
-    /**
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
@@ -224,59 +244,55 @@ class Finance extends Component {
                     <TabPane tab="未确认" key="1">
                         <InnerForm
                             ref="form"
+                            formStyle="g-mb20 m-advance-filter"                            
                             schema={this.querySchema}
-                            parentHandleSubmit = {this.handleFormSubmit}>
-                            <Row>
-                                <Col span={12} offset={12} style={{ textAlign: 'right' }}>
-                                    <Button type="primary"><Icon type="search"/>查询</Button>
-                                    <Button><Icon type="cross"/>清除条件</Button>
-                                </Col>
-                            </Row>
-                        </InnerForm>
+                            showSearch={true}                            
+                            parentHandleSubmit = {this.handleFormSubmit} />
 
                         <InnerTable
                             loading={finance.tableLoading}
                             columns={finance.tableColumns}
                             dataSource={finance.tableData}
                             isRowSelection={true}
-                            pagination={false}
-                            schema = {this.controlSchema}
+                            schema = {this.controlSchema[0]}
+                            bordered={true}
+                            pagination = {false}
                             parentHandleReceive={this.parentHandleReceive}
                             parentHandleRefund={this.parentHandleRefund}
-                            parentHandleExport={this.parentHandleExport}
-                            size={finance.tableControl.pageSize} />
+                            parentHandleExport={this.parentHandleExport} />
                         <InnerPagination
-                            total = {finance.tableControl.total}
-                            pageSize = {finance.tableControl.pageSize}
-                            skipCount = {finance.tableControl.skipCount}
-                            parentHandlePageChange={this.HandlePageChange}
-                         />
+                            total = {finance.total}
+                            pageSize = {finance.pageSize}
+                            skipCount = {finance.skipCount}
+                            parentHandlePageChange={this.handlePageChange}
+                            />
                     </TabPane>
 
                     <TabPane tab="已到账" key="2">
                         <InnerForm
                             ref="form"
-                            parentHandleSubmit = {this.handleFormSubmit}
-                            schema={this.querySchema}>
-                            <Row>
-                                <Col span={12} offset={12} style={{ textAlign: 'right' }}>
-                                    <Button type="primary"><Icon type="search"/>查询</Button>
-                                    <Button><Icon type="cross"/>清除条件</Button>
-                                </Col>
-                            </Row>
-                        </InnerForm>
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={this.querySchema}
+                            showSearch={true}
+                            parentHandleSubmit = {this.handleFormSubmit} />
 
                         <InnerTable
-                            schema = {this.controlSchema}
                             loading={finance.tableLoading}
                             columns={finance.tableColumns}
                             dataSource={finance.tableData}
                             isRowSelection={true}
-                            pagination={false}
+                            schema = {this.controlSchema[1]}
+                            bordered={true}
+                            pagination = {false}
                             parentHandleReceive={this.parentHandleReceive}
                             parentHandleRefund={this.parentHandleRefund}
-                            parentHandleExport={this.parentHandleExport}
-                            size={finance.tableControl.pageSize} />
+                            parentHandleExport={this.parentHandleExport} />
+                        <InnerPagination
+                            total = {finance.total}
+                            pageSize = {finance.pageSize}
+                            skipCount = {finance.skipCount}
+                            parentHandlePageChange={this.handlePageChange}
+                            />
                     </TabPane>
                 </Tabs>
             </section>

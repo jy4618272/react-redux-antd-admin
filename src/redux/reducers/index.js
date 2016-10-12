@@ -5,16 +5,18 @@ import layout from 'REDUCER/layout'
 import userInfo from 'REDUCER/userInfo'
 import menuList from 'REDUCER/menuList'
 import finance from 'REDUCER/finance'
+import lease from 'REDUCER/lease'
 
 // ================================
 // 同步的 Reducers（即应用初始化所必需的）
 // ================================
 const syncReducers = {
-  router: routerReducer,
-  layout: layout,
-  userInfo: userInfo,
-  menuList: menuList,
-  finance: finance
+	router: routerReducer,
+	layout: layout,
+	userInfo: userInfo,
+	menuList: menuList,
+	finance: finance,
+	lease: lease
 }
 
 // ================================
@@ -26,9 +28,9 @@ const asyncReducers = {}
  * @return {Function} rootReducer
  */
 export function createRootReducer() {
-  return combineReducers({
+	return combineReducers({
     ...syncReducers,
-    ...asyncReducers
+		...asyncReducers
   })
 }
 
@@ -38,6 +40,6 @@ export function createRootReducer() {
  * @param  {Function} reducer
  */
 export function injectReducer(key, reducer) {
-  asyncReducers[key] = reducer
-  store.replaceReducer(createRootReducer()) // 替换当前的 rootReducer
+	asyncReducers[key] = reducer
+	store.replaceReducer(createRootReducer()) // 替换当前的 rootReducer
 }
