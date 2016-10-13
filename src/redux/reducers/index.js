@@ -29,7 +29,7 @@ const asyncReducers = {}
  */
 export function createRootReducer() {
 	return combineReducers({
-    ...syncReducers,
+    	...syncReducers,
 		...asyncReducers
   })
 }

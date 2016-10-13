@@ -1,34 +1,34 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/lease/room'
+import { ACTION_HANDLERS } from 'ACTION/lease/classLine'
 
 const initialState = {
     area: [],
-    tableLoading: true,
+    tableLoading: false,
     tableColumns: [
         {
-            title: '区域',
-            dataIndex: 'area',
-            key: 'area'
+            title: '所属基地',
+            dataIndex: 'site',
+            key: 'site'
         },
         {
-            title: '楼号',
-            dataIndex: 'build',
-            key: 'build'
+            title: '班线名称',
+            dataIndex: 'linename',
+            key: 'linename'
         },
         {
-            title: '房间号',
-            dataIndex: 'room',
-            key: 'room'
+            title: '班线价格',
+            dataIndex: 'linefee',
+            key: 'linefee'
         },
         {
-            title: '面积',
-            dataIndex: 'romearea',
-            key: 'romearea'
+            title: '输入人',
+            dataIndex: 'inputman',
+            key: 'inputman'
         },
         {
-            title: '金额',
-            dataIndex: 'money',
-            key: 'money'
+            title: '创建日期',
+            dataIndex: 'createdate',
+            key: 'createdate'
         },
         {
             title: '状态',

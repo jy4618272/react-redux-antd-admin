@@ -1,32 +1,31 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/lease/room'
+import { ACTION_HANDLERS } from 'ACTION/lease/policy'
 
 const initialState = {
-    area: [],
-    tableLoading: true,
+    tableLoading: false,
     tableColumns: [
         {
-            title: '区域',
+            title: '所属基地',
             dataIndex: 'area',
             key: 'area'
         },
         {
-            title: '楼号',
+            title: '活动名称',
             dataIndex: 'build',
             key: 'build'
         },
         {
-            title: '房间号',
+            title: '优惠类型',
             dataIndex: 'room',
             key: 'room'
         },
         {
-            title: '面积',
+            title: '优惠幅度',
             dataIndex: 'romearea',
             key: 'romearea'
         },
         {
-            title: '金额',
+            title: '区域',
             dataIndex: 'money',
             key: 'money'
         },

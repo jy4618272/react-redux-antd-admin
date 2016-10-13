@@ -98,7 +98,6 @@ class InnerTable extends Component {
     // 点击新增
     handleAdd = () => {
         this.props.parentHandleAdd()
-
     }
     // 点击修改
     handleEdit = () => {

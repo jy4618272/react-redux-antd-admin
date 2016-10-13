@@ -1,6 +1,6 @@
 import {notification} from 'antd'
 import xhr from 'SERVICE'
-import {errHandler} from 'SERVICE/config'
+import {errHandler, leasePath} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -20,8 +20,13 @@ const receiveArea = (res) => ({
 
 const fetchArea = () => {
     return dispatch =>
-        xhr('post', '/tfPassParkAdmin/rentroomcs/seleAreaBySite', {}, function (res) {
+        xhr('post', leasePath + '/rentroomcs/seleAreaBySite', {}, function (res) {
             console.log('房间设置之区域', res)
+            const options = []
+            res.data.map(item => {
+                options.push({ key: item.area, value: item.area })
+            })
+            dispatch(receiveArea(options))
         })
 }
 
@@ -37,14 +42,14 @@ const receiveRoomTable = (res) => ({
 const fetchRoomTable = (data) => {
     return dispatch => {
         dispatch(requestRoomTable())
-        xhr('post', '/tfPassParkAdmin/rentroomcs/selectByStatus', data, function (res) {
-            // const newRes = Object.assign({}, res, {
-            //     sub: data
-            // })
-
-            console.log('房间设置之列表', res)
+        xhr('post', leasePath + '/rentroomcs/selectByStatus', data, function (res) {
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('房间设置之列表', newRes)
+            
             if (res.result === 'success') {
-                dispatch(receiveRoomTable(res))
+                dispatch(receiveRoomTable(newRes))
             } else {
                 dispatch(receiveRoomTable({}))
                 errHandler(res.result)
@@ -60,16 +65,35 @@ export default {
 }
 
 export const ACTION_HANDLERS = {
-    [RECEIVE_AREA]: (payload) => ({
-        payload
+    [RECEIVE_AREA]: (roomData, {payload: res}) => ({
+        ...roomData,
+        room:[
+            {
+                key: 'type',  // 传递给后端的字段名
+                title: '区域',  // 前端显示的名称
+                dataType: 'varchar',
+                showType: 'select',
+                options: res
+            },
+            {
+                key: 'name',
+                title: '关键字',
+                dataType: 'varchar',
+                placeholder: '请输入楼号/房间号'
+            }    
+        ]
     }),
-    [REQUEST_ROOM_TABLE]: (lease) => ({
-        ...lease,
+    [REQUEST_ROOM_TABLE]: (roomData) => ({
+        ...roomData,
         tableLoading: true
     }),
-    [RECEIVE_ROOM_TABLE]: (lease) => ({
-            ...lease,
-        tableLoading: false
+    [RECEIVE_ROOM_TABLE]: (roomData, {payload: res}) => ({
+        ...roomData,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
     })
 }
 

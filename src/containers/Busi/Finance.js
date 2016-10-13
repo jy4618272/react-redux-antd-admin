@@ -176,7 +176,7 @@ class Finance extends Component {
         const {finance} = this.props
         console.debug('handlePageChange, page = %d', page);
 
-        page = (page <= 1) ? 0 : (page - 1) * 10 - 1
+        page = (page <= 1) ? 0 : (page - 1) * 10
         this.select(this.queryObj, finance.pageSize, page)
     }
 
@@ -240,7 +240,7 @@ class Finance extends Component {
 
         return (
             <section className="padding">
-                <Tabs defaultActiveKey="1" animated="false" type="card" onChange={this.handlerTabs}>
+                <Tabs defaultActiveKey="1" animated="false" type="card" onTabClick={this.handlerTabs}>
                     <TabPane tab="未确认" key="1">
                         <InnerForm
                             ref="form"

@@ -2,7 +2,21 @@ import createReducer from 'UTIL/createReducer'
 import { ACTION_HANDLERS } from 'ACTION/lease/room'
 
 const initialState = {
-    area: [],
+    room: [
+        {
+            key: 'type',  // 传递给后端的字段名
+            title: '区域',  // 前端显示的名称
+            dataType: 'varchar',
+            showType: 'select',
+            options: []
+        },
+        {
+            key: 'name',
+            title: '关键字',
+            dataType: 'varchar',
+            placeholder: '请输入楼号/房间号'
+        }
+    ],
     tableLoading: true,
     tableColumns: [
         {

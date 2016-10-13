@@ -16,7 +16,7 @@ class InnerPagination extends React.Component {
                     showQuickJumper
                     selectComponentClass={Select}
                     total={total}
-                    showTotal={(total) => `每页${pageSize}条, 共 ${total} 条`}
+                    showTotal={(total) => `每页${pageSize}条, 共 ${total || 0} 条`}
                     pageSize={pageSize}
                     defaultCurrent={1}
                     current={skipCount}

@@ -17,6 +17,7 @@ import actionLease from 'ACTION/lease'
 import Error from 'COMPONENT/Error'
 import InnerForm from 'COMPONENT/DBTable/InnerForm'
 import InnerTable from 'COMPONENT/DBTable/InnerTable'
+import InnerPagination from 'COMPONENT/DBTable/InnerPagination'
 
 const mapDispatchToProps = (dispatch) => ({
     actionLease: bindActionCreators(actionLease, dispatch)
@@ -29,8 +30,9 @@ const mapDispatchToProps = (dispatch) => ({
 class Lease extends Component {
     constructor(props) {
         super(props)
-        console.log('111111', props)
+        this.props.actionLease.fetchArea()
         this.initFetchSchema(this.props)
+        this.status = 'room'
     }
 
     /**
@@ -41,6 +43,7 @@ class Lease extends Component {
      * @param tableName
      */
     initFetchSchema(props) {
+        const that = this
         const routes = props.routes
         const tableName = routes.pop().tableName // lease
         if (tableName) {
@@ -55,8 +58,9 @@ class Lease extends Component {
         this.tableName = tableName
 
         try {
-            this.querySchema = require(`SCHEMA/${tableName}/${tableName}.querySchema.js`)
-            console.log(this.querySchema['room'])
+            that.querySchema = require(`SCHEMA/${tableName}/${tableName}.querySchema.js`)
+            console.log('querySchema', this.querySchema['room'])
+
         } catch (e) {
             console.error('load query schema error: %o', e)
             this.inited = false
@@ -85,18 +89,14 @@ class Lease extends Component {
      * @param pageSize
      * @returns {Promise}
      */
-    select = (queryObj, pageSize, skipCount) => {
-        const {actionLease} = this.props
-
+    select = (queryObj, pageSize, skipCount, fetchHandle) => {
         const hide = message.loading('正在查询...', 0)
         const tmpObj = Object.assign({}, queryObj)
 
-        tmpObj.status = this.status
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
 
-        this.queryObj = tmpObj
-        // actionLease.fetchRoomTable(tmpObj)
+        fetchHandle(tmpObj)
         setTimeout(() => {
             hide()
         }, 2000)
@@ -105,9 +105,42 @@ class Lease extends Component {
     /**
      * 按当前的查询条件重新查询一次
      */
-    refresh = (queryObj = {}) => {
-        const {lease} = this.props
-        this.select(queryObj, lease.roomData.pageSize, 0)
+    refresh = (fetchHandle) => {
+        this.select({}, 10, 0, fetchHandle)
+    }
+
+    /**
+     * 切换分页时触发查询
+     *
+     * @param page
+     */
+    handlePageChange = (page) => {
+        const {
+            roomData,
+            classLineData,
+            policyData,
+            accountManagerData
+        } = this.props.lease
+
+        const {
+            fetchRoomTable,
+            fetchClassLineTable,
+            fetchPolicyTable,
+            fetchManagerTable
+        } = this.props.actionLease
+
+        console.debug('handlePageChange, page = %d', page);
+
+        page = (page <= 1) ? 0 : (page - 1) * 10
+        if (this.status === 'room') {
+            this.select(this.queryObj, roomData.pageSize, page, fetchRoomTable)
+        } else if (this.status === 'classLine') {
+            this.select(this.queryObj, classLineData.pageSize, page, fetchClassLineTable)
+        } else if (this.status === 'policy') {
+            this.select(this.queryObj, policyData.pageSize, page, fetchPolicyTable)
+        } else if (this.status === 'accountManager') {
+            this.select(this.queryObj, accountManagerData.pageSize, page, fetchManagerTable)
+        }
     }
 
     /**
@@ -116,20 +149,43 @@ class Lease extends Component {
      * @param 
      */
     handlerTabs = (activeKey) => {
-        console.log(activeKey)
+        this.status = activeKey
         this.refs.form.resetFields()
+        const {
+            fetchRoomTable,
+            fetchClassLineTable,
+            fetchPolicyTable,
+            fetchManagerTable
+        } = this.props.actionLease
+
+        if (this.status === 'room') {
+            this.refresh(fetchRoomTable)
+        } else if (this.status === 'classLine') {
+            this.refresh(fetchClassLineTable)
+        } else if (this.status === 'policy') {
+            this.refresh(fetchPolicyTable)
+        } else if (this.status === 'accountManager') {
+            this.refresh(fetchManagerTable)
+        }
     }
 
-    // 新增
-    parentHandleAdd = (record, index) => {
+
+    /**
+     * 新增
+     */
+    parentHandleAddRoom = (record, index) => {
         // alert(record)
-        hashHistory.push(`config/config_lease/room/add`)   
+        hashHistory.push(`config/config_lease/room/add`)
+    }
+    parentHandleAddClassLine = (record, index) => {
+        // alert(record)
+        hashHistory.push(`config/config_lease/classLine/add`)
     }
 
     // 新增
     parentHandleEdit = (record, index) => {
         // alert(record)
-        hashHistory.push(`config/config_lease/room/edit/22`)   
+        hashHistory.push(`config/config_lease/room/edit/22`)
     }
 
     /**
@@ -143,20 +199,27 @@ class Lease extends Component {
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
-        this.refresh()
-
-        const {actionLease} = this.props
-        actionLease.fetchArea()
+        const {fetchRoomTable} = this.props.actionLease
+        this.refresh(fetchRoomTable)
     }
+
 
     render() {
         const {lease} = this.props
-        const {roomData} = lease
+        const {
+            roomData,
+            classLineData,
+            policyData,
+            accountManagerData,
+            contractTplData,
+            auditPersonData
+        } = lease
         if (!this.inited) {
             return (
                 <Error errorMsg={this.errorMsg} />
             )
         }
+
         return (
             <section className="padding">
                 <Tabs defaultActiveKey="room" animated="false" type="card" onChange={this.handlerTabs}>
@@ -164,7 +227,7 @@ class Lease extends Component {
                         <InnerForm
                             ref="form"
                             formStyle="g-mb20 m-advance-filter"
-                            schema={this.querySchema['room']}
+                            schema={roomData['room']}
                             showSearch={true}
                             parentHandleSubmit = {this.handleFormSubmit} />
                         <InnerTable
@@ -174,9 +237,15 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema = {this.controlSchema['room']}
                             bordered={true}
-                            parentHandleAdd = {this.parentHandleAdd}
+                            parentHandleAdd = {this.parentHandleAddRoom}
                             parentHandleEdit = {this.parentHandleEdit}
                             pagination = {false} />
+                        <InnerPagination
+                            total = {roomData.total}
+                            pageSize = {roomData.pageSize}
+                            skipCount = {roomData.skipCount}
+                            parentHandlePageChange={this.handlePageChange}
+                            />
                     </TabPane>
                     <TabPane tab="班线管理" key="classLine">
                         <InnerForm
@@ -186,11 +255,88 @@ class Lease extends Component {
                             showSearch={true}
                             parentHandleSubmit = {this.handleFormSubmit} />
                         <InnerTable
-                            loading={roomData.tableLoading}
-                            columns={roomData.tableColumns}
-                            dataSource={roomData.tableData}
+                            loading={classLineData.tableLoading}
+                            columns={classLineData.tableColumns}
+                            dataSource={classLineData.tableData}
                             isRowSelection={true}
                             schema = {this.controlSchema['classLine']}
+                            bordered={true}
+                            parentHandleAdd = {this.parentHandleAddClassLine}
+                            parentHandleEdit = {this.parentHandleEdit}
+                            parentHandleOpen = {this.parentHandleOpen}
+                            parentHandleClose = {this.parentHandleClose}
+                            pagination = {false} />
+                        <InnerPagination
+                            total = {classLineData.total}
+                            pageSize = {classLineData.pageSize}
+                            skipCount = {classLineData.skipCount}
+                            parentHandlePageChange={this.handlePageChange}
+                            />
+                    </TabPane>
+                    <TabPane tab="政策优惠" key="policy">
+                        <InnerForm
+                            ref="form"
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={this.querySchema['policy']}
+                            showSearch={true}
+                            parentHandleSubmit = {this.handleFormSubmit} />
+                        <InnerTable
+                            loading={policyData.tableLoading}
+                            columns={policyData.tableColumns}
+                            dataSource={policyData.tableData}
+                            isRowSelection={true}
+                            schema = {this.controlSchema['policy']}
+                            bordered={true}
+                            parentHandleAdd = {this.parentHandleAdd}
+                            parentHandleEdit = {this.parentHandleEdit}
+                            parentHandleOpen = {this.parentHandleOpen}
+                            parentHandleClose = {this.parentHandleClose}
+                            pagination = {false} />
+                        <InnerPagination
+                            total = {policyData.total}
+                            pageSize = {policyData.pageSize}
+                            skipCount = {policyData.skipCount}
+                            parentHandlePageChange={this.handlePageChange}
+                            />
+                    </TabPane>
+                    <TabPane tab="客户经理列表" key="accountManager">
+                        <InnerForm
+                            ref="form"
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={this.querySchema['accountManager']}
+                            showSearch={true}
+                            parentHandleSubmit = {this.handleFormSubmit} />
+                        <InnerTable
+                            loading={accountManagerData.tableLoading}
+                            columns={accountManagerData.tableColumns}
+                            dataSource={accountManagerData.tableData}
+                            isRowSelection={true}
+                            schema = {this.controlSchema['accountManager']}
+                            bordered={true}
+                            parentHandleAdd = {this.parentHandleAdd}
+                            parentHandleEdit = {this.parentHandleEdit}
+                            parentHandleOpen = {this.parentHandleOpen}
+                            parentHandleClose = {this.parentHandleClose}
+                            pagination = {false} />
+                        <InnerPagination
+                            total = {accountManagerData.total}
+                            pageSize = {accountManagerData.pageSize}
+                            skipCount = {accountManagerData.skipCount}
+                            parentHandlePageChange={this.handlePageChange} />
+                    </TabPane>
+                    <TabPane tab="合同模板配置" key="contractTpl">
+                        <InnerForm
+                            ref="form"
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={this.querySchema['contractTpl']}
+                            showSearch={true}
+                            parentHandleSubmit = {this.handleFormSubmit} />
+                        <InnerTable
+                            loading={contractTplData.tableLoading}
+                            columns={contractTplData.tableColumns}
+                            dataSource={contractTplData.tableData}
+                            isRowSelection={true}
+                            schema = {this.controlSchema['contractTpl']}
                             bordered={true}
                             parentHandleAdd = {this.parentHandleAdd}
                             parentHandleEdit = {this.parentHandleEdit}
@@ -198,33 +344,25 @@ class Lease extends Component {
                             parentHandleClose = {this.parentHandleClose}
                             pagination = {false} />
                     </TabPane>
-                    <TabPane tab="政策优惠" key="policy">
-                        <InnerForm
-                            ref="form"
-                            formStyle="g-mb20 m-advance-filter"
-                            schema={this.querySchema['policy']}
-                            parentHandleSubmit = {this.handleFormSubmit} />
-                    </TabPane>
-                    <TabPane tab="客户经理列表" key="accountManager">
-                        <InnerForm
-                            ref="form"
-                            formStyle="g-mb20 m-advance-filter"
-                            schema={this.querySchema['accountManager']}
-                            parentHandleSubmit = {this.handleFormSubmit} />
-                    </TabPane>
-                    <TabPane tab="合同模板配置" key="contractTpl">
-                        <InnerForm
-                            ref="form"
-                            formStyle="g-mb20 m-advance-filter"
-                            schema={this.querySchema['contractTpl']}
-                            parentHandleSubmit = {this.handleFormSubmit} />
-                    </TabPane>
                     <TabPane tab="审核人配置" key="auditPerson">
                         <InnerForm
                             ref="form"
                             formStyle="g-mb20 m-advance-filter"
                             schema={this.querySchema['auditPerson']}
+                            showSearch={true}
                             parentHandleSubmit = {this.handleFormSubmit} />
+                        <InnerTable
+                            loading={auditPersonData.tableLoading}
+                            columns={auditPersonData.tableColumns}
+                            dataSource={auditPersonData.tableData}
+                            isRowSelection={true}
+                            schema = {this.controlSchema['auditPerson']}
+                            bordered={true}
+                            parentHandleAdd = {this.parentHandleAdd}
+                            parentHandleEdit = {this.parentHandleEdit}
+                            parentHandleOpen = {this.parentHandleOpen}
+                            parentHandleClose = {this.parentHandleClose}
+                            pagination = {false} />
                     </TabPane>
                 </Tabs>
             </section>

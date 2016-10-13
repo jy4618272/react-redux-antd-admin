@@ -3,30 +3,35 @@ import { ACTION_HANDLERS } from 'ACTION/lease/room'
 
 const initialState = {
     area: [],
-    tableLoading: true,
+    tableLoading: false,
     tableColumns: [
         {
-            title: '区域',
+            title: '序号',
+            dataIndex: 'primaryKey',
+            key: 'primaryKey'
+        },
+        {
+            title: '所属基地',
             dataIndex: 'area',
             key: 'area'
         },
         {
-            title: '楼号',
+            title: '姓名',
             dataIndex: 'build',
             key: 'build'
         },
         {
-            title: '房间号',
+            title: '工号',
             dataIndex: 'room',
             key: 'room'
         },
         {
-            title: '面积',
+            title: '创建人',
             dataIndex: 'romearea',
             key: 'romearea'
         },
         {
-            title: '金额',
+            title: '创建日期',
             dataIndex: 'money',
             key: 'money'
         },

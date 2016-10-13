@@ -1,6 +1,6 @@
 import {notification} from 'antd'
 import xhr from 'SERVICE'
-import {errHandler} from 'SERVICE/config'
+import {errHandler, financePath} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -23,10 +23,11 @@ const receiveFinanceTable = (res) => ({
     type: RECEIVE_FINANCE_TABLE,
     payload: res
 })
+
 const fetchFinanceTable = (data) => {
     return dispatch => {
         dispatch(requestFinanceTable())
-        xhr('post', '/financeParkAdmin/financecollectioncs/selectFinanceCollectionByTypeAndName', data, function (res) {
+        xhr('post', financePath + '/financecollectioncs/selectFinanceCollectionByTypeAndName', data, function (res) {
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -51,7 +52,7 @@ const receiveReceive = (res) => ({
 
 const fetchReceive = (data) => {
     return dispatch => {
-        xhr('post', '/financeParkAdmin/financecollectioncs/confirmPay', data, function (res) {
+        xhr('post', financePath + '/financecollectioncs/confirmPay', data, function (res) {
             console.log('确认收款', res)
             if (res.result === 'success') {
                 dispatch(receiveReceive(res))
@@ -72,7 +73,7 @@ const receiveRefund = (res) => ({
 
 const fetchRefund = (data) => {
     return dispatch => {
-        xhr('post', '/financeParkAdmin/financecollectioncs/confirmRefund', data, function (res) {
+        xhr('post', financePath + '/financecollectioncs/confirmRefund', data, function (res) {
             console.log('确认退款', res)
             if (res.result === 'success') {
                 dispatch(receiveRefund(res))
@@ -103,7 +104,7 @@ export const ACTION_HANDLERS = {
         tableData: res.data,
         total: res.count,
         pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) + 1)/10 + 1
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
     }),
     [RECEIVE_RECEIVE]: (finance, {payload: res}) => ({
         ...finance,
