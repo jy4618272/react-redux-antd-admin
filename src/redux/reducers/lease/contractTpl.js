@@ -1,24 +1,18 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/lease/room'
+import { ACTION_HANDLERS } from 'ACTION/lease/contractTpl'
 
 const initialState = {
-    area: [],
     tableLoading: false,
     tableColumns: [
         {
-            title: '序号',
-            dataIndex: 'primaryKey',
-            key: 'primaryKey'
-        },
-        {
             title: '模板名称',
-            dataIndex: 'area',
-            key: 'area'
+            dataIndex: 'modelname',
+            key: 'modelname'
         },
         {
             title: '修改时间',
-            dataIndex: 'build',
-            key: 'build'
+            dataIndex: 'inputdate',
+            key: 'inputdate'
         },
         {
             title: '状态',

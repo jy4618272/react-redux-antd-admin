@@ -1,39 +1,34 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/lease/room'
+import { ACTION_HANDLERS } from 'ACTION/lease/accountManager'
 
 const initialState = {
     area: [],
     tableLoading: false,
     tableColumns: [
         {
-            title: '序号',
-            dataIndex: 'primaryKey',
-            key: 'primaryKey'
-        },
-        {
             title: '所属基地',
-            dataIndex: 'area',
-            key: 'area'
+            dataIndex: 'site',
+            key: 'site'
         },
         {
             title: '姓名',
-            dataIndex: 'build',
-            key: 'build'
+            dataIndex: 'username',
+            key: 'username'
         },
         {
             title: '工号',
-            dataIndex: 'room',
-            key: 'room'
+            dataIndex: 'jobcard',
+            key: 'jobcard'
         },
         {
             title: '创建人',
-            dataIndex: 'romearea',
-            key: 'romearea'
+            dataIndex: 'createman',
+            key: 'createman'
         },
         {
             title: '创建日期',
-            dataIndex: 'money',
-            key: 'money'
+            dataIndex: 'createdate',
+            key: 'createdate'
         },
         {
             title: '状态',

@@ -91,7 +91,7 @@ class Finance extends Component {
         this.tableName = tableName
 
         try {
-            this.querySchema = require(`SCHEMA/${tableName}.querySchema.js`)
+            this.querySchema = require(`SCHEMA/${tableName}/${tableName}.querySchema.js`)
             console.log(this.querySchema)
         } catch (e) {
             console.error('load query schema error: %o', e)
@@ -101,7 +101,7 @@ class Finance extends Component {
         }
 
         try {
-            this.controlSchema = require(`SCHEMA/${tableName}.controlSchema.js`)
+            this.controlSchema = require(`SCHEMA/${tableName}/${tableName}.controlSchema.js`)
             console.log(`加载${tableName}controlSchema`, this.controlSchema)
         } catch (e) {
             console.error('load query schema error: %o', e)

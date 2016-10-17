@@ -26,6 +26,7 @@ const fetchArea = () => {
             res.data.map(item => {
                 options.push({ key: item.area, value: item.area })
             })
+            sessionStorage.setItem('areaBySite', JSON.stringify(options))
             dispatch(receiveArea(options))
         })
 }

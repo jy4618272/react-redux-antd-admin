@@ -11,13 +11,13 @@ const initialState = {
         },
         {
             title: '活动名称',
-            dataIndex: 'build',
-            key: 'build'
+            dataIndex: 'promotionname',
+            key: 'promotionname'
         },
         {
             title: '优惠类型',
-            dataIndex: 'room',
-            key: 'room'
+            dataIndex: 'promotiontype',
+            key: 'promotiontype'
         },
         {
             title: '优惠幅度',
@@ -26,8 +26,8 @@ const initialState = {
         },
         {
             title: '区域',
-            dataIndex: 'money',
-            key: 'money'
+            dataIndex: 'area',
+            key: 'area'
         },
         {
             title: '状态',

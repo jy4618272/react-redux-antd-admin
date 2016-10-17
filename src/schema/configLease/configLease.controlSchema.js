@@ -5,7 +5,7 @@
 module.exports = {
     room: {
         showAdd: true,
-        showMod: true,
+        showEdit: true,
         showLie: true,
         showVoid: true,
         showHistory: true,
@@ -17,32 +17,32 @@ module.exports = {
     },
     classLine: {
         showAdd: true,
-        showMod: true,
+        showEdit: true,
         showOpen: true,
         showClose: true
     },
     policy: {
         showAdd: true,
-        showMod: true,
+        showEdit: true,
         showOpen: true,
         showClose: true
     },
     accountManager: {
         showAdd: true,
-        showMod: true,
+        showEdit: true,
         showOpen: true,
         showClose: true
     },
     contractTpl: {
         showAdd: true,
-        showMod: true,
+        showEdit: true,
         showOpen: true,
         showClose: true,
         showSearchDictionary: true        
     },
     auditPerson: {
         showAdd: true,
-        showMod: true,
+        showEdit: true,
         showDel: true,
         showOpen: true,
         showClose: true

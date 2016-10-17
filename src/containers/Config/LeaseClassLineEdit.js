@@ -1,13 +1,13 @@
 import React, {Component, PropTypes} from 'react';
 
-class LeaseRoomDetail extends Component {
+class LeaseClassLineAdd extends Component {
     render() {
         return (
             <div>
-                LeaseRoomDetail
+                LeaseClassLineAdd
             </div>
         );
     }
 }
 
-export default LeaseRoomDetail;
+export default LeaseClassLineAdd;

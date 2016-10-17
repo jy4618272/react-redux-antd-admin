@@ -32,7 +32,7 @@ class Lease extends Component {
         super(props)
         this.props.actionLease.fetchArea()
         this.initFetchSchema(this.props)
-        this.status = 'room'
+        this.status = sessionStorage.getItem('leaseTabs') || 'room'
     }
 
     /**
@@ -119,14 +119,16 @@ class Lease extends Component {
             roomData,
             classLineData,
             policyData,
-            accountManagerData
+            accountManagerData,
+            contractTplData
         } = this.props.lease
 
         const {
             fetchRoomTable,
             fetchClassLineTable,
             fetchPolicyTable,
-            fetchManagerTable
+            fetchManagerTable,
+            fetchContractTable
         } = this.props.actionLease
 
         console.debug('handlePageChange, page = %d', page);
@@ -140,6 +142,8 @@ class Lease extends Component {
             this.select(this.queryObj, policyData.pageSize, page, fetchPolicyTable)
         } else if (this.status === 'accountManager') {
             this.select(this.queryObj, accountManagerData.pageSize, page, fetchManagerTable)
+        } else if (this.status === 'contractTpl') {
+            this.select(this.queryObj, contractTplData.pageSize, page, fetchContractTable)
         }
     }
 
@@ -155,7 +159,8 @@ class Lease extends Component {
             fetchRoomTable,
             fetchClassLineTable,
             fetchPolicyTable,
-            fetchManagerTable
+            fetchManagerTable,
+            fetchContractTable
         } = this.props.actionLease
 
         if (this.status === 'room') {
@@ -166,20 +171,18 @@ class Lease extends Component {
             this.refresh(fetchPolicyTable)
         } else if (this.status === 'accountManager') {
             this.refresh(fetchManagerTable)
+        } else if (this.status === 'contractTpl') {
+            this.refresh(fetchContractTable)
         }
+        sessionStorage.setItem('leaseTabs', this.status)
     }
 
 
     /**
      * 新增
      */
-    parentHandleAddRoom = (record, index) => {
-        // alert(record)
-        hashHistory.push(`config/config_lease/room/add`)
-    }
-    parentHandleAddClassLine = (record, index) => {
-        // alert(record)
-        hashHistory.push(`config/config_lease/classLine/add`)
+    parentHandleAdd = () => {
+        hashHistory.push('config/config_lease/add?type=' + this.status)
     }
 
     // 新增
@@ -199,10 +202,26 @@ class Lease extends Component {
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
-        const {fetchRoomTable} = this.props.actionLease
-        this.refresh(fetchRoomTable)
-    }
+        const {
+            fetchRoomTable,
+            fetchClassLineTable,
+            fetchPolicyTable,
+            fetchManagerTable,
+            fetchContractTable
+        } = this.props.actionLease
 
+        if (this.status === 'room') {
+            this.refresh(fetchRoomTable)
+        } else if (this.status === 'classLine') {
+            this.refresh(fetchClassLineTable)
+        } else if (this.status === 'policy') {
+            this.refresh(fetchPolicyTable)
+        } else if (this.status === 'accountManager') {
+            this.refresh(fetchManagerTable)
+        } else if (this.status === 'contractTpl') {
+            this.refresh(fetchContractTable)
+        }
+    }
 
     render() {
         const {lease} = this.props
@@ -220,9 +239,17 @@ class Lease extends Component {
             )
         }
 
+        let formItemsSchema = [
+            {
+                "key": "roomGoods",
+                "title": "房间物品",
+                "dataType": "varchar"
+            }
+        ]
+
         return (
             <section className="padding">
-                <Tabs defaultActiveKey="room" animated="false" type="card" onChange={this.handlerTabs}>
+                <Tabs defaultActiveKey={this.status} animated="false" type="card" onChange={this.handlerTabs}>
                     <TabPane tab="房间设置" key="room">
                         <InnerForm
                             ref="form"
@@ -237,7 +264,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema = {this.controlSchema['room']}
                             bordered={true}
-                            parentHandleAdd = {this.parentHandleAddRoom}
+                            parentHandleAdd = {this.parentHandleAdd}
                             parentHandleEdit = {this.parentHandleEdit}
                             pagination = {false} />
                         <InnerPagination
@@ -261,7 +288,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema = {this.controlSchema['classLine']}
                             bordered={true}
-                            parentHandleAdd = {this.parentHandleAddClassLine}
+                            parentHandleAdd = {this.parentHandleAdd}
                             parentHandleEdit = {this.parentHandleEdit}
                             parentHandleOpen = {this.parentHandleOpen}
                             parentHandleClose = {this.parentHandleClose}
@@ -343,6 +370,11 @@ class Lease extends Component {
                             parentHandleOpen = {this.parentHandleOpen}
                             parentHandleClose = {this.parentHandleClose}
                             pagination = {false} />
+                        <InnerPagination
+                            total = {contractTplData.total}
+                            pageSize = {contractTplData.pageSize}
+                            skipCount = {contractTplData.skipCount}
+                            parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
                     <TabPane tab="审核人配置" key="auditPerson">
                         <InnerForm
@@ -363,6 +395,12 @@ class Lease extends Component {
                             parentHandleOpen = {this.parentHandleOpen}
                             parentHandleClose = {this.parentHandleClose}
                             pagination = {false} />
+                        <InnerPagination
+                            total = {roomData.total}
+                            pageSize = {roomData.pageSize}
+                            skipCount = {roomData.skipCount}
+                            parentHandlePageChange={this.handlePageChange}
+                            />
                     </TabPane>
                 </Tabs>
             </section>
