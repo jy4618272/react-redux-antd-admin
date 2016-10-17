@@ -9,6 +9,7 @@ const RECEIVE_AREA = 'RECEIVE_AREA'
 const REQUEST_ROOM_TABLE = 'REQUEST_ROOM_TABLE'
 const RECEIVE_ROOM_TABLE = 'RECEIVE_ROOM_TABLE'
 
+
 // ================================
 // Action Creator
 // ================================
@@ -47,7 +48,27 @@ const fetchRoomTable = (data) => {
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('房间设置之列表', newRes)
+            console.log('房间设置之列表', data, newRes)
+            
+            if (res.result === 'success') {
+                dispatch(receiveRoomTable(newRes))
+            } else {
+                dispatch(receiveRoomTable({}))
+                errHandler(res.result)
+            }
+        })
+    }
+}
+
+// 查询接口
+const searchRoomTable = (data) => {
+    return dispatch => {
+        dispatch(requestRoomTable())
+        xhr('post', leasePath + '/rentroomcs/selectByAreaAndBuild', data, function (res) {
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('房间设置之查询', data, newRes)
             
             if (res.result === 'success') {
                 dispatch(receiveRoomTable(newRes))
@@ -62,7 +83,8 @@ const fetchRoomTable = (data) => {
 /* default 导出所有 Actions Creator */
 export default {
     fetchArea,
-    fetchRoomTable
+    fetchRoomTable,
+    searchRoomTable
 }
 
 export const ACTION_HANDLERS = {
@@ -70,14 +92,14 @@ export const ACTION_HANDLERS = {
         ...roomData,
         room:[
             {
-                key: 'type',  // 传递给后端的字段名
+                key: 'area',  // 传递给后端的字段名
                 title: '区域',  // 前端显示的名称
                 dataType: 'varchar',
                 showType: 'select',
                 options: res
             },
             {
-                key: 'name',
+                key: 'key',
                 title: '关键字',
                 dataType: 'varchar',
                 placeholder: '请输入楼号/房间号'

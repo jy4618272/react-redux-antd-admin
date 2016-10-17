@@ -16,6 +16,7 @@ const requestPolicyTable = () => ({
     type: REQUEST_POLICY_TABLE
 })
 
+// 获取
 const receivePolicyTable = (res) => ({
     type: RECEIVE_POLICY_TABLE,
     payload: res
@@ -39,9 +40,32 @@ const fetchPolicyTable = (data) => {
     }
 }
 
+// 搜索
+const searchPolicyTable = (data) => {
+    return dispatch => {
+        dispatch(requestPolicyTable())
+        xhr('post', leasePath + '/rentpromotioncs/selectRentPromotionDetail', data, function (res) {
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('政策优惠之查询', newRes)
+            
+            if (res.result === 'success') {
+                dispatch(receivePolicyTable(newRes))
+            } else {
+                dispatch(receivePolicyTable({}))
+                errHandler(res.result)
+            }
+        })
+    }
+}
+
+
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchPolicyTable
+    fetchPolicyTable,
+    searchPolicyTable
 }
 
 export const ACTION_HANDLERS = {

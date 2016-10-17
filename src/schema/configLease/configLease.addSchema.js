@@ -5,21 +5,20 @@
 module.exports = {
     room: [
         {
-            key: 'type',  // 传递给后端的字段名
-            title: '区域',  // 前端显示的名称
-
-            // 数据类型, 前端会根据数据类型展示不同的输入框
-            // 目前可用的dataType: int/float/varther/datetime
-            dataType: 'varther',
-
-            // 显示类型, 一些可枚举的字段, 比如type, 可以被显示为单选框或下拉框
-            // 默认显示类型是normal, 就是一个普通的输入框, 这时可以省略showType字段
-            // 目前可用的showType: normal/select/radio/between
-            // select和radio只能用于int和varther
-            // between只能用于int/float/datetime, 会显示2个输入框, 用于范围查询
+            key: 'area',
+            title: '区域',
             showType: 'select',
-            options: [],
-            placeholder: '请选择区域'
+            options: JSON.parse(sessionStorage.getItem('areaBySite')),
+            placeholder: "请选择区域",
+            feedBackShow: true,
+            validate: [
+                {
+                    rules: [
+                        { required: true, message: '必填，请选择区域' },
+                    ],
+                    trigger: ['onBlur', 'onChange']
+                }
+            ]
         },
         {
             key: 'build',

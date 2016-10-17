@@ -3,33 +3,9 @@
 // 注意: 所有的key不能重复
 
 module.exports = {
-    room: [
-        {
-            key: 'type',  // 传递给后端的字段名
-            title: '区域',  // 前端显示的名称
-
-            // 数据类型, 前端会根据数据类型展示不同的输入框
-            // 目前可用的dataType: int/float/varchar/datetime
-            dataType: 'varchar',
-
-            // 显示类型, 一些可枚举的字段, 比如type, 可以被显示为单选框或下拉框
-            // 默认显示类型是normal, 就是一个普通的输入框, 这时可以省略showType字段
-            // 目前可用的showType: normal/select/radio/between
-            // select和radio只能用于int和varchar
-            // between只能用于int/float/datetime, 会显示2个输入框, 用于范围查询
-            showType: 'select',
-            options: []
-        },
-        {
-            key: 'name',
-            title: '关键字',
-            dataType: 'varchar',
-            placeholder: '请输入楼号/房间号'
-        }
-    ],
     classLine: [
         {
-            key: 'name',
+            key: 'linename',
             title: '关键字',
             dataType: 'varchar',
             placeholder: '请输入班线名称/班线价格'
@@ -37,18 +13,44 @@ module.exports = {
     ],
     policy: [
         {
-            key: 'name',
-            title: '关键字',
+            key: 'area',
+            title: '区域',
             dataType: 'varchar',
-            placeholder: '请输入活动名称/优惠类型/区域'
+            showType: 'select',
+            options: JSON.parse(sessionStorage.getItem('areaBySite')),
+            placeholder: '请输入区域'
+        },
+        {
+            key: 'promotionname',
+            title: '活动名称',
+            dataType: 'varchar',
+            showType:'two',
+            placeholder: '请输入活动名称'
+        },
+        {
+            key: 'promotiontype',
+            title: '优惠类型',
+            dataType: 'varchar',
+            showType: 'select',
+            options: [
+                { key: '减免', value: '减免' },
+                { key: '折扣', value: '折扣' }
+            ],
+            placeholder: '请输入优惠类型'
         }
     ],
     accountManager: [
         {
-            key: 'name',
-            title: '关键字',
+            key: 'username',
+            title: '姓名',
             dataType: 'varchar',
-            placeholder: '请输入姓名/工号'
+            placeholder: '请输入姓名'
+        },
+        {
+            key: 'jobcard',
+            title: '工号',
+            dataType: 'varchar',
+            placeholder: '请输入工号'
         }
     ],
     contractTpl: [

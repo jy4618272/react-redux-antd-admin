@@ -16,6 +16,7 @@ const requestManagerTable = () => ({
     type: REQUEST_MANAGER_TABLE
 })
 
+// 获取
 const receiveManagerTable = (res) => ({
     type: RECEIVE_MANAGER_TABLE,
     payload: res
@@ -39,9 +40,32 @@ const fetchManagerTable = (data) => {
     }
 }
 
+// 查询
+const searchManagerTable = (data) => {
+    return dispatch => {
+        dispatch(requestManagerTable())
+        xhr('post', leasePath + '/salercs/selectByDetail', data, function (res) {
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('客户经理之查询', newRes)
+            
+            if (res.result === 'success') {
+                dispatch(receiveManagerTable(newRes))
+            } else {
+                dispatch(receiveManagerTable({}))
+                errHandler(res.result)
+            }
+        })
+    }
+}
+
+
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchManagerTable
+    fetchManagerTable,
+    searchManagerTable
 }
 
 export const ACTION_HANDLERS = {

@@ -138,10 +138,10 @@ class LeaseAdd extends Component {
                 {
                     this.addType == 'room' ?
                         <section>
-                            {/* <InnerForm
+                            <InnerForm
                                 formStyle="padding m-advance-fill"
-                                schema={this.addSchema[this.addType]} /> */}
-                            <div className="padding">
+                                schema={this.addSchema[this.addType]} />
+                            {/*<div className="padding">
                                 <div className="button-group">
                                     <Button type="ghost" onClick={this.handleAdd}>
                                         <Icon type="plus" />新增
@@ -160,15 +160,17 @@ class LeaseAdd extends Component {
                                     isRowSelection={true}
                                     bordered={true} />
                             </div>
-                            <Modal
-                                title={this.state.modalTitle}
-                                visible={this.state.modalVisible}
-                                onOk={this.handleModalOk}
-                                onCancel={this.handleHideModal}>
-                                <Form horizontal ref="formFill">
-                                    {formItems}
-                                </Form>
-                            </Modal>
+                            
+                                <Modal
+                                    title={this.state.modalTitle}
+                                    visible={this.state.modalVisible}
+                                    onOk={this.handleModalOk}
+                                    onCancel={this.handleHideModal}>
+                                    <Form horizontal ref="formFill">
+                                        {formItems}
+                                    </Form>
+                                </Modal>    
+                            */}
                         </section> :
                         <InnerForm
                             formStyle="padding m-advance-fill"
