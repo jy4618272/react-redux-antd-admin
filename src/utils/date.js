@@ -54,12 +54,3 @@ Date.prototype.plusDays = function (num) {
 	tmp.setDate(this.getDate() + num);
 	return tmp;
 };
-
-const dateFormat = (dt) => {
-	var str = dt.getFullYear()  + '-' + (dt.getMonth() + 1) + '-' + dt.getDate() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
-	return str
-}
-
-export {
-	dateFormat
-}

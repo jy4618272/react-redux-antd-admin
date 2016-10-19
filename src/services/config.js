@@ -9,7 +9,8 @@ if (__DEV__) {
 	rootPath = 'http://dev.myportaltest.tf56.com:9090'
 }
 if (__PROD__) {
-	rootPath = 'http://myportal.tf56.com'
+	// rootPath = 'http://myportal.tf56.com'
+	rootPath = 	"http://myportal.tf56.com"
 }
 
 // 财务
@@ -17,8 +18,6 @@ const financePath = '/financeParkAdmin'
 
 // 租赁
 const leasePath = '/tfPassParkAdmin'
-// export const rootPath = 'http://dev.myportaltest.tf56.com:9090'
-
 
 const errHandler = (e) => {
 	notification.error({

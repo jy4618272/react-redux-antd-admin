@@ -5,7 +5,7 @@
 module.exports = {
     classLine: [
         {
-            key: 'linename',
+            key: 'keyword',
             title: '关键字',
             dataType: 'varchar',
             placeholder: '请输入班线名称/班线价格'
@@ -13,49 +13,23 @@ module.exports = {
     ],
     policy: [
         {
-            key: 'area',
-            title: '区域',
+            key: 'keyword',
+            title: '关键字',
             dataType: 'varchar',
-            showType: 'select',
-            options: JSON.parse(sessionStorage.getItem('areaBySite')),
-            placeholder: '请输入区域'
-        },
-        {
-            key: 'promotionname',
-            title: '活动名称',
-            dataType: 'varchar',
-            showType:'two',
-            placeholder: '请输入活动名称'
-        },
-        {
-            key: 'promotiontype',
-            title: '优惠类型',
-            dataType: 'varchar',
-            showType: 'select',
-            options: [
-                { key: '减免', value: '减免' },
-                { key: '折扣', value: '折扣' }
-            ],
-            placeholder: '请输入优惠类型'
+            placeholder: '请输入区域/活动名称/优惠类型'
         }
     ],
     accountManager: [
         {
-            key: 'username',
-            title: '姓名',
+            key: 'keyword',
+            title: '关键字',
             dataType: 'varchar',
-            placeholder: '请输入姓名'
-        },
-        {
-            key: 'jobcard',
-            title: '工号',
-            dataType: 'varchar',
-            placeholder: '请输入工号'
+            placeholder: '请输入姓名/工号'
         }
     ],
     contractTpl: [
         {
-            key: 'name',
+            key: 'keyword',
             title: '关键字',
             dataType: 'varchar',
             placeholder: '请输入模版名称'
@@ -63,7 +37,7 @@ module.exports = {
     ],
     auditPerson: [
         {
-            key: 'name',
+            key: 'keyword',
             title: '关键字',
             dataType: 'varchar',
             placeholder: '请输入流程名称'

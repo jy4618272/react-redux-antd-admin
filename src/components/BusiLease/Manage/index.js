@@ -1,23 +1,43 @@
-import React, {Component, PropTypes} from 'react'
+import React, { Component, PropTypes } from 'react'
 
 import {
     Tabs
 } from 'antd'
 const TabPane = Tabs.TabPane
 
+import InnerForm from 'COMPONENT/DBTable/InnerForm'
+import InnerTable from 'COMPONENT/DBTable/InnerTable'
+import InnerPagination from 'COMPONENT/DBTable/InnerPagination'
+
+
 class Manage extends Component {
-    render () {
+
+    render() {
+        const {querySchema} = this.props
         return (
             <div>
-                <Tabs defaultActiveKey="ht">
-                    <TabPane tab="合同" key="ht">
-                        合同
+                <Tabs defaultActiveKey="contract">
+                    <TabPane tab="合同" key="contract">
+                        <InnerForm
+                            ref="form"
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={querySchema['contract']}
+                            showSearch={true} />
+                       
                     </TabPane>
-                    <TabPane tab="保证金" key="bzj">
-                        保证金
+                    <TabPane tab="履约保证金" key="bond">
+                        <InnerForm
+                            ref="form"
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={querySchema['bond']}
+                            showSearch={true} />
                     </TabPane>
-                    <TabPane tab="非合同" key="fht">
-                        非合同
+                    <TabPane tab="临时摊位交款" key="fht">
+                        <InnerForm
+                            ref="form"
+                            formStyle="g-mb20 m-advance-filter"
+                            schema={querySchema['notContract']}
+                            showSearch={true} />
                     </TabPane>
                 </Tabs>
             </div>

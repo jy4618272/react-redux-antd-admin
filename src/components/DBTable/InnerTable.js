@@ -1,8 +1,8 @@
 /**
  * 表格组件
  */
-import React, {Component} from 'react'
-import {Link, hashHistory} from 'react-router'
+import React, { Component } from 'react'
+import { Link, hashHistory } from 'react-router'
 import {
     Table,
     Affix,
@@ -25,12 +25,9 @@ import {
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
 
-import {rootPath} from 'SERVICE/config'
-
 class InnerTable extends Component {
     constructor(props) {
         super(props)
-        this.exportUrl = rootPath + '/financeParkAdmin/financecollectioncs/exportFinanceListExcel?'
         this.state = {
             modalVisible: false,  // modal是否可见
             modalTitle: '新增',  // modal标题
@@ -50,7 +47,7 @@ class InnerTable extends Component {
      */
     colWrapper = (formItem, field) => {
         console.log('11111111111', this.props)
-        
+
         const {getFieldDecorator} = this.props.form
 
         return (
@@ -77,44 +74,29 @@ class InnerTable extends Component {
             ), field)
         }
 
-        switch (field.dataType) {
-            case 'int':
-                console.debug('transform field %o to integer input', field)
-                return this.colWrapper((
-                    <InputNumber size="default" />
-                ), field)
-            case 'float':
-                console.debug('transform field %o to float input', field)
-                return this.colWrapper((
-                    <InputNumber step={1} size="default" />
-                ), field)
-            case 'datetime':
-                console.debug('transform field %o to datetime input', field)
-                return this.colWrapper((
-                    <DatePicker showTime format={field.format || "YYYY-MM-dd HH:mm:ss"}
-                        placeholder={field.placeholder || '请选择日期'} />
-                ), field)
-            default:  // 默认就是普通的输入框
-                console.debug('transform field %o to varchar input', field)
-                return this.colWrapper((
-                    <Input placeholder={field.placeholder} size="default" />
-                ), field)
-        }
-    }
-
-    parentHandleSave = (newObj) => {
-        console.log('11111111', newObj)
-    }
-
-    // 新增，弹出一个内嵌表单的modal
-    handleModalAdd = (e) => {
-        e.preventDefault()
-        // this.props.form.resetFields()
-        this.setState({
-            modalVisible: true,
-            modalTitle: '新增',
-            modalInsert: true
-        })
+        // switch (field.dataType) {
+        //     case 'int':
+        //         console.debug('transform field %o to integer input', field)
+        //         return this.colWrapper((
+        //             <InputNumber size="default" />
+        //         ), field)
+        //     case 'float':
+        //         console.debug('transform field %o to float input', field)
+        //         return this.colWrapper((
+        //             <InputNumber step={1} size="default" />
+        //         ), field)
+        //     case 'datetime':
+        //         console.debug('transform field %o to datetime input', field)
+        //         return this.colWrapper((
+        //             <DatePicker showTime format={field.format || "YYYY-MM-dd HH:mm:ss"}
+        //                 placeholder={field.placeholder || '请选择日期'} />
+        //         ), field)
+        //     default:  // 默认就是普通的输入框
+        //         console.debug('transform field %o to varchar input', field)
+        //         return this.colWrapper((
+        //             <Input placeholder={field.placeholder} size="default" />
+        //         ), field)
+        // }
     }
 
     // 修改
@@ -122,20 +104,6 @@ class InnerTable extends Component {
 
     // 删除
     handleModalDel = () => { }
-
-    /**
-     * 隐藏modal
-     */
-    handleModalHide = () => {
-        this.setState({
-            modalVisible: false
-        })
-    }
-
-    // 点击modal中确认按钮
-    handleModalOk = () => {
-        this.handleHideModal()
-    }
 
     /**
      * 处理表格的选择事件
@@ -161,7 +129,7 @@ class InnerTable extends Component {
     }
 
     /**
-     * 点击确认收款按钮
+     * 业务中心-财务，点击确认收款按钮
      */
     handleReceive = (e) => {
         e.preventDefault();
@@ -170,7 +138,7 @@ class InnerTable extends Component {
     }
 
     /**
-     * 点击退款收款按钮
+     * 业务中心-财务，点击退款收款按钮
      */
     handleRefund = (e) => {
         e.preventDefault();
@@ -181,12 +149,12 @@ class InnerTable extends Component {
 
     /**
      * 点击批量按钮
-     */
+     
     handleExport = (e) => {
         e.preventDefault();
         this.props.parentHandleReceive()
 
-    }
+    }*/
 
     /**
     * 点击资源文件
@@ -200,40 +168,24 @@ class InnerTable extends Component {
         e.preventDefault()
         this.props.parentHandleAdd()
     }
+
     // 点击修改
-    handleEdit = () => {
-        const data = this.state.selectedRows[0];
-        console.log('data', data)
-        // this.props.parentHandleEdit()
-
+    handleEdit = (e) => {
+        e.preventDefault()        
+        const data = this.state.selectedRows[0]
+        this.props.parentHandleEdit(data)
     }
-    // 点击删除
-    handleDel = () => {
-        this.props.parentHandleDel()
 
+    // 点击删除
+    handleDel = (e) => {
+        e.preventDefault()        
+        this.props.parentHandleDel()
     }
 
     // 导出本页
-    handleExportPage = () => {
-        const {dataSource} = this.props
-        let arrParam = []
-
-        dataSource.map(item => {
-            arrParam.push(item.financecollectionid)
-        })
-
-        if (arrParam.length) {
-            notification.open({
-                message: '导出本页',
-                description: `导出${arrParam.length}条数据`,
-            });
-            window.location.href = this.exportUrl + 'financeCollectionIds=' + arrParam.join(',')
-        } else {
-            notification.open({
-                message: '导出本页',
-                description: '本页没有数据',
-            });
-        }
+    handleExportPage = (e) => {
+        e.preventDefault()
+        this.props.parentHandleExportPage()
     }
 
     /**
@@ -255,17 +207,66 @@ class InnerTable extends Component {
         console.log('record', record)
         if (record.type == '租赁合同') {
             hashHistory.push(`busi/busi_finance/${record.financecollectionid}`)
-        } 
-        
+        }
+
         notification.open({
             message: '查看详情',
             description: `详情还在开发中，给你带来不便我很抱歉`
         })
     }
 
+    /**
+     * 租赁配置-房间设置
+     */ 
+    // 全部、已出租、未出租、作废【按钮点击】查询
+    handleSearchAll = (e) => {
+        e.preventDefault()        
+        this.props.parentHandleSearchAll()
+    }
+    handleSearchRented = (e) => {
+        e.preventDefault()        
+        this.props.parentHandleSearchRented()
+    }
+    handleSearchNotRent = (e) => {
+        e.preventDefault()        
+        this.props.parentHandleSearchNotRent()
+    }
+    handleSearchVoid = (e) => {
+        e.preventDefault()        
+        this.props.parentHandleSearchVoid()
+    }
+
+    /****************************** 
+     * 新增，弹出一个内嵌表单的modal
+     */
+    handleModalAdd = (e) => {
+        e.preventDefault()
+        // this.props.form.resetFields()
+        this.setState({
+            modalVisible: true,
+            modalTitle: '新增房间物品属性',
+            modalInsert: true
+        })
+    }
+
+    /**
+     * 隐藏modal
+     */
+    handleModalHide = () => {
+        this.setState({
+            modalVisible: false
+        })
+    }
+
+    // 点击modal中确认按钮
+    handleModalOk = () => {
+        this.handleHideModal()
+    }
+
     render() {
         // 结构赋值，从父组件获取数据
         const {
+            modalSchema,
             schema,
             loading,
             columns,
@@ -296,7 +297,7 @@ class InnerTable extends Component {
             dataSource={dataSource}
             bordered={bordered}
             pagination={pagination}
-            onRowClick={ this.handleDoubleClick } />
+            onRowClick={this.handleDoubleClick} />
         if (isRowSelection) {
             tableContext = <Table
                 rowSelection={rowSelection}
@@ -311,76 +312,81 @@ class InnerTable extends Component {
         return (
             <section className="m-table">
                 <div className="m-table-effect">
-                    <Affix target={() => document.querySelector('.m-container') } offsetTop={20}>
+                    <Affix target={() => document.querySelector('.m-container')} offsetTop={20}>
                         <div className="clearfix g-mb10">
                             <Row className="button-group">
                                 <Col span={18}>
                                     <Row>
                                         <Col span={15}>
+                                            {schema.showRoomAttrAdd ?
+                                                <Button type="ghost" onClick={this.handleModalAdd}>
+                                                    添加属性
+                                                </Button> : ''
+                                            }
                                             {schema.showReceive ?
-                                                <Button type="ghost" disabled={!oneSelected || (!this.isReceiveShow) } onClick={ this.handleReceive }>
+                                                <Button type="ghost" disabled={!oneSelected || (!this.isReceiveShow)} onClick={this.handleReceive}>
                                                     确认收款
                                                 </Button> : ''
                                             }
                                             {schema.showRefund ?
-                                                <Button type="ghost" disabled={!oneSelected || (!this.isRefundShow) } onClick={ this.handleRefund }>
+                                                <Button type="ghost" disabled={!oneSelected || (!this.isRefundShow)} onClick={this.handleRefund}>
                                                     确认退款
                                                 </Button> : ''
                                             }
                                             {schema.showDoc ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleDoc }>
+                                                <Button type="ghost" disabled={!oneSelected} onClick={this.handleDoc}>
                                                     资源文件
                                                 </Button> : ''
                                             }
                                             {schema.showAdd ?
-                                                <Button type="ghost" onClick={ this.handleAdd }>
+                                                <Button type="ghost" onClick={this.handleAdd}>
                                                     <Icon type="plus" />新增
                                                 </Button> : ''
                                             }
                                             {schema.showEdit ?
-                                                <Button type="ghost" disabled={ !oneSelected } onClick={ this.handleEdit }>
+                                                <Button type="ghost" disabled={!oneSelected} onClick={this.handleEdit}>
                                                     <Icon type="edit" />修改
                                                 </Button> : ''
                                             }
                                             {schema.showDel ?
-                                                <Button type="ghost" onClick={ this.handleDel }>
+                                                <Button type="ghost" onClick={this.handleDel}>
                                                     <Icon type="delete" />删除
                                                 </Button> : ''
                                             }
                                             {schema.showLie ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleLie }>
+                                                <Button type="ghost" disabled={!oneSelected} onClick={this.handleLie}>
                                                     闲置
                                                 </Button> : ''
                                             }
                                             {schema.showVoid ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleVoid }>
+                                                <Button type="ghost" disabled={!oneSelected} onClick={this.handleVoid}>
                                                     作废
                                                 </Button> : ''
                                             }
                                             {schema.showHistory ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleHistory }>
+                                                <Button type="ghost" disabled={!oneSelected} onClick={this.handleHistory}>
                                                     历史
                                                 </Button> : ''
                                             }
                                         </Col>
                                         <Col span={9} class="g-tar">
                                             {schema.showSearchAll ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleSearchAll }>
+                                                <Button type="ghost" onClick={this.handleSearchAll}>
                                                     全部
                                                 </Button> : ''
                                             }
                                             {schema.showSearchRented ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleSearchRented }>
+                                                <Button type="ghost" onClick={this.handleSearchRented}>
                                                     已出租
                                                 </Button> : ''
                                             }
                                             {schema.showSearchNotRent ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleSearchNotRent }>
+                                                <Button type="ghost" onClick={this.handleSearchNotRent}>
                                                     未出租
                                                 </Button> : ''
                                             }
                                             {schema.showSearchVoid ?
-                                                <Button type="ghost" disabled={!oneSelected } onClick={ this.handleSearchVoid }>
+                                                <Button type="ghost" onClick={this.handleSearchVoid}>
                                                     作废
                                                 </Button> : ''
                                             }
@@ -390,17 +396,17 @@ class InnerTable extends Component {
 
                                 <Col span={6} className="button-group g-tar">
                                     {schema.showSearchDictionary ?
-                                        <Button type="ghost" onClick={ this.handleExportPage }>
+                                        <Button type="ghost" onClick={this.handleExportPage}>
                                             字典查询
                                         </Button> : ''
                                     }
                                     {schema.showExportPage ?
-                                        <Button type="ghost" onClick={ this.handleExportPage }>
+                                        <Button type="ghost" onClick={this.handleExportPage}>
                                             <Icon type="export" />导出本页
                                         </Button> : ''
                                     }
                                     {schema.showExport ?
-                                        <Button type="ghost" disabled = {exportData.button} onClick={ this.handleExport}>
+                                        <Button type="ghost" disabled={exportData.button} onClick={this.handleExport}>
                                             <Icon type="export" />导出
                                         </Button> : ''
                                     }
@@ -408,6 +414,15 @@ class InnerTable extends Component {
                             </Row>
                         </div>
                     </Affix>
+                    <Modal 
+                        title={this.state.modalTitle} 
+                        visible={this.state.modalVisible} 
+                        onOk={this.handleModalOk}
+                        onCancel={this.handleModalHide}>
+                        <Form horizontal>
+                            <Input />
+                        </Form>
+                    </Modal>
                 </div>
                 {tableContext}
             </section>

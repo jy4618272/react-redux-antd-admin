@@ -160,6 +160,12 @@ class InnerForm extends Component {
      *
      * @param field
      */
+    handleSelect = (key, value) => {
+        console.log(key, value)
+        if(this.props.parentHandleSelect){
+           this.props.parentHandleSelect(key, value)
+        }
+    }
     transformSelect = (field) => {
         const options = []
 
@@ -169,7 +175,7 @@ class InnerForm extends Component {
         })
 
         return this.colWrapper((
-            <Select placeholder={field.placeholder || '请选择'} size="default">
+            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)}>
                 {options}
             </Select>
         ), field)
@@ -360,7 +366,7 @@ class InnerForm extends Component {
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
                 return this.colWrapper((
-                    <DatePicker format={field.format || 'YYYY/MM/DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} />
+                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} />
                 ), field)
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
@@ -383,7 +389,7 @@ class InnerForm extends Component {
         for (const key in oldObj) {
             if (oldObj[key]) {
                 // 对于js的日期类型, 要转换成字符串再传给后端
-                if (oldObj[key] instanceof Date) {
+                if ((key.indexOf('start') > -1) || (key.indexOf('end') > -1)) {
                     newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
                 } else {
                     newObj[key] = oldObj[key]
@@ -447,6 +453,12 @@ class InnerForm extends Component {
             this.props.form.setFieldsValue({
                 site: sessionStorage.getItem('getFacility')
             })
+        }
+
+        if(this.props.setFields){
+            this.props.form.setFieldsValue(
+                this.props.setFields
+            )
         }
     }
 

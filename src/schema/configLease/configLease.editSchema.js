@@ -1,7 +1,3 @@
-// 定义某个表的querySchema
-// schema的结构和含义参考下面的例子
-// 注意: 所有的key不能重复
-
 module.exports = {
     room: [],
     classLine: [
@@ -31,16 +27,17 @@ module.exports = {
         {
             key: 'linefee',
             title: '班线价格',
-            dataType: 'float',
+            dataType: 'varchar',
             placeholder: '请输入班线价格',
             feedBackShow: true,
-            step: 0.1,
-            validate: [{
-                rules: [
-                    { required: true, message: '必填，请输入正确的班线价格' },
-                ],
-                trigger: ['onBlur', 'onChange']
-            }]
+            validate: [
+                {
+                    rules: [
+                        { required: true, max: 10, message: '必填，请输入班线价格' },
+                    ],
+                    trigger: ['onBlur', 'onChange']
+                }
+            ]
         },
         {
             key: 'memo',
@@ -157,11 +154,11 @@ module.exports = {
             showType: 'between',
             format: 'YYYY-MM-DD HH:mm:ss',
             feedBackShow: true,
-            help:"必填，请选择活动期限",
+            help: "必填，请选择活动期限",
             validate: [
                 {
                     rules: [
-                        { required: true},
+                        { required: true },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -297,14 +294,8 @@ module.exports = {
                 ],
                 trigger: 'onChange',
             }]
+
         }
     ],
-    auditPerson: [
-        {
-            key: 'name',
-            title: '开发中',
-            dataType: 'varchar',
-            placeholder: '开发中'
-        }
-    ]
+    auditPerson: []
 }
