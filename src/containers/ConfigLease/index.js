@@ -229,28 +229,6 @@ class Lease extends Component {
             this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
         }
     }
-    parentHandleAdd = () => {
-        hashHistory.push('config/config_lease/add?type=' + this.status)
-    }
-
-    // 编辑
-    parentHandleEdit = (data) => {
-        console.log('编辑修改数据', data)
-
-        if (this.status === 'room') {
-            hashHistory.push('config/config_lease/edit/' + data.rentroomid + '?type=room')
-        } else if (this.status === 'classLine') {
-            hashHistory.push('config/config_lease/edit/' + data.transportlineid + '?type=classLine')
-        } else if (this.status === 'policy') {
-            hashHistory.push('config/config_lease/edit/' + data.rentpromotionid + '?type=policy')
-        } else if (this.status === 'accountManager') {
-            hashHistory.push('config/config_lease/edit/' + data.salerid + '?type=accountManager')
-        } else if (this.status === 'contractTpl') {
-            hashHistory.push('config/config_lease/edit/' + data.pactprintmodelid + '?type=contractTpl')
-        } else if (this.status === 'auditPerson') {
-            hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
-        }
-    }
 
     /**
      * 查询
@@ -284,58 +262,6 @@ class Lease extends Component {
         } else if (this.status === 'contractTpl') {
             this.select(newData, contractTplData.pageSize, 0, fetchContractTable)
         }
-    }
-
-    parentHandleExportPage = () => {
-        const {roomData} = this.props.configLease
-        let arrParam = []
-
-        alert('接口没有')
-        return;
-        if (this.status === 'room') {
-            roomData.tableData.map(item => {
-                arrParam.push(item.rentroomid)
-            })
-
-            if (arrParam.length) {
-                notification.open({
-                    message: '导出本页',
-                    description: `导出${arrParam.length}条数据`,
-                });
-                window.location.href = leasePath + '/' + arrParam.join(',')
-            } else {
-                notification.open({
-                    message: '导出本页',
-                    description: '本页没有数据',
-                });
-            }
-        }
-    }
-
-    // 全部-已出租-未出租-作废
-    handleSearchAll = () => {
-        this.queryObj = {
-            status: ''
-        }
-        this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-    }
-    handleSearchRented = () => {
-        this.queryObj = {
-            status: '已出租'
-        }
-        this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-    }
-    handleSearchNotRent = () => {
-        this.queryObj = {
-            status: '未出租'
-        }
-        this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-    }
-    handleSearchVoid = () => {
-        this.queryObj = {
-            status: '作废'
-        }
-        this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
     }
 
     /**
@@ -388,6 +314,7 @@ class Lease extends Component {
                             schema={roomData['room']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
+                        
                         <InnerTable
                             loading={roomData.tableLoading}
                             columns={roomData.tableColumns}

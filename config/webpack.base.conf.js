@@ -79,7 +79,7 @@ module.exports = {
 	},
 
 	plugins: [
-		new webpack.BannerPlugin('This file is created by ruizhengyun'),   // 生成文件时加上注释
+		new webpack.BannerPlugin('This file is created by rzy'),   // 生成文件时加上注释
 		new webpack.DefinePlugin({
 			'process.env': {
 				// 这是给 React / Redux 打包用的
