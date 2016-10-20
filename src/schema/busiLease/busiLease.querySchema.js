@@ -1,7 +1,7 @@
 module.exports = {
     contract: [
         {
-            key: 'lclx',
+            key: 'flowtype',
             title: '流程类型',
             showType: 'select',
             options: [
@@ -14,7 +14,7 @@ module.exports = {
             placeholder: "请选择流程类型"
         },
         {
-            key: 'lczt',
+            key: 'flowstatus',
             title: '流程状态',
             showType: 'select',
             options: [
@@ -27,7 +27,7 @@ module.exports = {
             placeholder: "请选择流程状态"
         },
         {
-            key: 'yyzt',
+            key: 'fistatus',
             title: '财务状态',
             showType: 'select',
             options: [
@@ -40,8 +40,8 @@ module.exports = {
             placeholder: "请选择业余状态"
         },
         {
-            key: 'lclx',
-            title: '客户名称',
+            key: 'keyword',
+            title: '关键字',
             dataType: 'varchar',
             placeholder: "请输入客户名称"
         }

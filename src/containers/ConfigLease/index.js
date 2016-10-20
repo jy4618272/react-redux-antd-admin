@@ -207,6 +207,26 @@ class Lease extends Component {
             } else if (this.status === 'auditPerson') {
                 hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
             }
+        } else if (key === 'searchAll') {
+            this.queryObj = {
+                status: ''
+            }
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        }else if (key === 'searchRented') {
+            this.queryObj = {
+                status: '已出租'
+            }
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        }else if (key === 'searchNotRent') {
+            this.queryObj = {
+                status: '未出租'
+            }
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        }else if (key === 'searchVoid') {
+            this.queryObj = {
+                status: '作废'
+            }
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
         }
     }
     parentHandleAdd = () => {
@@ -376,13 +396,6 @@ class Lease extends Component {
                             schema={this.controlSchema['room']}
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
-                            parentHandleAdd={this.parentHandleAdd}
-                            parentHandleEdit={this.parentHandleEdit}
-                            parentHandleSearchAll={this.handleSearchAll}
-                            parentHandleSearchRented={this.handleSearchRented}
-                            parentHandleSearchNotRent={this.handleSearchNotRent}
-                            parentHandleSearchVoid={this.handleSearchVoid}
-                            parentHandleExportPage={this.parentHandleExportPage}
                             pagination={false} />
                         <InnerPagination
                             total={roomData.total}
@@ -404,10 +417,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['classLine']}
                             bordered={true}
-                            parentHandleAdd={this.parentHandleAdd}
-                            parentHandleEdit={this.parentHandleEdit}
-                            parentHandleOpen={this.parentHandleOpen}
-                            parentHandleClose={this.parentHandleClose}
+                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={classLineData.total}
@@ -430,10 +440,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['policy']}
                             bordered={true}
-                            parentHandleAdd={this.parentHandleAdd}
-                            parentHandleEdit={this.parentHandleEdit}
-                            parentHandleOpen={this.parentHandleOpen}
-                            parentHandleClose={this.parentHandleClose}
+                            parentHandleClick={this.parentHandleClick}                            
                             pagination={false} />
                         <InnerPagination
                             total={policyData.total}
@@ -455,10 +462,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['accountManager']}
                             bordered={true}
-                            parentHandleAdd={this.parentHandleAdd}
-                            parentHandleEdit={this.parentHandleEdit}
-                            parentHandleOpen={this.parentHandleOpen}
-                            parentHandleClose={this.parentHandleClose}
+                            parentHandleClick={this.parentHandleClick}                            
                             pagination={false} />
                         <InnerPagination
                             total={accountManagerData.total}
@@ -480,10 +484,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['contractTpl']}
                             bordered={true}
-                            parentHandleAdd={this.parentHandleAdd}
-                            parentHandleEdit={this.parentHandleEdit}
-                            parentHandleOpen={this.parentHandleOpen}
-                            parentHandleClose={this.parentHandleClose}
+                            parentHandleClick={this.parentHandleClick}                            
                             pagination={false} />
                         <InnerPagination
                             total={contractTplData.total}
@@ -505,10 +506,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['auditPerson']}
                             bordered={true}
-                            parentHandleAdd={this.parentHandleAdd}
-                            parentHandleEdit={this.parentHandleEdit}
-                            parentHandleOpen={this.parentHandleOpen}
-                            parentHandleClose={this.parentHandleClose}
+                            parentHandleClick={this.parentHandleClick}                            
                             pagination={false} />
                         <InnerPagination
                             total={roomData.total}

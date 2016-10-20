@@ -134,6 +134,11 @@ class Manage extends Component {
         sessionStorage.setItem('leaseManageTabs', this.status)
     }
 
+    // 按钮
+    parentHandleClick = (key, data) => {
+        alert(key)
+    }
+
     /**
      * 刚进入页面时触发一次查询
      */
@@ -167,7 +172,7 @@ class Manage extends Component {
 
         return (
             <div>
-                <Tabs defaultActiveKey={this.status} animated="false" type="card" onChange={this.handlerTabs}>
+                <Tabs defaultActiveKey={this.status} animated="false" type="inline" onChange={this.handlerTabs}>
                     <TabPane tab="合同" key="contract">
                         <InnerForm
                             ref="form"
@@ -180,6 +185,7 @@ class Manage extends Component {
                             columns={contractData.tableColumns}
                             dataSource={contractData.tableData}
                             schema={controlSchema['contract']}
+                            parentHandleClick={this.parentHandleClick}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />
@@ -201,6 +207,7 @@ class Manage extends Component {
                             columns={bondData.tableColumns}
                             dataSource={bondData.tableData}
                             schema={controlSchema['bond']}
+                            parentHandleClick={this.parentHandleClick}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />
@@ -217,6 +224,7 @@ class Manage extends Component {
                             columns={notContractData.tableColumns}
                             dataSource={notContractData.tableData}
                             schema={controlSchema['notContract']}
+                            parentHandleClick={this.parentHandleClick}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />

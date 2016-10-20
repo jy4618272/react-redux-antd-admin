@@ -1,6 +1,6 @@
-import React, {Component} from 'react'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
+import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import {
     Row,
     Col,
@@ -15,10 +15,12 @@ const TabPane = Tabs.TabPane
 
 import actionFinance from 'ACTION/busiFinance'
 
-import Error from 'COMPONENT/Error'
-import InnerForm from 'COMPONENT/DBTable/InnerForm'
-import InnerTable from 'COMPONENT/DBTable/InnerTable'
-import InnerPagination from 'COMPONENT/DBTable/InnerPagination'
+import {
+    Err,
+    InnerForm,
+    InnerTable,
+    InnerPagination
+} from 'COMPONENT'
 
 import { rootPath, financePath } from 'SERVICE/config'
 
@@ -33,15 +35,6 @@ const mapDispatchToProps = (dispatch) => ({
 class Finance extends Component {
     constructor(props) {
         super(props)
-
-        /** 
-         * 导出按钮，点击查询后且查询数据有值
-         * 
-        this.state = {
-            exportData: {
-                button: true
-            }
-        } */
 
         // 组件初始化时尝试获取schema
         this.status = "未确认"
@@ -59,13 +52,6 @@ class Finance extends Component {
         } else if (activeKey == '2') {
             this.status = "已到账"
         }
-
-        /* 查询导出
-        this.setState({
-            exportData: {
-                button: true
-            }
-        })*/
 
         this.refs.form.resetFields()
         this.refresh()
@@ -117,27 +103,6 @@ class Finance extends Component {
     }
 
     /**
-     * 点击查询按钮时触发查询
-     *
-     * @param 
-     */
-    
-    handleFormSubmit = (newObj) => {
-        const tmpObj = Object.assign({}, newObj)
-        const {busiFinance} = this.props
-        
-        /* 查询导出
-        this.setState({
-            exportData: {
-                button: false,
-                newObj
-            }
-        })*/
-
-        this.select(tmpObj, busiFinance.pageSize, 0)
-    }
-
-    /**
      * 向服务端发送select请求, 会返回一个promise对象
      *
      * @param  包含了form中所有的查询条件, 再加上page和pageSize, 后端就能拼成完整的sql
@@ -171,19 +136,6 @@ class Finance extends Component {
     }
 
     /**
-     * 切换分页时触发查询
-     *
-     * @param page
-     */
-    handlePageChange = (page) => {
-        const {busiFinance} = this.props
-        console.debug('handlePageChange, page = %d', page);
-
-        page = (page <= 1) ? 0 : (page - 1) * 10
-        this.select(this.queryObj, busiFinance.pageSize, page)
-    }
-
-    /**
      * 获取所有选中项的数据
      */
     handleSelected = (data) => {
@@ -201,50 +153,73 @@ class Finance extends Component {
         }
     }
 
-
     /**
-     * 点击确认收款按钮
+     * 点击查询按钮时触发查询
+     * @param 
      */
-    parentHandleReceive = (data) => {
-        const {actionFinance} = this.props
-        const tmpObj = Object.assign({}, {
-            financeCollectionIds: this.handleSelected(data)
-        })
-        actionFinance.fetchReceive(tmpObj)
-    }
 
-    /**
-     * 点击确认退款按钮
-     */
-    parentHandleRefund = (data) => {
-        const {actionFinance} = this.props
-        const tmpObj = Object.assign({}, {
-            financeCollectionIds: this.handleSelected(data)
-        })
-
-        actionFinance.fetchRefund(tmpObj)
-    }
-
-    parentHandleExportPage = () => {
+    handleFormSubmit = (newObj) => {
+        const tmpObj = Object.assign({}, newObj)
         const {busiFinance} = this.props
-        let arrParam = []
 
-        busiFinance.tableData.map(item => {
-            arrParam.push(item.financecollectionid)
-        })
+        this.select(tmpObj, busiFinance.pageSize, 0)
+    }
 
-        if (arrParam.length) {
-            notification.open({
-                message: '导出本页',
-                description: `导出${arrParam.length}条数据`,
-            });
+    /**
+     * 切换分页时触发查询
+     * @param page
+     */
+    handlePageChange = (page) => {
+        const {busiFinance} = this.props
+        console.debug('handlePageChange, page = %d', page);
 
-            window.location.href = rootPath + financePath + '/financecollectioncs/exportFinanceListExcel?financeCollectionIds=' + arrParam.join(',')
-        } else {
-            notification.open({
-                message: '导出本页',
-                description: '本页没有数据',
-            });
+        page = (page <= 1) ? 0 : (page - 1) * 10
+        this.select(this.queryObj, busiFinance.pageSize, page)
+    }
+
+
+    /**
+     * 点击按钮
+     */
+    parentHandleClick = (key, data) => {
+        const {
+            busiFinance,
+            actionFinance
+        } = this.props
+        
+        if (key === 'receive') {
+            const tmpObj = Object.assign({}, {
+                financeCollectionIds: data[0].financecollectionid ? data[0].financecollectionid : 0
+            })
+            console.log(tmpObj)
+            actionFinance.fetchReceive(tmpObj)
+        } else if (key === 'refund') {
+            const tmpObj = Object.assign({}, {
+                financeCollectionIds: data[0].financecollectionid ? data[0].financecollectionid : 0
+            })
+            actionFinance.fetchRefund(tmpObj)
+        } else if (key === 'exportPage') {
+            let arrParam = []
+
+            busiFinance.tableData.map(item => {
+                arrParam.push(item.financecollectionid)
+            })
+
+            if (arrParam.length) {
+                notification.open({
+                    message: '导出本页',
+                    description: `导出${arrParam.length}条数据`,
+                });
+
+                window.location.href = rootPath + financePath + '/financecollectioncs/exportFinanceListExcel?financeCollectionIds=' + arrParam.join(',')
+            } else {
+                notification.open({
+                    message: '导出本页',
+                    description: '本页没有数据',
+                });
+            }
+        } else if (key === 'document') {
+            alert('资源文件开发中')
         }
     }
 
@@ -260,7 +235,7 @@ class Finance extends Component {
 
         if (!this.inited) {
             return (
-                <Error errorMsg={this.errorMsg} />
+                <Err errorMsg={this.errorMsg} />
             )
         }
 
@@ -270,26 +245,23 @@ class Finance extends Component {
                     <TabPane tab="未确认" key="1">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"                            
+                            formStyle="g-mb20 m-advance-filter"
                             schema={this.querySchema}
-                            showSearch={true}                            
-                            parentHandleSubmit = {this.handleFormSubmit} />
-
+                            showSearch={true}
+                            parentHandleSubmit={this.handleFormSubmit} />
                         <InnerTable
                             loading={busiFinance.tableLoading}
                             columns={busiFinance.tableColumns}
                             dataSource={busiFinance.tableData}
                             isRowSelection={true}
-                            schema = {this.controlSchema[0]}
+                            schema={this.controlSchema['not']}
                             bordered={true}
-                            pagination = {false}
-                            parentHandleReceive={this.parentHandleReceive}
-                            parentHandleRefund={this.parentHandleRefund}
-                            parentHandleExportPage={this.parentHandleExportPage} />
+                            pagination={false}
+                            parentHandleClick={this.parentHandleClick} />
                         <InnerPagination
-                            total = {busiFinance.total}
-                            pageSize = {busiFinance.pageSize}
-                            skipCount = {busiFinance.skipCount}
+                            total={busiFinance.total}
+                            pageSize={busiFinance.pageSize}
+                            skipCount={busiFinance.skipCount}
                             parentHandlePageChange={this.handlePageChange}
                             />
                     </TabPane>
@@ -300,23 +272,21 @@ class Finance extends Component {
                             formStyle="g-mb20 m-advance-filter"
                             schema={this.querySchema}
                             showSearch={true}
-                            parentHandleSubmit = {this.handleFormSubmit} />
+                            parentHandleSubmit={this.handleFormSubmit} />
 
                         <InnerTable
                             loading={busiFinance.tableLoading}
                             columns={busiFinance.tableColumns}
                             dataSource={busiFinance.tableData}
                             isRowSelection={true}
-                            schema = {this.controlSchema[1]}
+                            schema={this.controlSchema['done']}
                             bordered={true}
-                            pagination = {false}
-                            parentHandleReceive={this.parentHandleReceive}
-                            parentHandleRefund={this.parentHandleRefund}
-                            parentHandleExportPage={this.parentHandleExportPage} />
+                            pagination={false}
+                            parentHandleClick={this.parentHandleClick} />
                         <InnerPagination
-                            total = {busiFinance.total}
-                            pageSize = {busiFinance.pageSize}
-                            skipCount = {busiFinance.skipCount}
+                            total={busiFinance.total}
+                            pageSize={busiFinance.pageSize}
+                            skipCount={busiFinance.skipCount}
                             parentHandlePageChange={this.handlePageChange}
                             />
                     </TabPane>

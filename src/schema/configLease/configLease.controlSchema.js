@@ -4,47 +4,162 @@
 
 module.exports = {
     room: {
-        showAdd: true,
-        showEdit: true,
-        showLie: true,
-        showVoid: true,
-        showHistory: true,
-        showSearchAll: true,
-        showSearchRented: true,
-        showSearchNotRent: true,
-        showSearchVoid: true,
-        showExportPage: true
+        left: [
+            {
+                key: 'add',
+                title: '新增'
+            },
+            {
+                key: 'edit',
+                title: '修改',
+                disabled: true
+            },
+            {
+                key: 'lie',
+                title: '闲置'
+            },
+            {
+                key: 'void',
+                title: '作废'
+            },
+            {
+                key: 'history',
+                title: '历史'
+            }
+        ],
+        center: [
+            {
+                key: 'searchAll',
+                title: '全部'
+            },
+            {
+                key: 'searchRented',
+                title: '已出租'
+            },
+            {
+                key: 'searchNotRent',
+                title: '未出租'
+            },
+            {
+                key: 'searchVoid',
+                title: '作废'
+            }
+        ],
+        right: [
+            {
+                key: 'exportPage',
+                title: '导出本页'
+            }
+        ]
     },
     classLine: {
-        showAdd: true,
-        showEdit: true,
-        showOpen: true,
-        showClose: true
+        left: [
+            {
+                key: 'add',
+                title: '新增'
+            },
+            {
+                key: 'edit',
+                title: '修改'
+            },
+            {
+                key: 'open',
+                title: '开启'
+            },
+            {
+                key: 'close',
+                title: '关闭'
+            }
+        ],
+        center: [],
+        right: []
     },
     policy: {
-        showAdd: true,
-        showEdit: true,
-        showOpen: true,
-        showClose: true
+        left: [
+            {
+                key: 'add',
+                title: '新增'
+            },
+            {
+                key: 'edit',
+                title: '修改'
+            },
+            {
+                key: 'open',
+                title: '开启'
+            },
+            {
+                key: 'close',
+                title: '关闭'
+            }
+        ],
+        center: [],
+        right: []
     },
     accountManager: {
-        showAdd: true,
-        showEdit: true,
-        showOpen: true,
-        showClose: true
+        left: [
+            {
+                key: 'add',
+                title: '新增'
+            },
+            {
+                key: 'edit',
+                title: '修改'
+            },
+            {
+                key: 'open',
+                title: '开启'
+            },
+            {
+                key: 'close',
+                title: '关闭'
+            }
+        ],
+        center: [],
+        right: []
     },
     contractTpl: {
-        showAdd: true,
-        showEdit: true,
-        showOpen: true,
-        showClose: true,
-        showSearchDictionary: true        
+        left: [
+            {
+                key: 'add',
+                title: '新增'
+            },
+            {
+                key: 'edit',
+                title: '修改'
+            },
+            {
+                key: 'open',
+                title: '开启'
+            },
+            {
+                key: 'close',
+                title: '关闭'
+            }
+        ],
+        center: [],
+        right: []
     },
     auditPerson: {
-        showAdd: true,
-        showEdit: true,
-        showDel: true,
-        showOpen: true,
-        showClose: true
+        left: [
+            {
+                key: 'add',
+                title: '新增'
+            },
+            {
+                key: 'edit',
+                title: '修改'
+            },
+            {
+                key: 'open',
+                title: '开启'
+            },
+            {
+                key: 'close',
+                title: '关闭'
+            }
+        ],
+        center: [],
+        right: []
     }
 }
