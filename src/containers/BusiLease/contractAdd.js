@@ -4,7 +4,7 @@ class ContractAdd extends Component {
     render() {
         return (
             <div>
-                
+                contractAdd
             </div>
         );
     }
