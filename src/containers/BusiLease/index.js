@@ -62,27 +62,15 @@ class BusiLease extends Component {
     }
 
     render() {
-        const rowSelection = {
-            onChange(selectedRowKeys, selectedRows) {
-                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
-            },
-            onSelect(record, selected, selectedRows) {
-                console.log(record, selected, selectedRows)
-            },
-            onSelectAll(selected, selectedRows, changeRows) {
-                console.log(selected, selectedRows, changeRows)
-            }
-        }
-
         return (
             <section className="padding m-lease-busi">
-                <Tabs defaultActiveKey="leaseRoomState" animated="false" type="card" onTabClick={this.handlerTabs}>
+                <Tabs defaultActiveKey="leaseManage" animated="false" type="card" onTabClick={this.handlerTabs}>
                     <TabPane tab="房态图" key="leaseRoomState">
                         <RoomState />
                     </TabPane>
                     <TabPane tab="租赁管理" key="leaseManage">
                         <Manage 
-                            querySchema={this.querySchema} 
+                            querySchema={this.querySchema}
                             controlSchema={this.controlSchema} />
                     </TabPane>
                 </Tabs>

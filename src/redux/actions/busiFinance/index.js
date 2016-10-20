@@ -31,8 +31,8 @@ const fetchFinanceTable = (data) => {
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            
-            console.log('表格数据111', newRes)
+
+            console.log('财务业务', newRes)
             if (res.result === 'success') {
                 dispatch(receiveFinanceTable(newRes))
             } else {

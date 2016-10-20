@@ -8,16 +8,21 @@ import { Link, hashHistory } from 'react-router'
 
 import {
     Tabs,
-    message
+    message,
+    notification
 } from 'antd'
 const TabPane = Tabs.TabPane
 
 import actionLease from 'ACTION/configLease'
 
 import Error from 'COMPONENT/Error'
-import InnerForm from 'COMPONENT/DBTable/InnerForm'
-import InnerTable from 'COMPONENT/DBTable/InnerTable'
-import InnerPagination from 'COMPONENT/DBTable/InnerPagination'
+import {
+    InnerForm,
+    InnerTable,
+    InnerPagination
+} from 'COMPONENT'
+
+import { rootPath, leasePath } from 'SERVICE/config'
 
 const mapDispatchToProps = (dispatch) => ({
     actionLease: bindActionCreators(actionLease, dispatch)
@@ -173,6 +178,8 @@ class Lease extends Component {
             this.refresh(fetchManagerTable)
         } else if (this.status === 'contractTpl') {
             this.refresh(fetchContractTable)
+        } else if (this.status === 'auditPerson') {
+            alert('没有接口')
         }
         sessionStorage.setItem('leaseTabs', this.status)
     }
@@ -181,6 +188,27 @@ class Lease extends Component {
     /**
      * 新增
      */
+    parentHandleClick = (key, data) => {
+        if (key === 'add') {
+            hashHistory.push('config/config_lease/add?type=' + this.status)
+        } else if (key === 'edit') {
+            console.log('编辑修改数据', data)
+            data = data[0]
+            if (this.status === 'room') {
+                hashHistory.push('config/config_lease/edit/' + data.rentroomid + '?type=room')
+            } else if (this.status === 'classLine') {
+                hashHistory.push('config/config_lease/edit/' + data.transportlineid + '?type=classLine')
+            } else if (this.status === 'policy') {
+                hashHistory.push('config/config_lease/edit/' + data.rentpromotionid + '?type=policy')
+            } else if (this.status === 'accountManager') {
+                hashHistory.push('config/config_lease/edit/' + data.salerid + '?type=accountManager')
+            } else if (this.status === 'contractTpl') {
+                hashHistory.push('config/config_lease/edit/' + data.pactprintmodelid + '?type=contractTpl')
+            } else if (this.status === 'auditPerson') {
+                hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
+            }
+        }
+    }
     parentHandleAdd = () => {
         hashHistory.push('config/config_lease/add?type=' + this.status)
     }
@@ -190,16 +218,16 @@ class Lease extends Component {
         console.log('编辑修改数据', data)
 
         if (this.status === 'room') {
-            hashHistory.push('config/config_lease/edit/' + data.rentroomid + '?type=room')            
+            hashHistory.push('config/config_lease/edit/' + data.rentroomid + '?type=room')
         } else if (this.status === 'classLine') {
             hashHistory.push('config/config_lease/edit/' + data.transportlineid + '?type=classLine')
-        }else if (this.status === 'policy') {
+        } else if (this.status === 'policy') {
             hashHistory.push('config/config_lease/edit/' + data.rentpromotionid + '?type=policy')
-        }else if (this.status === 'accountManager') {
+        } else if (this.status === 'accountManager') {
             hashHistory.push('config/config_lease/edit/' + data.salerid + '?type=accountManager')
-        }else if (this.status === 'contractTpl') {
+        } else if (this.status === 'contractTpl') {
             hashHistory.push('config/config_lease/edit/' + data.pactprintmodelid + '?type=contractTpl')
-        }else if (this.status === 'auditPerson') {
+        } else if (this.status === 'auditPerson') {
             hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
         }
     }
@@ -237,6 +265,33 @@ class Lease extends Component {
             this.select(newData, contractTplData.pageSize, 0, fetchContractTable)
         }
     }
+
+    parentHandleExportPage = () => {
+        const {roomData} = this.props.configLease
+        let arrParam = []
+
+        alert('接口没有')
+        return;
+        if (this.status === 'room') {
+            roomData.tableData.map(item => {
+                arrParam.push(item.rentroomid)
+            })
+
+            if (arrParam.length) {
+                notification.open({
+                    message: '导出本页',
+                    description: `导出${arrParam.length}条数据`,
+                });
+                window.location.href = leasePath + '/' + arrParam.join(',')
+            } else {
+                notification.open({
+                    message: '导出本页',
+                    description: '本页没有数据',
+                });
+            }
+        }
+    }
+
     // 全部-已出租-未出租-作废
     handleSearchAll = () => {
         this.queryObj = {
@@ -302,7 +357,7 @@ class Lease extends Component {
                 <Error errorMsg={this.errorMsg} />
             )
         }
-        
+
         return (
             <section className="padding">
                 <Tabs defaultActiveKey={this.status} animated="false" type="card" onChange={this.handlerTabs}>
@@ -320,19 +375,20 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['room']}
                             bordered={true}
+                            parentHandleClick={this.parentHandleClick}
                             parentHandleAdd={this.parentHandleAdd}
                             parentHandleEdit={this.parentHandleEdit}
                             parentHandleSearchAll={this.handleSearchAll}
                             parentHandleSearchRented={this.handleSearchRented}
                             parentHandleSearchNotRent={this.handleSearchNotRent}
                             parentHandleSearchVoid={this.handleSearchVoid}
+                            parentHandleExportPage={this.parentHandleExportPage}
                             pagination={false} />
                         <InnerPagination
                             total={roomData.total}
                             pageSize={roomData.pageSize}
                             skipCount={roomData.skipCount}
-                            parentHandlePageChange={this.handlePageChange}
-                            />
+                            parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
                     <TabPane tab="班线管理" key="classLine">
                         <InnerForm
@@ -383,8 +439,7 @@ class Lease extends Component {
                             total={policyData.total}
                             pageSize={policyData.pageSize}
                             skipCount={policyData.skipCount}
-                            parentHandlePageChange={this.handlePageChange}
-                            />
+                            parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
                     <TabPane tab="客户经理列表" key="accountManager">
                         <InnerForm

@@ -5,35 +5,35 @@ import { errHandler, leasePath } from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const REQUEST_CONTRACT_TABLE = 'REQUEST_CONTRACT_TABLE'
-const RECEIVE_CONTRACT_TABLE = 'RECEIVE_CONTRACT_TABLE'
+const REQUEST_NOTCONTRACT_TABLE = 'REQUEST_NOTCONTRACT_TABLE'
+const RECEIVE_NOTCONTRACT_TABLE = 'RECEIVE_NOTCONTRACT_TABLE'
 
 
 // ================================
 // Action Creator
 // ================================
-const requestContractTable = () => ({
-    type: REQUEST_CONTRACT_TABLE
+const requestNotContractTable = () => ({
+    type: REQUEST_NOTCONTRACT_TABLE
 })
 
-const receiveContractTable = (res) => ({
-    type: RECEIVE_CONTRACT_TABLE,
+const receiveNotContractTable = (res) => ({
+    type: RECEIVE_NOTCONTRACT_TABLE,
     payload: res
 })
 
-const fetchContractTable = (data) => {
+const fetchNotContractTable = (data) => {
     return dispatch => {
-        dispatch(requestContractTable())
-        xhr('post', leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
+        dispatch(requestNotContractTable())
+        xhr('post', leasePath + '/boothpaymentcs/selectByKeyword', data,  (res) => {
             const newRes = Object.assign({}, res, {
                 sub: data
             })
 
-            console.log('租赁管理-合同获取数据：', newRes)
+            console.log('租赁管理-临时摊位获取数据：', newRes)
             if (res.result === 'success') {
-                dispatch(receiveContractTable(newRes))
+                dispatch(receiveNotContractTable(newRes))
             } else {
-                dispatch(receiveContractTable({}))
+                dispatch(receiveNotContractTable({}))
                 errHandler(res.result)
             }
         })
@@ -42,16 +42,16 @@ const fetchContractTable = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractTable
+    fetchNotContractTable
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_CONTRACT_TABLE]: (contract) => ({
-        ...contract,
+    [REQUEST_NOTCONTRACT_TABLE]: (notContract) => ({
+        ...notContract,
         tableLoading: true
     }),
-    [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
-        ...contract,
+    [RECEIVE_NOTCONTRACT_TABLE]: (notContract, {payload: res}) => ({
+        ...notContract,
         tableLoading: false,
         tableData: res.data,
         total: res.count,

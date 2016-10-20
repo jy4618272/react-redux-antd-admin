@@ -41,7 +41,7 @@ class ClassLineEdit extends Component {
             this.props.actionLease.fetchManagerEdit({
                 salerid: id
             })
-        }else if (this.editType === 'contractTpl') {
+        } else if (this.editType === 'contractTpl') {
             this.props.actionLease.fetchContractEdit({
                 pactprintmodelid: id
             })
@@ -82,7 +82,7 @@ class ClassLineEdit extends Component {
 
         this.inited = true
     }
-    
+
     parentHandleSelect = (key, value) => {
         const {actionLease} = this.props
         if (key === 'area') {
@@ -159,7 +159,7 @@ class ClassLineEdit extends Component {
                 <Error errorMsg={this.errorMsg} />
             )
         }
-        return (
+        if (this.status === 'room') {
             <section className="padding m-config-edit">
                 <InnerForm
                     schema={this.dataSource[this.editType]}
@@ -169,7 +169,19 @@ class ClassLineEdit extends Component {
                     sessionShouldGet={this.tableName}
                     parentHandleSave={this.parentHandleSave} />
             </section>
-        )
+        } else {
+            return (
+                <section className="padding m-config-edit">
+                    <InnerForm
+                        schema={this.editSchema[this.editType]}
+                        showSave={true}
+                        parentHandleSelect={this.parentHandleSelect}
+                        setFields={this.dataSource.data}
+                        sessionShouldGet={this.tableName}
+                        parentHandleSave={this.parentHandleSave} />
+                </section>
+            )
+        }
     }
 }
 

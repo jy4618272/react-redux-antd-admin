@@ -5,35 +5,35 @@ import { errHandler, leasePath } from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const REQUEST_CONTRACT_TABLE = 'REQUEST_CONTRACT_TABLE'
-const RECEIVE_CONTRACT_TABLE = 'RECEIVE_CONTRACT_TABLE'
+const REQUEST_BOND_TABLE = 'REQUEST_BOND_TABLE'
+const RECEIVE_BOND_TABLE = 'RECEIVE_BOND_TABLE'
 
 
 // ================================
 // Action Creator
 // ================================
-const requestContractTable = () => ({
-    type: REQUEST_CONTRACT_TABLE
+const requestBondTable = () => ({
+    type: REQUEST_BOND_TABLE
 })
 
-const receiveContractTable = (res) => ({
-    type: RECEIVE_CONTRACT_TABLE,
+const receiveBondTable = (res) => ({
+    type: RECEIVE_BOND_TABLE,
     payload: res
 })
 
-const fetchContractTable = (data) => {
+const fetchBondTable = (data) => {
     return dispatch => {
-        dispatch(requestContractTable())
-        xhr('post', leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
+        dispatch(requestBondTable())
+        xhr('post', leasePath + '/margincs/selectByIndex', data,  (res) => {
             const newRes = Object.assign({}, res, {
                 sub: data
             })
 
-            console.log('租赁管理-合同获取数据：', newRes)
+            console.log('租赁管理-保证金获取数据：', newRes)
             if (res.result === 'success') {
-                dispatch(receiveContractTable(newRes))
+                dispatch(receiveBondTable(newRes))
             } else {
-                dispatch(receiveContractTable({}))
+                dispatch(receiveBondTable({}))
                 errHandler(res.result)
             }
         })
@@ -42,16 +42,16 @@ const fetchContractTable = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractTable
+    fetchBondTable
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_CONTRACT_TABLE]: (contract) => ({
-        ...contract,
+    [REQUEST_BOND_TABLE]: (bond) => ({
+        ...bond,
         tableLoading: true
     }),
-    [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
-        ...contract,
+    [RECEIVE_BOND_TABLE]: (bond, {payload: res}) => ({
+        ...bond,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
