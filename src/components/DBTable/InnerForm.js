@@ -389,7 +389,7 @@ class InnerForm extends Component {
         for (const key in oldObj) {
             if (oldObj[key]) {
                 // 对于js的日期类型, 要转换成字符串再传给后端
-                if ((key.indexOf('start') > -1) || (key.indexOf('end') > -1)) {
+                if (key.indexOf('date') > -1) {
                     newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
                 } else {
                     newObj[key] = oldObj[key]

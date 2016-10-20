@@ -3,12 +3,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {
     Tabs,
+    Modal,
     message,
     notification
 } from 'antd'
 const TabPane = Tabs.TabPane
 
 import {
+    InnerModal,
     InnerForm,
     InnerTable,
     InnerPagination
@@ -28,6 +30,11 @@ class Manage extends Component {
     constructor(props) {
         super(props)
         this.status = sessionStorage.getItem('leaseManageTabs') || 'contract'
+        this.state = {
+            modalVisible: false,
+            modalTitle: '新增',
+            modalContent: '内容'
+        }
         console.log('1111122222', props)
     }
 
@@ -136,7 +143,36 @@ class Manage extends Component {
 
     // 按钮
     parentHandleClick = (key, data) => {
+        if (key === 'left') {
+            const content = '左侧内容'
+            this.setState({
+                modalKey: key,                
+                modalVisible: true,
+                modalTitle: '新增左侧',
+                modalContent: content,
+            })
+        } else if (key === 'center') {
+            const content = '中间内容'
+            this.setState({
+                modalKey: key,
+                modalVisible: true,
+                modalTitle: '新增中间',
+                modalContent: content
+            })
+        }
+    }
+
+    handleModalOk = (key) => {
         alert(key)
+        this.setState({
+            modalVisible: false
+        })
+    }
+
+    handleModalCancel = () => {
+        this.setState({
+            modalVisible: false
+        })
     }
 
     /**
@@ -171,7 +207,14 @@ class Manage extends Component {
         } = this.props.busiLease
 
         return (
-            <div>
+            <section>
+                <Modal
+                    visible={this.state.modalVisible}
+                    title={this.state.modalTitle}
+                    onOk={this.handleModalOk.bind(this, this.state.modalKey)}
+                    onCancel={this.handleModalCancel}>
+                    {this.state.modalContent}
+                </Modal>
                 <Tabs defaultActiveKey={this.status} animated="false" type="inline" onChange={this.handlerTabs}>
                     <TabPane tab="合同" key="contract">
                         <InnerForm
@@ -235,7 +278,7 @@ class Manage extends Component {
                             parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
                 </Tabs>
-            </div>
+            </section>
         )
     }
 }

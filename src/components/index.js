@@ -4,7 +4,7 @@ import Err from './Error'
 import Loading from './Loading'
 import SlideBar from './SlideBar'
 
-import InnerModal from './DBTable/InnerModal'
+import FormLayout from './DBTable/FormLayout'
 import InnerForm from './DBTable/InnerForm'
 import InnerTable from './DBTable/InnerTable'
 import InnerPagination from './DBTable/InnerPagination'
@@ -16,7 +16,7 @@ export {
     Err,
     Loading,
     SlideBar,
-    InnerModal,
+    FormLayout,
     InnerForm,
     InnerTable,
     InnerPagination

@@ -28,22 +28,22 @@ module.exports = {
             }
         ],
         center: [
-            {
-                key: 'searchAll',
-                title: '全部'
-            },
-            {
-                key: 'searchRented',
-                title: '已出租'
-            },
-            {
-                key: 'searchNotRent',
-                title: '未出租'
-            },
-            {
-                key: 'searchVoid',
-                title: '作废'
-            }
+            // {
+            //     key: 'searchAll',
+            //     title: '全部'
+            // },
+            // {
+            //     key: 'searchRented',
+            //     title: '已出租'
+            // },
+            // {
+            //     key: 'searchNotRent',
+            //     title: '未出租'
+            // },
+            // {
+            //     key: 'searchVoid',
+            //     title: '作废'
+            // }
         ],
         right: [
             {

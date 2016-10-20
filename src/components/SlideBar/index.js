@@ -104,8 +104,7 @@ class SlideNav extends Component {
                     onClick={this.handleClick}
                     defaultOpenKeys={this.defaultOpenKeys}
                     selectedKeys={[this.state.current]}
-                    mode={mode}
-                    >
+                    mode={mode}>
                     {this.menuStr}
                 </Menu>
             </nav>

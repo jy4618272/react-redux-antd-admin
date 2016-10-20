@@ -159,16 +159,18 @@ class ClassLineEdit extends Component {
                 <Error errorMsg={this.errorMsg} />
             )
         }
-        if (this.status === 'room') {
-            <section className="padding m-config-edit">
-                <InnerForm
-                    schema={this.dataSource[this.editType]}
-                    showSave={true}
-                    parentHandleSelect={this.parentHandleSelect}
-                    setFields={this.dataSource.data}
-                    sessionShouldGet={this.tableName}
-                    parentHandleSave={this.parentHandleSave} />
-            </section>
+        if (this.editType === 'room') {
+            return (
+                <section className="padding m-config-edit">
+                    <InnerForm
+                        schema={this.dataSource[this.editType]}
+                        showSave={true}
+                        parentHandleSelect={this.parentHandleSelect}
+                        setFields={this.dataSource.data}
+                        sessionShouldGet={this.tableName}
+                        parentHandleSave={this.parentHandleSave} />
+                </section>
+            )
         } else {
             return (
                 <section className="padding m-config-edit">

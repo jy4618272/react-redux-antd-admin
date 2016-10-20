@@ -111,7 +111,7 @@ class Lease extends Component {
      * 按当前的查询条件重新查询一次
      */
     refresh = (fetchHandle) => {
-        this.select({}, 10, 0, fetchHandle)
+        this.select(this.queryStatus, 10, 0, fetchHandle)
     }
 
     /**
@@ -184,6 +184,35 @@ class Lease extends Component {
         sessionStorage.setItem('leaseTabs', this.status)
     }
 
+    handlerRoomTabs = (activeKey) => {
+        if (activeKey === 'searchAll') {
+            this.queryStatus = {
+                status: ''
+            }
+            this.queryObj = Object.assign({}, this.queryData, this.queryStatus)
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        } else if (activeKey === 'searchRented') {
+            this.queryStatus = {
+                status: '已出租'
+            }
+            this.queryObj = Object.assign({}, this.queryData, this.queryStatus)
+
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        } else if (activeKey === 'searchNotRent') {
+            this.queryStatus = {
+                status: '未出租'
+            }
+            this.queryObj = Object.assign({}, this.queryData, this.queryStatus)
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        } else if (activeKey === 'searchVoid') {
+            this.queryStatus = {
+                status: '作废'
+            }
+            this.queryObj = Object.assign({}, this.queryData, this.queryStatus)
+            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
+        }
+    }
+
 
     /**
      * 新增
@@ -207,26 +236,6 @@ class Lease extends Component {
             } else if (this.status === 'auditPerson') {
                 hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
             }
-        } else if (key === 'searchAll') {
-            this.queryObj = {
-                status: ''
-            }
-            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-        }else if (key === 'searchRented') {
-            this.queryObj = {
-                status: '已出租'
-            }
-            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-        }else if (key === 'searchNotRent') {
-            this.queryObj = {
-                status: '未出租'
-            }
-            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-        }else if (key === 'searchVoid') {
-            this.queryObj = {
-                status: '作废'
-            }
-            this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
         }
     }
 
@@ -234,7 +243,7 @@ class Lease extends Component {
      * 查询
      */
     handleFormSubmit = (newData) => {
-        // alert(JSON.stringify(newData))
+        this.queryData = newData
         const {
             roomData,
             classLineData,
@@ -251,16 +260,18 @@ class Lease extends Component {
             fetchContractTable
         } = this.props.actionLease
 
+        this.queryObj = Object.assign({}, this.queryData, this.queryStatus)
+
         if (this.status === 'room') {
-            this.select(newData, roomData.pageSize, 0, fetchRoomTable)
+            this.select(this.queryObj, roomData.pageSize, 0, fetchRoomTable)
         } else if (this.status === 'classLine') {
-            this.select(newData, classLineData.pageSize, 0, fetchClassLineTable)
+            this.select(this.queryObj, classLineData.pageSize, 0, fetchClassLineTable)
         } else if (this.status === 'policy') {
-            this.select(newData, policyData.pageSize, 0, fetchPolicyTable)
+            this.select(this.queryObj, policyData.pageSize, 0, fetchPolicyTable)
         } else if (this.status === 'accountManager') {
-            this.select(newData, accountManagerData.pageSize, 0, fetchManagerTable)
+            this.select(this.queryObj, accountManagerData.pageSize, 0, fetchManagerTable)
         } else if (this.status === 'contractTpl') {
-            this.select(newData, contractTplData.pageSize, 0, fetchContractTable)
+            this.select(this.queryObj, contractTplData.pageSize, 0, fetchContractTable)
         }
     }
 
@@ -314,21 +325,72 @@ class Lease extends Component {
                             schema={roomData['room']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
-                        
-                        <InnerTable
-                            loading={roomData.tableLoading}
-                            columns={roomData.tableColumns}
-                            dataSource={roomData.tableData}
-                            isRowSelection={true}
-                            schema={this.controlSchema['room']}
-                            bordered={true}
-                            parentHandleClick={this.parentHandleClick}
-                            pagination={false} />
-                        <InnerPagination
-                            total={roomData.total}
-                            pageSize={roomData.pageSize}
-                            skipCount={roomData.skipCount}
-                            parentHandlePageChange={this.handlePageChange} />
+                        <Tabs defaultActiveKey="searchAll" animated="false" type="inline" onChange={this.handlerRoomTabs}>
+                            <TabPane tab="全部" key="searchAll">
+                                <InnerTable
+                                    loading={roomData.tableLoading}
+                                    columns={roomData.tableColumns}
+                                    dataSource={roomData.tableData}
+                                    isRowSelection={true}
+                                    schema={this.controlSchema['room']}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                                <InnerPagination
+                                    total={roomData.total}
+                                    pageSize={roomData.pageSize}
+                                    skipCount={roomData.skipCount}
+                                    parentHandlePageChange={this.handlePageChange} />
+                            </TabPane>
+                            <TabPane tab="已出租" key="searchRented">
+                                <InnerTable
+                                    loading={roomData.tableLoading}
+                                    columns={roomData.tableColumns}
+                                    dataSource={roomData.tableData}
+                                    isRowSelection={true}
+                                    schema={this.controlSchema['room']}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                                <InnerPagination
+                                    total={roomData.total}
+                                    pageSize={roomData.pageSize}
+                                    skipCount={roomData.skipCount}
+                                    parentHandlePageChange={this.handlePageChange} />
+                            </TabPane>
+                            <TabPane tab="未出租" key="searchNotRent">
+                                <InnerTable
+                                    loading={roomData.tableLoading}
+                                    columns={roomData.tableColumns}
+                                    dataSource={roomData.tableData}
+                                    isRowSelection={true}
+                                    schema={this.controlSchema['room']}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                                <InnerPagination
+                                    total={roomData.total}
+                                    pageSize={roomData.pageSize}
+                                    skipCount={roomData.skipCount}
+                                    parentHandlePageChange={this.handlePageChange} />
+                            </TabPane>
+                            <TabPane tab="作废" key="searchVoid">
+                                <InnerTable
+                                    loading={roomData.tableLoading}
+                                    columns={roomData.tableColumns}
+                                    dataSource={roomData.tableData}
+                                    isRowSelection={true}
+                                    schema={this.controlSchema['room']}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                                <InnerPagination
+                                    total={roomData.total}
+                                    pageSize={roomData.pageSize}
+                                    skipCount={roomData.skipCount}
+                                    parentHandlePageChange={this.handlePageChange} />
+                            </TabPane>
+                        </Tabs>
                     </TabPane>
                     <TabPane tab="班线管理" key="classLine">
                         <InnerForm
@@ -367,7 +429,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['policy']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}                            
+                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={policyData.total}
@@ -389,7 +451,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['accountManager']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}                            
+                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={accountManagerData.total}
@@ -411,7 +473,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['contractTpl']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}                            
+                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={contractTplData.total}
@@ -433,7 +495,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['auditPerson']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}                            
+                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={roomData.total}

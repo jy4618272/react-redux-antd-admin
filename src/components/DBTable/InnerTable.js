@@ -170,15 +170,6 @@ class InnerTable extends Component {
                             </Row>
                         </div>
                     </Affix>
-                    <Modal
-                        title={this.state.modalTitle}
-                        visible={this.state.modalVisible}
-                        onOk={this.handleModalOk}
-                        onCancel={this.handleModalHide}>
-                        <Form horizontal>
-                            接口有问题
-                        </Form>
-                    </Modal>
                 </div>
                 {tableContext}
             </section>

@@ -33,7 +33,7 @@ class LeaseAdd extends Component {
     constructor(props) {
         super(props)
         console.log(props)
-        
+
         this.initFetchSchema(props)
     }
 
@@ -112,7 +112,8 @@ class LeaseAdd extends Component {
             })
         }
     }
-
+    parentHandleClick = (key) => {
+    }
 
     // 渲染
     render() {
@@ -127,14 +128,24 @@ class LeaseAdd extends Component {
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
                         parentHandleSave={this.parentHandleSave}>
+                        {/*
                         <InnerTable
                             columns={roomAddSchema.tableColumns}
                             modalSchema={roomAddSchema['room']}
                             schema={{
-                                showRoomAttrAdd: true
+                                left: [
+                                    {
+                                        title: '新增',
+                                        key: 'add'
+                                    }
+                                ],
+                                center: [],
+                                right: []
                             }}
                             dataSource={roomAddSchema.tableSource}
+                            parentHandleClick={this.parentHandleClick}
                             bordered={true} />
+                        */}
                     </InnerForm> :
                     <InnerForm
                         formStyle="padding m-advance-fill"

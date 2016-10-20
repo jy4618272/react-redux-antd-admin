@@ -35,7 +35,8 @@ const routes = (
 			<IndexRoute component={Home} />
 
 			<Route path="busi">
-				<IndexRoute path="busi" component={BusiLease} />
+				<IndexRoute path="busi" component={Busi} />
+				<Route path="busi" tableName="busiLease" component={Busi} />,
 				<Route path="busi_lease" tableName="busiLease" component={BusiLease} />,
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
 				<Route path="busi_finance/:id" component={BusiFinanceDetail} />

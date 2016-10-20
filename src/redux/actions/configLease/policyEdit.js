@@ -1,6 +1,7 @@
 import { notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
+import moment from 'moment'
 
 // ================================
 // Action Type
@@ -26,9 +27,22 @@ const fetchPolicyEdit = (data) => {
     return dispatch => {
         dispatch(requestPolicyEdit())
         xhr('post', leasePath + '/rentpromotioncs/selectRentPromotionById', data, function (res) {
-            console.log('政策优惠之编辑', data, res)
+            console.log('政策优惠之编辑', res)
+            const oldObj = res.data
+            const newObj = {}
+            for (const key in oldObj) {
+                if (oldObj[key]) {
+                    if (key.indexOf('date') > -1) {
+                        newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
+                    } else {
+                        newObj[key] = oldObj[key]
+                    }
+                }
+            }
+
+            console.log('1111', newObj)
             if (res.result === 'success') {
-                dispatch(receivePolicyEdit(res))
+                dispatch(receivePolicyEdit(newObj))
             } else {
                 dispatch(receivePolicyEdit({}))
                 errHandler(res.result)
@@ -80,7 +94,7 @@ export const ACTION_HANDLERS = {
     [RECEIVE_POLICY_EDIT]: (policyEdit, {payload: res}) => ({
         ...policyEdit,
         loading: false,
-        data: res.data
+        data: res
     }),
     [REQUEST_POLICY_UPDATE]: () => ({}),
     [RECEIVE_POLICY_UPDATE]: () => ({})

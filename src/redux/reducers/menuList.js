@@ -8,6 +8,10 @@ const initialState = [
         icon: 'home',
         child: [
             {
+                key: 'busi',
+                name: '业务中心'
+            },
+            {
                 key: 'busi_lease',
                 name: '租赁业务'
             },
