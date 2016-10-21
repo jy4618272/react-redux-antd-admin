@@ -25,12 +25,11 @@ const fetchRoomState = (data) => {
     return dispatch => {
         dispatch(requestRoomState())
         xhr('post', leasePath + '/rentroomcs/selectByAreaAndStatus', data, function (res) {
-            // alert(JSON.stringify(data))
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('房态图之列表', newRes)
 
+            console.log('房态图获取数据：', newRes)
             if (res.result === 'success') {
                 dispatch(receiveRoomState(newRes))
             } else {
@@ -55,10 +54,10 @@ export const ACTION_HANDLERS = {
     }),
     [RECEIVE_ROOM_STATE]: (roomState, {payload: res}) => ({
         ...roomState,
-        roomStateData: res.data,
         loading: false,
+        roomStateData: res.data,
         total: res.count,
-        pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+        pageSize: 24,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/24 + 1)
     })
 }

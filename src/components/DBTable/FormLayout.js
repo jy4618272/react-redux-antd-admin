@@ -275,7 +275,7 @@ class FormLayout extends Component {
                     placeholder={field.placeholderBegin || '最小值'} />)
                 endFormItem = (<InputNumber size="default"
                     placeholder={field.placeholderEnd || '最大值'} />)
-                cols.push(this.betweenColWrapper(beginFormItem, endFormItem, field))
+                cols.push(this.colWrapper(beginFormItem, endFormItem, field))
                 break
             case 'float':
                 // console.debug('transform field %o to float BETWEEN component', field)
@@ -283,22 +283,22 @@ class FormLayout extends Component {
                     placeholder={field.placeholderBegin || '最小值'} />)
                 endFormItem = (<InputNumber step={1} size="default"
                     placeholder={field.placeholderEnd || '最大值'} />)
-                cols.push(this.betweenColWrapper(beginFormItem, endFormItem, field))
+                cols.push(this.colWrapper(beginFormItem, endFormItem, field))
                 break
             // datetime类型的between要占用两个Col
             // 不写辅助函数了, 直接这里写jsx吧...
             case 'datetime':
                 // console.debug('transform field %o to datetime BETWEEN component', field)
                 cols.push(
-                    <Col key={`start${field.key}`} sm={6}>
+                    <Col key={field.key} sm={5}>
                         <FormItem
-                            key={`start${field.key}`}
+                            key={field.key}
                             label={field.title}
-                            labelCol={{ span: 8 }}
-                            wrapperCol={{ span: 16 }}
+                            labelCol={{ span: 10 }}
+                            wrapperCol={{ span: 14 }}
                             hasFeedback={field.feedBackShow}
                             help={field.help}>
-                            {getFieldDecorator(`start${field.key}`, {
+                            {getFieldDecorator(field.key, {
                                 validate: field.validate || []
                             })(
                                 <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '开始日期'} />
@@ -306,14 +306,14 @@ class FormLayout extends Component {
                         </FormItem>
                     </Col>
                 )
-                cols.push(<Col key={`end${field.key}`} sm={6}>
+                cols.push(<Col key={field.keyEnd} sm={3}>
                     <FormItem
-                        key={`end${field.key}`}
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
+                        key={field.keyEnd}
+                        labelCol={{ span: 0 }}
+                        wrapperCol={{ span: 24 }}
                         hasFeedback={field.feedBackShow}
                         help={field.help}>
-                        {getFieldDecorator(`end${field.key}`, {
+                        {getFieldDecorator(field.keyEnd, {
                             validate: field.validate || []
                         })(
                             <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderEnd || '结束日期'} />

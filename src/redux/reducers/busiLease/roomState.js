@@ -2,10 +2,10 @@ import createReducer from 'UTIL/createReducer'
 import { ACTION_HANDLERS } from 'ACTION/busiLease/roomState'
 
 const initialState = {
-    Loading: true,
+    loading: true,
     roomStateData: [],
     skipCount: 1,
-    pageSize: 10,
+    pageSize: 24,
     count: 0
 }
 

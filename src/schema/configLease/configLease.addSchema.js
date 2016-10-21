@@ -103,7 +103,7 @@ module.exports = {
         {
             key: 'promotionnum',
             title: '优惠幅度',
-            dataType: 'varchar',
+            dataType: 'float',
             placeholder: '请输入优惠幅度',
             feedBackShow: true,
             validate: [
@@ -151,7 +151,8 @@ module.exports = {
             ]
         },
         {
-            key: 'date',
+            key: 'startdate',
+            keyEnd:'enddate',
             title: '活动期限',
             dataType: 'datetime',
             showType: 'between',

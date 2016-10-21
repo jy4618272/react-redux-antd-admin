@@ -25,6 +25,10 @@ import {
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
 
+import {
+    Err
+} from 'COMPONENT'
+
 class InnerTable extends Component {
     constructor(props) {
         super(props)
@@ -88,6 +92,12 @@ class InnerTable extends Component {
             isRowSelection
         } = this.props
 
+        if (!schema) {
+            return (
+                <Err errorMsg="表格数据没有完善，请细查" />
+            )
+        }
+
         // 表格checkbox操作 
         const rowSelection = {
             selectedRowKeys: this.state.selectedRowKeys,
@@ -147,6 +157,7 @@ class InnerTable extends Component {
             )
         })
 
+        
         return (
             <section className="m-table">
                 <div className="m-table-effect">

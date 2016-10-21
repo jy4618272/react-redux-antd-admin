@@ -1,14 +1,21 @@
 import React, { Component, PropTypes } from 'react'
+import {Link} from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import {
     Tabs,
     Row,
-    Col
+    Col,
+    Popover,
+    Button
 } from 'antd'
-
 const TabPane = Tabs.TabPane
+
+import {
+    InnerPagination,
+    Err
+} from 'COMPONENT'
 
 // 房态图图片
 import roomRed from './img/house-red.png'
@@ -29,18 +36,6 @@ class RoomState extends Component {
     constructor(props) {
         super(props)
         this.area = "全部"
-    }
-
-    /**
-     * 点击选项卡切换
-     * 
-     * @param 
-     */
-    handlerTabs = (activeKey) => {
-        this.area = activeKey
-
-        this.refs.form.resetFields()
-        this.refresh()
     }
 
     /**
@@ -72,6 +67,16 @@ class RoomState extends Component {
     }
 
     /**
+     * 点击选项卡切换
+     * 
+     * @param 
+     */
+    handlerTabs = (activeKey) => {
+        this.area = activeKey
+        this.select({}, 24, 0)
+    }
+
+    /**
      * 切换分页时触发查询
      *
      * @param page
@@ -80,9 +85,10 @@ class RoomState extends Component {
         const {roomState} = this.props.busiLease
         console.debug('handlePageChange, page = %d', page);
 
-        page = (page <= 1) ? 0 : (page - 1) * 10
+        page = (page <= 1) ? 0 : (page - 1) * 24
         this.select(this.queryObj, roomState.pageSize, page)
     }
+
 
     /**
      * 刚进入页面时触发一次查询
@@ -94,14 +100,66 @@ class RoomState extends Component {
     render() {
         const {roomState} = this.props.busiLease
         const roomStateList = roomState.roomStateData.map(item => {
+            let imgStatus
+            if (item.status === '预定') {
+                imgStatus = roomRed
+            } else if (item.status === '未出租') {
+                imgStatus = roomBlue
+                return (
+                    <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
+                        <Link to="/busi/busi_lease/add?type=contract&rentroomid=${item.rentroomid}">
+                            <div className="list-img"><img src={imgStatus} /></div>
+                            <div className="list-txt">{item.build}- {item.room}</div>
+                        </Link>
+                    </Col>
+                )
+            } else if (item.status === '已出租') {
+                imgStatus = roomOrange
+                const tips = (
+                    <div>
+                        <p>客户名称：{item.organization}</p>
+                        <p>合同编码：{item.pactCode}</p>
+                    </div>
+                )
+                return (
+                    <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
+                        <Popover content={tips} title={item.status}>
+                            <div>
+                                <div className="list-img"><img src={imgStatus} /></div>
+                                <div className="list-txt">{item.build}- {item.room}</div>
+                            </div>
+                        </Popover>
+                    </Col>
+                )
+            }
+
             return (
-                <Col xs={24} sm={12} md={6} lg={4}>
-                    <div className="list-img"><img src={roomRed} /></div>
-                    <div className="list-txt">2323</div>
+                <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
+                    <div className="list-img"><img src={imgStatus} /></div>
+                    <div className="list-txt">{item.build}- {item.room}</div>
                 </Col>
             )
         })
-        
+
+        // 选项卡内容展示
+        let content
+        if (roomState.roomStateData.length === 0) {
+            content = <div className="padding list-room-state">
+                <Err errorMsg={`${this.area}中还没有房态图`} />
+            </div>
+        } else {
+            content = <div className="padding list-room-state">
+                <Row gutter={20}>
+                    {roomStateList}
+                </Row>
+                <InnerPagination
+                    total={roomState.total}
+                    pageSize={roomState.pageSize}
+                    skipCount={roomState.skipCount}
+                    parentHandlePageChange={this.handlePageChange} />
+            </div>
+        }
+
         return (
             <section className="m-room-state">
                 <ul className="clearfix list-room-state-map">
@@ -110,63 +168,39 @@ class RoomState extends Component {
                     <li><img src={roomOrange} />已出租</li>
                 </ul>
                 <div className="tabs-vertical">
-                    <Tabs defaultActiveKey="全部">
+                    <Tabs defaultActiveKey="全部" onChange={this.handlerTabs}>
                         <TabPane tab="全部" key="全部">
-                            <div className="padding list-room-state">
-                                <Row gutter={20}>
-                                    3
-                                </Row>
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="信息交易中心" key="信息交易中心">
-                            <div className="padding list-room-state">
-                                信息
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="大仓" key="大仓">
-                            <div className="padding list-room-state">
-                                大仓
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="零担" key="零担">
-                            <div className="padding list-room-state">
-                                零担
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="汽修汽配汽贸" key="汽修汽配汽贸">
-                            <div className="padding list-room-state">
-                                汽修汽配汽贸
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="司机之家" key="司机之家">
-                            <div className="padding list-room-state">
-                                司机之家
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="饭店餐饮" key="饭店餐饮">
-                            <div className="padding list-room-state">
-                                饭店餐饮
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="第3方物流" key="第3方物流">
-                            <div className="padding list-room-state">
-                                第3方物流
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="广告位" key="广告位">
-                            <div className="padding list-room-state">
-                                广告位
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="席位" key="席位">
-                            <div className="padding list-room-state">
-                                席位
-                            </div>
+                            {content}
                         </TabPane>
                         <TabPane tab="其它" key="其它">
-                            <div className="padding list-room-state">
-                                其它
-                            </div>
+                            {content}
                         </TabPane>
                     </Tabs>
                 </div>

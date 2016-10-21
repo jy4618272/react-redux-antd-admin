@@ -5,34 +5,34 @@ const initialState = {
     tableLoading: true,
     tableColumns: [
         {
-            title:'客户名称',            
-            dataIndex:'organization',            
-            key:'organization'
+            title: '客户名称',
+            dataIndex: 'organization',
+            key: 'organization'
         },
         {
-            title:'房间',            
-            dataIndex:'roomlist',            
-            key:'roomlist'
+            title: '房间',
+            dataIndex: 'roomlist',
+            key: 'roomlist'
         },
         {
-            title:'流程状态',            
-            dataIndex:'flowstatus',            
-            key:'flowstatus'
+            title: '流程状态',
+            dataIndex: 'flowstatus',
+            key: 'flowstatus'
         },
         {
-            title:'金额',            
-            dataIndex:'marginmoney',            
-            key:'marginmoney'
+            title: '金额',
+            dataIndex: 'marginmoney',
+            key: 'marginmoney'
         },
         {
-            title:'交款单号',            
-            dataIndex:'businessnumber',            
-            key:'businessnumber'
+            title: '交款单号',
+            dataIndex: 'businessnumber',
+            key: 'businessnumber'
         },
         {
-            title:'备注',            
-            dataIndex:'memo',            
-            key:'memo'
+            title: '备注',
+            dataIndex: 'memo',
+            key: 'memo'
         }
     ],
     tableData: [],

@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { Link, hashHistory } from 'react-router'
+
 import {
     Tabs,
     Modal,
@@ -143,14 +145,8 @@ class Manage extends Component {
 
     // 按钮
     parentHandleClick = (key, data) => {
-        if (key === 'left') {
-            const content = '左侧内容'
-            this.setState({
-                modalKey: key,                
-                modalVisible: true,
-                modalTitle: '新增左侧',
-                modalContent: content,
-            })
+        if (key === 'addContract') {
+            hashHistory.push('busi/busi_lease/add?type=' + this.status)
         } else if (key === 'center') {
             const content = '中间内容'
             this.setState({
