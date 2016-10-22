@@ -79,6 +79,13 @@ class InnerTable extends Component {
         this.props.parentHandleClick(key, data)
     }
 
+    isEmpty = (obj) => {
+        for (var name in obj) {
+            return false;
+        }
+        return true;
+    }
+
     render() {
         // 结构赋值，从父组件获取数据
         const {
@@ -91,13 +98,7 @@ class InnerTable extends Component {
             pagination,
             isRowSelection
         } = this.props
-
-        if (!schema) {
-            return (
-                <Err errorMsg="表格数据没有完善，请细查" />
-            )
-        }
-
+        
         // 表格checkbox操作 
         const rowSelection = {
             selectedRowKeys: this.state.selectedRowKeys,
@@ -105,10 +106,9 @@ class InnerTable extends Component {
             onSelectAll: this.handleSelectAll
         }
 
-        // checkbox是否有勾选
+        // checkbox是否有=>勾选/只有一项/多项
         const hasSelected = this.state.selectedRowKeys.length > 0
         const oneSelected = this.state.selectedRowKeys.length == 1
-        // 是否选择了多项
         const multiSelected = this.state.selectedRowKeys.length > 1
 
 
@@ -131,57 +131,67 @@ class InnerTable extends Component {
                 onRowDoubleClick={this.handleDoubleClick} />
         }
 
-        const buttonGroupLeft = schema.left.map((item) => {
-            if (item.key === 'edit' || item.key === 'refund') {
+        /**
+         * 表格操作按钮
+         * {
+         *     left:[],
+         *     center:[],
+         *     right:[]
+         * }
+         */
+        let tableControl = ''
+        if (!this.isEmpty(schema)) {
+            const buttonGroupLeft = schema.left.map((item) => {
+                if (item.key === 'edit' || item.key === 'refund') {
+                    return (
+                        <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                    )
+                }
+                if (item.key === 'receive') {
+                    return (
+                        <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                    )
+                }
                 return (
-                    <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                    <Button type="ghost" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
                 )
-            }
-            if (item.key === 'receive') {
+            })
+            const buttonGroupCenter = schema.center.map((item) => {
                 return (
-                    <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                    <Button type="dashed" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
                 )
-            }
-            return (
-                <Button type="ghost" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-            )
-        })
-        const buttonGroupCenter = schema.center.map((item) => {
-            return (
-                <Button type="dashed" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-            )
-        })
-        const buttonGroupRight = schema.right.map((item) => {
-            return (
-                <Button type="primary" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-            )
-        })
+            })
+            const buttonGroupRight = schema.right.map((item) => {
+                return (
+                    <Button type="primary" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                )
+            })
 
-        
-        return (
-            <section className="m-table">
-                <div className="m-table-effect">
-                    <Affix target={() => document.querySelector('.m-container')} offsetTop={20}>
-                        <div className="clearfix g-mb10">
-                            <Row className="button-group">
-                                <Col span={18}>
-                                    <Row>
-                                        <Col span={15}>
-                                            {buttonGroupLeft}
-                                        </Col>
-                                        <Col span={9} class="g-tar">
-                                            {buttonGroupCenter}
-                                        </Col>
-                                    </Row>
+            tableControl = <div className="m-table-effect">
+                <div className="clearfix g-mb10">
+                    <Row className="button-group">
+                        <Col span={18}>
+                            <Row>
+                                <Col span={15}>
+                                    {buttonGroupLeft}
                                 </Col>
-
-                                <Col span={6} className="button-group g-tar">
-                                    {buttonGroupRight}
+                                <Col span={9} class="g-tar">
+                                    {buttonGroupCenter}
                                 </Col>
                             </Row>
-                        </div>
-                    </Affix>
+                        </Col>
+
+                        <Col span={6} className="button-group g-tar">
+                            {buttonGroupRight}
+                        </Col>
+                    </Row>
                 </div>
+            </div>
+        }
+
+        return (
+            <section className="m-table">
+                {tableControl}
                 {tableContext}
             </section>
         )

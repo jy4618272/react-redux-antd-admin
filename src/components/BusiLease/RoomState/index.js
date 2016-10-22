@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -101,42 +101,51 @@ class RoomState extends Component {
         const {roomState} = this.props.busiLease
         const roomStateList = roomState.roomStateData.map(item => {
             let imgStatus
+            let tips
             if (item.status === '预定') {
                 imgStatus = roomRed
+                tips = (
+                    <div>
+                        <p>房间号：{item.room}</p>
+                    </div>
+                )
             } else if (item.status === '未出租') {
                 imgStatus = roomBlue
+                tips = (
+                    <div>
+                        <p>房间号：{item.room}</p>
+                    </div>
+                )
+                
                 return (
-                    <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
-                        <Link to="/busi/busi_lease/add?type=contract&rentroomid=${item.rentroomid}">
-                            <div className="list-img"><img src={imgStatus} /></div>
-                            <div className="list-txt">{item.build}- {item.room}</div>
-                        </Link>
+                    <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
+                        <Popover content={tips} title={item.status}>
+                            <div>
+                                <Link to={`/busi/busi_lease/add?type=contract&rentroomid=${item.rentroomid}`}>
+                                    <div className="list-img"><img src={imgStatus} /></div>
+                                    <div className="list-txt">{item.build}- {item.room}</div>
+                                </Link>
+                            </div>
+                        </Popover>
                     </Col>
                 )
             } else if (item.status === '已出租') {
                 imgStatus = roomOrange
-                const tips = (
+                tips = (
                     <div>
                         <p>客户名称：{item.organization}</p>
                         <p>合同编码：{item.pactCode}</p>
                     </div>
                 )
-                return (
-                    <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
-                        <Popover content={tips} title={item.status}>
-                            <div>
-                                <div className="list-img"><img src={imgStatus} /></div>
-                                <div className="list-txt">{item.build}- {item.room}</div>
-                            </div>
-                        </Popover>
-                    </Col>
-                )
             }
-
             return (
-                <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
-                    <div className="list-img"><img src={imgStatus} /></div>
-                    <div className="list-txt">{item.build}- {item.room}</div>
+                <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
+                    <Popover content={tips} title={item.status}>
+                        <div>
+                            <div className="list-img"><img src={imgStatus} /></div>
+                            <div className="list-txt">{item.build}- {item.room}</div>
+                        </div>
+                    </Popover>
                 </Col>
             )
         })

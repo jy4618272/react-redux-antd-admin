@@ -17,8 +17,6 @@ import {
     notification
 } from 'antd'
 
-import moment from 'moment'
-
 import './dbTable.less'
 
 const FormItem = Form.Item
@@ -37,7 +35,7 @@ class FormLayout extends Component {
     colWrapper = (formItem, field) => {
         const {getFieldDecorator, isFieldValidating, getFieldError} = this.props.form
         return (
-            <Col key={field.key} sm={8}>
+            <Col key={field.key} sm={8} className="form-col-wrapper">
                 <FormItem
                     key={field.key}
                     label={field.title}
@@ -63,8 +61,6 @@ class FormLayout extends Component {
      * @returns {XML}
      */
     betweenColWrapper = (beginFormItem, endFormItem, field) => {
-        // 布局真是个麻烦事
-        // col内部又用了一个row做布局
         const {getFieldDecorator} = this.props.form
         return (
             <Col key={`start${field.key}`} sm={8}>
@@ -80,7 +76,7 @@ class FormLayout extends Component {
                                 validate: field.validate || []
                             })(
                                 beginFormItem
-                                )}
+                            )}
                         </FormItem>
                     </Col>
                     <Col span={8} offset={0}>
@@ -93,7 +89,7 @@ class FormLayout extends Component {
                                 validate: field.validate || []
                             })(
                                 endFormItem
-                                )}
+                            )}
                         </FormItem>
                     </Col>
                 </Row>
@@ -122,7 +118,7 @@ class FormLayout extends Component {
                         validate: field.validate || []
                     })(
                         formItem
-                        )}
+                    )}
                 </FormItem>
             </Col>
         )
@@ -149,10 +145,18 @@ class FormLayout extends Component {
                         validate: field.validate || []
                     })(
                         formItem
-                        )}
+                    )}
                 </FormItem>
             </Row>
         )
+    }
+
+    
+    handleSelect = (key, value) => {
+        console.log(key, value)
+        if(this.props.parentHandleSelect){
+           this.props.parentHandleSelect(key, value)
+        }
     }
 
     /**
@@ -160,20 +164,12 @@ class FormLayout extends Component {
      *
      * @param field
      */
-    handleSelect = (key, value) => {
-        console.log(key, value)
-        if(this.props.parentHandleSelect){
-           this.props.parentHandleSelect(key, value)
-        }
-    }
     transformSelect = (field) => {
         const options = []
-
         // console.debug('transform field %o to Select component', field)
         field.options.map((option) => {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
-
         return this.colWrapper((
             <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)}>
                 {options}
@@ -188,12 +184,10 @@ class FormLayout extends Component {
      */
     transformRadio = (field) => {
         const options = []
-
         // console.debug('transform field %o to Radio component', field)
         field.options.map((option) => {
             options.push(<Radio key={option.key} value={option.key}>{option.value}</Radio>)
         })
-
         return this.colWrapper((
             <RadioGroup>
                 {options}
@@ -208,12 +202,10 @@ class FormLayout extends Component {
      */
     transformCheckbox = (field) => {
         const options = []
-
         // console.debug('transform field %o to Checkbox component', field)
         field.options.map((option) => {
             options.push({ label: option.value, value: option.key })
         })
-
         return this.colWrapper((
             <CheckboxGroup options={options} />
         ), field)
@@ -227,12 +219,10 @@ class FormLayout extends Component {
      */
     transformMultiSelect = (field) => {
         const options = []
-
         // console.debug('transform field %o to MultipleSelect component', field)
         field.options.forEach((option) => {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
-
         return this.colWrapper((
             <Select multiple placeholder={field.placeholder || '请选择'} size="default">
                 {options}
@@ -279,9 +269,9 @@ class FormLayout extends Component {
                 break
             case 'float':
                 // console.debug('transform field %o to float BETWEEN component', field)
-                beginFormItem = (<InputNumber step={1} size="default"
+                beginFormItem = (<InputNumber step={0.1} size="default"
                     placeholder={field.placeholderBegin || '最小值'} />)
-                endFormItem = (<InputNumber step={1} size="default"
+                endFormItem = (<InputNumber step={0.1} size="default"
                     placeholder={field.placeholderEnd || '最大值'} />)
                 cols.push(this.colWrapper(beginFormItem, endFormItem, field))
                 break
@@ -302,27 +292,28 @@ class FormLayout extends Component {
                                 validate: field.validate || []
                             })(
                                 <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '开始日期'} />
-                                )}
+                            )}
                         </FormItem>
                     </Col>
                 )
-                cols.push(<Col key={field.keyEnd} sm={3}>
-                    <FormItem
-                        key={field.keyEnd}
-                        labelCol={{ span: 0 }}
-                        wrapperCol={{ span: 24 }}
-                        hasFeedback={field.feedBackShow}
-                        help={field.help}>
-                        {getFieldDecorator(field.keyEnd, {
-                            validate: field.validate || []
-                        })(
-                            <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderEnd || '结束日期'} />
+                cols.push(
+                    <Col key={field.keyEnd} sm={3}>
+                        <FormItem
+                            key={field.keyEnd}
+                            labelCol={{ span: 0 }}
+                            wrapperCol={{ span: 24 }}
+                            hasFeedback={field.feedBackShow}
+                            help={field.help}>
+                            {getFieldDecorator(field.keyEnd, {
+                                validate: field.validate || []
+                            })(
+                                <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderEnd || '结束日期'} />
                             )}
-                    </FormItem>
-                </Col>)
+                        </FormItem>
+                    </Col>)
                 break
             default:
-                console.error('unknown dataType: %s', field.dataType);
+                console.error('unknown dataType: %s', field.dataType)
         }
         return cols
     }
@@ -334,10 +325,8 @@ class FormLayout extends Component {
      * @returns {XML}
      */
     transformTwo = (field) => {
-        const {getFieldDecorator} = this.props.form
         switch (field.dataType) {
-            default:  // 默认就是普通的输入框
-                // console.debug('transform field %o to varchar input component', field)
+            default:
                 return this.twoColWrapper((
                     <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
                 ), field)
@@ -435,8 +424,8 @@ class FormLayout extends Component {
                 notification.error({
                     message: '表单填写有误',
                     description: '请按要求正确填写表单'
-                });
-                return false;
+                })
+                return false
             }
             parentHandleSave(newObj)
         })
@@ -463,7 +452,7 @@ class FormLayout extends Component {
     }
 
     render() {
-        const {schema} = this.props
+        const {schema, fromLayoutStyle} = this.props
         const rows = []
         let cols = []
 
@@ -473,9 +462,9 @@ class FormLayout extends Component {
         schema.forEach((field) => {
             // 当前列需要占用几个格子? 普通的都是8, 只有datetime between是16
             let spaceNeed = 8
-            if (field.showType === 'between' || field.dataType === 'datetime') {
-                spaceNeed = 12
-            }
+            // if (field.showType === 'between' || field.dataType === 'datetime') {
+            //     spaceNeed = 12
+            // }
 
             if (field.showType === 'full') {
                 spaceNeed = 24
@@ -543,7 +532,7 @@ class FormLayout extends Component {
         }
 
         return (
-            <section>
+            <section className={fromLayoutStyle}>
                 {rows}
                 {formOpe}
             </section>

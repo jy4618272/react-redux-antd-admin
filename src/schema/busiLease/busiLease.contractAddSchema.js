@@ -13,7 +13,8 @@ module.exports = {
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
-            ]
+            ],
+            disabled: true            
         },
         {
             key: '2',
@@ -149,18 +150,8 @@ module.exports = {
             dataType: 'datetime',
             showType: 'between',
             format: 'YYYY-MM-DD HH:mm:ss',
-             placeholderBegin: '租期开始',
-            placeholderEnd: '租期结束',
-            feedBackShow: true,
-            help:"必填，请选择优惠租期",
-            validate: [
-                {
-                    rules: [
-                        { required: true},
-                    ],
-                    trigger: ['onBlur', 'onChange']
-                }
-            ]
+            placeholderBegin: '租期开始',
+            placeholderEnd: '租期结束'  
         },
         {
             key: 'pactcode',

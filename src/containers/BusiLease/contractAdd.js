@@ -1,23 +1,60 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import {
     Form,
-    Tabs
+    Tabs,
+    Select,
+    Button,
+    Modal,
+    Input,
+    Row,
+    Col,
+    message
 } from 'antd'
 const TabPane = Tabs.TabPane
+const FormItem = Form.Item
+const Option = Select.Option
 
 import {
     FormLayout,
-    InnerTable
+    InnerTable,
+    InnerPagination
 } from 'COMPONENT'
 
+import './contractAdd.less'
+
+import actionBusiLease from 'ACTION/busiLease'
+import actionLease from 'ACTION/configLease'
+
+const mapDispatchToProps = (dispatch) => ({
+    action: bindActionCreators(actionBusiLease, dispatch),
+    actionLease: bindActionCreators(actionLease, dispatch)
+})
 @connect(
-    ({ busiLease }) => ({ busiLease })
+    ({ busiLease, configLease }) => ({ busiLease, configLease }),
+    mapDispatchToProps
 )
 class ContractAdd extends Component {
     constructor(props) {
         super(props)
-        this.initFetchSchema(this.props)
+        this.state = {
+            tabsStatus: 'room',
+            organizationValue: '',
+
+            selectedRowKeys: [],  // 当前有哪些行被选中, 这里只保存key
+            selectedRows: [],  // 当前有哪些行被选中, 保存完整数据
+
+            modalVisible: false,
+            modalTitle: '新增',
+            modalWidth: '800',
+            modalContent: '内容'
+        }
+
+        console.log('1111111', props)
+
+        this.initFetchSchema(props)
+        props.action.fetchContractFrom()
     }
 
     /**
@@ -27,7 +64,7 @@ class ContractAdd extends Component {
      * @param dbName
      * @param tableName
      */
-    initFetchSchema(props){
+    initFetchSchema(props) {
         const routes = props.routes
         const tableName = routes.pop().tableName
 
@@ -53,44 +90,317 @@ class ContractAdd extends Component {
         }
     }
 
+    /**
+     * 向服务端发送select请求, 会返回一个promise对象
+     *
+     * @param  包含了form中所有的查询条件, 再加上page和pageSize, 后端就能拼成完整的sql
+     * @param page
+     * @param pageSize
+     * @returns {Promise}
+     */
+    select = (queryObj, pageSize, skipCount, fetchHandle) => {
+        const hide = message.loading('正在查询...', 0)
+        const tmpObj = Object.assign({}, queryObj)
+
+        tmpObj.pageSize = pageSize
+        tmpObj.skipCount = skipCount
+        fetchHandle(tmpObj)
+        setTimeout(() => {
+            hide()
+        }, 2000)
+    }
+
+    /**
+     * 按当前的查询条件重新查询一次
+     */
+    refresh = (fetchHandle) => {
+        this.select({}, 10, 0, fetchHandle)
+    }
+
+    // 分页
+    handlePageChange = () => {
+        const {
+            roomData,
+            classLineData,
+            policyData,
+            accountManagerData,
+            contractTplData
+        } = this.props.configLease
+
+        const {
+            fetchRoomTable,
+            fetchClassLineTable,
+            fetchPolicyTable,
+            fetchManagerTable,
+            fetchContractTable
+        } = this.props.actionLease
+
+        let page = (page <= 1) ? 0 : (page - 1) * 10
+        if (this.status === 'room') {
+            this.select(this.queryObj, roomData.pageSize, page, fetchRoomTable)
+        } else if (this.status === 'classLine') {
+            this.select(this.queryObj, classLineData.pageSize, page, fetchClassLineTable)
+        } else if (this.status === 'policy') {
+            this.select(this.queryObj, policyData.pageSize, page, fetchPolicyTable)
+        } else if (this.status === 'accountManager') {
+            this.select(this.queryObj, accountManagerData.pageSize, page, fetchManagerTable)
+        } else if (this.status === 'contractTpl') {
+            this.select(this.queryObj, contractTplData.pageSize, page, fetchContractTable)
+        }
+    }
+
+    // 下拉选择
+    parentHandleSelect = (key, value) => {
+        const { contractAdd } = this.props.busiLease
+        // 合同模板
+        if (key === 'modelname') {
+            contractAdd.contractFrom[0].options.map(item => {
+                if (item.value === value) {
+                    this.props.form.setFieldsValue({
+                        pactkind: item.pactkind
+                    })
+                }
+            })
+        }
+    }
+
     // 合同数据来演-选项卡
-    handleContractDataFrom = (activeKey) => {
+    handleTabsContractFrom = (activeKey) => {
         console.log(activeKey)
+        this.setState({
+            tabsStatus: activeKey
+        })
+    }
+
+    /**
+     * 点击获取客户信息
+     */
+    handleInputChange = (e) => {
+        this.setState({
+            organizationValue: e.target.value,
+        });
+    }
+
+    // 获取客户信息-搜索
+    handleSearch = () => {
+        const { action } = this.props
+        action.fetchContractOrganization({
+            keywords: this.state.organizationValue
+        })
+    }
+
+    // 表格按钮
+    parentHandleClick = (key) => {
+        const {
+            roomData,
+            classLineData,
+            policyData,
+            accountManagerData,
+            contractTplData
+        } = this.props.configLease
+
+        const {
+            fetchRoomTable,
+            fetchClassLineTable,
+            fetchPolicyTable,
+            fetchManagerTable,
+            fetchContractTable
+        } = this.props.actionLease
+
+        if (key === 'addRoom' && this.state.tabsStatus === 'room') {
+            let content = <div>
+                <InnerTable
+                    loading={roomData.tableLoading}
+                    columns={roomData.tableColumns}
+                    dataSource={roomData.tableData}
+                    isRowSelection={true}
+                    bordered={true}
+                    pagination={false} />
+                <InnerPagination
+                    total={roomData.total}
+                    pageSize={roomData.pageSize}
+                    skipCount={roomData.skipCount}
+                    parentHandlePageChange={this.handlePageChange} />
+            </div>
+
+            this.refresh(fetchRoomTable)
+
+            this.setState({
+                modalVisible: true,
+                modalTitle: '选择房间',
+                modalContent: content
+            })
+        }
+    }
+
+    // 获取客户信息
+    handleGetOrganization = () => {
+        const {
+            contractOrganization
+        } = this.props.busiLease.contractAdd
+        const content = <div className="m-search-modal">
+            <div className="m-search-bar">
+                <Input
+                    placeholder="请选择身份证号|邮箱|手机号|会员名|会员卡号"
+                    onChange={this.handleInputChange}
+                    onFocus={this.handleFocusBlur}
+                    onBlur={this.handleFocusBlur}
+                    onPressEnter={this.handleSearch} />
+                <Button icon="search" type="primary" size="default" onClick={this.handleSearch}>搜索</Button>
+            </div>
+            <InnerTable
+                columns={contractOrganization.tableColumns}
+                dataSource={contractOrganization.tableData}
+                schema={
+                    {
+                        left: [],
+                        center: [],
+                        right: []
+                    }
+                }
+                isRowSelection={true}
+                bordered={true}
+                pagination={false} />
+            <InnerPagination
+                total={contractOrganization.total}
+                pageSize={contractOrganization.pageSize}
+                skipCount={contractOrganization.skipCount}
+                parentHandlePageChange={this.handlePageChange} />
+        </div>
+        this.setState({
+            modalVisible: true,
+            modalTitle: '选择客户',
+            modalContent: content
+        })
+    }
+
+    // 弹框打开
+    handleModalOk = () => {
+
+    }
+
+    // 弹框关闭
+    handleModalCancel = () => {
+        this.setState({
+            modalVisible: false
+        })
     }
 
     render() {
         const {
-            contractAddCustom
+            contractAdd
         } = this.props.busiLease
+
+        // 分期select-options
         return (
-            <section className="padding m-contract-add">
+            <section className="padding m-contract-add g-mt20">
+                <Modal
+                    visible={this.state.modalVisible}
+                    title={this.state.modalTitle}
+                    width={this.state.modalWidth}
+                    onOk={this.handleModalOk}
+                    onCancel={this.handleModalCancel}>
+                    {this.state.modalContent}
+                </Modal>
                 <Form horizontal>
-                    {/* 客户选择 */}
+                    {/* 获取合同模板 */}
                     <FormLayout
-                        schema={this.addSchema['organization']}
+                        schema={contractAdd.contractFrom}
                         form={this.props.form}
-                        setFields={this.props.setFields}
-                        />
+                        fromLayoutStyle="g-border-bottom"
+                        parentHandleSelect={this.parentHandleSelect} />
+
+                    {/* 客户名称 */}
+                    <div className="g-border-bottom">
+                        <div className="button-get-organization">
+                            <Button type="primary" onClick={this.handleGetOrganization}>点击获取客户信息</Button>
+                        </div>
+                        <FormLayout
+                            schema={this.addSchema['organization']}
+                            form={this.props.form} />
+                    </div>
 
                     {/* 合同号 */}
-                    <Tabs className="g-mt20" defaultActiveKey="contractRoom" onChange={this.handleContractDataFrom}>
-                        <TabPane tab="合同房间" key="contractRoom">
-                            <InnerTable />
+                    <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                        <TabPane tab="合同房间" key="room">
+                            <div className="padding-lr g-mb20">
+                                <InnerTable
+                                    columns={contractAdd.contractRoomTable.tableColumns}
+                                    dataSource={contractAdd.contractRoomTable.tableData}
+                                    schema={contractAdd.contractRoomTable.topButtons}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                            </div>
                         </TabPane>
-                        <TabPane tab="合同班线" key="contractLine">
-                            <InnerTable />
+                        <TabPane tab="合同班线" key="classLine">
+                            <div className="padding-lr g-mb20">
+                                <InnerTable
+                                    columns={contractAdd.contractLineTable.tableColumns}
+                                    dataSource={contractAdd.contractLineTable.tableData}
+                                    schema={contractAdd.contractLineTable.topButtons}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                            </div>
                         </TabPane>
-                        <TabPane tab="合同优惠冲抵" key="contractDiscount">
-                            <InnerTable />
+                        <TabPane tab="合同优惠冲抵" key="policy">
+                            <div className="padding-lr g-mb20">
+                                <InnerTable
+                                    columns={contractAdd.contractPolicyTable.tableColumns}
+                                    dataSource={contractAdd.contractPolicyTable.tableData}
+                                    schema={contractAdd.contractPolicyTable.topButtons}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                            </div>
                         </TabPane>
                         <TabPane tab="履约保证金冲抵" key="contractBond">
-                            <InnerTable />
+                            <div className="padding-lr g-mb20">
+                                <InnerTable
+                                    columns={contractAdd.contractBondTable.tableColumns}
+                                    dataSource={contractAdd.contractBondTable.tableData}
+                                    schema={contractAdd.contractBondTable.topButtons}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                            </div>
                         </TabPane>
                         <TabPane tab="合同附件" key="contractField">
-                            <InnerTable />
+                            <div className="padding-lr g-mb20">
+                                <InnerTable
+                                    columns={contractAdd.contractAppendicesTable.tableColumns}
+                                    dataSource={contractAdd.contractAppendicesTable.tableData}
+                                    schema={contractAdd.contractAppendicesTable.topButtons}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                            </div>
                         </TabPane>
                         <TabPane tab="分期明细" key="contractShow">
-                            <InnerTable />
+                            <div className="padding-lr g-mb20">
+                                <FormItem
+                                    key="stages"
+                                    label="分期付款"
+                                    labelCol={{ span: 2 }}
+                                    wrapperCol={{ span: 4 }}>
+                                    {this.props.form.getFieldDecorator('stages', )(
+                                        <Select placeholder="请选择" size="default">
+                                            <Option key="1" value="第1期">第1期</Option>
+                                            <Option key="2" value="第2期">第2期</Option>
+                                            <Option key="3" value="第3期">第3期</Option>
+                                            <Option key="4" value="第4期">第4期</Option>
+                                        </Select>
+                                    )}
+                                </FormItem>
+                                <InnerTable
+                                    columns={contractAdd.contractStagesTable.tableColumns}
+                                    dataSource={contractAdd.contractStagesTable.tableData}
+                                    schema={contractAdd.contractStagesTable.topButtons}
+                                    bordered={true}
+                                    parentHandleClick={this.parentHandleClick}
+                                    pagination={false} />
+                            </div>
                         </TabPane>
                     </Tabs>
 
@@ -98,6 +408,7 @@ class ContractAdd extends Component {
                     <FormLayout
                         schema={this.addSchema['contractInfo']}
                         form={this.props.form}
+                        FormLayoutStyle="g-border-bottom"
                         showSave={this.props.showSave}
                         setFields={this.props.setContractInfoFields}
                         />

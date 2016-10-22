@@ -100,7 +100,6 @@ class Lease extends Component {
 
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
-
         fetchHandle(tmpObj)
         setTimeout(() => {
             hide()
