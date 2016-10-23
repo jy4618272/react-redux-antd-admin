@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -24,6 +24,7 @@ const receiveBuildList = (res) => ({
 const fetchBuildList = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之获取楼号：', data, res)
             const options = []
             res.data.map(item => {
@@ -35,6 +36,7 @@ const fetchBuildList = (data) => {
                 dispatch(receiveBuildList({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -52,6 +54,7 @@ const fetchRoomEdit = (data) => {
     return dispatch => {
         dispatch(requestRoomEdit())
         xhr('post', leasePath + '/rentroomcs/selectRentRoomById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveRoomEdit(res))
@@ -59,6 +62,7 @@ const fetchRoomEdit = (data) => {
                 dispatch(receiveRoomEdit({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -75,6 +79,7 @@ const receiveRoomUpdate = (res) => ({
 const fetchRoomUpdate = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/rentroomcs/updateRentRoomStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0) 
             console.log('房间设置之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveRoomUpdate(res))
@@ -87,6 +92,7 @@ const fetchRoomUpdate = (data) => {
                 dispatch(receiveRoomUpdate({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -94,6 +100,7 @@ const fetchRoomUpdate = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
+    fetchBuildList,
     fetchRoomEdit,
     fetchRoomUpdate
 }

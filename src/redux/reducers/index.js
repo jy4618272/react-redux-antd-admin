@@ -7,6 +7,8 @@ import menuList from 'REDUCER/menuList'
 import busiFinance from 'REDUCER/busiFinance'
 import busiLease from 'REDUCER/busiLease'
 import configLease from 'REDUCER/configLease'
+// import configBase from 'REDUCER/configBase'
+import configRights from 'REDUCER/configRights'
 
 // ================================
 // 同步的 Reducers（即应用初始化所必需的）
@@ -18,7 +20,9 @@ const syncReducers = {
 	menuList: menuList,
 	busiFinance: busiFinance,
 	busiLease: busiLease,
-	configLease: configLease
+	configLease: configLease,
+	// configBase: configBase,
+	configRights: configRights
 }
 
 // ================================

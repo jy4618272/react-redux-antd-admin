@@ -1,40 +1,39 @@
-import { message } from 'antd'
+import {message} from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import {errHandler, leasePath} from 'SERVICE/config'
 
 // ================================
 // Action Type
 // ================================
-const REQUEST_CONTRACT_TABLE = 'REQUEST_CONTRACT_TABLE'
-const RECEIVE_CONTRACT_TABLE = 'RECEIVE_CONTRACT_TABLE'
-
+const REQUEST_ROLE_TABLE = 'REQUEST_ROLE_TABLE'
+const RECEIVE_ROLE_TABLE = 'RECEIVE_ROLE_TABLE'
 
 // ================================
 // Action Creator
 // ================================
-const requestContractTable = () => ({
-    type: REQUEST_CONTRACT_TABLE
+// 请求页面数据
+const requestRoleTable = () => ({
+    type: REQUEST_ROLE_TABLE
 })
 
-const receiveContractTable = (res) => ({
-    type: RECEIVE_CONTRACT_TABLE,
+const receiveRoleTable = (res) => ({
+    type: RECEIVE_ROLE_TABLE,
     payload: res
 })
-
-const fetchContractTable = (data) => {
+const fetchRoleTable = (data) => {
     return dispatch => {
-        dispatch(requestContractTable())
-        xhr('post', leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
+        dispatch(requestRoleTable())
+        xhr('post', leasePath + '/', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-
-            console.log('租赁管理-合同获取数据：', newRes)
+            console.log('角色管理之列表', newRes)
+            
             if (res.result === 'success') {
-                dispatch(receiveContractTable(newRes))
+                dispatch(receiveRoleTable(newRes))
             } else {
-                dispatch(receiveContractTable({}))
+                dispatch(receiveRoleTable({}))
                 errHandler(res.result)
             }
             hide()
@@ -42,18 +41,19 @@ const fetchContractTable = (data) => {
     }
 }
 
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractTable
+    fetchRoleTable
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_CONTRACT_TABLE]: (contract) => ({
-        ...contract,
+    [REQUEST_ROLE_TABLE]: (roleData) => ({
+        ...roleData,
         tableLoading: true
     }),
-    [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
-        ...contract,
+    [RECEIVE_ROLE_TABLE]: (roleData, {payload: res}) => ({
+        ...roleData,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
@@ -61,3 +61,4 @@ export const ACTION_HANDLERS = {
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
     })
 }
+

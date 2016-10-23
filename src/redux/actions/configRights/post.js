@@ -1,40 +1,39 @@
-import { message } from 'antd'
+import {message} from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import {errHandler, leasePath} from 'SERVICE/config'
 
 // ================================
 // Action Type
 // ================================
-const REQUEST_CONTRACT_TABLE = 'REQUEST_CONTRACT_TABLE'
-const RECEIVE_CONTRACT_TABLE = 'RECEIVE_CONTRACT_TABLE'
-
+const REQUEST_POST_TABLE = 'REQUEST_POST_TABLE'
+const RECEIVE_POST_TABLE = 'RECEIVE_POST_TABLE'
 
 // ================================
 // Action Creator
 // ================================
-const requestContractTable = () => ({
-    type: REQUEST_CONTRACT_TABLE
+// 请求页面数据
+const requestPostTable = () => ({
+    type: REQUEST_POST_TABLE
 })
 
-const receiveContractTable = (res) => ({
-    type: RECEIVE_CONTRACT_TABLE,
+const receivePostTable = (res) => ({
+    type: RECEIVE_POST_TABLE,
     payload: res
 })
-
-const fetchContractTable = (data) => {
+const fetchPostTable = (data) => {
     return dispatch => {
-        dispatch(requestContractTable())
-        xhr('post', leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
+        dispatch(requestPostTable())
+        xhr('post', leasePath + '/', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-
-            console.log('租赁管理-合同获取数据：', newRes)
+            console.log('岗位管理之列表', newRes)
+            
             if (res.result === 'success') {
-                dispatch(receiveContractTable(newRes))
+                dispatch(receivePostTable(newRes))
             } else {
-                dispatch(receiveContractTable({}))
+                dispatch(receivePostTable({}))
                 errHandler(res.result)
             }
             hide()
@@ -42,18 +41,19 @@ const fetchContractTable = (data) => {
     }
 }
 
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractTable
+    fetchPostTable
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_CONTRACT_TABLE]: (contract) => ({
-        ...contract,
+    [REQUEST_POST_TABLE]: (postData) => ({
+        ...postData,
         tableLoading: true
     }),
-    [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
-        ...contract,
+    [RECEIVE_POST_TABLE]: (postData, {payload: res}) => ({
+        ...postData,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
@@ -61,3 +61,4 @@ export const ACTION_HANDLERS = {
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
     })
 }
+

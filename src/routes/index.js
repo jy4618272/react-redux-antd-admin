@@ -10,14 +10,14 @@ import {
 import Layout from 'CONTAINER/Layout'
 import Home from 'CONTAINER/Home'
 
-import Busi from 'CONTAINER/BusiFinance/Home'
+import Busi from 'CONTAINER/Home/Busi'
 import BusiFinance from 'CONTAINER/BusiFinance'
 import BusiFinanceDetail from 'CONTAINER/BusiFinance/FinanceDetail'
 
 import BusiLease from 'CONTAINER/BusiLease'
 import BusiLeaseContractAdd from 'CONTAINER/BusiLease/ContractAdd'
 
-import ConfigBase from 'CONTAINER/ConfigBase'
+import ConfigBase from 'CONTAINER/ConfigBase/insert'
 import ConfigRights from 'CONTAINER/ConfigRights'
 import ConfigLease from 'CONTAINER/ConfigLease'
 import ConfigLeaseAdd from 'CONTAINER/ConfigLease/LeaseAdd'

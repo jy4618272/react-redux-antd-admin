@@ -22,8 +22,7 @@ const leasePath = '/tfPassParkAdmin'
 const errHandler = (e) => {
 	notification.error({
 		message: '出错啦!',
-		description: `请联系管理员, 错误信息: ${e}`,
-		duration: 0,
+		description: `请联系管理员, 错误信息: ${e}`
 	});
 	// alert('[ XHR:Failed ] 详情请看控制台')
 	console.error('[ XHR:Failed ]', e)

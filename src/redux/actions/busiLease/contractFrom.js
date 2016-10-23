@@ -1,4 +1,7 @@
-import { notification } from 'antd'
+import { 
+    message,
+    notification 
+} from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -19,6 +22,7 @@ const receiveContractFrom = (res) => ({
 const fetchContractFrom = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/pactprintmodelcs/selectTypeBySite', data, (res) => {
+            const hide = message.loading('正在查询...', 0)
             const newRes = []
             res.data.map(item => {
                 newRes.push({
@@ -34,6 +38,7 @@ const fetchContractFrom = (data) => {
                 dispatch(receiveContractFrom({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

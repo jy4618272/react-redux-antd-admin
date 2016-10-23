@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 import moment from 'moment'
@@ -27,6 +27,7 @@ const fetchPolicyEdit = (data) => {
     return dispatch => {
         dispatch(requestPolicyEdit())
         xhr('post', leasePath + '/rentpromotioncs/selectRentPromotionById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('政策优惠之编辑', res)
             const oldObj = res.data
             const newObj = {}
@@ -40,13 +41,13 @@ const fetchPolicyEdit = (data) => {
                 }
             }
 
-            console.log('1111', newObj)
             if (res.result === 'success') {
                 dispatch(receivePolicyEdit(newObj))
             } else {
                 dispatch(receivePolicyEdit({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -63,10 +64,11 @@ const receivePolicyUpdate = (res) => ({
 const fetchPolicyUpdate = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/rentpromotioncs/updateRentPromotion', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('政策优惠之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receivePolicyUpdate(res))
-                notification.success({
+                message, notification.success({
                     message: '更新成功',
                     description: '政策优惠更新数据成功'
                 });
@@ -75,6 +77,7 @@ const fetchPolicyUpdate = (data) => {
                 dispatch(receivePolicyUpdate({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

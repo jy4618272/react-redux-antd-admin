@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -29,6 +29,7 @@ const fetchClassLineEdit = (data) => {
     return dispatch => {
         dispatch(requestLineEdit())
         xhr('post', leasePath + '/transportlinecs/selectTransportLineById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('班线管理之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveLineEdit(res))
@@ -36,6 +37,7 @@ const fetchClassLineEdit = (data) => {
                 dispatch(receiveLineEdit({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -52,6 +54,7 @@ const receiveClassLineUpdate = (res) => ({
 const fetchClassLineUpdate = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/transportlinecs/updateTransportLine', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('班线管理之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveClassLineUpdate(res))
@@ -64,6 +67,7 @@ const fetchClassLineUpdate = (data) => {
                 dispatch(receiveClassLineUpdate({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

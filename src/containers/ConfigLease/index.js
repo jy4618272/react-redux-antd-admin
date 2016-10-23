@@ -95,15 +95,12 @@ class Lease extends Component {
      * @returns {Promise}
      */
     select = (queryObj, pageSize, skipCount, fetchHandle) => {
-        const hide = message.loading('正在查询...', 0)
         const tmpObj = Object.assign({}, queryObj)
 
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
+
         fetchHandle(tmpObj)
-        setTimeout(() => {
-            hide()
-        }, 2000)
     }
 
     /**

@@ -1,4 +1,4 @@
-import {notification} from 'antd'
+import { message } from 'antd'
 import xhr from 'SERVICE'
 import {errHandler, leasePath} from 'SERVICE/config'
 
@@ -25,6 +25,7 @@ const fetchPolicyTable = (data) => {
     return dispatch => {
         dispatch(requestPolicyTable())
         xhr('post', leasePath + '/rentpromotioncs/selectRentPromotionDetail', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -36,6 +37,7 @@ const fetchPolicyTable = (data) => {
                 dispatch(receivePolicyTable({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

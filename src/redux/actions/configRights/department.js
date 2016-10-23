@@ -5,35 +5,35 @@ import {errHandler, leasePath} from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const REQUEST_CONTRACT_TABLE = 'REQUEST_CONTRACT_TABLE'
-const RECEIVE_CONTRACT_TABLE = 'RECEIVE_CONTRACT_TABLE'
+const REQUEST_DEPARTMENT_TABLE = 'REQUEST_DEPARTMENT_TABLE'
+const RECEIVE_DEPARTMENT_TABLE = 'RECEIVE_DEPARTMENT_TABLE'
 
 // ================================
 // Action Creator
 // ================================
 // 请求页面数据
-const requestContractTable = () => ({
-    type: REQUEST_CONTRACT_TABLE
+const requestDepartmentTable = () => ({
+    type: REQUEST_DEPARTMENT_TABLE
 })
 
-const receiveContractTable = (res) => ({
-    type: RECEIVE_CONTRACT_TABLE,
+const receiveDepartmentTable = (res) => ({
+    type: RECEIVE_DEPARTMENT_TABLE,
     payload: res
 })
-const fetchContractTable = (data) => {
+const fetchDepartmentTable = (data) => {
     return dispatch => {
-        dispatch(requestContractTable())
-        xhr('post', leasePath + '/pactprintmodelcs/selectList', data, function (res) {
+        dispatch(requestDepartmentTable())
+        xhr('post', leasePath + '/', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('合同模板之列表', newRes)
+            console.log('部门管理之列表', newRes)
             
             if (res.result === 'success') {
-                dispatch(receiveContractTable(newRes))
+                dispatch(receiveDepartmentTable(newRes))
             } else {
-                dispatch(receiveContractTable({}))
+                dispatch(receiveDepartmentTable({}))
                 errHandler(res.result)
             }
             hide()
@@ -41,18 +41,19 @@ const fetchContractTable = (data) => {
     }
 }
 
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractTable
+    fetchDepartmentTable
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_CONTRACT_TABLE]: (contractData) => ({
-        ...contractData,
+    [REQUEST_DEPARTMENT_TABLE]: (departmentData) => ({
+        ...departmentData,
         tableLoading: true
     }),
-    [RECEIVE_CONTRACT_TABLE]: (contractData, {payload: res}) => ({
-        ...contractData,
+    [RECEIVE_DEPARTMENT_TABLE]: (departmentData, {payload: res}) => ({
+        ...departmentData,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
@@ -60,3 +61,4 @@ export const ACTION_HANDLERS = {
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
     })
 }
+

@@ -1,4 +1,6 @@
-import { notification } from 'antd'
+import { 
+    message
+} from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -18,6 +20,7 @@ const receiveContractOrganization = (res) => ({
 const fetchContractOrganization = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/rentpactfullinfocs/selectOrganizationByPhoneOrPartyName', data, (res) => {
+            const hide = message.loading('正在查询...', 0)
             console.log('获取【客户信息】数据：', res)
             if (res.result === 'success') {
                 dispatch(receiveContractOrganization(res))
@@ -25,6 +28,7 @@ const fetchContractOrganization = (data) => {
                 dispatch(receiveContractOrganization({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

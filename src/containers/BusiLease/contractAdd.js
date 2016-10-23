@@ -19,7 +19,8 @@ const Option = Select.Option
 import {
     FormLayout,
     InnerTable,
-    InnerPagination
+    InnerPagination,
+    ModalTable
 } from 'COMPONENT'
 
 import './contractAdd.less'
@@ -31,27 +32,25 @@ const mapDispatchToProps = (dispatch) => ({
     action: bindActionCreators(actionBusiLease, dispatch),
     actionLease: bindActionCreators(actionLease, dispatch)
 })
+
+
 @connect(
     ({ busiLease, configLease }) => ({ busiLease, configLease }),
     mapDispatchToProps
 )
-class ContractAdd extends Component {
+class ContractInsert extends Component {
     constructor(props) {
         super(props)
         this.state = {
             tabsStatus: 'room',
             organizationValue: '',
 
-            selectedRowKeys: [],  // 当前有哪些行被选中, 这里只保存key
-            selectedRows: [],  // 当前有哪些行被选中, 保存完整数据
-
             modalVisible: false,
             modalTitle: '新增',
-            modalWidth: '800',
-            modalContent: '内容'
+            modalWidth: '900'
         }
 
-        console.log('1111111', props)
+        console.log('21111111', props)
 
         this.initFetchSchema(props)
         props.action.fetchContractFrom()
@@ -99,15 +98,10 @@ class ContractAdd extends Component {
      * @returns {Promise}
      */
     select = (queryObj, pageSize, skipCount, fetchHandle) => {
-        const hide = message.loading('正在查询...', 0)
         const tmpObj = Object.assign({}, queryObj)
-
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
         fetchHandle(tmpObj)
-        setTimeout(() => {
-            hide()
-        }, 2000)
     }
 
     /**
@@ -118,7 +112,8 @@ class ContractAdd extends Component {
     }
 
     // 分页
-    handlePageChange = () => {
+    handlePageChange = (page) => {
+        const {tabsStatus} = this.state
         const {
             roomData,
             classLineData,
@@ -135,26 +130,28 @@ class ContractAdd extends Component {
             fetchContractTable
         } = this.props.actionLease
 
-        let page = (page <= 1) ? 0 : (page - 1) * 10
-        if (this.status === 'room') {
-            this.select(this.queryObj, roomData.pageSize, page, fetchRoomTable)
-        } else if (this.status === 'classLine') {
+        page = (page <= 1) ? 0 : (page - 1) * 10
+        if (tabsStatus === 'room') {
+            this.select({
+                status: '未出租'
+            }, roomData.pageSize, page, fetchRoomTable)
+        } else if (tabsStatus === 'classLine') {
             this.select(this.queryObj, classLineData.pageSize, page, fetchClassLineTable)
-        } else if (this.status === 'policy') {
+        } else if (tabsStatus === 'policy') {
             this.select(this.queryObj, policyData.pageSize, page, fetchPolicyTable)
-        } else if (this.status === 'accountManager') {
+        } else if (tabsStatus === 'accountManager') {
             this.select(this.queryObj, accountManagerData.pageSize, page, fetchManagerTable)
-        } else if (this.status === 'contractTpl') {
+        } else if (tabsStatus === 'contractTpl') {
             this.select(this.queryObj, contractTplData.pageSize, page, fetchContractTable)
         }
     }
 
     // 下拉选择
     parentHandleSelect = (key, value) => {
-        const { contractAdd } = this.props.busiLease
+        const { busiLease } = this.props
         // 合同模板
         if (key === 'modelname') {
-            contractAdd.contractFrom[0].options.map(item => {
+            busiLease.contractFrom[0].options.map(item => {
                 if (item.value === value) {
                     this.props.form.setFieldsValue({
                         pactkind: item.pactkind
@@ -208,28 +205,25 @@ class ContractAdd extends Component {
         } = this.props.actionLease
 
         if (key === 'addRoom' && this.state.tabsStatus === 'room') {
-            let content = <div>
-                <InnerTable
-                    loading={roomData.tableLoading}
-                    columns={roomData.tableColumns}
-                    dataSource={roomData.tableData}
-                    isRowSelection={true}
-                    bordered={true}
-                    pagination={false} />
-                <InnerPagination
-                    total={roomData.total}
-                    pageSize={roomData.pageSize}
-                    skipCount={roomData.skipCount}
-                    parentHandlePageChange={this.handlePageChange} />
-            </div>
-
-            this.refresh(fetchRoomTable)
-
             this.setState({
                 modalVisible: true,
-                modalTitle: '选择房间',
-                modalContent: content
+                modalTitle: '选择房间'
             })
+            this.select({
+                status: '未出租'
+            }, 10, 0, fetchRoomTable)
+        } else if (key === 'addLine' && this.state.tabsStatus === 'classLine') {
+            this.setState({
+                modalVisible: true,
+                modalTitle: '选择班线'
+            })
+            this.refresh(fetchClassLineTable)
+        } else if (key === 'addPolicy' && this.state.tabsStatus === 'policy') {
+            this.setState({
+                modalVisible: true,
+                modalTitle: '选择优惠'
+            })
+            this.refresh(fetchPolicyTable)
         }
     }
 
@@ -237,7 +231,7 @@ class ContractAdd extends Component {
     handleGetOrganization = () => {
         const {
             contractOrganization
-        } = this.props.busiLease.contractAdd
+        } = this.props.busiLease
         const content = <div className="m-search-modal">
             <div className="m-search-bar">
                 <Input
@@ -251,13 +245,7 @@ class ContractAdd extends Component {
             <InnerTable
                 columns={contractOrganization.tableColumns}
                 dataSource={contractOrganization.tableData}
-                schema={
-                    {
-                        left: [],
-                        center: [],
-                        right: []
-                    }
-                }
+                schema={[]}
                 isRowSelection={true}
                 bordered={true}
                 pagination={false} />
@@ -274,9 +262,14 @@ class ContractAdd extends Component {
         })
     }
 
-    // 弹框打开
+    // 弹框确认
     handleModalOk = () => {
+        const {
+            action
+        } = this.props
 
+        alert(JSON.stringify(this.state.selectedRows))
+        // action.insertRoomData(this.state.selectedRows)
     }
 
     // 弹框关闭
@@ -288,8 +281,20 @@ class ContractAdd extends Component {
 
     render() {
         const {
-            contractAdd
-        } = this.props.busiLease
+            busiLease,
+            configLease
+        } = this.props
+
+        const {tabsStatus} = this.state
+        let modalContent = ''
+
+        if (tabsStatus === 'room') {
+            modalContent = <ModalTable dataSource={configLease.roomData} handlePageChange={this.handlePageChange} />
+        } else if (tabsStatus === 'classLine') {
+            modalContent = <ModalTable dataSource={configLease.classLineData} handlePageChange={this.handlePageChange} />
+        } else if (tabsStatus === 'policy') {
+            modalContent = <ModalTable dataSource={configLease.policyData} handlePageChange={this.handlePageChange} />
+        }
 
         // 分期select-options
         return (
@@ -300,12 +305,12 @@ class ContractAdd extends Component {
                     width={this.state.modalWidth}
                     onOk={this.handleModalOk}
                     onCancel={this.handleModalCancel}>
-                    {this.state.modalContent}
+                    {modalContent}
                 </Modal>
                 <Form horizontal>
                     {/* 获取合同模板 */}
                     <FormLayout
-                        schema={contractAdd.contractFrom}
+                        schema={busiLease.contractFrom}
                         form={this.props.form}
                         fromLayoutStyle="g-border-bottom"
                         parentHandleSelect={this.parentHandleSelect} />
@@ -325,9 +330,9 @@ class ContractAdd extends Component {
                         <TabPane tab="合同房间" key="room">
                             <div className="padding-lr g-mb20">
                                 <InnerTable
-                                    columns={contractAdd.contractRoomTable.tableColumns}
-                                    dataSource={contractAdd.contractRoomTable.tableData}
-                                    schema={contractAdd.contractRoomTable.topButtons}
+                                    columns={busiLease.contractRoomTable.tableColumns}
+                                    dataSource={busiLease.contractRoomTable.tableData}
+                                    schema={busiLease.contractRoomTable.topButtons}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -336,9 +341,9 @@ class ContractAdd extends Component {
                         <TabPane tab="合同班线" key="classLine">
                             <div className="padding-lr g-mb20">
                                 <InnerTable
-                                    columns={contractAdd.contractLineTable.tableColumns}
-                                    dataSource={contractAdd.contractLineTable.tableData}
-                                    schema={contractAdd.contractLineTable.topButtons}
+                                    columns={busiLease.contractLineTable.tableColumns}
+                                    dataSource={busiLease.contractLineTable.tableData}
+                                    schema={busiLease.contractLineTable.topButtons}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -347,9 +352,9 @@ class ContractAdd extends Component {
                         <TabPane tab="合同优惠冲抵" key="policy">
                             <div className="padding-lr g-mb20">
                                 <InnerTable
-                                    columns={contractAdd.contractPolicyTable.tableColumns}
-                                    dataSource={contractAdd.contractPolicyTable.tableData}
-                                    schema={contractAdd.contractPolicyTable.topButtons}
+                                    columns={busiLease.contractPolicyTable.tableColumns}
+                                    dataSource={busiLease.contractPolicyTable.tableData}
+                                    schema={busiLease.contractPolicyTable.topButtons}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -358,9 +363,9 @@ class ContractAdd extends Component {
                         <TabPane tab="履约保证金冲抵" key="contractBond">
                             <div className="padding-lr g-mb20">
                                 <InnerTable
-                                    columns={contractAdd.contractBondTable.tableColumns}
-                                    dataSource={contractAdd.contractBondTable.tableData}
-                                    schema={contractAdd.contractBondTable.topButtons}
+                                    columns={busiLease.contractBondTable.tableColumns}
+                                    dataSource={busiLease.contractBondTable.tableData}
+                                    schema={busiLease.contractBondTable.topButtons}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -369,9 +374,9 @@ class ContractAdd extends Component {
                         <TabPane tab="合同附件" key="contractField">
                             <div className="padding-lr g-mb20">
                                 <InnerTable
-                                    columns={contractAdd.contractAppendicesTable.tableColumns}
-                                    dataSource={contractAdd.contractAppendicesTable.tableData}
-                                    schema={contractAdd.contractAppendicesTable.topButtons}
+                                    columns={busiLease.contractAppendicesTable.tableColumns}
+                                    dataSource={busiLease.contractAppendicesTable.tableData}
+                                    schema={busiLease.contractAppendicesTable.topButtons}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -394,9 +399,9 @@ class ContractAdd extends Component {
                                     )}
                                 </FormItem>
                                 <InnerTable
-                                    columns={contractAdd.contractStagesTable.tableColumns}
-                                    dataSource={contractAdd.contractStagesTable.tableData}
-                                    schema={contractAdd.contractStagesTable.topButtons}
+                                    columns={busiLease.contractStagesTable.tableColumns}
+                                    dataSource={busiLease.contractStagesTable.tableData}
+                                    schema={busiLease.contractStagesTable.topButtons}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -418,6 +423,6 @@ class ContractAdd extends Component {
     }
 }
 
-ContractAdd = Form.create()(ContractAdd)
+ContractInsert = Form.create()(ContractInsert)
 
-export default ContractAdd
+export default ContractInsert

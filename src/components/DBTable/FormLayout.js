@@ -107,12 +107,12 @@ class FormLayout extends Component {
     twoColWrapper = (formItem, field) => {
         const {getFieldDecorator} = this.props.form
         return (
-            <Col key={field.key} sm={12}>
+            <Col key={field.key} sm={16}>
                 <FormItem
                     key={field.key}
                     label={field.title}
-                    labelCol={{ span: 4 }}
-                    wrapperCol={{ span: 20 }}
+                    labelCol={{ span: 3 }}
+                    wrapperCol={{ span: 21 }}
                     hasFeedback={field.feedBackShow}>
                     {getFieldDecorator(field.key, {
                         validate: field.validate || []

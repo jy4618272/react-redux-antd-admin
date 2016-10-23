@@ -1,6 +1,9 @@
-import {notification} from 'antd'
+import { 
+    message,
+    notification 
+} from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, financePath} from 'SERVICE/config'
+import { errHandler, financePath } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -28,6 +31,8 @@ const fetchFinanceTable = (data) => {
     return dispatch => {
         dispatch(requestFinanceTable())
         xhr('post', financePath + '/financecollectioncs/selectFinanceCollectionByTypeAndName', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -39,6 +44,7 @@ const fetchFinanceTable = (data) => {
                 dispatch(receiveFinanceTable({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -53,6 +59,7 @@ const receiveReceive = (res) => ({
 const fetchReceive = (data) => {
     return dispatch => {
         xhr('post', financePath + '/financecollectioncs/confirmPay', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('确认收款', res)
             if (res.result === 'success') {
                 dispatch(receiveReceive(res))
@@ -60,6 +67,7 @@ const fetchReceive = (data) => {
                 dispatch(receiveReceive({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -74,6 +82,7 @@ const receiveRefund = (res) => ({
 const fetchRefund = (data) => {
     return dispatch => {
         xhr('post', financePath + '/financecollectioncs/confirmRefund', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('确认退款', res)
             if (res.result === 'success') {
                 dispatch(receiveRefund(res))
@@ -81,6 +90,7 @@ const fetchRefund = (data) => {
                 dispatch(receiveRefund({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -99,22 +109,22 @@ export const ACTION_HANDLERS = {
         tableLoading: true
     }),
     [RECEIVE_FINANCE_TABLE]: (finance, {payload: res}) => ({
-        ...finance,
+            ...finance,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
         pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
     }),
     [RECEIVE_RECEIVE]: (finance, {payload: res}) => ({
         ...finance,
-        tableData: finance.tableData.filter(item => 
+        tableData: finance.tableData.filter(item =>
             item.financecollectionid !== res.data[0].financeCollectionId
         )
     }),
     [RECEIVE_REFUND]: (finance, {payload: res}) => ({
         ...finance,
-        tableData: finance.tableData.filter(item => 
+        tableData: finance.tableData.filter(item =>
             item.financecollectionid !== res.data[0].financeCollectionId
         )
     })

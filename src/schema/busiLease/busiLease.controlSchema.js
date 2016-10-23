@@ -42,48 +42,38 @@ module.exports = {
     bond: {
         left: [
             {
-                key: 'left',
-                title: '左侧'
+                key: 'addBond',
+                title: '新增保证金'
             },
             {
-                key: 'left1',
-                title: '左侧1'
+                key: 'void',
+                title: '作废'
             },
             {
-                key: 'left2',
-                title: '左侧2'
+                key: 'submitFinance',
+                title: '提交财务'
             }
         ],
-        center: [
-            {
-                key: 'center',
-                title: '中间'
-            }
-        ],
+        center: [],
         right: [
             {
-                key: 'right',
-                title: '右侧'
+                key: 'exportPage',
+                title: '导出本页'
             }
         ]
     },
     notContract: {
         left: [
             {
-                key: 'left',
-                title: '左侧'
+                key: 'addNotContract',
+                title: '新增临时摊位协议'
             }
         ],
-        center: [
-            {
-                key: 'center',
-                title: '中间'
-            }
-        ],
+        center: [],
         right: [
             {
-                key: 'right',
-                title: '右侧'
+                key: 'exportPage',
+                title: '导出本页'
             }
         ]
     }

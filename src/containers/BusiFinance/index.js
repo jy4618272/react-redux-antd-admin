@@ -112,8 +112,6 @@ class Finance extends Component {
      */
     select = (queryObj, pageSize, skipCount) => {
         const {actionFinance} = this.props
-
-        const hide = message.loading('正在查询...', 0)
         const tmpObj = Object.assign({}, queryObj)
 
         tmpObj.status = this.status
@@ -122,9 +120,6 @@ class Finance extends Component {
 
         this.queryObj = tmpObj
         actionFinance.fetchFinanceTable(tmpObj)
-        setTimeout(() => {
-            hide()
-        }, 2000)
     }
 
     /**

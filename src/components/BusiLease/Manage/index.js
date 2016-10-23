@@ -5,14 +5,12 @@ import { Link, hashHistory } from 'react-router'
 
 import {
     Tabs,
-    Modal,
     message,
     notification
 } from 'antd'
 const TabPane = Tabs.TabPane
 
 import {
-    InnerModal,
     InnerForm,
     InnerTable,
     InnerPagination
@@ -28,16 +26,11 @@ const mapDispatchToProps = (dispatch) => ({
     ({ busiLease }) => ({ busiLease }),
     mapDispatchToProps
 )
-class Manage extends Component {
+class LeaseManage extends Component {
     constructor(props) {
         super(props)
         this.status = sessionStorage.getItem('leaseManageTabs') || 'contract'
-        this.state = {
-            modalVisible: false,
-            modalTitle: '新增',
-            modalContent: '内容'
-        }
-        console.log('1111122222', props)
+        // console.log('props:', props)
     }
 
     /**
@@ -68,7 +61,6 @@ class Manage extends Component {
      * 查询
      */
     handleFormSubmit = (newData) => {
-        // alert(JSON.stringify(newData))
         const {
             contractData,
             bondData,
@@ -107,7 +99,6 @@ class Manage extends Component {
             fetchBondTable,
             fetchNotContractTable
         } = this.props.actionLease
-        console.debug('handlePageChange, page = %d', page);
 
         page = (page <= 1) ? 0 : (page - 1) * 10
         if (this.status === 'contract') {
@@ -147,28 +138,7 @@ class Manage extends Component {
     parentHandleClick = (key, data) => {
         if (key === 'addContract') {
             hashHistory.push('busi/busi_lease/add?type=' + this.status)
-        } else if (key === 'center') {
-            const content = '中间内容'
-            this.setState({
-                modalKey: key,
-                modalVisible: true,
-                modalTitle: '新增中间',
-                modalContent: content
-            })
         }
-    }
-
-    handleModalOk = (key) => {
-        alert(key)
-        this.setState({
-            modalVisible: false
-        })
-    }
-
-    handleModalCancel = () => {
-        this.setState({
-            modalVisible: false
-        })
     }
 
     /**
@@ -204,13 +174,6 @@ class Manage extends Component {
 
         return (
             <section>
-                <Modal
-                    visible={this.state.modalVisible}
-                    title={this.state.modalTitle}
-                    onOk={this.handleModalOk.bind(this, this.state.modalKey)}
-                    onCancel={this.handleModalCancel}>
-                    {this.state.modalContent}
-                </Modal>
                 <Tabs defaultActiveKey={this.status} animated="false" type="inline" onChange={this.handlerTabs}>
                     <TabPane tab="合同" key="contract">
                         <InnerForm
@@ -250,6 +213,11 @@ class Manage extends Component {
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />
+                        <InnerPagination
+                            total={bondData.total}
+                            pageSize={bondData.pageSize}
+                            skipCount={bondData.skipCount}
+                            parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
                     <TabPane tab="临时摊位交款" key="notContract">
                         <InnerForm
@@ -279,4 +247,4 @@ class Manage extends Component {
     }
 }
 
-export default Manage
+export default LeaseManage

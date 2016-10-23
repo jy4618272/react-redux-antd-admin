@@ -86,6 +86,26 @@ class InnerTable extends Component {
         return true;
     }
 
+    /**
+     * InnerTable组件的重render有两种可能:
+     * 1. 上层组件调用的render方法, 这个时候会触发componentWillReceiveProps方法
+     * 2. 自身状态变化引起的重新render
+     * 注意区分
+     *
+     * 对于第一种情况, 要将组件的状态还原到初始状态
+     *
+     * @param nextProps
+     */
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.loading === true) {
+            this.setState({
+                selectedRowKeys: [],
+                selectedRows: []
+            })
+        }
+    }
+
+
     render() {
         // 结构赋值，从父组件获取数据
         const {
@@ -98,7 +118,7 @@ class InnerTable extends Component {
             pagination,
             isRowSelection
         } = this.props
-        
+
         // 表格checkbox操作 
         const rowSelection = {
             selectedRowKeys: this.state.selectedRowKeys,

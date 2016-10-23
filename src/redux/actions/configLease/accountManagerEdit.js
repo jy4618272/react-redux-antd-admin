@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -27,6 +27,7 @@ const fetchManagerEdit = (data) => {
     return dispatch => {
         dispatch(requestManagerEdit())
         xhr('post', leasePath + '/salercs/selectSalerById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('客户经理之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveManagerEdit(res))
@@ -34,6 +35,7 @@ const fetchManagerEdit = (data) => {
                 dispatch(receiveManagerEdit({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -50,10 +52,11 @@ const receiveMangerUpdate = (res) => ({
 const fetchManagerUpdate = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/salercs/updateSaler', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('客户经理之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveMangerUpdate(res))
-                notification.success({
+                message.success({
                     message: '更新成功',
                     description: '客户经理更新数据成功'
                 });
@@ -62,6 +65,7 @@ const fetchManagerUpdate = (data) => {
                 dispatch(receiveMangerUpdate({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

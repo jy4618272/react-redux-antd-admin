@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import {
     errHandler,
@@ -28,6 +28,7 @@ const receiveRoomAdd = (res) => ({
 const fetchRoomAdd = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之表单保存', res)
             if (res.result === 'success') {
                 if (res.data.rentroomid) {
@@ -50,6 +51,7 @@ const fetchRoomAdd = (data) => {
                 dispatch(receiveRoomAdd({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

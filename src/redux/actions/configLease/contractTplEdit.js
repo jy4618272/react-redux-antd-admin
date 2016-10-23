@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -27,6 +27,7 @@ const fetchContractEdit = (data) => {
     return dispatch => {
         dispatch(requestContractEdit())
         xhr('post', leasePath + '/pactprintmodelcs/selectPactPrintModelById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('合同模板之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveContractEdit(res))
@@ -34,6 +35,7 @@ const fetchContractEdit = (data) => {
                 dispatch(receiveContractEdit({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -50,10 +52,11 @@ const receiveContractUpdate = (res) => ({
 const fetchContractUpdate = (data) => {
     return dispatch => {
         xhr('post', leasePath + '/pactprintmodelcs/updatePactPrintModelStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('合同模板之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveContractUpdate(res))
-                notification.success({
+                message, notification.success({
                     message: '更新成功',
                     description: '合同模板更新数据成功'
                 });
@@ -62,6 +65,7 @@ const fetchContractUpdate = (data) => {
                 dispatch(receiveContractUpdate({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

@@ -1,4 +1,4 @@
-import { notification } from 'antd'
+import { message } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, leasePath } from 'SERVICE/config'
 
@@ -25,6 +25,7 @@ const fetchRoomState = (data) => {
     return dispatch => {
         dispatch(requestRoomState())
         xhr('post', leasePath + '/rentroomcs/selectByAreaAndStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -36,6 +37,7 @@ const fetchRoomState = (data) => {
                 dispatch(receiveRoomState({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }

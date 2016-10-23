@@ -1,4 +1,7 @@
-import {notification} from 'antd'
+import {
+    message,
+    notification
+} from 'antd'
 import xhr from 'SERVICE'
 import {errHandler, leasePath} from 'SERVICE/config'
 
@@ -45,6 +48,7 @@ const fetchRoomTable = (data) => {
     return dispatch => {
         dispatch(requestRoomTable())
         xhr('post', leasePath + '/rentroomcs/selectByStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -56,6 +60,7 @@ const fetchRoomTable = (data) => {
                 dispatch(receiveRoomTable({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
@@ -65,6 +70,7 @@ const searchRoomTable = (data) => {
     return dispatch => {
         dispatch(requestRoomTable())
         xhr('post', leasePath + '/rentroomcs/selectByAreaAndBuild', data, function (res) {
+            const hide = message.loading('正在查询...', 0)            
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -76,6 +82,7 @@ const searchRoomTable = (data) => {
                 dispatch(receiveRoomTable({}))
                 errHandler(res.result)
             }
+            hide()
         })
     }
 }
