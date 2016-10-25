@@ -12,14 +12,14 @@ const initialState = [
         placeholder: "请输入合同号"
     },
     {
-        key: 'signDate',
+        key: 'signdate',
         title: '合同签订时间',
         dataType: 'datetime',
         format: 'YYYY-MM-DD',
         placeholder: "请输入合同签订时间"
     },
     {
-        key: 'startsate',
+        key: 'startdate',
         title: '合同开始时间',
         dataType: 'datetime',
         format: 'YYYY-MM-DD',
@@ -64,7 +64,8 @@ const initialState = [
         key: 'standardMoney',
         title: '合同标准金额',
         dataType: 'varchar',
-        placeholder: "请输入合同标准金额"
+        placeholder: "请输入合同标准金额",
+        disabled:true
     },
     {
         key: 'money',
@@ -83,7 +84,8 @@ const initialState = [
         key: 'marginMoneyOffset',
         title: '履约保证金冲抵',
         dataType: 'varchar',
-        placeholder: "请输入履约保证金冲抵"
+        placeholder: "请输入履约保证金冲抵",
+        disabled:true
     },
     {
         key: 'freestartdate',
@@ -99,13 +101,15 @@ const initialState = [
         key: 'pactcode',
         title: '优惠金额',
         dataType: 'varchar',
-        placeholder: "请输入优惠金额"
+        placeholder: "请输入优惠金额",
+        disabled:true        
     },
     {
         key: 'totalOffsetMoney',
         title: '冲抵总额',
         dataType: 'varchar',
-        placeholder: "请输入冲抵总额"
+        placeholder: "请输入冲抵总额",
+        disabled:true        
     },
     {
         key: 'saler',

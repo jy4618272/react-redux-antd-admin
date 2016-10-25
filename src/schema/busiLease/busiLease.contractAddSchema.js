@@ -202,8 +202,8 @@ module.exports = {
         columns: [
             {
                 title: '文件名称',
-                dataIndex: '1',
-                key: '1'
+                dataIndex: 'filename',
+                key: 'filename'
             }
         ]
     },

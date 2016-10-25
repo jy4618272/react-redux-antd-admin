@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-// import _ from 'lodash'
 import moment from 'moment'
 import {
     Form,
@@ -12,7 +11,10 @@ import {
     Input,
     Row,
     Col,
-    message
+    message,
+    Upload,
+    Icon,
+    notification
 } from 'antd'
 const TabPane = Tabs.TabPane
 const FormItem = Form.Item
@@ -39,7 +41,7 @@ const mapDispatchToProps = (dispatch) => ({
     ({ busiLease, configLease }) => ({ busiLease, configLease }),
     mapDispatchToProps
 )
-class ContractInsert extends Component {
+class ContractInsert extends Component {    
     constructor(props) {
         super(props)
         this.state = {
@@ -47,11 +49,7 @@ class ContractInsert extends Component {
             organizationValue: '',
             selectDatas: [],
             dataRoom: [],
-            dataRoomId: [12],
-            dataRoomMoney: 0,
             dataLine: [],
-            dataLineId: [],
-            dataLineMoney: 0,
             dataPolicy: [],
             dataBond: [],
             dataAttachment: [],
@@ -59,7 +57,8 @@ class ContractInsert extends Component {
             modalName: 'room',
             modalVisible: false,
             modalTitle: '新增',
-            modalWidth: '900'
+            modalWidth: '900',
+            fileList: []
         }
 
         console.log('合同新增props:', props)
@@ -265,9 +264,6 @@ class ContractInsert extends Component {
         let ids = []
         if (arr.length == 0) {
             arr = arr1
-            arr1.map(item => {
-                ids.push(item[id])
-            })
         } else {
             arr.map(item => {
                 ids.push(item[id])
@@ -275,15 +271,16 @@ class ContractInsert extends Component {
             arr1.map(item => {
                 if (ids.indexOf(item[id]) == -1) {
                     arr.push(item)
-                    ids.push(item[id])
                 }
             })
         }
 
-        return {
-            arr: arr,
-            ids: ids
-        }
+        return arr
+    }
+
+    //  求和
+    handleSum(preValue, curValue){
+        return preValue + curValue;
     }
 
     // 弹框确认
@@ -292,58 +289,88 @@ class ContractInsert extends Component {
             modalName,
             selectDatas,
             dataRoom,
-            dataRoomId,
-            dataRoomMoney,
             dataLine,
-            dataLineId,
-            dataLineMoney,
             dataPolicy,
             dataBond
         } = this.state
 
+        const {getFieldValue} = this.props.form
+
         if (modalName === 'room' && selectDatas.length !== 0) {
-            let obj = this.uniq(this.state.dataRoom, selectDatas, 'rentroomid')
-            console.log('1111', obj.arr)
-            console.log('222', obj.ids)
-
+            const obj = this.uniq(this.state.dataRoom, selectDatas, 'rentroomid')
+            const ids =[]
+            const tmp = {}
+            const moneyList = []
+            
+            obj.map(item => {
+                ids.push(item.rentroomid)
+                moneyList.push(parseFloat(item.money))                
+            })    
+            // console.log(money)               
+            const sum = moneyList.reduce(this.handleSum)
+            tmp['roomList'] = ids.join(',')
+            tmp['roomMoney'] = sum            
+            tmp['standardMoney'] = sum + parseFloat(getFieldValue('lineMoney'))
+            tmp['money'] = sum + parseFloat(getFieldValue('lineMoney')) - parseFloat(getFieldValue('totalOffsetMoney'))
+            
             this.setState({
-                dataRoom: obj.arr,
-                dataRoomId: obj.ids
-            })
-
-            console.log('选中房间合同', this.state.dataRoom)
-            console.log('选中房间合同ids', this.state.dataRoomId)
+                dataRoom: obj
+            })     
+            this.props.form.setFieldsValue(tmp)
         } else if (modalName === 'classLine' && selectDatas.length !== 0) {
-            let obj = this.uniq(this.state.dataLine, selectDatas, 'transportlineid')
-
+            const obj = this.uniq(this.state.dataLine, selectDatas, 'transportlineid')
+            const ids =[]
+            const tmp = {}
+            const moneyList = []
+            
+            obj.map(item => {
+                ids.push(item.transportlineid)
+                moneyList.push(parseFloat(item.linefee))                                
+            })  
+            const sum =  moneyList.reduce(this.handleSum) 
+            tmp['lineList'] = ids.join(',')  
+            tmp['lineMoney'] = sum                      
+            tmp['standardMoney'] = sum + parseFloat(getFieldValue('roomMoney'))            
+            tmp['money'] = sum + parseFloat(getFieldValue('roomMoney')) - parseFloat(getFieldValue('totalOffsetMoney'))
+            
             this.setState({
-                dataLine: obj.arr,
-                dataLineId: obj.ids
-            })
+                dataLine: obj
+            })     
+            this.props.form.setFieldsValue(tmp)
         } else if (modalName === 'policy' && selectDatas.length !== 0) {
-            let obj = this.uniq(this.state.dataPolicy, selectDatas, 'rentpromotionid')
-
+            const obj = this.uniq(this.state.dataPolicy, selectDatas, 'rentpromotionid')
+            const tmp = {}
+            const moneyList = []
+            
+            obj.map(item => {
+                moneyList.push(parseFloat(item.promotionnum))                                
+            })  
+            const sum =  moneyList.reduce(this.handleSum) 
+            tmp['pactcode'] = sum 
+            tmp['totalOffsetMoney'] = sum + parseFloat(getFieldValue('marginMoneyOffset'))       
+            tmp['money'] = parseFloat(getFieldValue('standardMoney')) - (sum + parseFloat(getFieldValue('marginMoneyOffset')))
             this.setState({
-                dataPolicy: obj.arr,
-                dataPolicyId: obj.ids
+                dataPolicy: obj
             })
+            this.props.form.setFieldsValue(tmp)
         } else if (modalName === 'contractBond' && selectDatas.length !== 0) {
-            let obj = this.uniq(this.state.dataBond, selectDatas, 'marginid')
-
+            const obj = this.uniq(this.state.dataBond, selectDatas, 'marginid')
+            const tmp = {}
+            const moneyList = []
+            
+            obj.map(item => {
+                moneyList.push(parseFloat(item.marginmoney))                                
+            })  
+            const sum =  moneyList.reduce(this.handleSum) 
+            tmp['marginMoneyOffset'] = sum 
+            tmp['totalOffsetMoney'] = sum + parseFloat(getFieldValue('pactcode'))       
+            tmp['money'] = parseFloat(getFieldValue('standardMoney')) - (sum + parseFloat(getFieldValue('pactcode')))
             this.setState({
-                dataBond: obj.arr,
-                dataBondId: obj.ids
+                dataBond: obj
             })
-
+            this.props.form.setFieldsValue(tmp)
         }
 
-        // 填充下面表单【合同房间】
-        this.props.form.setFieldsValue({
-            roomList: dataRoomId,
-            roomMoney: dataRoomMoney,
-            lineList: dataLineId,
-            lineMoney: dataLineMoney
-        })
         this.handleModalCancel()
     }
 
@@ -355,79 +382,215 @@ class ContractInsert extends Component {
     }
 
     handleDelRoom = (record) => {
-        const {
-            dataRoom
-        } = this.state
-        dataRoom.map((item, index) => {
+        const {getFieldValue} = this.props.form
+        const obj = this.state.dataRoom
+        const ids =[]
+        const tmp = {}
+        const moneyList = []
+        let sum = 0
+        obj.map((item, index) => {
             if (item.rentroomid == record.rentroomid) {
-                dataRoom.splice(index, 1)
-            }
+                obj.splice(index, 1)
+            }              
         })
-
+        obj.map(item => {
+            ids.push(item.rentroomid)
+            moneyList.push(parseFloat(item.money))                
+        })
+        if(moneyList.lenght){
+            sum = moneyList.reduce(this.handleSum)
+        }
+        tmp['roomList'] = ids.join(',')
+        tmp['roomMoney'] = sum            
+        tmp['standardMoney'] = sum + parseFloat(getFieldValue('lineMoney'))
+        tmp['money'] = sum + parseFloat(getFieldValue('lineMoney')) - parseFloat(getFieldValue('totalOffsetMoney'))
+        
         this.setState({
-            dataRoom
-        })
+            dataRoom: obj
+        })     
+        this.props.form.setFieldsValue(tmp)
     }
 
     handleDelLine = (record) => {
-        const {
-            dataLine
-        } = this.state
-        dataLine.map((item, index) => {
-            if (item.rentroomid == record.rentroomid) {
-                dataLine.splice(index, 1)
-            }
+        const {getFieldValue} = this.props.form
+        const obj = this.state.dataLine
+        const ids =[]
+        const tmp = {}
+        const moneyList = []
+        let sum = 0
+        obj.map((item, index) => {
+            if (item.transportlineid == record.transportlineid) {
+                obj.splice(index, 1)
+            }              
         })
-
+        obj.map(item => {
+            ids.push(item.transportlineid)
+            moneyList.push(parseFloat(item.linefee))                
+        })
+        if(moneyList.length){
+            sum = moneyList.reduce(this.handleSum)
+        }
+        tmp['lineList'] = ids.join(',')  
+        tmp['lineMoney'] = sum                      
+        tmp['standardMoney'] = sum + parseFloat(getFieldValue('roomMoney'))            
+        tmp['money'] = sum + parseFloat(getFieldValue('roomMoney')) - parseFloat(getFieldValue('totalOffsetMoney'))
+        
         this.setState({
-            dataLine
-        })
+            dataLine: obj
+        })     
+        this.props.form.setFieldsValue(tmp)
     }
 
     handleDelPolicy = (record) => {
-        const {
-            dataPolicy
-        } = this.state
-        dataPolicy.map((item, index) => {
+        const {getFieldValue} = this.props.form
+        const obj = this.state.dataPolicy
+        const tmp = {}
+        const moneyList = []
+        let sum = 0
+        obj.map((item, index) => {
             if (item.rentpromotionid == record.rentpromotionid) {
-                dataPolicy.splice(index, 1)
-            }
+                obj.splice(index, 1)
+            }              
         })
-
+        obj.map(item => {
+            moneyList.push(parseFloat(item.promotionnum))                
+        })
+        if(moneyList.length){
+            sum = moneyList.reduce(this.handleSum)
+        }
+        tmp['pactcode'] = sum 
+        tmp['totalOffsetMoney'] = sum + parseFloat(getFieldValue('marginMoneyOffset'))       
+        tmp['money'] = parseFloat(getFieldValue('standardMoney')) - (sum + parseFloat(getFieldValue('marginMoneyOffset')))
+        
         this.setState({
-            dataPolicy
-        })
+            dataPolicy: obj
+        })     
+        this.props.form.setFieldsValue(tmp)
     }
 
     handleDelBond = (record) => {
-        const {
-            dataBond
-        } = this.state
-        dataBond.map((item, index) => {
+        const {getFieldValue} = this.props.form
+        const obj = this.state.dataBond
+        const tmp = {}
+        const moneyList = []
+        let sum = 0
+        obj.map((item, index) => {
             if (item.marginid == record.marginid) {
-                dataBond.splice(index, 1)
-            }
+                obj.splice(index, 1)
+            }              
         })
-
+        obj.map(item => {
+            moneyList.push(parseFloat(item.marginmoney))                
+        })
+        if(moneyList.length){
+            sum = moneyList.reduce(this.handleSum)
+        }
+        tmp['marginMoneyOffset'] = sum 
+            tmp['totalOffsetMoney'] = sum + parseFloat(getFieldValue('pactcode'))       
+            tmp['money'] = parseFloat(getFieldValue('standardMoney')) - (sum + parseFloat(getFieldValue('pactcode')))
+        
         this.setState({
-            dataBond
-        })
+            dataBond: obj
+        })     
+        this.props.form.setFieldsValue(tmp)
     }
 
+    handleDelDoc = () => {}
 
     componentDidMount() {
         this.props.form.setFieldsValue({
-            signDate: moment().locale('en').utcOffset(0),
-            startsate: moment().locale('en').utcOffset(0),
-            enddate: moment().locale('en').utcOffset(0)
+            roomMoney:0, // 房间租金
+            lineMoney:0, // 班线费用
+            standardMoney:0, // 合同标准金额 = 房间租金 + 班线费用
+            pactcode:0,   // 优惠金额
+            marginMoneyOffset:0,// 履约保证金冲抵,
+            totalOffsetMoney:0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
+            money:0, // 合同金额        
+            signdate: moment().locale('en').utcOffset(0),
+            startdate: moment().locale('en').utcOffset(0),
+            enddate: moment().add(1, 'year').subtract(1, 'days')
         })
     }
+
+    handleUpload = (info) => {
+        if (info.file.status !== 'uploading') {
+            console.log(info.file, info.fileList);
+            const obj = this.state.dataAttachment.slice()
+            obj.push({
+                filename: info.file.response.data.filename
+            })
+            this.setState({
+                dataAttachment: obj
+            })
+        }
+        if (info.file.status === 'done') {
+            message.success(`${info.file.name}文件上传成功`)
+            const res = info.file.response.data
+            this.props.action.fetchFileUpload({
+                rentpactid: 3,
+                type: res.type,
+                filename: res.filename,
+                url: res.url
+            })
+        } else if (info.file.status === 'error') {
+            message.error(`${info.file.name}文件上传失败`)
+        }
+    }
+
+    /**
+     * 表单的查询条件不能直接传给后端, 要处理一下
+     *
+     * @param oldObj
+     * @returns {{}}
+     */
+    filterQueryObj(oldObj) {
+        // 将提交的值中undefined的去掉
+        const newObj = {}
+
+        for (const key in oldObj) {
+            if (oldObj[key]) {
+                // 对于js的日期类型, 要转换成字符串再传给后端
+                if (key.indexOf('date') > -1) {
+                    newObj[key] = oldObj[key].format('YYYY-MM-DD')
+                } else {
+                    newObj[key] = oldObj[key]
+                }
+            }
+        }
+        // console.debug('old queryObj: %o, new queryObj %o', oldObj, newObj)
+        return newObj
+    }
+
+    handleSaveAll = (e) =>{
+        e.preventDefault()
+        const {form} = this.props
+        const oldObj = form.getFieldsValue()
+        const newObj = this.filterQueryObj(oldObj)
+        console.log('保存表单字段', newObj)
+
+        this.props.form.validateFields((errors, values) => {
+            if (errors) {
+                notification.error({
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
+                })
+                return false
+            }
+        })
+    }
+
     render() {
         const {getFieldDecorator} = this.props.form
         const {
             busiLease,
             configLease
         } = this.props
+
+        const uploadProps = {
+            action: "/tfPassParkAdmin/rentpactattachmentcs/uploadFiles",
+            showUploadList: false,
+            onChange: this.handleUpload
+        }
 
         const tableColumnsRoom = this.addSchema['room']['columns'].concat([
             {
@@ -461,7 +624,7 @@ class ContractInsert extends Component {
             {
                 title: '操作',
                 key: 'operation',
-                render: (record) => <a href="javascript:;" className="s-blue" onClick={this.handleDelTr.bind(this, record)}>删除</a>
+                render: (record) => <a href="javascript:;" className="s-blue" onClick={this.handleDelDoc.bind(this, record)}>删除</a>
             }
         ])
 
@@ -582,7 +745,7 @@ class ContractInsert extends Component {
                                     pagination={false} />
                             </div>
                         </TabPane>
-                        <TabPane tab="合同优惠冲抵" key="policy">
+                       <TabPane tab="合同优惠冲抵" key="policy">
                             <div className="padding-lr g-mb20">
                                 <InnerTable
                                     columns={tableColumnsPolicy}
@@ -606,10 +769,14 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="合同附件" key="contractAttachment">
                             <div className="padding-lr g-mb20">
+                                <Upload {...uploadProps}>
+                                    <Button type="ghost">
+                                        <Icon type="upload" /> 文件上传
+                                    </Button>
+                                </Upload>
                                 <InnerTable
                                     columns={tableColumnsAttachment}
                                     dataSource={this.state.dataAttachment}
-                                    schema={this.addSchema['attachment']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -617,26 +784,11 @@ class ContractInsert extends Component {
                         </TabPane>
                     </Tabs>
 
-                    {/* 客户数据录入 */}
+                    {/* 客户数据录入*/} 
                     <FormLayout
                         schema={busiLease.contractTabs}
                         form={this.props.form}
                         fromLayoutStyle="g-border-bottom" />
-
-                    {/*333
-                    <Row>
-                        <Col key="roomList" sm={8} className="form-col-wrapper">
-                            <FormItem
-                                key="roomList"
-                                label="合同房间"
-                                labelCol={{ span: 6 }}
-                                wrapperCol={{ span: 18 }}>
-                                {getFieldDecorator("roomList")(
-                                    <Input placeholder={'请填写'} value={this.state.dataRoom} size="default" disabled={true} />
-                                )}
-                            </FormItem>
-                        </Col>
-                    </Row>*/}
 
                     {/* 分期明细 */}
                     <div className="padding-lr g-mb20">
@@ -667,6 +819,10 @@ class ContractInsert extends Component {
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />
+                    </div>
+                    <div className="g-tac button-group">
+                        <Button type="primary" onClick={this.handleSaveAll}>保存</Button>
+                        <Button type="default">取消</Button>
                     </div>
                 </Form>
             </section>
