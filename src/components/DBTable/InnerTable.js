@@ -52,6 +52,7 @@ class InnerTable extends Component {
             selectedRowKeys,
             selectedRows
         })
+        this.props.parentHandleSelectChange(selectedRows)
         selectedRows.map(item => {
             arrPaytype.push(item.paytype)
         })
@@ -66,10 +67,10 @@ class InnerTable extends Component {
             hashHistory.push(`busi/busi_finance/${record.financecollectionid}`)
         }
 
-        notification.open({
-            message: '查看详情',
-            description: `详情还在开发中，给你带来不便我很抱歉`
-        })
+        // notification.open({
+        //     message: '查看详情',
+        //     description: `详情还在开发中，给你带来不便我很抱歉`
+        // })
     }
 
     // 点击按钮

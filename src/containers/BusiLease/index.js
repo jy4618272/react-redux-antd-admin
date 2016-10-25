@@ -41,6 +41,7 @@ class BusiLease extends Component {
 
         try {
             this.querySchema = require(`SCHEMA/${tableName}/${tableName}.querySchema.js`)
+            this.insertBondSchema = require(`SCHEMA/${tableName}/${tableName}.insertBondSchema.js`)
             console.log(this.querySchema)
         } catch (e) {
             console.error('load query schema error: %o', e)
@@ -71,6 +72,7 @@ class BusiLease extends Component {
                     <TabPane tab="租赁管理" key="leaseManage">
                         <Manage 
                             querySchema={this.querySchema}
+                            insertBondSchema={this.insertBondSchema}
                             controlSchema={this.controlSchema} />
                     </TabPane>
                 </Tabs>

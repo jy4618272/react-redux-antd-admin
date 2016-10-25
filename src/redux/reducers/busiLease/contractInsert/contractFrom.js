@@ -1,8 +1,8 @@
 /**
- * 合同新增-客户信息获取
+ * 合同新增-合同模板
  */
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/busiLease/contractFrom'
+import { ACTION_HANDLERS } from 'ACTION/busiLease/contractInsert/contractFrom'
 
 const initialState = [
     {

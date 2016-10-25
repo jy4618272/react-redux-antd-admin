@@ -6,7 +6,8 @@ import { Link, hashHistory } from 'react-router'
 import {
     Tabs,
     message,
-    notification
+    notification,
+    Modal
 } from 'antd'
 const TabPane = Tabs.TabPane
 
@@ -29,7 +30,15 @@ const mapDispatchToProps = (dispatch) => ({
 class LeaseManage extends Component {
     constructor(props) {
         super(props)
+
         this.status = sessionStorage.getItem('leaseManageTabs') || 'contract'
+        this.state = {
+            modalName: 'insertBond',
+            modalVisible: false,
+            modalTitle: '新增',
+            okText:'确定',
+            modalWidth: '900'
+        }
         // console.log('props:', props)
     }
 
@@ -138,7 +147,30 @@ class LeaseManage extends Component {
     parentHandleClick = (key, data) => {
         if (key === 'addContract') {
             hashHistory.push('busi/busi_lease/add?type=' + this.status)
+        } else if (key === "addBond") {
+            this.setState({
+                modalVisible: true,
+                okText:'保存'
+            })
         }
+    }
+
+    handleModalOk = () => {
+        if (this.status === 'bond') {
+            console.log(this.refs.formInsert.getFieldsValue());
+            this.refs.formInsert.resetFields()
+            this.handleModalCancel()
+        }
+    }
+
+    // 弹框关闭
+    handleModalCancel = () => {
+        if (this.status === 'bond') {
+            this.refs.formInsert.resetFields()
+        }
+        this.setState({
+            modalVisible: false
+        })
     }
 
     /**
@@ -160,6 +192,7 @@ class LeaseManage extends Component {
         }
     }
 
+
     render() {
         const {
             querySchema,
@@ -172,8 +205,25 @@ class LeaseManage extends Component {
             notContractData
         } = this.props.busiLease
 
+        let modalContent = ''
+
+        if (this.state.modalName === 'insertBond') {
+            modalContent = <InnerForm
+                ref="formInsert"
+                schema={this.props.insertBondSchema}
+                parentHandleSubmit={this.handleFormSubmit} />
+        }
         return (
             <section>
+                <Modal
+                    visible={this.state.modalVisible}
+                    title={this.state.modalTitle}
+                    okText={this.state.okText}                    
+                    width={this.state.modalWidth}
+                    onOk={this.handleModalOk}
+                    onCancel={this.handleModalCancel}>
+                    {modalContent}
+                </Modal>
                 <Tabs defaultActiveKey={this.status} animated="false" type="inline" onChange={this.handlerTabs}>
                     <TabPane tab="合同" key="contract">
                         <InnerForm

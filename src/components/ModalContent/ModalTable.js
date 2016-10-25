@@ -6,18 +6,25 @@ import {
 } from 'COMPONENT'
 
 class ModalTable extends Component {
+    handleSelectChange = (data) => {
+        console.log('8888', data)
+        this.props.parentHandleSelectChange(data)
+    }
+
     render() {
         const {
             dataSource,
-            handlePageChange
+            handlePageChange,
+            parentHandleSelectChange
         } = this.props
-        
+
         return (
             <section className="m-modal-table">
                 <InnerTable
                     loading={dataSource.tableLoading}
                     columns={dataSource.tableColumns}
                     dataSource={dataSource.tableData}
+                    parentHandleSelectChange={this.handleSelectChange}
                     isRowSelection={true}
                     bordered={true}
                     pagination={false} />

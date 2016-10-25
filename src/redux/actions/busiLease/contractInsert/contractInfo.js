@@ -6,8 +6,6 @@ import { errHandler, leasePath } from 'SERVICE/config'
 // Action Type
 // ================================
 const RECEIVE_CONTRACT_INFO = 'RECEIVE_CONTRACT_INFO'  // 获取合同模板
-const RECEIVE_ROOM_DATA = 'RECEIVE_ROOM_DATA'
-
 
 // ================================
 // Action Creator
@@ -42,23 +40,9 @@ const fetchContractInfo = (data) => {
     }
 }
 
-// 合同房间新增数据
-const receiveRoomData = (res) => ({
-    type: RECEIVE_ROOM_DATA,
-    payload: res
-})
-
-const insertRoomData = (data) => {
-    alert(JSON.stringify(data))
-    return dispatch => {
-        dispatch(receiveRoomData(data))
-    }
-}
-
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractInfo,
-    insertRoomData
+    fetchContractInfo
 }
 
 export const ACTION_HANDLERS = {
@@ -66,7 +50,5 @@ export const ACTION_HANDLERS = {
         item.key === 'modelname' ?
             Object.assign({}, item, { options: res }) :
             item
-    ),
-    [RECEIVE_ROOM_DATA]: (roomData) => null
-
+    )
 }

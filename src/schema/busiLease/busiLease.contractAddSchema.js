@@ -14,7 +14,7 @@ module.exports = {
                     trigger: ['onBlur', 'onChange']
                 }
             ],
-            disabled: true            
+            disabled: true
         },
         {
             key: '2',
@@ -67,121 +67,173 @@ module.exports = {
         }
     ],
 
-    contractInfo: [
-        {
-            key: 'pactCode',
-            title: '合同号',
-            dataType: 'varchar',
-            placeholder: "请输入合同号"
+    room: {
+        topButtons: {
+            left: [
+                {
+                    key: 'addRoom',
+                    title: '新增房间'
+                }
+            ],
+            center: [],
+            right: []
         },
-        {
-            key: 'signDate',
-            title: '合同签订时间',
-            dataType: 'datetime',
-            format: 'YYYY-MM-DD HH:mm:ss',
-            placeholder: "请输入合同签订时间"
+        columns: [
+            {
+                title: '区域',
+                dataIndex: 'area',
+                key: 'area'
+            },
+            {
+                title: '楼号',
+                dataIndex: 'build',
+                key: 'build'
+            },
+            {
+                title: '房间号',
+                dataIndex: 'room',
+                key: 'room'
+            },
+            {
+                title: '面积',
+                dataIndex: 'romearea',
+                key: 'romearea'
+            },
+            {
+                title: '金额',
+                dataIndex: 'money',
+                key: 'money'
+            },
+            {
+                title: '流程状态',
+                dataIndex: 'status',
+                key: 'status'
+            }
+        ]
+    },
+    line: {
+        topButtons: {
+            left: [
+                {
+                    key: 'addLine',
+                    title: '新增班线'
+                }
+            ],
+            center: [],
+            right: []
         },
-        {
-            key: 'startsate',
-            title: '合同开始时间',
-            dataType: 'datetime',
-            format: 'YYYY-MM-DD HH:mm:ss',
-            placeholder: "请输入合同开始时间"
+        columns: [
+            {
+                title: '班线名称',
+                dataIndex: 'linename',
+                key: 'linename'
+            },
+            {
+                title: '班线价格',
+                dataIndex: 'linefee',
+                key: 'linefee'
+            }
+        ]
+    },
+    policy: {
+        topButtons: {
+            left: [
+                {
+                    key: 'addPolicy',
+                    title: '新增优惠'
+                }
+            ],
+            center: [],
+            right: []
         },
-        {
-            key: 'enddate',
-            title: '合同结束时间',
-            dataType: 'datetime',
-            format: 'YYYY-MM-DD HH:mm:ss',
-            placeholder: "请输入合同结束时间"
+        columns: [
+            {
+                title: '活动名称',
+                dataIndex: 'promotionname',
+                key: 'promotionname'
+            },
+            {
+                title: '优惠类型',
+                dataIndex: 'promotiontype',
+                key: 'promotiontype'
+            },
+            {
+                title: '优惠幅度',
+                dataIndex: 'promotionnum',
+                key: 'promotionnum'
+            },
+            {
+                title: '范围',
+                dataIndex: 'area',
+                key: 'area'
+            }
+        ]
+    },
+    contractBond: {
+        topButtons: {
+            left: [
+                {
+                    key: 'addBond',
+                    title: '新增保证金'
+                }
+            ],
+            center: [],
+            right: []
         },
-        {
-            key: 'roomList',
-            title: '合同房间',
-            dataType: 'varchar',
-            placeholder: "请输入合同房间"
+        columns: [
+            {
+                title: '履约保证金金额',
+                dataIndex: 'marginmoney',
+                key: 'marginmoney'
+            }
+        ]
+    },
+    attachment: {
+        topButtons: {
+            left: [
+                {
+                    key: 'selectDoc',
+                    title: '选择文件'
+                }
+            ],
+            center: [],
+            right: []
         },
-        {
-            key: 'roomMoney',
-            title: '房间租金',
-            dataType: 'varchar',
-            placeholder: "请输入房间租金"
-        },
-        {
-            key: 'lineList',
-            title: '合同班线',
-            dataType: 'varchar',
-            placeholder: "请输入合同班线"
-        },
-        {
-            key: 'lineMoney',
-            title: '班线费用',
-            dataType: 'varchar',
-            placeholder: "请输入班线费用"
-        },
-        {
-            key: 'standardMoney',
-            title: '合同标准金额',
-            dataType: 'varchar',
-            placeholder: "请输入合同标准金额"
-        },
-        {
-            key: 'money',
-            title: '合同金额',
-            dataType: 'varchar',
-            placeholder: "请输入合同金额"
-        },
-        {
-            key: 'marginMoney',
-            title: '履约保证金',
-            dataType: 'varchar',
-            placeholder: "请输入履约保证金"
-        },
-        {
-            key: 'marginMoneyOffset',
-            title: '履约保证金冲抵',
-            dataType: 'varchar',
-            placeholder: "请输入履约保证金冲抵"
-        },
-        {
-            key: 'freestartdate',
-            keyEnd:'freeenddate',
-            title: '优惠租期',
-            dataType: 'datetime',
-            showType: 'between',
-            format: 'YYYY-MM-DD HH:mm:ss',
-            placeholderBegin: '租期开始',
-            placeholderEnd: '租期结束'  
-        },
-        {
-            key: 'pactcode',
-            title: '优惠金额',
-            dataType: 'varchar',
-            placeholder: "请输入优惠金额"
-        },
-        {
-            key: 'totalOffsetMoney',
-            title: '冲抵总额',
-            dataType: 'varchar',
-            placeholder: "请输入冲抵总额"
-        },
-        {
-            key: 'saler',
-            title: '客户经理',
-            dataType: 'varchar',
-            placeholder: "请输入客户经理"
-        },
-        {
-            key: 'manager',
-            title: '委托代理人',
-            dataType: 'varchar',
-            placeholder: "请输入委托代理人"
-        },
-        {
-            key: 'memo',
-            title: '备注',
-            dataType: 'varchar',
-            placeholder: "请输入备注"
-        }
-    ]
+        columns: [
+            {
+                title: '文件名称',
+                dataIndex: '1',
+                key: '1'
+            }
+        ]
+    },
+    stages:{
+        columns:[
+             {
+                title: '分期数',
+                dataIndex: 'linename',
+                key: 'linename'
+            },
+            {
+                title: '交款日期',
+                dataIndex: 'linefee',
+                key: 'linefee'
+            },
+            {
+                title: '失效日期',
+                dataIndex: 'linename',
+                key: 'linename'
+            },
+            {
+                title: '交款金额',
+                dataIndex: 'linefee',
+                key: 'linefee'
+            },
+            {
+                title: '备注',
+                dataIndex: 'linename',
+                key: 'linename'
+            }
+        ]
+    }
 }

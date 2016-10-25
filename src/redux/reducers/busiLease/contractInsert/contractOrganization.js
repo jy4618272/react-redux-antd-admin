@@ -2,7 +2,7 @@
  * 客户信息获取
  */
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/busiLease/contractOrganization'
+import { ACTION_HANDLERS } from 'ACTION/busiLease/contractInsert/contractOrganization'
 
 const initialState = {
     tableColumns: [
