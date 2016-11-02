@@ -3,7 +3,7 @@ import {
     notification 
 } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, financePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -30,7 +30,7 @@ const receiveFinanceTable = (res) => ({
 const fetchFinanceTable = (data) => {
     return dispatch => {
         dispatch(requestFinanceTable())
-        xhr('post', financePath + '/financecollectioncs/selectFinanceCollectionByTypeAndName', data, function (res) {
+        xhr('post', paths.financePath + '/financecollectioncs/selectFinanceCollectionByTypeAndName', data, function (res) {
             const hide = message.loading('正在查询...', 0)
 
             const newRes = Object.assign({}, res, {
@@ -58,7 +58,7 @@ const receiveReceive = (res) => ({
 
 const fetchReceive = (data) => {
     return dispatch => {
-        xhr('post', financePath + '/financecollectioncs/confirmPay', data, function (res) {
+        xhr('post', paths.financePath + '/financecollectioncs/confirmPay', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('确认收款', res)
             if (res.result === 'success') {
@@ -81,7 +81,7 @@ const receiveRefund = (res) => ({
 
 const fetchRefund = (data) => {
     return dispatch => {
-        xhr('post', financePath + '/financecollectioncs/confirmRefund', data, function (res) {
+        xhr('post', paths.financePath + '/financecollectioncs/confirmRefund', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('确认退款', res)
             if (res.result === 'success') {

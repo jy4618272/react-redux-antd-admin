@@ -1,36 +1,41 @@
-import {notification} from 'antd'
+import { notification } from 'antd'
 
 // 此处配置 根访问路径 以及 全局错误处理
 // 更多配置请根据业务逻辑自行实现
 
 // 后端 API 地址，最好以 http(s):// 打头
-let rootPath
+let rootPaths
 if (__DEV__) {
-	rootPath = 'http://dev.myportaltest.tf56.com:9090'
+	rootPaths = {
+		rootPath: 'http://dev.myportaltest.tf56.com:9090',
+		imgPath: 'http://10.7.15.56'
+	}
 }
 if (__PROD__) {
-	// rootPath = 'http://myportal.tf56.com'
-	rootPath = 	"http://myportal.tf56.com"
+	rootPaths = {
+		rootPath: 'http://myportal.tf56.com',
+		imgPath: 'http://image.tf56.com'
+	}
 }
 
-// 财务
-const financePath = '/financeParkAdmin'
-
-// 租赁
-const leasePath = '/tfPassParkAdmin'
+const paths = {
+	// 财务
+	financePath: '/financeParkAdmin',
+	// 租赁
+	leasePath: '/tfPassParkAdmin',
+	imgPath: '/dfs'
+}
 
 const errHandler = (e) => {
 	notification.error({
 		message: '出错啦!',
 		description: `请联系管理员, 错误信息: ${e}`
 	});
-	// alert('[ XHR:Failed ] 详情请看控制台')
 	console.error('[ XHR:Failed ]', e)
 }
 
-export {
-	rootPath,
-	errHandler,
-	financePath,
-	leasePath
+export { 
+	rootPaths, 
+	errHandler, 
+	paths 
 }

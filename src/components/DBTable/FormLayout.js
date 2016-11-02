@@ -46,7 +46,7 @@ class FormLayout extends Component {
                         validate: field.validate || []
                     })(
                         formItem
-                    )}
+                        )}
                 </FormItem>
             </Col>
         )
@@ -76,7 +76,7 @@ class FormLayout extends Component {
                                 validate: field.validate || []
                             })(
                                 beginFormItem
-                            )}
+                                )}
                         </FormItem>
                     </Col>
                     <Col span={8} offset={0}>
@@ -89,7 +89,7 @@ class FormLayout extends Component {
                                 validate: field.validate || []
                             })(
                                 endFormItem
-                            )}
+                                )}
                         </FormItem>
                     </Col>
                 </Row>
@@ -118,7 +118,7 @@ class FormLayout extends Component {
                         validate: field.validate || []
                     })(
                         formItem
-                    )}
+                        )}
                 </FormItem>
             </Col>
         )
@@ -145,17 +145,17 @@ class FormLayout extends Component {
                         validate: field.validate || []
                     })(
                         formItem
-                    )}
+                        )}
                 </FormItem>
             </Row>
         )
     }
 
-    
+
     handleSelect = (key, value) => {
         console.log(key, value)
-        if(this.props.parentHandleSelect){
-           this.props.parentHandleSelect(key, value)
+        if (this.props.parentHandleSelect) {
+            this.props.parentHandleSelect(key, value)
         }
     }
 
@@ -262,17 +262,17 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer BETWEEN component', field)
                 beginFormItem = (<InputNumber size="default"
-                    placeholder={field.placeholderBegin || '最小值'} />)
+                    placeholder={field.placeholderBegin || '最小值'} disabled={field.disabled} />)
                 endFormItem = (<InputNumber size="default"
-                    placeholder={field.placeholderEnd || '最大值'} />)
+                    placeholder={field.placeholderEnd || '最大值'} disabled={field.disabled} />)
                 cols.push(this.colWrapper(beginFormItem, endFormItem, field))
                 break
             case 'float':
                 // console.debug('transform field %o to float BETWEEN component', field)
-                beginFormItem = (<InputNumber step={0.1} size="default"
-                    placeholder={field.placeholderBegin || '最小值'} />)
-                endFormItem = (<InputNumber step={0.1} size="default"
-                    placeholder={field.placeholderEnd || '最大值'} />)
+                beginFormItem = (<InputNumber step={0.01} size="default"
+                    placeholder={field.placeholderBegin || '最小值'} disabled={field.disabled} />)
+                endFormItem = (<InputNumber step={0.01} size="default"
+                    placeholder={field.placeholderEnd || '最大值'} disabled={field.disabled} />)
                 cols.push(this.colWrapper(beginFormItem, endFormItem, field))
                 break
             // datetime类型的between要占用两个Col
@@ -291,8 +291,8 @@ class FormLayout extends Component {
                             {getFieldDecorator(field.key, {
                                 validate: field.validate || []
                             })(
-                                <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '开始日期'} />
-                            )}
+                                <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '开始日期'} disabled={field.disabled} />
+                                )}
                         </FormItem>
                     </Col>
                 )
@@ -307,8 +307,8 @@ class FormLayout extends Component {
                             {getFieldDecorator(field.keyEnd, {
                                 validate: field.validate || []
                             })(
-                                <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderEnd || '结束日期'} />
-                            )}
+                                <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderEnd || '结束日期'} disabled={field.disabled} />
+                                )}
                         </FormItem>
                     </Col>)
                 break
@@ -345,12 +345,12 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber size="default" />
+                    <InputNumber size="default" step={0.01} disabled={field.disabled}  />
                 ), field)
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber step={1} size="default" />
+                    <InputNumber step={0.01} size="default" disabled={field.disabled}  />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
@@ -431,6 +431,12 @@ class FormLayout extends Component {
         })
     }
 
+    // 点击按钮
+    handleClick = (key) => {
+        console.log('你刚点击了按钮key：', key)
+        this.props.parentHandleClick(key)
+    }
+
     // 处理表单关闭
     handleClose = (e) => {
         e.preventDefault()
@@ -444,7 +450,7 @@ class FormLayout extends Component {
             })
         }
 
-        if(this.props.setFields){
+        if (this.props.setFields) {
             this.props.form.setFieldsValue(
                 this.props.setFields
             )
@@ -520,6 +526,18 @@ class FormLayout extends Component {
             )
         }
 
+        // 别忘了最后一行
+        if (Array.isArray(this.props.buttonSchema) && this.props.buttonSchema.length) {
+            const buttonGroup =this.props.buttonSchema.map(item => {
+                return <Button type={item.type} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+            })
+            cols.push(
+                <Col sm={8} className="button-group form-button-group">
+                    {buttonGroup}
+                </Col>
+            )
+        }
+
         rows.push(<Row key={rows.length} gutter={16}>{cols}</Row>)
 
         // 别忘了最后一行
@@ -534,6 +552,7 @@ class FormLayout extends Component {
         return (
             <section className={fromLayoutStyle}>
                 {rows}
+                {this.props.children}
                 {formOpe}
             </section>
         )

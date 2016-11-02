@@ -143,21 +143,31 @@ class LeaseManage extends Component {
         sessionStorage.setItem('leaseManageTabs', this.status)
     }
 
-    // 按钮
+    // 表格操作按钮
     parentHandleClick = (key, data) => {
         if (key === 'addContract') {
-            hashHistory.push('busi/busi_lease/add?type=' + this.status)
-        } else if (key === "addBond") {
+            hashHistory.push('busi/busi_lease/contract/add')
+        } else if (key === "renewContract") {
+            hashHistory.push('busi/busi_lease/contract/renew/289')
+        }else if (key === "addBond") {
             this.setState({
                 modalVisible: true,
+                modalTitle:'新增保证金',
                 okText:'保存'
             })
-        }
+        } 
+
+        // 
     }
 
     handleModalOk = () => {
+        const  {
+            busiLease
+        } = this.props.actionLease
         if (this.status === 'bond') {
             console.log(this.refs.formInsert.getFieldsValue());
+            const tmp = {}
+            busiLease.bondInsert(tmp)
             this.refs.formInsert.resetFields()
             this.handleModalCancel()
         }

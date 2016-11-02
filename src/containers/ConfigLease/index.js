@@ -22,7 +22,7 @@ import {
     InnerPagination
 } from 'COMPONENT'
 
-import { rootPath, leasePath } from 'SERVICE/config'
+import { paths } from 'SERVICE/config'
 
 const mapDispatchToProps = (dispatch) => ({
     actionLease: bindActionCreators(actionLease, dispatch)

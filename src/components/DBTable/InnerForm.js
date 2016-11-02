@@ -36,7 +36,9 @@ class InnerForm extends Component {
                         parentHandleSubmit={this.props.parentHandleSubmit}
                         parentHandleSave ={this.props.parentHandleSave}
                         setFields={this.props.setFields}
-                        sessionShouldGet={this.props.sessionShouldGet} />
+                        sessionShouldGet={this.props.sessionShouldGet}>
+                        {this.props.children}
+                    </FormLayout>
                 </Form>
             </section>
         )

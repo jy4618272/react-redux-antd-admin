@@ -22,7 +22,7 @@ import {
     InnerPagination
 } from 'COMPONENT'
 
-import { rootPath, financePath } from 'SERVICE/config'
+import { paths } from 'SERVICE/config'
 
 const mapDispatchToProps = (dispatch) => ({
     actionFinance: bindActionCreators(actionFinance, dispatch)
@@ -206,7 +206,7 @@ class Finance extends Component {
                     description: `导出${arrParam.length}条数据`,
                 });
 
-                window.location.href = rootPath + financePath + '/financecollectioncs/exportFinanceListExcel?financeCollectionIds=' + arrParam.join(',')
+                window.location.href = paths.financePath + '/financecollectioncs/exportFinanceListExcel?financeCollectionIds=' + arrParam.join(',')
             } else {
                 notification.open({
                     message: '导出本页',

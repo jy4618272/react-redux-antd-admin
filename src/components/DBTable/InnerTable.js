@@ -52,7 +52,7 @@ class InnerTable extends Component {
             selectedRowKeys,
             selectedRows
         })
-        this.props.parentHandleSelectChange(selectedRows)
+        this.props.parentHandleSelectChange && this.props.parentHandleSelectChange(selectedRows)
         selectedRows.map(item => {
             arrPaytype.push(item.paytype)
         })
@@ -117,9 +117,13 @@ class InnerTable extends Component {
             dataSource,
             bordered,
             pagination,
-            isRowSelection
+            isRowSelection,
+            size,
+            tableStyle,
+            title,
+            footer
         } = this.props
-
+        const theTableStyle = tableStyle ? tableStyle : 'm-table m-table-primary'
         // 表格checkbox操作 
         const rowSelection = {
             selectedRowKeys: this.state.selectedRowKeys,
@@ -140,7 +144,10 @@ class InnerTable extends Component {
             dataSource={dataSource}
             bordered={bordered}
             pagination={pagination}
-            onRowClick={this.handleDoubleClick} />
+            onRowClick={this.handleDoubleClick}
+            size={size}
+            title={title}
+            footer={footer} />
         if (isRowSelection) {
             tableContext = <Table
                 rowSelection={rowSelection}
@@ -149,7 +156,10 @@ class InnerTable extends Component {
                 dataSource={dataSource}
                 bordered={bordered}
                 pagination={pagination}
-                onRowDoubleClick={this.handleDoubleClick} />
+                onRowDoubleClick={this.handleDoubleClick}
+                size={size}
+                title={title}
+                footer={footer} />
         }
 
         /**
@@ -211,7 +221,7 @@ class InnerTable extends Component {
         }
 
         return (
-            <section className="m-table">
+            <section className={theTableStyle}>
                 {tableControl}
                 {tableContext}
             </section>

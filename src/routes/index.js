@@ -16,6 +16,7 @@ import BusiFinanceDetail from 'CONTAINER/BusiFinance/FinanceDetail'
 
 import BusiLease from 'CONTAINER/BusiLease'
 import BusiLeaseContractAdd from 'CONTAINER/BusiLease/ContractAdd'
+import BusiLeaseContractRenew from 'CONTAINER/BusiLease/ContractRenew'
 
 import ConfigBase from 'CONTAINER/ConfigBase/insert'
 import ConfigRights from 'CONTAINER/ConfigRights'
@@ -36,7 +37,8 @@ const routes = (
 				<IndexRoute path="busi" component={Busi} />
 				<Route path="busi" tableName="busiLease" component={Busi} />
 				<Route path="busi_lease" tableName="busiLease" component={BusiLease} />
-				<Route path="busi_lease/add" tableName="busiLease" component={BusiLeaseContractAdd} />				
+				<Route path="busi_lease/contract/add" tableName="busiLease" component={BusiLeaseContractAdd} />				
+				<Route path="busi_lease/contract/renew/:id" tableName="busiLease" component={BusiLeaseContractRenew} />				
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
 				<Route path="busi_finance/:id" component={BusiFinanceDetail} />
 			</Route>

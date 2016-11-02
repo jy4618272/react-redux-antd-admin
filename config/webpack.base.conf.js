@@ -46,8 +46,7 @@ module.exports = {
 			UTIL: path.join(src, 'utils'),
 			HOC: path.join(src, 'utils/HoC'),
 			MIXIN: path.join(src, 'utils/mixins'),
-			SCHEMA: path.join(src, 'schema'),
-			antdcss: 'antd/dist/antd.min.css',  // import时的别名
+			SCHEMA: path.join(src, 'schema')
 		}
 	},
 	module: {

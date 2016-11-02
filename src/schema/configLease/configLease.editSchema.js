@@ -100,13 +100,13 @@ module.exports = {
         {
             key: 'promotionnum',
             title: '优惠幅度',
-            dataType: 'varchar',
+            dataType: 'float',
             placeholder: '请输入优惠幅度',
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, max: 50, message: '必填，优惠幅度不能为空' },
+                        { required: true, type:'number', message: '必填，优惠幅度不能为空' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -148,7 +148,8 @@ module.exports = {
             ]
         },
         {
-            key: 'date',
+            key: 'startdate',
+            keyEnd:'enddate',
             title: '活动期限',
             dataType: 'datetime',
             showType: 'between',
@@ -158,7 +159,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true },
+                        { required: true, type: 'object', message: '必填，请选择活动期限' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }

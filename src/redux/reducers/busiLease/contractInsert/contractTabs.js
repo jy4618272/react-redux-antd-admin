@@ -6,86 +6,127 @@ import { ACTION_HANDLERS } from 'ACTION/busiLease/contractInsert/contractTabs'
 
 const initialState = [
     {
-        key: 'pactCode',
+        key: 'pactcode',
         title: '合同号',
         dataType: 'varchar',
-        placeholder: "请输入合同号"
+        placeholder: "请输入合同号",
+        disabled: true,
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, message: '请选择合同模板' },
+                ]
+            }
+        ]
     },
     {
         key: 'signdate',
         title: '合同签订时间',
         dataType: 'datetime',
         format: 'YYYY-MM-DD',
-        placeholder: "请输入合同签订时间"
+        placeholder: "请选择合同签订时间",
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'object', message: '请选择合同签订时间' },
+                ]
+            }
+        ]
     },
     {
         key: 'startdate',
         title: '合同开始时间',
         dataType: 'datetime',
         format: 'YYYY-MM-DD',
-        placeholder: "请输入合同开始时间"
+        placeholder: "请选择合同开始时间",
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'object', message: '请选择合同开始时间' },
+                ]
+            }
+        ]
     },
     {
         key: 'enddate',
         title: '合同结束时间',
         dataType: 'datetime',
         format: 'YYYY-MM-DD',
-        placeholder: "请输入合同结束时间"
+        placeholder: "请选择合同结束时间",
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'object', message: '请选择合同结束时间' },
+                ]
+            }
+        ]
     },
     {
-        key: 'roomList',
+        key: 'roomlist',
         title: '合同房间',
         dataType: 'varchar',
-        placeholder: "请输入合同房间",
+        placeholder: "请选择合同房间",
         disabled: true
     },
     {
-        key: 'roomMoney',
+        key: 'roommoney',
         title: '房间租金',
-        dataType: 'varchar',
-        placeholder: "请输入房间租金",
-        disabled: true
+        dataType: 'int',
+        placeholder: "请选择合同房间",
+        disabled: true,
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, type:'number', min:1, message: '请选择合同房间' },
+                ]
+            }
+        ]
     },
     {
-        key: 'lineList',
+        key: 'linelist',
         title: '合同班线',
         dataType: 'varchar',
-        placeholder: "请输入合同班线",
+        placeholder: "请选择合同班线",
         disabled: true
     },
     {
-        key: 'lineMoney',
+        key: 'linemoney',
         title: '班线费用',
-        dataType: 'varchar',
-        placeholder: "请输入班线费用",
+        dataType: 'float',
+        placeholder: "请选择合同班线",
         disabled: true
     },
     {
-        key: 'standardMoney',
+        key: 'standardmoney',
         title: '合同标准金额',
-        dataType: 'varchar',
-        placeholder: "请输入合同标准金额",
-        disabled:true
+        dataType: 'float',
+        placeholder: "请选择合同房间和合同班线",
+        disabled: true
     },
     {
         key: 'money',
         title: '合同金额',
-        dataType: 'varchar',
-        placeholder: "请输入合同金额",
+        dataType: 'float',
+        placeholder: "请选择合同房间、合同班线、合同优惠冲抵和履约保证金",
         disabled: true
     },
     {
-        key: 'marginMoney',
+        key: 'marginmoney',
         title: '履约保证金',
-        dataType: 'varchar',
-        placeholder: "请输入履约保证金"
+        dataType: 'float',
+        placeholder: "请选择履约保证金"
     },
     {
-        key: 'marginMoneyOffset',
+        key: 'marginmoneyoffset',
         title: '履约保证金冲抵',
         dataType: 'varchar',
-        placeholder: "请输入履约保证金冲抵",
-        disabled:true
+        placeholder: "请选择履约保证金冲抵",
+        disabled: true
     },
     {
         key: 'freestartdate',
@@ -98,18 +139,18 @@ const initialState = [
         placeholderEnd: '租期结束'
     },
     {
-        key: 'pactcode',
+        key: 'promotionmoneyoffset',
         title: '优惠金额',
-        dataType: 'varchar',
+        dataType: 'float',
         placeholder: "请输入优惠金额",
-        disabled:true        
+        disabled: true
     },
     {
-        key: 'totalOffsetMoney',
+        key: 'totaloffsetmoney',
         title: '冲抵总额',
         dataType: 'varchar',
         placeholder: "请输入冲抵总额",
-        disabled:true        
+        disabled: true
     },
     {
         key: 'saler',

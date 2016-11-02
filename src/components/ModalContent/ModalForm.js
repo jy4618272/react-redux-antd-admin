@@ -22,7 +22,14 @@ const Option = Select.Option
 const RadioGroup = Radio.Group
 const CheckboxGroup = Checkbox.Group
 
-class FormModal extends Component {
+class ModalForm extends Component {
+    handleSelect = (key, value) => {
+        console.log(key, value)
+        if (this.props.parentHandleSelect) {
+            this.props.parentHandleSelect(key, value)
+        }
+    }
+
     /**
      * 辅助函数, 将一个input元素包装下
      *
@@ -61,7 +68,7 @@ class FormModal extends Component {
                 ), field)
             case 'float':
                 return this.colWrapper((
-                    <InputNumber step={1} size="default" />
+                    <InputNumber step={field.step || 0.01} size="default" />
                 ), field)
             case 'datetime':
                 return this.colWrapper((
@@ -150,8 +157,8 @@ class FormModal extends Component {
         const rows = []
 
         // 生成表单项
-        const formItems = [];
-        this.props.schema.forEach((field) => {
+        // const formItems = [];
+        schema.forEach((field) => {
             // 开始push各种FormItem
             switch (field.showType) {
                 case 'select':
@@ -170,16 +177,16 @@ class FormModal extends Component {
                     rows.push(this.transformNormal(field))
             }
 
-            formItems.push(rows);
-        });
+            // formItems.push(rows);
+        })
         return (
             <Form horizontal>
-                {formItems}
+                {rows}
             </Form>
         )
     }
 }
 
-FormModal = Form.create()(FormModal)
+ModalForm = Form.create()(ModalForm)
 
-export default FormModal
+export default ModalForm

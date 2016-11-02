@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -24,7 +24,7 @@ const receiveContractTable = (res) => ({
 const fetchContractTable = (data) => {
     return dispatch => {
         dispatch(requestContractTable())
-        xhr('post', leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
+        xhr('post', paths.leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data

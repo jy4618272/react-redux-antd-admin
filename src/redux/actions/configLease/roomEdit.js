@@ -1,6 +1,6 @@
 import { message, notification } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -23,7 +23,7 @@ const receiveBuildList = (res) => ({
 })
 const fetchBuildList = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('房间设置之获取楼号：', data, res)
             const options = []
@@ -53,7 +53,7 @@ const receiveRoomEdit = (res) => ({
 const fetchRoomEdit = (data) => {
     return dispatch => {
         dispatch(requestRoomEdit())
-        xhr('post', leasePath + '/rentroomcs/selectRentRoomById', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/selectRentRoomById', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('房间设置之编辑', data, res)
             if (res.result === 'success') {
@@ -78,7 +78,7 @@ const receiveRoomUpdate = (res) => ({
 
 const fetchRoomUpdate = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/updateRentRoomStatus', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/updateRentRoomStatus', data, function (res) {
             const hide = message.loading('正在查询...', 0) 
             console.log('房间设置之表单更新保存', res)
             if (res.result === 'success') {

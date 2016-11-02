@@ -3,7 +3,7 @@ import {
     notification 
 } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -21,14 +21,15 @@ const receiveContractFrom = (res) => ({
 
 const fetchContractFrom = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/pactprintmodelcs/selectTypeBySite', data, (res) => {
+        xhr('post', paths.leasePath + '/pactprintmodelcs/selectTypeBySite', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             const newRes = []
             res.data.map(item => {
                 newRes.push({
                     key: item.modelname,
                     value: item.modelname,
-                    pactkind: item.pactkind
+                    pactkind: item.pactkind,
+                    pactprintmodelid: item.pactprintmodelid
                 })
             })
             console.log('获取【合同模板】数据：', newRes)

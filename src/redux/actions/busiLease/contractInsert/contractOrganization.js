@@ -1,17 +1,21 @@
-import { 
+import {
     message
 } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
 // ================================
+const REQUEST_CONTRACT_ORGANIZATION = 'REQUEST_CONTRACT_ORGANIZATION'  // 获取合同模板
 const RECEIVE_CONTRACT_ORGANIZATION = 'RECEIVE_CONTRACT_ORGANIZATION'  // 获取合同模板
 
 // ================================
 // Action Creator
 // ================================
+const requestContractOrganization = () => ({
+    type: REQUEST_CONTRACT_ORGANIZATION
+})
 const receiveContractOrganization = (res) => ({
     type: RECEIVE_CONTRACT_ORGANIZATION,
     payload: res
@@ -19,16 +23,33 @@ const receiveContractOrganization = (res) => ({
 
 const fetchContractOrganization = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentpactfullinfocs/selectOrganizationByPhoneOrPartyName', data, (res) => {
+        dispatch(requestContractOrganization())
+        xhr('post', paths.leasePath + '/rentpactfullinfocs/selectOrganizationByPhoneOrPartyName', data, (res) => {
             const hide = message.loading('正在查询...', 0)
+            const newRes = []
             console.log('获取【客户信息】数据：', res)
             if (res.result === 'success') {
-                dispatch(receiveContractOrganization(res))
+                hide()
+                res.data.map(item => {
+                    newRes.push({
+                        organization: item.realname,
+                        operationrange: '',
+                        legalperson: '',
+                        idcard: item.certificatenumber,
+                        address: '',
+                        telephone: item.mobilenumber,
+                        bankname: '',
+                        bankaccount: '',
+                        partyid: item.partyid,
+                        partyname: item.partyname
+                    })
+                })
+                dispatch(receiveContractOrganization(newRes))
             } else {
-                dispatch(receiveContractOrganization({}))
-                errHandler(res.result)
+                hide()
+                dispatch(receiveContractOrganization([]))
+                errHandler(res.result + '，' + res.msg)
             }
-            hide()
         })
     }
 }
@@ -39,5 +60,13 @@ export default {
 }
 
 export const ACTION_HANDLERS = {
-    [RECEIVE_CONTRACT_ORGANIZATION]: (contractOrganization, {payload: res}) => []
+    [REQUEST_CONTRACT_ORGANIZATION]: (organization) => ({
+        ...organization,
+        tableLoading: true
+    }),
+    [RECEIVE_CONTRACT_ORGANIZATION]: (organization, {payload: res}) => ({
+        ...organization,
+        tableLoading: false,
+        tableData: res
+    })
 }

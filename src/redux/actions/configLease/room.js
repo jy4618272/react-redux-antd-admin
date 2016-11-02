@@ -3,7 +3,7 @@ import {
     notification
 } from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, leasePath} from 'SERVICE/config'
+import {errHandler, paths} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -24,7 +24,7 @@ const receiveArea = (res) => ({
 
 const fetchArea = () => {
     return dispatch =>
-        xhr('post', leasePath + '/rentroomcs/seleAreaBySite', {}, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/seleAreaBySite', {}, function (res) {
             console.log('房间设置之区域', res)
             const options = []
             res.data.map(item => {
@@ -47,7 +47,7 @@ const receiveRoomTable = (res) => ({
 const fetchRoomTable = (data) => {
     return dispatch => {
         dispatch(requestRoomTable())
-        xhr('post', leasePath + '/rentroomcs/selectByStatus', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/selectByStatus', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -69,7 +69,7 @@ const fetchRoomTable = (data) => {
 const searchRoomTable = (data) => {
     return dispatch => {
         dispatch(requestRoomTable())
-        xhr('post', leasePath + '/rentroomcs/selectByAreaAndBuild', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/selectByAreaAndBuild', data, function (res) {
             const hide = message.loading('正在查询...', 0)            
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -91,7 +91,7 @@ const searchRoomTable = (data) => {
 const searchButtonRoomTable = (data) => {
     return dispatch => {
         dispatch(requestRoomTable())
-        xhr('post', leasePath + '/rentroomcs/selectByStatus', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/selectByStatus', data, function (res) {
             const newRes = Object.assign({}, res, {
                 sub: data
             })

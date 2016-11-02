@@ -8,38 +8,38 @@ const initialState = {
     tableColumns: [
         {
             title: '客户名称',
-            dataIndex: 'keyname',
-            key: 'keyname'
+            dataIndex: 'organization',
+            key: 'organization'
         },
         {
             title: '公司法人',
-            dataIndex: 'promotiontype',
-            key: 'promotiontype'
+            dataIndex: 'legalperson',
+            key: 'legalperson'
         },
         {
             title: '身份证',
-            dataIndex: 'promotionnum',
-            key: 'promotionnum'
+            dataIndex: 'idcard',
+            key: 'idcard'
         },
         {
-            title: '公司地址',
-            dataIndex: 'area',
-            key: 'area'
+            title: '身份证地址',
+            dataIndex: 'address',
+            key: 'address'
         },
         {
             title: '联系电话',
-            dataIndex: 'promotionnum',
-            key: 'promotionnum'
+            dataIndex: 'telephone',
+            key: 'telephone'
         },
         {
             title: '开户银行',
-            dataIndex: 'area',
-            key: 'area'
+            dataIndex: 'bankname',
+            key: 'bankname'
         },
         {
             title: '银行帐号',
-            dataIndex: 'businessnumber',
-            key: 'businessnumber'
+            dataIndex: 'bankaccount',
+            key: 'bankaccount'
         }
     ],
     tableData: [],

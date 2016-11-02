@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -17,7 +17,7 @@ const receiveContractInfo = (res) => ({
 
 const fetchContractInfo = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/pactprintmodelc', data, (res) => {
+        xhr('post', paths.leasePath + '/pactprintmodelc', data, (res) => {
             const hide = message.loading('正在查询...', 0)
 
             const newRes = []

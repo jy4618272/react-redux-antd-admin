@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, leasePath} from 'SERVICE/config'
+import {errHandler, paths} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -23,7 +23,7 @@ const receiveClassLineTable = (res) => ({
 const fetchClassLineTable = (data) => {
     return dispatch => {
         dispatch(requestClassLineTable())
-        xhr('post', leasePath + '/transportlinecs/selectByIndex', data, function (res) {
+        xhr('post', paths.leasePath + '/transportlinecs/selectByIndex', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data

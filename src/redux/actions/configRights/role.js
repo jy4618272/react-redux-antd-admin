@@ -1,6 +1,6 @@
 import {message} from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, leasePath} from 'SERVICE/config'
+import {errHandler, paths} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -23,7 +23,7 @@ const receiveRoleTable = (res) => ({
 const fetchRoleTable = (data) => {
     return dispatch => {
         dispatch(requestRoleTable())
-        xhr('post', leasePath + '/', data, function (res) {
+        xhr('post', paths.leasePath + '/', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data

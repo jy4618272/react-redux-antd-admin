@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, leasePath} from 'SERVICE/config'
+import {errHandler, paths} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -24,7 +24,7 @@ const receiveManagerTable = (res) => ({
 const fetchManagerTable = (data) => {
     return dispatch => {
         dispatch(requestManagerTable())
-        xhr('post', leasePath + '/salercs/selectByDetail', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/selectByDetail', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data

@@ -9,17 +9,20 @@ import {
     Form,
     InputNumber,
     Input,
-    DatePicker
+    DatePicker,
+    notification
 } from 'antd'
+
 const FormItem = Form.Item
 
-import InnerForm from 'COMPONENT/DBTable/InnerForm'
-import InnerTable from 'COMPONENT/DBTable/InnerTable'
+import {
+    ModalForm,
+    InnerForm,
+    InnerTable
+} from 'COMPONENT'
 
 import actionLeaseAdd from 'ACTION/configLease/leaseAdd'
-
-import moment from 'moment'
-
+import { filterQueryObj } from 'UTIL'
 
 const mapDispatchToProps = (dispatch) => ({
     actionLeaseAdd: bindActionCreators(actionLeaseAdd, dispatch)
@@ -33,7 +36,14 @@ class LeaseAdd extends Component {
     constructor(props) {
         super(props)
         console.log(props)
-
+        this.state = {
+            modalOpenBtn: 'roomGoodsInsert',
+            modalName: 'roomGoodsInsert',
+            modalVisible: false,
+            modalTitle: '新增',
+            modalWidth: '500',
+            tableDataGoods: []
+        }
         this.initFetchSchema(props)
     }
 
@@ -112,40 +122,120 @@ class LeaseAdd extends Component {
             })
         }
     }
+    
     parentHandleClick = (key) => {
+        if (key === 'addRoomGoods') {
+            this.setState({
+                modalOpenBtn: 'roomGoodsInsert',
+                modalName: 'roomGoods',
+                modalVisible: true,
+                modalTitle: '新增房间物品'
+            })
+        }
+    }
+
+    handleEditGoods = (text, record, index) => {
+        this.setState({
+            modalOpenBtn: 'roomGoodsEdit',
+            modalName: 'roomGoodsEdit',
+            modalVisible: true,
+            modalTitle: '修改房间物品'
+        })
+
+        setTimeout(() => {
+            this.refs.roomGoodsModal.setFieldsValue(record)
+        }, 0)
+    }
+
+    handleDelGoods = (text, record, index) => {
+        const {tableDataGoods} = this.state
+        tableDataGoods.splice(index, 1)
+        this.setState({
+            tableDataGoods
+        })
+    }
+
+    // 弹框确认
+    handleModalOk = () => {
+        this.refs.roomGoodsModal.validateFieldsAndScroll((errors, values) => {
+            if (errors) {
+                notification.error({
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
+                })
+                return false;
+            }
+
+            const obj = this.state.tableDataGoods
+            const oldObj = this.refs.roomGoodsModal.getFieldsValue()
+            const newObj = filterQueryObj(oldObj)
+            obj.push(Object.assign({}, newObj))
+            this.setState({
+                tableDataGoods: obj
+            })
+            this.handleModalCancel()
+        })
+    }
+
+    handleModalCancel = () => {
+        const {modalName} = this.state
+        if (modalName === 'roomGoods') {
+            this.refs.roomGoodsModal.resetFields()
+        }
+        this.setState({
+            modalVisible: false
+        })
     }
 
     // 渲染
     render() {
         const {roomAddSchema} = this.props.configLease
+        const {modalName} = this.state
+        const roomSchema = roomAddSchema['tableColumns'].concat([
+            {
+                key: 'operation',
+                title: '操作',
+                render: (text, record, index) => <div className="button-group">
+                    <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditGoods.bind(this, text, record, index)}>修改</a>
+                    <a href="javascript:;" className="s-blue" onClick={this.handleDelGoods.bind(this, text, record, index)}>删除</a>
+                </div>
+            }
+        ])
+
+        let modalContent
+        if (modalName === "roomGoods") {
+            modalContent = <ModalForm
+                ref="roomGoodsModal"
+                schema={roomAddSchema['roomGoodsForm']} />
+        }
+
         return (
             <section className="m-config m-config-room">
+                <Modal
+                    visible={this.state.modalVisible}
+                    title={this.state.modalTitle}
+                    width={this.state.modalWidth}
+                    onOk={this.handleModalOk}
+                    onCancel={this.handleModalCancel}>
+                    {modalContent}
+                </Modal>
                 {this.addType == 'room' ?
                     <InnerForm
-                        formStyle="padding m-advance-fill"
-                        schema={roomAddSchema['room']}
+                        formStyle="padding"
+                        schema={roomAddSchema['roomForm']}
                         sessionShouldGet={this.addType}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
                         parentHandleSave={this.parentHandleSave}>
-                        {/*
-                        <InnerTable
-                            columns={roomAddSchema.tableColumns}
-                            modalSchema={roomAddSchema['room']}
-                            schema={{
-                                left: [
-                                    {
-                                        title: '新增',
-                                        key: 'add'
-                                    }
-                                ],
-                                center: [],
-                                right: []
-                            }}
-                            dataSource={roomAddSchema.tableSource}
-                            parentHandleClick={this.parentHandleClick}
-                            bordered={true} />
-                        */}
+                        <div className="padding-lr g-mt20">
+                            <InnerTable
+                                columns={roomSchema}
+                                schema={roomAddSchema['tableControls']}
+                                dataSource={this.state.tableDataGoods}
+                                parentHandleClick={this.parentHandleClick}
+                                pagination={false}
+                                bordered={true} />
+                        </div>
                     </InnerForm> :
                     <InnerForm
                         formStyle="padding m-advance-fill"

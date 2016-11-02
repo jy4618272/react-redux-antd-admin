@@ -2,7 +2,7 @@ import createReducer from 'UTIL/createReducer'
 import { ACTION_HANDLERS } from 'ACTION/configLease/leaseAdd'
 
 const initialState = {
-    room: [
+    roomForm: [
         {
             key: 'area',
             title: '区域',
@@ -96,21 +96,26 @@ const initialState = {
             }]
         }
     ],
+    tableControls: {
+        left: [
+            {
+                key: "addRoomGoods",
+                title: '新增房间物品'
+            }
+        ],
+        center: [],
+        right: []
+    },
     tableColumns: [
         {
-            title: "序号",
-            dataIndex: "primaryKey",
-            key: "primaryKey"
-        },
-        {
             title: "房间物品",
-            dataIndex: "goods",
-            key: "goods"
+            dataIndex: "itemname",
+            key: "itemname"
         },
         {
             title: "物品规格",
-            dataIndex: "size",
-            key: "size"
+            dataIndex: "spec",
+            key: "spec"
         },
         {
             title: "数量",
@@ -119,21 +124,72 @@ const initialState = {
         },
         {
             title: "价格",
-            dataIndex: "price",
-            key: "price"
+            dataIndex: "money",
+            key: "money"
         },
         {
             title: "备注",
             dataIndex: "memo",
             key: "memo"
-        },
-        {
-            title: '',
-            key: "add",
-            render: () => <a href="javascript:void(0)" onClick={() => { alert(3) } }><Icon type="delete" /> 删除</a>,
         }
     ],
-    tableSource: []
+    roomGoodsForm: [
+        {
+            title: "房间物品",
+            key: "itemname",
+            dataType: 'varchar',
+            placeholder: "请输入房间物品",
+            feedBackShow: true,
+            validate: [
+                {
+                    rules: [
+                        { required: true, type: 'string', message: '请输入房间物品' },
+                    ],
+                    trigger: ['onChange']
+                }
+            ]
+        },
+        {
+            title: "物品规格",
+            key: "spec",
+            dataType: 'varchar'
+        },
+        {
+            title: "数量",
+            key: "num",
+            dataType: 'int',
+            placeholder: "请输入数量",
+            feedBackShow: true,
+            validate: [
+                {
+                    rules: [
+                        {type: 'number', message: '请输入正确的数量' },
+                    ],
+                    trigger: ['onChange']
+                }
+            ]
+        },
+        {
+            title: "价格",
+            key: "money",
+            dataType: 'float',
+            placeholder: "请输入价格",
+            feedBackShow: true,
+            validate: [
+                {
+                    rules: [
+                        {type: 'number', message: '请输入正确的价格' },
+                    ],
+                    trigger: ['onChange']
+                }
+            ]
+        },
+        {
+            title: "备注",
+            key: "memo",
+            dataType: 'varchar'
+        }
+    ]
 }
 
 export default createReducer(initialState, ACTION_HANDLERS)

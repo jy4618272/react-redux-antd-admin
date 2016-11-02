@@ -4,7 +4,6 @@ import $ from 'jquery'
 const xhr = (method, url, body, cb) => {
 	$.ajax({
 		type: method,
-		// url: rootPath + url,
 		url: url,
 		data: body,
 		dataType: 'json'

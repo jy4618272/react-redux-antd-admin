@@ -2,7 +2,7 @@ import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import {
     errHandler,
-    leasePath
+    paths
 } from 'SERVICE/config'
 
 // ================================
@@ -27,12 +27,12 @@ const receiveRoomAdd = (res) => ({
 
 const fetchRoomAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('房间设置之表单保存', res)
             if (res.result === 'success') {
                 if (res.data.rentroomid) {
-                    xhr('post', leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
+                    xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
                         rentroomid: res.data.rentroomid,
                         itemname: '32323'
                     }, function (res) {
@@ -63,7 +63,7 @@ const receiveBuildList = (res) => ({
 })
 const fetchBuildList = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
             console.log('房间设置之获取楼号：', data, res)
             const options = []
             res.data.map(item => {
@@ -87,7 +87,7 @@ const receiveClassLineAdd = (res) => ({
 
 const fetchClassLineAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/transportlinecs/insertTransportLine', data, function (res) {
+        xhr('post', paths.leasePath + '/transportlinecs/insertTransportLine', data, function (res) {
             console.log('班线管理之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receiveClassLineAdd(res))
@@ -112,7 +112,7 @@ const receivePolicyAdd = (res) => ({
 
 const fetchPolicyAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentpromotioncs/insertRentPromotion', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/insertRentPromotion', data, function (res) {
             console.log('政策优惠之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receivePolicyAdd(res))
@@ -137,7 +137,7 @@ const receiveManagerAdd = (res) => ({
 
 const fetchManagerAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/salercs/insertSaler', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/insertSaler', data, function (res) {
             console.log('客户经理之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receiveManagerAdd(res))
@@ -162,7 +162,7 @@ const receiveContractAdd = (res) => ({
 
 const fetchContractAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/pactprintmodelcs/insertPactPrintModel ', data, function (res) {
+        xhr('post', paths.leasePath + '/pactprintmodelcs/insertPactPrintModel ', data, function (res) {
             console.log('合同模板之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receiveContractAdd(res))

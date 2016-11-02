@@ -1,9 +1,6 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import {
-    errHandler,
-    leasePath
-} from 'SERVICE/config'
+import { errHandler, paths} from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -22,7 +19,7 @@ const receiveBaseInsert= (res) => ({
 
 const fetchBaseInsert = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/dd', data, function (res) {
+        xhr('post', paths.leasePath + '/dd', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('基地配置之表单保存', res)
             if (res.result === 'success') {
