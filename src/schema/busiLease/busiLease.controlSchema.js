@@ -3,30 +3,36 @@ module.exports = {
         left: [
             {
                 key: 'addContract',
-                title: '新增合同'
-            },
-            {
-                key: 'payContract',
-                title: '合同交款'
+                title: '新增'
             },
             {
                 key: 'approvalContract',
-                title: '合同审批'
+                title: '审批'
             },
             {
                 key: 'renewContract',
                 title: '续租'
             },
             {
+                key: 'changeContract',
+                title: '变更'
+            },
+            {
+                key: 'editContract',
+                title: '编辑'
+            },
+            {
                 key: 'rentContract',
                 title: '退租'
             },
-             {
-                key: 'changeContract',
-                title: '变更'
+            {
+                key: 'voidContract',
+                title: '作废'
+            },
+            {
+                key: 'payContract',
+                title: '合同交款'
             }
-        ],
-        center: [
         ],
         right: [
             {
@@ -54,7 +60,6 @@ module.exports = {
                 title: '提交财务'
             }
         ],
-        center: [],
         right: [
             {
                 key: 'exportPage',
@@ -69,7 +74,6 @@ module.exports = {
                 title: '新增临时摊位协议'
             }
         ],
-        center: [],
         right: [
             {
                 key: 'exportPage',

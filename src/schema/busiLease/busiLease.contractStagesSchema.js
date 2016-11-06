@@ -111,7 +111,6 @@ module.exports = {
                 title: '关闭明细'
             }
         ],
-        center: [],
         right: []
     },
     tableShowColumns: [

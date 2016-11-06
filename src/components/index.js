@@ -4,9 +4,12 @@ import Footer from './Footer'
 import Err from './Error'
 import Loading from './Loading'
 import SlideBar from './SlideBar'
+import ListText from './List/ListText'
+import WorkFlow from './WorkFlow'
 
 import FormLayout from './DBTable/FormLayout'
 import InnerForm from './DBTable/InnerForm'
+import InnerTableControl from './DBTable/InnerTableControl'
 import InnerTable from './DBTable/InnerTable'
 import InnerPagination from './DBTable/InnerPagination'
 import ModalTable from './ModalContent/ModalTable'
@@ -21,8 +24,11 @@ export {
     Err,
     Loading,
     SlideBar,
+    ListText,
+    WorkFlow,
     FormLayout,
     InnerForm,
+    InnerTableControl,
     InnerTable,
     InnerPagination,
     ModalTable,

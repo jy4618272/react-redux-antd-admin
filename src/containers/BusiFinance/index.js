@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { Link, hashHistory } from 'react-router'
 import {
     Row,
     Col,
@@ -181,7 +182,7 @@ class Finance extends Component {
             busiFinance,
             actionFinance
         } = this.props
-        
+
         if (key === 'receive') {
             const tmpObj = Object.assign({}, {
                 financeCollectionIds: data[0].financecollectionid ? data[0].financecollectionid : 0
@@ -218,6 +219,14 @@ class Finance extends Component {
         }
     }
 
+    parentHandleDoubleClick = (record, index) => {
+        // alert(JSON.stringify(record))
+        if (record.type === '租赁合同') {
+            hashHistory.push(`busi/busi_finance/${record.financecollectionid}`)
+        }
+
+    }
+
     /**
      * 刚进入页面时触发一次查询
      */
@@ -252,6 +261,7 @@ class Finance extends Component {
                             schema={this.controlSchema['not']}
                             bordered={true}
                             pagination={false}
+                            parentHandleDoubleClick={this.parentHandleDoubleClick}
                             parentHandleClick={this.parentHandleClick} />
                         <InnerPagination
                             total={busiFinance.total}

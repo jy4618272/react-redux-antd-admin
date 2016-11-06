@@ -276,6 +276,7 @@ class Lease extends Component {
      */
     componentDidMount() {
         const {
+            fetchArea,
             fetchRoomTable,
             fetchClassLineTable,
             fetchPolicyTable,
@@ -285,6 +286,7 @@ class Lease extends Component {
 
         if (this.status === 'room') {
             this.refresh(fetchRoomTable)
+            fetchArea()
         } else if (this.status === 'classLine') {
             this.refresh(fetchClassLineTable)
         } else if (this.status === 'policy') {
@@ -298,6 +300,7 @@ class Lease extends Component {
 
     render() {
         const {
+            areaData,
             roomData,
             classLineData,
             policyData,
@@ -305,6 +308,11 @@ class Lease extends Component {
             contractTplData,
             auditPersonData
         } = this.props.configLease
+
+        if (this.status === 'room') {
+            roomData['room'][0].options = areaData.data
+        }
+
         if (!this.inited) {
             return (
                 <Error errorMsg={this.errorMsg} />
@@ -477,7 +485,7 @@ class Lease extends Component {
                             skipCount={contractTplData.skipCount}
                             parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
-                    <TabPane tab="审核人配置" key="auditPerson">
+                    {/*<TabPane tab="审核人配置" key="auditPerson">
                         <InnerForm
                             ref="form"
                             formStyle="g-mb20 m-advance-filter"
@@ -499,7 +507,7 @@ class Lease extends Component {
                             skipCount={roomData.skipCount}
                             parentHandlePageChange={this.handlePageChange}
                             />
-                    </TabPane>
+                    </TabPane>*/}
                 </Tabs>
             </section>
         )

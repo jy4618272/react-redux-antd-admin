@@ -66,7 +66,6 @@ module.exports = {
             disabled: true
         }
     ],
-
     room: {
         topButtons: {
             left: [
@@ -75,7 +74,6 @@ module.exports = {
                     title: '新增房间'
                 }
             ],
-            center: [],
             right: []
         },
         columns: [
@@ -119,7 +117,6 @@ module.exports = {
                     title: '新增班线'
                 }
             ],
-            center: [],
             right: []
         },
         columns: [
@@ -143,7 +140,6 @@ module.exports = {
                     title: '新增优惠'
                 }
             ],
-            center: [],
             right: []
         },
         columns: [
@@ -177,7 +173,6 @@ module.exports = {
                     title: '新增保证金'
                 }
             ],
-            center: [],
             right: []
         },
         columns: [
@@ -196,7 +191,6 @@ module.exports = {
                     title: '选择文件'
                 }
             ],
-            center: [],
             right: []
         },
         columns: [

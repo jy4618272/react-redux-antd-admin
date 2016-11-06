@@ -19,10 +19,13 @@ if (__PROD__) {
 }
 
 const paths = {
+	// 流程
+	workFlowPath: '/workflowAdmin',
 	// 财务
 	financePath: '/financeParkAdmin',
 	// 租赁
 	leasePath: '/tfPassParkAdmin',
+	// 图片
 	imgPath: '/dfs'
 }
 
@@ -34,8 +37,8 @@ const errHandler = (e) => {
 	console.error('[ XHR:Failed ]', e)
 }
 
-export { 
-	rootPaths, 
-	errHandler, 
-	paths 
+export {
+	rootPaths,
+	errHandler,
+	paths
 }

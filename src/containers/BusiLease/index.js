@@ -59,7 +59,6 @@ class BusiLease extends Component {
             this.errorMsg = `加载${tableName}表的querySchema出错, 请检查配置`
             return false
         }
-
     }
 
     render() {

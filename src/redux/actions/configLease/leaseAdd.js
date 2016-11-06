@@ -27,31 +27,40 @@ const receiveRoomAdd = (res) => ({
 
 const fetchRoomAdd = (data) => {
     return dispatch => {
-        xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
-            const hide = message.loading('正在查询...', 0)
-            console.log('房间设置之表单保存', res)
+        xhr('post', paths.leasePath + '/rentroomcs/queryRoom', data, function (res) {
             if (res.result === 'success') {
-                if (res.data.rentroomid) {
-                    xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
-                        rentroomid: res.data.rentroomid,
-                        itemname: '32323'
-                    }, function (res) {
-                        console.log('房间设置之表单保存2', res)
-                        if (res.result === 'success') {
-                            dispatch(receiveRoomAdd(res))
+                xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
+                    const hide = message.loading('正在查询...', 0)
+                    console.log('房间设置之表单保存', res)
+                    if (res.result === 'success') {
+                        if (res.data.rentroomid) {
+                            xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
+                                rentroomid: res.data.rentroomid,
+                                itemname: data.roomGoods
+                            }, function (res) {
+                                console.log('房间设置之表单保存2', res)
+                                if (res.result === 'success') {
+                                    dispatch(receiveRoomAdd(res))
+                                }
+                            })
                         }
-                    })
-                }
-                notification.success({
-                    message: '新增成功',
-                    description: '房间设置新增数据成功'
-                });
-                history.back()
+                        notification.success({
+                            message: '新增成功',
+                            description: '房间设置新增数据成功'
+                        });
+                        history.back()
+                    } else {
+                        dispatch(receiveRoomAdd({}))
+                        errHandler(res.result)
+                    }
+                    hide()
+                })
             } else {
-                dispatch(receiveRoomAdd({}))
-                errHandler(res.result)
+                notification.success({
+                    message: '新增失败',
+                    description: '房间已经存在'
+                });
             }
-            hide()
         })
     }
 }
@@ -65,11 +74,11 @@ const fetchBuildList = (data) => {
     return dispatch => {
         xhr('post', paths.leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
             console.log('房间设置之获取楼号：', data, res)
-            const options = []
-            res.data.map(item => {
-                options.push({ key: item.build, value: item.build })
-            })
             if (res.result === 'success') {
+                const options = []
+                res.data.map(item => {
+                    options.push({ key: item.build, value: item.build })
+                })
                 dispatch(receiveBuildList(options))
             } else {
                 dispatch(receiveBuildList({}))
@@ -193,16 +202,16 @@ export const ACTION_HANDLERS = {
     [RECEIVE_ROOM_ADD]: (roomAdd) => ({
         ...roomAdd
     }),
-    [RECEIVE_BUILD_LIST]: (roomAdd, {payload: res}) => {
-        roomAdd.room.map((item, index) => {
-            if (index == 1) {
-                item.options = res
-            }
-        })
-        return roomAdd
-    },
+[RECEIVE_BUILD_LIST]: (roomAdd, {payload: res}) => {
+    roomAdd.roomForm.map((item, index) => {
+        if (index == 1) {
+            item.options = res
+        }
+    })
+    return roomAdd
+},
     [RECEIVE_CLASSLINE_ADD]: ({ payload: res }) => [],
-    [RECEIVE_POLICY_ADD]: ({payload: res}) => [],
-    [RECEIVE_MANAGER_ADD]: ({payload: res}) => [],
-    [RECEIVE_CONSTRACT_ADD]: ({payload: res}) => []
+        [RECEIVE_POLICY_ADD]: ({payload: res}) => [],
+            [RECEIVE_MANAGER_ADD]: ({payload: res}) => [],
+                [RECEIVE_CONSTRACT_ADD]: ({payload: res}) => []
 }

@@ -27,24 +27,6 @@ module.exports = {
                 title: '历史'
             }
         ],
-        center: [
-            // {
-            //     key: 'searchAll',
-            //     title: '全部'
-            // },
-            // {
-            //     key: 'searchRented',
-            //     title: '已出租'
-            // },
-            // {
-            //     key: 'searchNotRent',
-            //     title: '未出租'
-            // },
-            // {
-            //     key: 'searchVoid',
-            //     title: '作废'
-            // }
-        ],
         right: [
             {
                 key: 'exportPage',
@@ -71,7 +53,6 @@ module.exports = {
                 title: '关闭'
             }
         ],
-        center: [],
         right: []
     },
     policy: {
@@ -93,7 +74,6 @@ module.exports = {
                 title: '关闭'
             }
         ],
-        center: [],
         right: []
     },
     accountManager: {
@@ -115,7 +95,6 @@ module.exports = {
                 title: '关闭'
             }
         ],
-        center: [],
         right: []
     },
     contractTpl: {
@@ -137,7 +116,6 @@ module.exports = {
                 title: '关闭'
             }
         ],
-        center: [],
         right: []
     },
     auditPerson: {
@@ -159,7 +137,6 @@ module.exports = {
                 title: '关闭'
             }
         ],
-        center: [],
         right: []
     }
 }

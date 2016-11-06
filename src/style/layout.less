@@ -1,24 +1,4 @@
-/**************************** 变量 ****************************/
-@base-color: #f50;
-@white:#fff;
-@white-light:#f6f6f6;
-@gray:#666;
-@gray-ligth:#999;
-@gray-bg:#fafafa;
-@border-color:#ddd;
-
-
-/**************************** 组件样式 ****************************/
-.popover-theme-primary{
-  .ant-popover-inner{
-    background-color: rgba(0, 0, 0, 0.8);
-    box-shadow:0 0 0 none;
-    color:#fff;
-  }
-  .ant-popover-placement-top .ant-popover-arrow:after{
-    border-top-color:rgba(0, 0, 0, 0.8);
-  }
-}
+@import './variable.less';
 
 .m-table{
   	.ant-table-bordered .ant-table-thead > tr > th, .ant-table-bordered .ant-table-tbody > tr > td{
@@ -38,7 +18,7 @@
     width:100%;
   }
 }
-.m-search{}
+
 /**************************** 常用样式 ****************************/
 .clearfix {
   *zoom: 1;
@@ -112,6 +92,22 @@
 .s-blue{
   color:#2db7f5;
 }
+.s-primary{
+  color:@base-color;
+}
+.s-green{
+  color:@green;
+}
+.s-red{
+  color:@red;
+}
+.s-yellow{
+  color:@yellow;
+}
+.s-gray{
+  color:@gray-ligth;
+}
+
 
 .g-border-bottom{
   border-bottom:1px solid @border-color;
@@ -141,6 +137,41 @@
     }
 }
 
+.list-text{
+
+  .ant-col-sm-8{  
+    line-height: 30px;
+  }
+}
+.modal-with-title{
+  h3{
+    line-height: 40px;
+  }
+}
+.modal-with-title{
+  h3{
+    position:relative;
+    text-align: center;
+    .u-mark{
+      position: absolute;
+      right:10px;      
+      font-weight: normal;
+      font-size: 12px;
+    }
+  }
+}
+.m-table-print{
+  border-collapse: collapse;
+  width: 100%;
+  td{
+    padding:10px;
+    line-height: 24px;
+    border:1px solid #ddd;   
+    &.title{
+      background-color:#f8f8f8;
+    } 
+  }
+}
 
 /**************************** 布局 ****************************/
 .m-layout{
@@ -154,6 +185,7 @@
 		}
 	}
 }
+
 // 左侧导航固定宽度
 .m-aside {
 	position:absolute;

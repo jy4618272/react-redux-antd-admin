@@ -3,7 +3,6 @@
 // 注意: 所有的key不能重复
 
 module.exports = {
-    room: [],
     classLine: [
         {
             key: 'site',

@@ -14,7 +14,6 @@ module.exports = {
                 title: '确认退款'
             }
         ],
-        center: [],
         right: [
             {
                 key: 'exportPage',
@@ -29,7 +28,6 @@ module.exports = {
                 title: '资源文件'
             }
         ],
-        center: [],
         right: [
             {
                 key: 'exportPage',

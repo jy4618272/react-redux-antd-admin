@@ -7,13 +7,13 @@ const initialState = {
             key: 'area',
             title: '区域',
             showType: 'select',
-            options: JSON.parse(sessionStorage.getItem('areaBySite')),
+            options: [],
             placeholder: "请选择区域",
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择区域' },
+                        { required: true, type: 'string', message: '必填，请选择区域' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -30,7 +30,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择楼号' },
+                        { required: true, type: 'string', message: '必填，请选择楼号' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -45,7 +45,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请输入房间号' },
+                        { required: true, type: 'string', message: '必填，请输入房间号' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -60,7 +60,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请输入面积' },
+                        { required: true, type: 'number', message: '必填，请输入面积' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -75,7 +75,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请输入金额' },
+                        { required: true, type: 'number', message: '必填，请输入金额' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }

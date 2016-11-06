@@ -7,7 +7,7 @@ const initialState = {
             key: 'area',
             title: '区域',
             showType: 'select',
-            options: JSON.parse(sessionStorage.getItem('areaBySite')),
+            options: [],
             placeholder: "请选择区域",
             feedBackShow: true,
             validate: [
@@ -20,27 +20,12 @@ const initialState = {
             ]
         },
         {
-            key: 'build',
-            title: '楼号',
-            dataType: 'varchar',
-            showType: 'select',
-            options: [],
-            placeholder: '请选择楼号',
-            feedBackShow: true,
-            validate: [
-                {
-                    rules: [
-                        { required: true, message: '必填，请选择楼号' },
-                    ],
-                    trigger: ['onBlur', 'onChange']
-                }
-            ]
-        },
-        {
             key: 'room',
             title: '房间号',
             dataType: 'varchar',
             placeholder: '请输入房间号',
+            showType: 'select',                        
+            options:[],
             feedBackShow: true,
             validate: [
                 {
@@ -103,7 +88,6 @@ const initialState = {
                 title: '新增房间物品'
             }
         ],
-        center: [],
         right: []
     },
     tableColumns: [

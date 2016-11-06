@@ -1,6 +1,6 @@
-import { 
+import {
     message,
-    notification 
+    notification
 } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
@@ -29,7 +29,7 @@ const receiveBondTable = (res) => ({
 const fetchBondTable = (data) => {
     return dispatch => {
         dispatch(requestBondTable())
-        xhr('post', paths.leasePath + '/margincs/selectByIndex', data,  (res) => {
+        xhr('post', paths.leasePath + '/margincs/selectByIndex', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -60,7 +60,7 @@ const receiveBondInsert = (res) => ({
 const bondInsert = (data) => {
     return dispatch => {
         dispatch(requestBondInsert())
-        xhr('post', paths.leasePath + '/margincs/selectByIndex', data,  (res) => {
+        xhr('post', paths.leasePath + '/margincs/selectByIndex', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             console.log('租赁管理-保证金新增：', res)
             if (res.result === 'success') {
@@ -83,23 +83,23 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_BOND_TABLE]: (bond) => ({
         ...bond,
-        tableLoading: true
+    tableLoading: true
     }),
-    [RECEIVE_BOND_TABLE]: (bond, {payload: res}) => ({
+[RECEIVE_BOND_TABLE]: (bond, {payload: res}) => ({
         ...bond,
-        tableLoading: false,
-        tableData: res.data,
-        total: res.count,
-        pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
-    }),
+    tableLoading: false,
+    tableData: res.data,
+    total: res.count,
+    pageSize: 10,
+    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+}),
     [REQUEST_BOND_INSERT]: (bond) => ({
         ...bond,
         tableLoading: true
     }),
-    [RECEIVE_BOND_INSERT]: (bond, {payload: res}) => ({
+        [RECEIVE_BOND_INSERT]: (bond, {payload: res}) => ({
         ...bond,
-        tableLoading: false,
-        tableData: res
-    }),
+            tableLoading: false,
+            tableData: res
+        }),
 }

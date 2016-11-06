@@ -11,45 +11,99 @@ module.exports = [
         disabled: true
     },
     {
-        key: '1',
+        key: 'companytitle',
         title: '公司抬头',
         dataType: 'varchar',
-        placeholder: '请输入公司抬头'
+        placeholder: '请输入公司抬头',
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'string', message: '请输入公司抬头' },
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
     },
     {
-        key: '2',
+        key: 'bankname',
         title: '开户行',
         dataType: 'varchar',
-        placeholder: '请输入开户行'
+        placeholder: '请输入开户行',
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'string', message: '请输入开户行' },
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
     },
     {
-        key: '4',
+        key: 'bankaccount',
+        title: '银行账户 ',
+        dataType: 'varchar',
+        placeholder: '请输入银行账户 ',
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'string', message: '请输入银行账户 ' },
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
+    },
+    {
+        key: 'siteaddress',
         title: '基地地址',
         dataType: 'varchar',
-        placeholder: '请输入基地地址'
+        placeholder: '请输入基地地址',
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'string', message: '请输入基地地址' },
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
     },
     {
-        key: '5',
+        key: 'sitephone',
         title: '基地电话',
-        dataType: 'varchar',
-        placeholder: '请输入基地电话'
+        dataType: 'int',
+        placeholder: '请输入基地电话',
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'string', message: '请输入基地电话' },
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
     },
     {
-        key: '6',
+        key: 'sitepostcode',
         title: '邮编',
         dataType: 'varchar',
-        placeholder: '请输入邮编'
+        placeholder: '请输入邮编',
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'string', message: '请输入邮编' },
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
     },
     {
-        key: '7',
+        key: 'sitefax',
         title: '传真',
         dataType: 'varchar',
         placeholder: '请输入传真'
     },
     {
-        key: 'memo',
+        key: 'remark',
         title: '备注',
-        showType:'two',
         dataType: 'varchar',
         placeholder: '请输入备注'
     }

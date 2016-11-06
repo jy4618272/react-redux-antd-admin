@@ -1,24 +1,31 @@
+@import '../../style/variable.less';
+
 .list-news-tips{
-    margin-bottom: 20px;
-    .name{
+    border-bottom:1px solid @base-color;
+    padding:20px 0;
+    .title{
         display: block;
         text-align: right;
         padding-right: 10px;
         line-height: 36px;
     }
-    .ant-badge{
+    li{
         float: left;
         margin-right: 20px;
-        border:1px solid #f50;
-        border-radius:3px;        
         a{
-            color:#666;
+            border:1px solid transparent;
+            line-height: 20px;
+            padding:8px 15px;
+            color:@text-color;
             display: block;
-            line-height: 24px;
-            padding:5px 20px;
+            border-color: @base-color;
+            border-radius:3px;
         }
-    }
-    .ant-badge-count{
-        right: -24px;
+        .ant-badge{
+            top:-2px;
+        }
+        .name{
+            margin-right: 5px;
+        }
     }
 }

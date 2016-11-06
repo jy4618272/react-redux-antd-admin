@@ -4,9 +4,12 @@ import { connect } from 'react-redux'
 
 import actionLease from 'ACTION/configLease'
 
-import Loading from 'COMPONENT/Loading'
-import Error from 'COMPONENT/Error'
-import InnerForm from 'COMPONENT/DBTable/InnerForm'
+import {
+    Loading,
+    Error,
+    InnerForm,
+    InnerTable
+} from 'COMPONENT'
 
 const mapDispatchToProps = (dispatch) => ({
     actionLease: bindActionCreators(actionLease, dispatch)
@@ -16,36 +19,14 @@ const mapDispatchToProps = (dispatch) => ({
     ({ configLease }) => ({ configLease }),
     mapDispatchToProps
 )
-class ClassLineEdit extends Component {
+class LeaseEdit extends Component {
     constructor(props) {
         super(props)
         console.log('编辑props：', props)
 
         this.initFetchSchema(this.props)
 
-        const id = parseInt(this.props.params.id)
         this.editType = props.location.query.type
-        if (this.editType === 'room') {
-            this.props.actionLease.fetchRoomEdit({
-                rentroomid: id
-            })
-        } else if (this.editType === 'classLine') {
-            this.props.actionLease.fetchClassLineEdit({
-                transportlineid: id
-            })
-        } else if (this.editType === 'policy') {
-            this.props.actionLease.fetchPolicyEdit({
-                rentpromotionid: id
-            })
-        } else if (this.editType === 'accountManager') {
-            this.props.actionLease.fetchManagerEdit({
-                salerid: id
-            })
-        } else if (this.editType === 'contractTpl') {
-            this.props.actionLease.fetchContractEdit({
-                pactprintmodelid: id
-            })
-        }
     }
 
     /**
@@ -126,19 +107,45 @@ class ClassLineEdit extends Component {
         }
     }
 
+    componentDidMount() {
+        const {actionLease} = this.props
+        const id = parseInt(this.props.params.id)
+
+        if (this.editType === 'room') {
+            this.props.actionLease.fetchArea()
+            actionLease.fetchRoomEdit({
+                rentroomid: id
+            })
+        } else if (this.editType === 'classLine') {
+            actionLease.fetchClassLineEdit({
+                transportlineid: id
+            })
+        } else if (this.editType === 'policy') {
+            actionLease.fetchPolicyEdit({
+                rentpromotionid: id
+            })
+        } else if (this.editType === 'accountManager') {
+            actionLease.fetchManagerEdit({
+                salerid: id
+            })
+        } else if (this.editType === 'contractTpl') {
+            actionLease.fetchContractEdit({
+                pactprintmodelid: id
+            })
+        }
+    }
+
     render() {
         const {
+            areaData,
             roomEdit,
             classLineEdit,
             policyEdit,
             accountManagerEdit,
             contractTplEdit
         } = this.props.configLease
-        // alert(JSON.stringify(classLineEdit.data))
 
-        if (this.editType === 'room') {
-            this.dataSource = roomEdit
-        } else if (this.editType === 'classLine') {
+        if (this.editType === 'classLine') {
             this.dataSource = classLineEdit
         } else if (this.editType === 'policy') {
             this.dataSource = policyEdit
@@ -148,27 +155,37 @@ class ClassLineEdit extends Component {
             this.dataSource = contractTplEdit
         }
 
-        if (this.dataSource.loading) {
-            return (
-                <Loading />
-            )
-        }
-
         if (!this.inited) {
             return (
                 <Error errorMsg={this.errorMsg} />
             )
         }
+
         if (this.editType === 'room') {
+            if (roomEdit.loading) {
+                return <Loading />
+            }
+
+            roomEdit['room'][0].options = areaData.data
+
             return (
                 <section className="padding m-config-edit">
                     <InnerForm
-                        schema={this.dataSource[this.editType]}
+                        schema={roomEdit[this.editType]}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
-                        setFields={this.dataSource.data}
+                        setFields={roomEdit.data}
                         sessionShouldGet={this.tableName}
-                        parentHandleSave={this.parentHandleSave} />
+                        parentHandleSave={this.parentHandleSave}>
+                        <div className="padding-lr g-mt20">
+                            <InnerTable
+                                columns={roomEdit.tableColumns}
+                                dataSource={roomEdit.tableSource}
+                                parentHandleClick={this.parentHandleClick}
+                                pagination={false}
+                                bordered={true} />
+                        </div>
+                    </InnerForm>
                 </section>
             )
         } else {
@@ -187,4 +204,4 @@ class ClassLineEdit extends Component {
     }
 }
 
-export default ClassLineEdit
+export default LeaseEdit

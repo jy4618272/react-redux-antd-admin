@@ -1,6 +1,6 @@
-import { 
+import {
     message,
-    notification 
+    notification
 } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
@@ -34,12 +34,15 @@ const fetchContractFrom = (data) => {
             })
             console.log('获取【合同模板】数据：', newRes)
             if (res.result === 'success') {
+                hide()
+
                 dispatch(receiveContractFrom(newRes))
             } else {
+                hide()
+
                 dispatch(receiveContractFrom({}))
                 errHandler(res.result)
             }
-            hide()
         })
     }
 }
@@ -50,9 +53,9 @@ export default {
 }
 
 export const ACTION_HANDLERS = {
-    [RECEIVE_CONTRACT_FROM]: (contractFrom, {payload: res}) => contractFrom.map(item => 
-        item.key === 'modelname' ? 
-            Object.assign({}, item, { options: res}) : 
+    [RECEIVE_CONTRACT_FROM]: (contractFrom, {payload: res}) => contractFrom.map(item =>
+        item.key === 'modelname' ?
+            Object.assign({}, item, { options: res }) :
             item
     )
 }

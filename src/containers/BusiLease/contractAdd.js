@@ -1,3 +1,6 @@
+// ================================
+// 租赁管理-合同-合同新增
+// ================================
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -25,6 +28,7 @@ import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
+    WorkFlow,
     FormLayout,
     InnerTable,
     InnerPagination,
@@ -80,6 +84,10 @@ class ContractInsert extends Component {
         this.initFetchSchema(props)
         props.action.fetchContractFrom()
         props.action.fetchManager()
+        props.action.fetchWorkFlow({
+            type: '新增',
+            modelname: '合同'
+        })
     }
 
     /**
@@ -1079,6 +1087,10 @@ class ContractInsert extends Component {
                 schema={this.stagesSchema.tableShowSchema} />
         }
 
+        const workFlowProps = {
+            flow: busiLease.contractWorkFlow
+        }
+
         return (
             <section className="padding m-contract-add g-mt20">
                 <Modal
@@ -1096,6 +1108,11 @@ class ContractInsert extends Component {
                         form={this.props.form}
                         fromLayoutStyle="g-border-bottom"
                         parentHandleSelect={this.parentHandleSelect} />
+
+                    {/* 合同流程 */}
+                    <section className="g-border-bottom">
+                        <WorkFlow {...workFlowProps} />
+                    </section>
 
                     {/* 客户名称 */}
                     <div className="g-border-bottom">

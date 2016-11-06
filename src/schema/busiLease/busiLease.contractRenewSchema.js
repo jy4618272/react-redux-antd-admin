@@ -77,7 +77,6 @@ module.exports = {
     room: {
         topButtons: {
             left: [],
-            center: [],
             right: []
         },
         columns: [
@@ -116,7 +115,6 @@ module.exports = {
     line: {
         topButtons: {
             left: [],
-            center: [],
             right: []
         },
         columns: [
@@ -135,7 +133,6 @@ module.exports = {
     policy: {
         topButtons: {
             left: [],
-            center: [],
             right: []
         },
         columns: [
@@ -164,7 +161,6 @@ module.exports = {
     contractBond: {
         topButtons: {
             left: [],
-            center: [],
             right: []
         },
         columns: [
@@ -178,7 +174,6 @@ module.exports = {
     attachment: {
         topButtons: {
             left: [],
-            center: [],
             right: []
         },
         columns: [

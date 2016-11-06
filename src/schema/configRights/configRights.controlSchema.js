@@ -19,7 +19,6 @@ module.exports = {
                 title: '删除'
             }
         ],
-        center: [],
         right: []
     },
     post: {
@@ -38,7 +37,6 @@ module.exports = {
                 title: '删除'
             }
         ],
-        center: [],
         right: []
     },
     role: {
@@ -55,9 +53,7 @@ module.exports = {
             {
                 key: 'del',
                 title: '删除'
-            }
-        ],
-        center: [
+            },
             {
                 key: 'menuRights',
                 title: '菜单权限配置'
@@ -85,7 +81,6 @@ module.exports = {
                 title: '删除'
             }
         ],
-        center: [],
         right: []
     },
 }

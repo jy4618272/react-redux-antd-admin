@@ -16,16 +16,19 @@ import {
 const FormItem = Form.Item
 
 import {
+    Loading,
     ModalForm,
     InnerForm,
     InnerTable
 } from 'COMPONENT'
 
 import actionLeaseAdd from 'ACTION/configLease/leaseAdd'
+import actionLease from 'ACTION/configLease'
 import { filterQueryObj } from 'UTIL'
 
 const mapDispatchToProps = (dispatch) => ({
-    actionLeaseAdd: bindActionCreators(actionLeaseAdd, dispatch)
+    actionLease: bindActionCreators(actionLease, dispatch),
+    actionLeaseAdd: bindActionCreators(actionLeaseAdd, dispatch),
 })
 
 @connect(
@@ -35,13 +38,14 @@ const mapDispatchToProps = (dispatch) => ({
 class LeaseAdd extends Component {
     constructor(props) {
         super(props)
-        console.log(props)
+        console.log('props:', props)
         this.state = {
             modalOpenBtn: 'roomGoodsInsert',
-            modalName: 'roomGoodsInsert',
+            modalName: 'roomGoods',
             modalVisible: false,
             modalTitle: '新增',
             modalWidth: '500',
+            tableIndex: 0,
             tableDataGoods: []
         }
         this.initFetchSchema(props)
@@ -101,6 +105,9 @@ class LeaseAdd extends Component {
         const {actionLeaseAdd} = this.props
 
         if (this.addType === 'room') {
+            newObj = Object.assign({}, newObj, {
+                roomGoods: this.state.tableDataGoods
+            })
             actionLeaseAdd.fetchRoomAdd(newObj)
         } else if (this.addType === 'classLine') {
             actionLeaseAdd.fetchClassLineAdd(newObj)
@@ -122,12 +129,11 @@ class LeaseAdd extends Component {
             })
         }
     }
-    
+
     parentHandleClick = (key) => {
         if (key === 'addRoomGoods') {
             this.setState({
                 modalOpenBtn: 'roomGoodsInsert',
-                modalName: 'roomGoods',
                 modalVisible: true,
                 modalTitle: '新增房间物品'
             })
@@ -137,9 +143,9 @@ class LeaseAdd extends Component {
     handleEditGoods = (text, record, index) => {
         this.setState({
             modalOpenBtn: 'roomGoodsEdit',
-            modalName: 'roomGoodsEdit',
             modalVisible: true,
-            modalTitle: '修改房间物品'
+            modalTitle: '修改房间物品',
+            tableIndex: index
         })
 
         setTimeout(() => {
@@ -157,6 +163,11 @@ class LeaseAdd extends Component {
 
     // 弹框确认
     handleModalOk = () => {
+        const {
+            modalOpenBtn,
+            tableDataGoods,
+            tableIndex
+        } = this.state
         this.refs.roomGoodsModal.validateFieldsAndScroll((errors, values) => {
             if (errors) {
                 notification.error({
@@ -169,10 +180,16 @@ class LeaseAdd extends Component {
             const obj = this.state.tableDataGoods
             const oldObj = this.refs.roomGoodsModal.getFieldsValue()
             const newObj = filterQueryObj(oldObj)
-            obj.push(Object.assign({}, newObj))
-            this.setState({
-                tableDataGoods: obj
-            })
+            if (modalOpenBtn === 'roomGoodsInsert') {
+                obj.push(Object.assign({}, newObj))
+                this.setState({
+                    tableDataGoods: obj
+                })
+            } else if (modalOpenBtn === 'roomGoodsEdit') {
+                tableDataGoods[tableIndex] = newObj
+            }
+
+            this.refs.roomGoodsModal.resetFields()
             this.handleModalCancel()
         })
     }
@@ -187,43 +204,56 @@ class LeaseAdd extends Component {
         })
     }
 
+    componentDidMount() {
+        this.props.actionLease.fetchArea()
+    }
+
     // 渲染
     render() {
-        const {roomAddSchema} = this.props.configLease
-        const {modalName} = this.state
-        const roomSchema = roomAddSchema['tableColumns'].concat([
-            {
-                key: 'operation',
-                title: '操作',
-                render: (text, record, index) => <div className="button-group">
-                    <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditGoods.bind(this, text, record, index)}>修改</a>
-                    <a href="javascript:;" className="s-blue" onClick={this.handleDelGoods.bind(this, text, record, index)}>删除</a>
-                </div>
+        const {
+            areaData,
+            roomAddSchema
+        } = this.props.configLease
+
+        if (this.addType == 'room') {
+            const {modalName} = this.state
+            const roomSchema = roomAddSchema['tableColumns'].concat([
+                {
+                    key: 'operation',
+                    title: '操作',
+                    render: (text, record, index) => <div className="button-group">
+                        <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditGoods.bind(this, text, record, index)}>修改</a>
+                        <a href="javascript:;" className="s-blue" onClick={this.handleDelGoods.bind(this, text, record, index)}>删除</a>
+                    </div>
+                }
+            ])
+
+            roomAddSchema['roomForm'][0].options = areaData.data
+
+            let modalContent
+            if (modalName === "roomGoods") {
+                modalContent = <ModalForm
+                    ref="roomGoodsModal"
+                    schema={roomAddSchema['roomGoodsForm']} />
             }
-        ])
 
-        let modalContent
-        if (modalName === "roomGoods") {
-            modalContent = <ModalForm
-                ref="roomGoodsModal"
-                schema={roomAddSchema['roomGoodsForm']} />
-        }
+            if (areaData.loading) {
+                return <Loading />
+            }
 
-        return (
-            <section className="m-config m-config-room">
-                <Modal
-                    visible={this.state.modalVisible}
-                    title={this.state.modalTitle}
-                    width={this.state.modalWidth}
-                    onOk={this.handleModalOk}
-                    onCancel={this.handleModalCancel}>
-                    {modalContent}
-                </Modal>
-                {this.addType == 'room' ?
+            return (
+                <section className="m-config m-config-room">
+                    <Modal
+                        visible={this.state.modalVisible}
+                        title={this.state.modalTitle}
+                        width={this.state.modalWidth}
+                        onOk={this.handleModalOk}
+                        onCancel={this.handleModalCancel}>
+                        {modalContent}
+                    </Modal>
                     <InnerForm
                         formStyle="padding"
                         schema={roomAddSchema['roomForm']}
-                        sessionShouldGet={this.addType}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
                         parentHandleSave={this.parentHandleSave}>
@@ -236,16 +266,22 @@ class LeaseAdd extends Component {
                                 pagination={false}
                                 bordered={true} />
                         </div>
-                    </InnerForm> :
+                    </InnerForm>
+                </section>
+            )
+        } else {
+            return (
+                <section className="m-config m-config-room">
                     <InnerForm
                         formStyle="padding m-advance-fill"
                         schema={this.addSchema[this.addType]}
                         showSave={true}
                         sessionShouldGet={this.addType}
                         parentHandleSave={this.parentHandleSave} />
-                }
-            </section>
-        )
+
+                </section>
+            )
+        }
     }
 }
 export default LeaseAdd

@@ -8,7 +8,6 @@ import {errHandler, paths} from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const RECEIVE_AREA = 'RECEIVE_AREA'
 const REQUEST_ROOM_TABLE = 'REQUEST_ROOM_TABLE'
 const RECEIVE_ROOM_TABLE = 'RECEIVE_ROOM_TABLE'
 
@@ -16,25 +15,6 @@ const RECEIVE_ROOM_TABLE = 'RECEIVE_ROOM_TABLE'
 // ================================
 // Action Creator
 // ================================
-// 请求区域
-const receiveArea = (res) => ({
-    type: RECEIVE_AREA,
-    payload: res
-})
-
-const fetchArea = () => {
-    return dispatch =>
-        xhr('post', paths.leasePath + '/rentroomcs/seleAreaBySite', {}, function (res) {
-            console.log('房间设置之区域', res)
-            const options = []
-            res.data.map(item => {
-                options.push({ key: item.area, value: item.area })
-            })
-            sessionStorage.setItem('areaBySite', JSON.stringify(options))
-            dispatch(receiveArea(options))
-        })
-}
-
 // 请求页面数据
 const requestRoomTable = () => ({
     type: REQUEST_ROOM_TABLE
@@ -109,31 +89,12 @@ const searchButtonRoomTable = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
-    fetchArea,
     fetchRoomTable,
     searchRoomTable,
     searchButtonRoomTable
 }
 
 export const ACTION_HANDLERS = {
-    [RECEIVE_AREA]: (roomData, {payload: res}) => ({
-        ...roomData,
-        room:[
-            {
-                key: 'area',  // 传递给后端的字段名
-                title: '区域',  // 前端显示的名称
-                dataType: 'varchar',
-                showType: 'select',
-                options: res
-            },
-            {
-                key: 'key',
-                title: '关键字',
-                dataType: 'varchar',
-                placeholder: '请输入楼号/房间号'
-            }    
-        ]
-    }),
     [REQUEST_ROOM_TABLE]: (roomData) => ({
         ...roomData,
         tableLoading: true

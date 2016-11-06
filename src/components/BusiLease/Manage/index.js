@@ -36,7 +36,7 @@ class LeaseManage extends Component {
             modalName: 'insertBond',
             modalVisible: false,
             modalTitle: '新增',
-            okText:'确定',
+            okText: '确定',
             modalWidth: '900'
         }
         // console.log('props:', props)
@@ -148,20 +148,26 @@ class LeaseManage extends Component {
         if (key === 'addContract') {
             hashHistory.push('busi/busi_lease/contract/add')
         } else if (key === "renewContract") {
-            hashHistory.push('busi/busi_lease/contract/renew/289')
-        }else if (key === "addBond") {
+            hashHistory.push('busi/busi_lease/contract/renew/' + data[0].rentpactid)
+        } else if (key === "changeContract") {
+            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=change')
+        } else if (key === "editContract") {
+            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=edit')
+        } else if (key === "payContract") {
+            hashHistory.push('busi/busi_lease/contract/pay')
+        } else if (key === "approvalContract") {
+            hashHistory.push('busi/busi_lease/contract/approval/' + data[0].rentpactid + '?type=view')
+        } else if (key === "addBond") {
             this.setState({
                 modalVisible: true,
-                modalTitle:'新增保证金',
-                okText:'保存'
+                modalTitle: '新增保证金',
+                okText: '保存'
             })
-        } 
-
-        // 
+        }
     }
 
     handleModalOk = () => {
-        const  {
+        const {
             busiLease
         } = this.props.actionLease
         if (this.status === 'bond') {
@@ -228,7 +234,7 @@ class LeaseManage extends Component {
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
-                    okText={this.state.okText}                    
+                    okText={this.state.okText}
                     width={this.state.modalWidth}
                     onOk={this.handleModalOk}
                     onCancel={this.handleModalCancel}>

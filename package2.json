@@ -1,0 +1,36 @@
+{
+  "name": "yqt_admin",
+  "version": "1.0.0",
+  "description": "如果对React或Ant Design感兴趣，但又不知如何入手的话，也可以参考下这个项目。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=development npm run dev",
+    "build": "cross-env NODE_ENV=production webpack --progress --colors --hide-modules --config config/webpack.prod.conf.js -p --display-error-details",
+    "clean": "rm dist/bundle*",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --port 3000 --devtool eval --progress --colors --content-base --hot --inline --display-error-details --config config/webpack.dev.conf.js",
+    "eslint": "eslint --ext .js,.jsx src",
+    "stylelint": "stylelint \"src/**/*.css\"",
+    "lesshint": "lesshint src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ruizhengyun@github.com/ruizhengyun/react-redux-antd-admin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruizhengyun/react-redux-antd-admin/issues"
+  },
+  "homepage": "https://github.com/ruizhengyun/react-redux-antd-admin#readme",
+  "devDependencies": {
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.24.1",
+    "open-browser-webpack-plugin": "0.0.3",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
+  }
+}

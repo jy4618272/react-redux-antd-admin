@@ -171,7 +171,7 @@ class FormLayout extends Component {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
         return this.colWrapper((
-            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)}>
+            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)} disabled={field.disabled}>
                 {options}
             </Select>
         ), field)
@@ -188,8 +188,15 @@ class FormLayout extends Component {
         field.options.map((option) => {
             options.push(<Radio key={option.key} value={option.key}>{option.value}</Radio>)
         })
+        if (field.styleType) {
+            return this.fullColWrapper((
+                <RadioGroup value={field.default}>
+                    {options}
+                </RadioGroup>
+            ), field)
+        }
         return this.colWrapper((
-            <RadioGroup>
+            <RadioGroup value={field.value}>
                 {options}
             </RadioGroup>
         ), field)
@@ -237,11 +244,17 @@ class FormLayout extends Component {
     * @returns {XML}
     */
     transformFull = (field) => {
-        if (field.dataType) {
-            // console.debug('transform field %o to varchar input component', field)
-            return this.fullColWrapper((
-                <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
-            ), field)
+        switch (field.dataType) {
+            case 'textarea':
+                return this.fullColWrapper((
+                    <Input type="textarea" placeholder={field.placeholder || '请填写'} size="default" autosize={{ minRows: field.minRows || 4, maxRows: field.maxRows || 10 }} disabled={field.disabled} />
+                ), field)
+
+            default:
+                // console.debug('transform field %o to varchar input component', field)
+                return this.fullColWrapper((
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
+                ), field)
         }
     }
 
@@ -345,17 +358,17 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber size="default" step={0.01} disabled={field.disabled}  />
+                    <InputNumber size="default" step={0.01} disabled={field.disabled} />
                 ), field)
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber step={0.01} size="default" disabled={field.disabled}  />
+                    <InputNumber step={0.01} size="default" disabled={field.disabled} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
                 return this.colWrapper((
-                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} />
+                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} disabled={field.disabled} />
                 ), field)
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
@@ -378,7 +391,7 @@ class FormLayout extends Component {
         for (const key in oldObj) {
             if (oldObj[key]) {
                 // 对于js的日期类型, 要转换成字符串再传给后端
-                if (key.indexOf('date') > -1) {
+                if (key.indexOf('date') > -1 && key !== 'plandate') {
                     newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
                 } else {
                     newObj[key] = oldObj[key]
@@ -528,7 +541,7 @@ class FormLayout extends Component {
 
         // 别忘了最后一行
         if (Array.isArray(this.props.buttonSchema) && this.props.buttonSchema.length) {
-            const buttonGroup =this.props.buttonSchema.map(item => {
+            const buttonGroup = this.props.buttonSchema.map(item => {
                 return <Button type={item.type} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
             })
             cols.push(

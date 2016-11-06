@@ -24,12 +24,11 @@ const receiveContractTable = (res) => ({
 const fetchContractTable = (data) => {
     return dispatch => {
         dispatch(requestContractTable())
-        xhr('post', paths.leasePath + '/rentpactcs/selectByKeyword', data,  (res) => {
+        xhr('POST', paths.leasePath + '/rentpactcs/selectByKeyword', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-
             console.log('租赁管理-合同获取数据：', newRes)
             if (res.result === 'success') {
                 dispatch(receiveContractTable(newRes))
@@ -50,14 +49,14 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_CONTRACT_TABLE]: (contract) => ({
         ...contract,
-        tableLoading: true
+    tableLoading: true
     }),
-    [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
+[RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
         ...contract,
-        tableLoading: false,
-        tableData: res.data,
-        total: res.count,
-        pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
-    })
+    tableLoading: false,
+    tableData: res.data,
+    total: res.count,
+    pageSize: 10,
+    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+})
 }

@@ -46,7 +46,8 @@ module.exports = {
 			UTIL: path.join(src, 'utils'),
 			HOC: path.join(src, 'utils/HoC'),
 			MIXIN: path.join(src, 'utils/mixins'),
-			SCHEMA: path.join(src, 'schema')
+			SCHEMA: path.join(src, 'schema'),
+			STYLE: path.join(src, 'style'),
 		}
 	},
 	module: {

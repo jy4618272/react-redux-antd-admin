@@ -2,7 +2,6 @@
  * 表格组件
  */
 import React, { Component } from 'react'
-import { Link, hashHistory } from 'react-router'
 import {
     Table,
     Affix,
@@ -45,43 +44,37 @@ class InnerTable extends Component {
      * @param selectedRows
      */
     handleSelectChange = (selectedRowKeys, selectedRows) => {
+        const {parentHandleSelectChange} = this.props
         console.log('selectedRowKeys', selectedRowKeys)
         console.log('selectedRows', selectedRows)
-        let arrPaytype = []
         this.setState({
             selectedRowKeys,
             selectedRows
         })
-        this.props.parentHandleSelectChange && this.props.parentHandleSelectChange(selectedRows)
-        selectedRows.map(item => {
-            arrPaytype.push(item.paytype)
-        })
-        this.isReceiveShow = (arrPaytype.length > 0) && arrPaytype.every((text) => text === '收款')
-        this.isRefundShow = (arrPaytype.length > 0) && arrPaytype.every((text) => text === '退款')
+        parentHandleSelectChange && parentHandleSelectChange(selectedRows)
     }
 
     // 点击查看详情
-    handleDoubleClick = (record, index) => {
-        console.log('record', record)
-        if (record.type == '租赁合同') {
-            hashHistory.push(`busi/busi_finance/${record.financecollectionid}`)
-        }
+    handleRowClick = (record, index) => {
+        const {parentHandleRowClick} = this.props
+        parentHandleRowClick && parentHandleRowClick(record, index)
+    }
 
-        // notification.open({
-        //     message: '查看详情',
-        //     description: `详情还在开发中，给你带来不便我很抱歉`
-        // })
+    handleDoubleClick = (record, index) => {
+        const {parentHandleDoubleClick} = this.props
+        parentHandleDoubleClick && parentHandleDoubleClick(record, index)
     }
 
     // 点击按钮
     handleClick = (key) => {
-        console.log('你刚点击了按钮key：', key)
         const data = this.state.selectedRows
-        this.props.parentHandleClick(key, data)
+        const {parentHandleClick} = this.props
+        console.log('你刚点击按钮key+data', key, data)
+        parentHandleClick && parentHandleClick(key, data)
     }
 
     isEmpty = (obj) => {
-        for (var name in obj) {
+        for (let name in obj) {
             return false;
         }
         return true;
@@ -106,7 +99,6 @@ class InnerTable extends Component {
         }
     }
 
-
     render() {
         // 结构赋值，从父组件获取数据
         const {
@@ -123,7 +115,9 @@ class InnerTable extends Component {
             title,
             footer
         } = this.props
+
         const theTableStyle = tableStyle ? tableStyle : 'm-table m-table-primary'
+
         // 表格checkbox操作 
         const rowSelection = {
             selectedRowKeys: this.state.selectedRowKeys,
@@ -136,26 +130,27 @@ class InnerTable extends Component {
         const oneSelected = this.state.selectedRowKeys.length == 1
         const multiSelected = this.state.selectedRowKeys.length > 1
 
-
         // 判断表格是否加上勾选列
-        let tableContext = <Table
+        let tableContent = <Table
             loading={loading}
             columns={columns}
             dataSource={dataSource}
             bordered={bordered}
             pagination={pagination}
-            onRowClick={this.handleDoubleClick}
+            onRowClick={this.handleRowClick}
+            onRowDoubleClick={this.handleDoubleClick}
             size={size}
             title={title}
             footer={footer} />
         if (isRowSelection) {
-            tableContext = <Table
+            tableContent = <Table
                 rowSelection={rowSelection}
                 loading={loading}
                 columns={columns}
                 dataSource={dataSource}
                 bordered={bordered}
                 pagination={pagination}
+                onRowClick={this.parentHandleRowClick}
                 onRowDoubleClick={this.handleDoubleClick}
                 size={size}
                 title={title}
@@ -166,16 +161,21 @@ class InnerTable extends Component {
          * 表格操作按钮
          * {
          *     left:[],
-         *     center:[],
          *     right:[]
          * }
          */
         let tableControl = ''
         if (!this.isEmpty(schema)) {
             const buttonGroupLeft = schema.left.map((item) => {
-                if (item.key === 'edit' || item.key === 'refund') {
+                if (item.key === 'refund') {
+                    let dis
+                    if (!oneSelected) {
+                        // dis = (oneSelected) ? false : true
+                        // alert(dis)
+
+                    }
                     return (
-                        <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                        <Button type="ghost" disabled={dis} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
                     )
                 }
                 if (item.key === 'receive') {
@@ -183,13 +183,13 @@ class InnerTable extends Component {
                         <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
                     )
                 }
+                if (item.key.indexOf('add') > -1 || item.key.indexOf('default') > -1) {
+                    return (
+                        <Button type="ghost" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                    )
+                }
                 return (
-                    <Button type="ghost" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-                )
-            })
-            const buttonGroupCenter = schema.center.map((item) => {
-                return (
-                    <Button type="dashed" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                    <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
                 )
             })
             const buttonGroupRight = schema.right.map((item) => {
@@ -202,16 +202,8 @@ class InnerTable extends Component {
                 <div className="clearfix g-mb10">
                     <Row className="button-group">
                         <Col span={18}>
-                            <Row>
-                                <Col span={15}>
-                                    {buttonGroupLeft}
-                                </Col>
-                                <Col span={9} class="g-tar">
-                                    {buttonGroupCenter}
-                                </Col>
-                            </Row>
+                            {buttonGroupLeft}
                         </Col>
-
                         <Col span={6} className="button-group g-tar">
                             {buttonGroupRight}
                         </Col>
@@ -222,8 +214,7 @@ class InnerTable extends Component {
 
         return (
             <section className={theTableStyle}>
-                {tableControl}
-                {tableContext}
+                {tableContent}
             </section>
         )
     }

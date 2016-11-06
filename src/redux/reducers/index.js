@@ -7,7 +7,7 @@ import menuList from 'REDUCER/menuList'
 import busiFinance from 'REDUCER/busiFinance'
 import busiLease from 'REDUCER/busiLease'
 import configLease from 'REDUCER/configLease'
-// import configBase from 'REDUCER/configBase'
+import configBase from 'REDUCER/configBase/insert'
 import configRights from 'REDUCER/configRights'
 
 // ================================
@@ -21,7 +21,7 @@ const syncReducers = {
 	busiFinance: busiFinance,
 	busiLease: busiLease,
 	configLease: configLease,
-	// configBase: configBase,
+	configBase: configBase,
 	configRights: configRights
 }
 

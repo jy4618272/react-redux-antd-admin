@@ -57,12 +57,13 @@ const fetchRoomEdit = (data) => {
             const hide = message.loading('正在查询...', 0)
             console.log('房间设置之编辑', data, res)
             if (res.result === 'success') {
+                hide()
                 dispatch(receiveRoomEdit(res))
             } else {
+                hide()
                 dispatch(receiveRoomEdit({}))
                 errHandler(res.result)
             }
-            hide()
         })
     }
 }
@@ -78,8 +79,8 @@ const receiveRoomUpdate = (res) => ({
 
 const fetchRoomUpdate = (data) => {
     return dispatch => {
-        xhr('post', paths.leasePath + '/rentroomcs/updateRentRoomStatus', data, function (res) {
-            const hide = message.loading('正在查询...', 0) 
+        xhr('post', paths.leasePath + '/rentroomcs/updateRentRoom', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveRoomUpdate(res))
@@ -116,14 +117,14 @@ export const ACTION_HANDLERS = {
     },
     [REQUEST_ROOM_EDIT]: (roomEdit) => ({
         ...roomEdit,
-        loading: true
+    loading: true
     }),
-    [RECEIVE_ROOM_EDIT]: (roomEdit, {payload: res}) => ({
+[RECEIVE_ROOM_EDIT]: (roomEdit, {payload: res}) => ({
         ...roomEdit,
-        loading: false,
-        data: res.data
-    }),
-    [REQUEST_ROOM_UPDATE]: (roomEdit) => ({...roomEdit}),
-    [RECEIVE_ROOM_UPDATE]: (roomEdit) => ({...roomEdit})
+    loading: false,
+    data: res.data
+}),
+    [REQUEST_ROOM_UPDATE]: (roomEdit) => ({...roomEdit }),
+        [RECEIVE_ROOM_UPDATE]: (roomEdit) => ({...roomEdit })
 }
 

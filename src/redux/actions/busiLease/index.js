@@ -6,6 +6,13 @@ import { default as contractTabsActionCreators } from './contractInsert/contract
 
 import { default as contractRenewActionCreators } from './contractRenew'
 
+import { default as contractApprovalActionCreators } from './contractApproval'
+import { default as contractApprovalShowActionCreators } from './contractApproval/show'
+
+import { default as contractPayActionCreators } from './contractPay'
+import { default as contractPayShowActionCreators } from './contractPay/payShow'
+import { default as contractworkFlowActionCreators } from './contract/workFlow'
+
 import { default as notContractActionCreators } from './notContract'
 import { default as bondActionCreators } from './bond'
 import { default as roomStateActionCreators } from './roomState'
@@ -17,7 +24,16 @@ export default {
   ...contractOrganizationActionCreators,
   ...contractInfoActionCreators,
   ...contractTabsActionCreators,
+  
   ...contractRenewActionCreators,
+  ...contractApprovalActionCreators,
+  ...contractApprovalShowActionCreators,
+  
+  ...contractPayActionCreators,
+  ...contractPayShowActionCreators,
+
+  ...contractworkFlowActionCreators,
+  
   ...notContractActionCreators,
   ...bondActionCreators,
   ...roomStateActionCreators

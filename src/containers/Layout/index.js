@@ -9,7 +9,7 @@ import Breadcrumb from 'COMPONENT/Breadcrumb'
 import Footer from 'COMPONENT/Footer'
 import actionLayout from 'ACTION/layout'
 
-import './index.less'
+import 'STYLE/index.less'
 import logo from './img/logo.png'
 
 let DevTools

@@ -3,27 +3,27 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import {
+    Loading,
     InnerForm
 } from 'COMPONENT'
 
-import actionInsert from 'ACTION/configBase/insert'
-
-import moment from 'moment'
-
+import action from 'ACTION/configBase/insert'
 
 const mapDispatchToProps = (dispatch) => ({
-    actionInsert: bindActionCreators(actionInsert, dispatch)
+    action: bindActionCreators(action, dispatch)
 })
 
 @connect(
-    ({ }) => ({  }),
+    ({ configBase }) => ({ configBase }),
     mapDispatchToProps
 )
 class ConfigBase extends Component {
     constructor(props) {
         super(props)
-        console.log('1111112222', props)
-
+        console.log('基地配置：', props)
+        this.state = {
+            sitepactconfigid: 0
+        }
         this.initFetchSchema(props)
     }
 
@@ -61,25 +61,44 @@ class ConfigBase extends Component {
     }
 
     // 新增页面数据保存
-    parentHandleSave = (newObj) => {
-        actionInsert.fetchBaseInsert(newObj)
+    parentHandleSave = (oldObj) => {
+        const {
+            configBase,
+            action
+        } = this.props
+        let newObj = Object.assign({}, oldObj, {
+            sitepactconfigid: configBase.data.sitepactconfigid,
+            sitecode: configBase.data.sitecode
+        })
+
+        action.saveBaseInsert(newObj)
     }
 
-    parentHandleClick = (key) => {
+    componentDidMount() {
+        const {
+            action
+        } = this.props
+        action.fetchBaseInsert({})
     }
 
     // 渲染
     render() {
+        const {configBase} = this.props
+
+        if (configBase.loading) {
+            return <Loading />
+        }
+
         return (
-            <section className="m-config m-config-base">
+            <section className="padding m-config m-config-base">
                 <InnerForm
-                    formStyle="padding m-advance-fill"
                     schema={this.addSchema}
                     showSave={true}
-                    sessionShouldGet={this.addType}
+                    setFields={configBase.data}
                     parentHandleSave={this.parentHandleSave} />
             </section>
         )
     }
 }
+
 export default ConfigBase

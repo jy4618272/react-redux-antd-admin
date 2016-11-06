@@ -1,3 +1,6 @@
+// ================================
+// 租赁管理-合同-合同续租
+// ================================
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -63,7 +66,7 @@ class ContractInsert extends Component {
             modalTitle: '新增',
             modalWidth: '900',
             selectDatas: [],
-            dataRoom:[],
+            dataRoom: [],
             dataLine: [],
             dataPolicy: [],
             dataBond: [],
@@ -338,7 +341,7 @@ class ContractInsert extends Component {
                 status: '开启'
             }, 10, 0, fetchBusiPolicyTable)
         } else if (key === 'addBond' && this.state.tabsStatus === 'contractBond') {
-            if ((this.props.form.getFieldValue('partyid') === 0 ) && (this.state.partyid === 0)) {
+            if ((this.props.form.getFieldValue('partyid') === 0) && (this.state.partyid === 0)) {
                 notification.error({
                     message: '请选择客户',
                     description: '选择客户后才能新增保证金'
@@ -771,13 +774,15 @@ class ContractInsert extends Component {
                 }
             }
         }
-        // console.debug('old queryObj: %o, new queryObj %o', oldObj, newObj)
         return newObj
     }
 
+    // 取消
     handleGoBack = () => {
         hashHistory.push('busi/busi_lease')
     }
+
+    // 保存
     handleSaveAll = (e) => {
         e.preventDefault()
         this.setState({
@@ -854,6 +859,15 @@ class ContractInsert extends Component {
         })
     }
 
+    // 打印预览
+    handlePrintView = () => {
+
+    }
+
+    // 续租提交
+    handleSubmitRenew = () => { }
+
+    // 渲染前调用一次
     componentDidMount() {
         this.props.action.fetchContractFrom()
         this.props.action.fetchManager()
@@ -870,13 +884,13 @@ class ContractInsert extends Component {
                 for (const key in oldObj) {
                     if (key.indexOf('date') > -1) {
                         newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
-                    } else if(key.indexOf('stagesnumber') > -1){
+                    } else if (key.indexOf('totalstages') > -1) {
                         continue;
-                    }else {
+                    } else {
                         newObj[key] = oldObj[key]
                     }
                 }
-                this.props.form.setFieldsValue(newObj)                
+                this.props.form.setFieldsValue(newObj)
                 this.setState(Object.assign({}, newObj, {
                     dataRoom: res.data.rentpactrooms,
                     dataLine: res.data.rentpactlines
@@ -887,13 +901,13 @@ class ContractInsert extends Component {
                 errHandler(res.result)
             }
         })
-        this.props.form.setFieldsValue({
-            standardmoney: 0, // 合同标准金额 = 房间租金 + 班线费用
-            promotionmoneyoffset: 0,   // 优惠金额
-            marginmoneyoffset: 0,// 履约保证金冲抵,
-            totaloffsetmoney: 0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
-            money: 0, // 合同金额  
-        })
+        // this.props.form.setFieldsValue({
+        //     standardmoney: 0, // 合同标准金额 = 房间租金 + 班线费用
+        //     promotionmoneyoffset: 0,   // 优惠金额
+        //     marginmoneyoffset: 0,// 履约保证金冲抵,
+        //     totaloffsetmoney: 0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
+        //     money: 0, // 合同金额  
+        // })
 
     }
 
@@ -1025,7 +1039,7 @@ class ContractInsert extends Component {
                             <Button type="primary" onClick={this.handleGetOrganization}>点击获取客户信息</Button>
                         </div>
                         <FormLayout
-                            schema={this.addSchema['organization']}       
+                            schema={this.addSchema['organization']}
                             form={this.props.form} />
                     </div>
 
@@ -1093,7 +1107,7 @@ class ContractInsert extends Component {
                     {/* 客户数据录入*/}
                     <FormLayout
                         schema={busiLease.contractTabs}
-                        form={this.props.form}                                                
+                        form={this.props.form}
                         fromLayoutStyle="g-border-bottom" />
 
                     {/* 分期明细 */}
@@ -1131,6 +1145,8 @@ class ContractInsert extends Component {
                     </div>
                     <div className="g-tac button-group">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
+                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitRenew}>续租提交</Button>
+                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handlePrintView}>打印预览</Button>
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>
                     </div>
                 </Form>
