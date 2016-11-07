@@ -6,9 +6,31 @@ import {
 } from 'COMPONENT'
 
 class ModalTable extends Component {
-    handleSelectChange = (data) => {
-        console.log('8888', data)
-        this.props.parentHandleSelectChange(data)
+    constructor(props) {
+        super(props)
+        this.state = {
+            selectedRowKeys: [],  // 当前有哪些行被选中, 这里只保存key
+            selectedRows: []  // 当前有哪些行被选中, 保存完整数据
+        }
+    }
+
+    /**
+     * InnerTable组件的重render有两种可能:
+     * 1. 上层组件调用的render方法, 这个时候会触发componentWillReceiveProps方法
+     * 2. 自身状态变化引起的重新render
+     * 注意区分
+     *
+     * 对于第一种情况, 要将组件的状态还原到初始状态
+     *
+     * @param nextProps
+     */
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.loading === true) {
+            this.setState({
+                selectedRowKeys: [],
+                selectedRows: []
+            })
+        }
     }
 
     render() {
@@ -24,7 +46,7 @@ class ModalTable extends Component {
                     loading={dataSource.tableLoading}
                     columns={dataSource.tableColumns}
                     dataSource={dataSource.tableData}
-                    parentHandleSelectChange={this.handleSelectChange}
+                    parentHandleSelectChange={parentHandleSelectChange}
                     isRowSelection={true}
                     bordered={true}
                     pagination={false} />

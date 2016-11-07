@@ -4,6 +4,9 @@ import { bindActionCreators } from 'redux'
 import { Link, hashHistory } from 'react-router'
 
 import {
+    Row,
+    Col,
+    Button,
     Tabs,
     message,
     notification,
@@ -33,6 +36,8 @@ class LeaseManage extends Component {
 
         this.status = sessionStorage.getItem('leaseManageTabs') || 'contract'
         this.state = {
+            selectedRowKeys: [],
+            selectedRows: [],
             modalName: 'insertBond',
             modalVisible: false,
             modalTitle: '新增',
@@ -143,21 +148,61 @@ class LeaseManage extends Component {
         sessionStorage.setItem('leaseManageTabs', this.status)
     }
 
-    // 表格操作按钮
+
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectedRowKeys: keys,
+            selectedRows: rows
+        })
+    }
+
+    // 合同新增
+    handleAddContract = () => {
+        hashHistory.push('busi/busi_lease/contract/add')
+    }
+
+    // 合同审批
+    handleApprovalContract = () => {
+        hashHistory.push('busi/busi_lease/contract/approval/' + data[0].rentpactid + '?type=view')
+
+    }
+
+    // 合同续租
+    handleRenewContract = () => {
+        hashHistory.push('busi/busi_lease/contract/renew/' + data[0].rentpactid)
+    }
+
+    // 合同变更
+    handleChangeContract = () => {
+        hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=change')
+
+    }
+
+    // 合同编辑
+    handleEditContract = () => {
+        hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=edit')
+
+    }
+
+    // 合同退租
+    handleRentContract = () => {
+
+    }
+
+    // 合同作废
+    handleVoidContract = () => {
+
+    }
+
+    // 合同交款
+    handlePayContract = () => {
+        hashHistory.push('busi/busi_lease/contract/pay')
+    }
+
+
     parentHandleClick = (key, data) => {
-        if (key === 'addContract') {
-            hashHistory.push('busi/busi_lease/contract/add')
-        } else if (key === "renewContract") {
-            hashHistory.push('busi/busi_lease/contract/renew/' + data[0].rentpactid)
-        } else if (key === "changeContract") {
-            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=change')
-        } else if (key === "editContract") {
-            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=edit')
-        } else if (key === "payContract") {
-            hashHistory.push('busi/busi_lease/contract/pay')
-        } else if (key === "approvalContract") {
-            hashHistory.push('busi/busi_lease/contract/approval/' + data[0].rentpactid + '?type=view')
-        } else if (key === "addBond") {
+        if (key === "addBond") {
             this.setState({
                 modalVisible: true,
                 modalTitle: '新增保证金',
@@ -188,6 +233,7 @@ class LeaseManage extends Component {
             modalVisible: false
         })
     }
+
 
     /**
      * 刚进入页面时触发一次查询
@@ -221,8 +267,163 @@ class LeaseManage extends Component {
             notContractData
         } = this.props.busiLease
 
-        let modalContent = ''
+        const {
+            selectedRowKeys,
+            selectedRows
+        } = this.state
+        const oneSelected = selectedRowKeys.length == 1
 
+        let isApproval = false   // 审批
+        let isRenew = false      // 续租
+        let isChange = false     // 变更
+        let isEdit = false       // 编辑
+        let isRent = false       // 退租
+        let isVoid = false       // 作废
+
+        if (oneSelected) {
+            const selected = selectedRows[0]
+            if (selected.flowtype === '新增/续租') {
+                if (selected.flowstatus === '录入未完成') {
+                    if (selected.fistatus === '未提交') {
+                        // 作废
+                        isVoid = true
+                    } else if (selected.fistatus === '待财务确认') {
+                        // 作废
+                        isVoid = true
+                    } else if (selected.fistatus === '有效') {
+                        // 续租、退租、变更
+                        isRenew = true
+                        isRent = true
+                        isChange = true
+                    } else if (selected.fistatus === '已退') {
+                        // 编辑、作废
+                        isEdit = true
+                        isVoid = true
+                    }
+                } else if (selected.flowstatus === '审批中') {
+                    if (selected.fistatus === '未提交') {
+                        // 催办
+                    } else if (selected.fistatus === '待财务确认') {
+                        // 催办
+                    } else if (selected.fistatus === '有效') {
+                        // 催办
+                    } else if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                } else if (selected.flowstatus === '审批通过') {
+                    if (selected.fistatus === '未提交') {
+
+                    } else if (selected.fistatus === '待财务确认') {
+
+                    } else if (selected.fistatus === '有效') {
+                        // 续租、退租、变更
+                        isRenew = true
+                        isRent = true
+                        isChange = true
+                    } else if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                } else if (selected.flowstatus === '审批退回') {
+                    if (selected.fistatus === '未提交') {
+                        // 作废、编辑
+                        isVoid = true
+                        isEdit = true
+                    } else if (selected.fistatus === '待财务确认') {
+                        // 作废、编辑
+                        isVoid = true
+                        isEdit = true
+                    } else if (selected.fistatus === '有效') {
+                        // 编辑
+                        isEdit = true
+                    } else if (selected.fistatus === '已退') {
+                        // 作废、编辑
+                        isVoid = true
+                        isEdit = true
+                    }
+                }
+            } else if (selected.flowtype === '变更') {
+                if (selected.flowstatus === '审批中') {
+                    if (selected.fistatus === '未提交') {
+                        // 催办
+                    } else if (selected.fistatus === '待财务确认') {
+                        // 催办
+                    } else if (selected.fistatus === '有效') {
+                        // 催办
+                    } else if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                } else if (selected.flowstatus === '审批通过') {
+                    if (selected.fistatus === '未提交') {
+                        // 撤回
+                    } else if (selected.fistatus === '待财务确认') {
+
+                    } else if (selected.fistatus === '有效') {
+                        // 续租、退租、变更
+                        isRenew = true
+                        isRent = true
+                        isChange = true
+                    } else if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                } else if (selected.flowstatus === '审批退回') {
+                    if (selected.fistatus === '未提交') {
+                        // 编辑
+                        isEdit = true
+                    } else if (selected.fistatus === '待财务确认') {
+                        // 作废、编辑
+                        isVoid = true
+                        isEdit = true
+                    } else if (selected.fistatus === '有效') {
+                        // 编辑
+                        isEdit = true
+                    } else if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                }
+            } else if (selected.flowtype === '退租') {
+                if (selected.flowstatus === '审批中') {
+                    // 催办
+                } else if (selected.flowstatus === '审批通过') {
+                    if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                } else if (selected.flowstatus === '审批退回') {
+                    if (selected.fistatus === '已退') {
+                        // 编辑
+                        isEdit = true
+                    }
+                }
+            }
+        }
+
+
+        const tableContractControl = <div className="button-group g-mb10">
+            <Row>
+                <Col sm={16}>
+                    <Button onClick={this.handleAddContract}>新增</Button>
+                    <Button disabled={!isApproval} onClick={this.handleApprovalContract}>审批</Button>
+                    <Button disabled={!isRenew} onClick={this.handleRenewContract}>续租</Button>
+                    <Button disabled={!isChange} onClick={this.handleChangeContract}>变更</Button>
+                    <Button disabled={!isEdit} onClick={this.handleEditContract}>编辑</Button>
+                    <Button disabled={!isRent} onClick={this.handleRentContract}>退租</Button>
+                    <Button disabled={!isVoid} onClick={this.handleVoidContract}>作废</Button>
+                    <Button onClick={this.handlePayContract}>合同交款</Button>
+                </Col>
+                <Col sm={8} className="g-tar">
+                    <Button type="primary" onClick={this.handlePrintContract}>打印</Button>
+                    <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                </Col>
+            </Row>
+        </div>
+
+
+        let modalContent = ''
         if (this.state.modalName === 'insertBond') {
             modalContent = <InnerForm
                 ref="formInsert"
@@ -248,12 +449,12 @@ class LeaseManage extends Component {
                             schema={querySchema['contract']}
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true} />
+                        {tableContractControl}
                         <InnerTable
                             loading={contractData.tableLoading}
                             columns={contractData.tableColumns}
                             dataSource={contractData.tableData}
-                            schema={controlSchema['contract']}
-                            parentHandleClick={this.parentHandleClick}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />

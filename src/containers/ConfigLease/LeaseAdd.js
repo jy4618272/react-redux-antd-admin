@@ -106,7 +106,7 @@ class LeaseAdd extends Component {
 
         if (this.addType === 'room') {
             newObj = Object.assign({}, newObj, {
-                roomGoods: this.state.tableDataGoods
+                roomGoods: JSON.stringify(this.state.tableDataGoods)
             })
             actionLeaseAdd.fetchRoomAdd(newObj)
         } else if (this.addType === 'classLine') {
@@ -116,7 +116,10 @@ class LeaseAdd extends Component {
         } else if (this.addType === 'accountManager') {
             actionLeaseAdd.fetchManagerAdd(newObj)
         } else if (this.addType === 'contractTpl') {
-            actionLeaseAdd.fetchContractAdd(newObj)
+            const saveObj = Object.assign({}, newObj, {
+                status: '开启'
+            })
+            actionLeaseAdd.fetchContractAdd(saveObj)
         }
     }
 
@@ -130,14 +133,12 @@ class LeaseAdd extends Component {
         }
     }
 
-    parentHandleClick = (key) => {
-        if (key === 'addRoomGoods') {
-            this.setState({
-                modalOpenBtn: 'roomGoodsInsert',
-                modalVisible: true,
-                modalTitle: '新增房间物品'
-            })
-        }
+    handleAddGoods = (key) => {
+        this.setState({
+            modalOpenBtn: 'roomGoodsInsert',
+            modalVisible: true,
+            modalTitle: '新增房间物品'
+        })
     }
 
     handleEditGoods = (text, record, index) => {
@@ -228,8 +229,6 @@ class LeaseAdd extends Component {
                 }
             ])
 
-            roomAddSchema['roomForm'][0].options = areaData.data
-
             let modalContent
             if (modalName === "roomGoods") {
                 modalContent = <ModalForm
@@ -240,6 +239,7 @@ class LeaseAdd extends Component {
             if (areaData.loading) {
                 return <Loading />
             }
+            roomAddSchema['roomForm'][0].options = areaData.data
 
             return (
                 <section className="m-config m-config-room">
@@ -258,11 +258,13 @@ class LeaseAdd extends Component {
                         parentHandleSelect={this.parentHandleSelect}
                         parentHandleSave={this.parentHandleSave}>
                         <div className="padding-lr g-mt20">
+                            <div className="button-group g-mb10">
+                                <Button onClick={this.handleAddGoods}>新增物品</Button>
+                            </div>
                             <InnerTable
                                 columns={roomSchema}
                                 schema={roomAddSchema['tableControls']}
                                 dataSource={this.state.tableDataGoods}
-                                parentHandleClick={this.parentHandleClick}
                                 pagination={false}
                                 bordered={true} />
                         </div>
@@ -270,6 +272,13 @@ class LeaseAdd extends Component {
                 </section>
             )
         } else {
+            if (areaData.loading) {
+                return <Loading />
+            }
+            if (this.addType === 'policy') {
+                this.addSchema['policy'][5].options = areaData.data
+            }
+
             return (
                 <section className="m-config m-config-room">
                     <InnerForm
@@ -278,7 +287,6 @@ class LeaseAdd extends Component {
                         showSave={true}
                         sessionShouldGet={this.addType}
                         parentHandleSave={this.parentHandleSave} />
-
                 </section>
             )
         }

@@ -36,8 +36,8 @@ const initialState = {
         },
         {
             title: '面积',
-            dataIndex: 'romearea',
-            key: 'romearea'
+            dataIndex: 'roomarea',
+            key: 'roomarea'
         },
         {
             title: '金额',

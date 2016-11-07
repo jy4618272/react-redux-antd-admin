@@ -8,6 +8,7 @@ import {errHandler, paths} from 'SERVICE/config'
 const REQUEST_POLICY_TABLE = 'REQUEST_POLICY_TABLE'
 const RECEIVE_POLICY_TABLE = 'RECEIVE_POLICY_TABLE'
 const RECEIVE_BUSI_POLICY_TABLE = 'RECEIVE_BUSI_POLICY_TABLE'
+const STATUS_POPLICY = 'STATUS_POPLICY'
 
 // ================================
 // Action Creator
@@ -70,10 +71,37 @@ const fetchBusiPolicyTable = (data) => {
 }
 
 
+// 开启/关闭
+const statusPolicy = (res) => ({
+    type: STATUS_POPLICY,
+    payload: res
+})
+const changeStatusPolicy = (data) => {
+    return dispatch => {
+        xhr('post', paths.leasePath + '/rentpromotioncs/updateRentPromotionStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('政策优惠之开启', newRes)
+            if (res.result === 'success') {
+                hide()
+                dispatch(statusPolicy(newRes))
+            } else {
+                hide()
+                dispatch(statusPolicy({}))
+                errHandler(res.result)
+            }
+        })
+    }
+}
+
+
 /* default 导出所有 Actions Creator */
 export default {
     fetchPolicyTable,
-    fetchBusiPolicyTable
+    fetchBusiPolicyTable,
+    changeStatusPolicy
 }
 
 export const ACTION_HANDLERS = {
@@ -96,6 +124,15 @@ export const ACTION_HANDLERS = {
         total: res.count,
         pageSize: 10,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
-    })
+    }),
+    [STATUS_POPLICY]: (policyData, {payload: res}) => {
+        const obj = policyData.tableData
+        obj.map(item => {
+            if (item.rentpromotionid === res.sub.rentpromotionid) {
+                item.status = res.sub.status
+            }
+        })
+        return Object.assign({}, policyData, { tableData: obj })
+    }
 }
 

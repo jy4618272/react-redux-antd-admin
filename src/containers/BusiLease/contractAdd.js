@@ -302,122 +302,235 @@ class ContractInsert extends Component {
     }
 
     // 表格按钮点击
-    parentHandleClick = (key) => {
-        const {
-            fetchRoomTable,
-            fetchClassLineTable,
-            fetchBusiPolicyTable
-        } = this.props.actionLease
+    handleAddRoom = () => {
+        this.setState({
+            modalVisible: true,
+            modalWidth: '900',
+            modalTitle: '选择房间',
+            modalName: 'room'
+        })
+        this.select({
+            status: '未出租'
+        }, 10, 0, this.props.actionLease.fetchRoomTable)
+    }
 
-        const {
-            fetchBondTable,
-            fetchStagesInfo
-        } = this.props.action
+    handleAddLine = () => {
+        this.setState({
+            modalName: 'classLine',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '选择班线'
+        })
+        this.select({
+            status: '有效'
+        }, 10, 0, this.props.actionLease.fetchClassLineTable)
+    }
 
-        const {getFieldValue} = this.props.form
+    handleAddPolicy = () => {
+        this.setState({
+            modalName: 'policy',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '选择优惠'
+        })
+        this.select({
+            status: '开启'
+        }, 10, 0, this.props.actionLease.fetchBusiPolicyTable)
+    }
 
-        if (key === 'addRoom' && this.state.tabsStatus === 'room') {
-            this.setState({
-                modalVisible: true,
-                modalWidth: '900',
-                modalTitle: '选择房间',
-                modalName: 'room'
+    handleAddBond = () => {
+        if (this.state.partyid === 0) {
+            notification.error({
+                message: '请选择客户',
+                description: '选择客户后才能新增保证金'
             })
-            this.select({
-                status: '未出租'
-            }, 10, 0, fetchRoomTable)
-        } else if (key === 'addLine' && this.state.tabsStatus === 'classLine') {
-            this.setState({
-                modalName: 'classLine',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择班线'
-            })
-            this.select({
-                status: '有效'
-            }, 10, 0, fetchClassLineTable)
-        } else if (key === 'addPolicy' && this.state.tabsStatus === 'policy') {
-            this.setState({
-                modalName: 'policy',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择优惠'
-            })
-            this.select({
-                status: '开启'
-            }, 10, 0, fetchBusiPolicyTable)
-        } else if (key === 'addBond' && this.state.tabsStatus === 'contractBond') {
-            if (this.state.partyid === 0) {
+            return false;
+        }
+
+        this.setState({
+            modalName: 'contractBond',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '选择保证金'
+        })
+        this.select({
+            partyid: this.state.partyid,
+            status: '有效'
+        }, 10, 0, this.props.action.fetchBondTable)
+    }
+
+    handleMakeDefault = () => {
+        const {form} = this.props
+        const oldObj = form.getFieldsValue()
+        const newObj = this.filterQueryObj(oldObj)
+        console.log('保存表单字段', newObj)
+
+        this.props.form.validateFieldsAndScroll((errors, values) => {
+            if (errors) {
                 notification.error({
-                    message: '请选择客户',
-                    description: '选择客户后才能新增保证金'
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
                 })
                 return false;
+            } else {
+                // 传给后端字段
+                const tmp = Object.assign({}, {
+                    rentpact: JSON.stringify((newObj)),
+                    rentpactrooms: JSON.stringify(this.state.dataRoom),
+                    rentpactlines: JSON.stringify(this.state.dataLine),
+                    rentpactpromotions: JSON.stringify(this.state.dataPolicy),
+                    offsetmargins: JSON.stringify(this.state.dataBond)
+                })
+                console.log('传给后端数据：', tmp)
+
+                xhr('post', paths.leasePath + '/rentpactfullinfocs/reloadRentPactPlan', tmp, (res) => {
+                    const hide = message.loading('正在查询...', 0)
+                    console.log('获取【分期】数据：', res)
+                    if (res.result === 'success') {
+                        this.setState({
+                            isStagesShow: false,
+                            stagesTableData: res.data
+                        })
+                    } else {
+                        errHandler(res.result)
+                    }
+                    hide()
+                })
             }
-
-            this.setState({
-                modalName: 'contractBond',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择保证金'
-            })
-            this.select({
-                partyid: this.state.partyid,
-                status: '有效'
-            }, 10, 0, fetchBondTable)
-        } else if (key === 'makeDefault') {
-            const {form} = this.props
-            const oldObj = form.getFieldsValue()
-            const newObj = this.filterQueryObj(oldObj)
-            console.log('保存表单字段', newObj)
-
-            this.props.form.validateFieldsAndScroll((errors, values) => {
-                if (errors) {
-                    notification.error({
-                        message: '表单填写有误',
-                        description: '请按要求正确填写表单'
-                    })
-                    return false;
-                } else {
-                    // 传给后端字段
-                    const tmp = Object.assign({}, {
-                        rentpact: JSON.stringify((newObj)),
-                        rentpactrooms: JSON.stringify(this.state.dataRoom),
-                        rentpactlines: JSON.stringify(this.state.dataLine),
-                        rentpactpromotions: JSON.stringify(this.state.dataPolicy),
-                        offsetmargins: JSON.stringify(this.state.dataBond)
-                    })
-                    console.log('传给后端数据：', tmp)
-
-                    xhr('post', paths.leasePath + '/rentpactfullinfocs/reloadRentPactPlan', tmp, (res) => {
-                        const hide = message.loading('正在查询...', 0)
-                        console.log('获取【分期】数据：', res)
-                        if (res.result === 'success') {
-                            this.setState({
-                                isStagesShow: false,
-                                stagesTableData: res.data
-                            })
-                        } else {
-                            errHandler(res.result)
-                        }
-                        hide()
-                    })
-                }
-            })
-        } else if (key === 'stagesShowInsert') {
-            this.setState({
-                modalOpenBtn: key,
-                modalVisible: true,
-                modalWidth: '600',
-                modalTitle: '新增第' + this.state.stagesNum + '期明细',
-                modalName: 'stagesShowModal'
-            })
-        } else if (key === 'stagesShowClose') {
-            this.setState({
-                isStagesShow: false
-            })
-        }
+        })
     }
+
+    handleStagesInsert = () => {
+        this.setState({
+            modalOpenBtn: 'stagesShowInsert',
+            modalVisible: true,
+            modalWidth: '600',
+            modalTitle: '新增第' + this.state.stagesNum + '期明细',
+            modalName: 'stagesShowModal'
+        })
+    }
+
+    handleStagesClose = () => {
+         this.setState({
+             isStagesShow: false
+         })
+    }
+    // parentHandleClick = (key) => {
+    //     const {
+    //         fetchRoomTable,
+    //         fetchClassLineTable,
+    //         fetchBusiPolicyTable
+    //     } = this.props.actionLease
+
+    //     const {
+    //         fetchBondTable,
+    //         fetchStagesInfo
+    //     } = this.props.action
+
+    //     const {getFieldValue} = this.props.form
+
+    //     if (key === 'addRoom' && this.state.tabsStatus === 'room') {
+    //         this.setState({
+    //             modalVisible: true,
+    //             modalWidth: '900',
+    //             modalTitle: '选择房间',
+    //             modalName: 'room'
+    //         })
+    //         this.select({
+    //             status: '未出租'
+    //         }, 10, 0, fetchRoomTable)
+    //     } else if (key === 'addLine' && this.state.tabsStatus === 'classLine') {
+    //         this.setState({
+    //             modalName: 'classLine',
+    //             modalWidth: '900',
+    //             modalVisible: true,
+    //             modalTitle: '选择班线'
+    //         })
+    //         this.select({
+    //             status: '有效'
+    //         }, 10, 0, fetchClassLineTable)
+    //     } else if (key === 'addPolicy' && this.state.tabsStatus === 'policy') {
+    //         this.setState({
+    //             modalName: 'policy',
+    //             modalWidth: '900',
+    //             modalVisible: true,
+    //             modalTitle: '选择优惠'
+    //         })
+    //         this.select({
+    //             status: '开启'
+    //         }, 10, 0, fetchBusiPolicyTable)
+    //     } else if (key === 'addBond' && this.state.tabsStatus === 'contractBond') {
+    //         if (this.state.partyid === 0) {
+    //             notification.error({
+    //                 message: '请选择客户',
+    //                 description: '选择客户后才能新增保证金'
+    //             })
+    //             return false;
+    //         }
+
+    //         this.setState({
+    //             modalName: 'contractBond',
+    //             modalWidth: '900',
+    //             modalVisible: true,
+    //             modalTitle: '选择保证金'
+    //         })
+    //         this.select({
+    //             partyid: this.state.partyid,
+    //             status: '有效'
+    //         }, 10, 0, fetchBondTable)
+    //     } else if (key === 'makeDefault') {
+    //         const {form} = this.props
+    //         const oldObj = form.getFieldsValue()
+    //         const newObj = this.filterQueryObj(oldObj)
+    //         console.log('保存表单字段', newObj)
+
+    //         this.props.form.validateFieldsAndScroll((errors, values) => {
+    //             if (errors) {
+    //                 notification.error({
+    //                     message: '表单填写有误',
+    //                     description: '请按要求正确填写表单'
+    //                 })
+    //                 return false;
+    //             } else {
+    //                 // 传给后端字段
+    //                 const tmp = Object.assign({}, {
+    //                     rentpact: JSON.stringify((newObj)),
+    //                     rentpactrooms: JSON.stringify(this.state.dataRoom),
+    //                     rentpactlines: JSON.stringify(this.state.dataLine),
+    //                     rentpactpromotions: JSON.stringify(this.state.dataPolicy),
+    //                     offsetmargins: JSON.stringify(this.state.dataBond)
+    //                 })
+    //                 console.log('传给后端数据：', tmp)
+
+    //                 xhr('post', paths.leasePath + '/rentpactfullinfocs/reloadRentPactPlan', tmp, (res) => {
+    //                     const hide = message.loading('正在查询...', 0)
+    //                     console.log('获取【分期】数据：', res)
+    //                     if (res.result === 'success') {
+    //                         this.setState({
+    //                             isStagesShow: false,
+    //                             stagesTableData: res.data
+    //                         })
+    //                     } else {
+    //                         errHandler(res.result)
+    //                     }
+    //                     hide()
+    //                 })
+    //             }
+    //         })
+    //     } else if (key === 'stagesShowInsert') {
+    //         this.setState({
+    //             modalOpenBtn: key,
+    //             modalVisible: true,
+    //             modalWidth: '600',
+    //             modalTitle: '新增第' + this.state.stagesNum + '期明细',
+    //             modalName: 'stagesShowModal'
+    //         })
+    //     } else if (key === 'stagesShowClose') {
+    //         this.setState({
+    //             isStagesShow: false
+    //         })
+    //     }
+    // }
 
     // 获取客户信息
     handleGetOrganization = () => {
@@ -428,11 +541,11 @@ class ContractInsert extends Component {
         })
     }
 
-    handleSelectChange = (data) => {
-        this.setState({
-            selectDatas: data
-        })
-    }
+    // handleSelectChange = (data) => {
+    //     this.setState({
+    //         selectDatas: data
+    //     })
+    // }
 
     // 去重
     uniq = (arr, arr1, id) => {
@@ -642,6 +755,7 @@ class ContractInsert extends Component {
             this.refs.stagesShowModal.setFieldsValue(record)
         }, 0)
     }
+
     handleDelStagesShow = (text, record, index) => {
         const obj = this.state.stagesShowTableData
         obj.map((item, ind) => {
@@ -651,6 +765,13 @@ class ContractInsert extends Component {
         })
         this.setState({
             stagesShowTableData: obj
+        })
+    }
+
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectDatas: rows
         })
     }
 
@@ -670,7 +791,6 @@ class ContractInsert extends Component {
 
         const {action, form} = this.props
         const {getFieldValue} = form
-
         if (modalName === 'room' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataRoom, selectDatas, 'rentroomid')
             const ids = []
@@ -1037,22 +1157,22 @@ class ContractInsert extends Component {
         if (modalName === 'room') {
             modalContent = <ModalTable
                 dataSource={configLease.roomData}
-                parentHandleSelectChange={this.handleSelectChange}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'classLine') {
             modalContent = <ModalTable
                 dataSource={configLease.classLineData}
-                parentHandleSelectChange={this.handleSelectChange}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'policy') {
             modalContent = <ModalTable
                 dataSource={configLease.policyData}
-                parentHandleSelectChange={this.handleSelectChange}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'contractBond') {
             modalContent = <ModalTable
                 dataSource={busiLease.bondData}
-                parentHandleSelectChange={this.handleSelectChange}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'selectOrganization') {
             const {
@@ -1071,8 +1191,7 @@ class ContractInsert extends Component {
                 <InnerTable
                     columns={contractOrganization.tableColumns}
                     dataSource={contractOrganization.tableData}
-                    schema={[]}
-                    parentHandleSelectChange={this.handleSelectChange}
+                    parentHandleSelectChange={this.parentHandleSelectChange}
                     isRowSelection={true}
                     bordered={true}
                     pagination={false} />
@@ -1128,10 +1247,12 @@ class ContractInsert extends Component {
                     <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                         <TabPane tab="合同房间" key="room">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddRoom}>新增房间</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsRoom}
                                     dataSource={this.state.dataRoom}
-                                    schema={this.addSchema['room']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -1139,6 +1260,9 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="合同班线" key="classLine">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddLine}>新增班线</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsLine}
                                     dataSource={this.state.dataLine}
@@ -1150,10 +1274,12 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="合同优惠冲抵" key="policy">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddPolicy}>新增合同优惠</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsPolicy}
                                     dataSource={this.state.dataPolicy}
-                                    schema={this.addSchema['policy']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -1161,12 +1287,15 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="履约保证金冲抵" key="contractBond">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddBond}>新增保证金冲抵</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsBond}
                                     dataSource={this.state.dataBond}
-                                    schema={this.addSchema['contractBond']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
+                                    parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                             </div>
                         </TabPane>
@@ -1199,18 +1328,22 @@ class ContractInsert extends Component {
                             schema={this.addSchema['stages']['form']}
                             form={this.props.form}
                             parentHandleClick={this.parentHandleClick}
-                            buttonSchema={this.addSchema['stages']['buttons']}
                             parentHandleSelect={this.parentHandleSelect} />
-
+                        <div>
+                            <Button onClick={this.handleMakeDefault}>生成默认明细</Button>
+                        </div>
                         {
                             this.state.isStagesShow ?
                                 <div className="m-stages-show">
                                     <h2>{`第${this.state.stagesNum}期明细`}</h2>
+                                    <div className="button-group g-mb10">
+                                        <Button onClick={this.handleStagesInsert}>新增明细</Button>
+                                        <Button onClick={this.handleStagesClose}>关闭明细</Button>
+                                    </div>
                                     <InnerTable
                                         columns={tableStagesShowColumns}
                                         dataSource={this.state.stagesShowTableData}
                                         bordered={true}
-                                        schema={this.stagesSchema.tableShowControl}
                                         parentHandleClick={this.parentHandleClick}
                                         size="middle"
                                         tableStyle="m-table"

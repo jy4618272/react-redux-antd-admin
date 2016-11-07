@@ -1,12 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
+import {
+    Modal,
+    Button
+} from 'antd'
+import xhr from 'SERVICE'
+import { errHandler, paths } from 'SERVICE/config'
+import {
+    filterQueryObj
+} from 'UTIL'
 import actionLease from 'ACTION/configLease'
 
 import {
     Loading,
     Error,
+    ModalForm,
     InnerForm,
     InnerTable
 } from 'COMPONENT'
@@ -22,10 +31,17 @@ const mapDispatchToProps = (dispatch) => ({
 class LeaseEdit extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            modalOpenBtn: 'roomGoodsInsert',
+            modalName: 'roomGoods',
+            modalVisible: false,
+            modalTitle: '新增',
+            modalWidth: '500',
+            tableIndex: 0,
+            tableDataGoods: [],
+        }
         console.log('编辑props：', props)
-
         this.initFetchSchema(this.props)
-
         this.editType = props.location.query.type
     }
 
@@ -74,14 +90,89 @@ class LeaseEdit extends Component {
         }
     }
 
+    handleAddGoods = (key) => {
+        this.setState({
+            modalOpenBtn: 'roomGoodsInsert',
+            modalVisible: true,
+            modalTitle: '新增房间物品'
+        })
+    }
+
+    handleEditGoods = (text, record, index) => {
+        this.setState({
+            modalOpenBtn: 'roomGoodsEdit',
+            modalVisible: true,
+            modalTitle: '修改房间物品',
+            tableIndex: index
+        })
+
+        setTimeout(() => {
+            this.refs.roomGoodsModal.setFieldsValue(record)
+        }, 0)
+    }
+
+    handleDelGoods = (text, record, index) => {
+        const data = this.state.tableDataGoods
+        data.splice(index, 1)
+        this.setState({
+            tableDataGoods: data
+        })
+
+    }
+
+    // 弹框确认
+    handleModalOk = () => {
+        const {
+            modalOpenBtn,
+            tableDataGoods,
+            tableIndex
+        } = this.state
+
+        this.refs.roomGoodsModal.validateFieldsAndScroll((errors, values) => {
+            if (errors) {
+                notification.error({
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
+                })
+                return false;
+            }
+
+            const obj = this.state.tableDataGoods
+            const oldObj = this.refs.roomGoodsModal.getFieldsValue()
+            const newObj = filterQueryObj(oldObj)
+            if (modalOpenBtn === 'roomGoodsInsert') {
+                obj.push(Object.assign({}, newObj))
+                this.setState({
+                    tableDataGoods: obj
+                })
+            } else if (modalOpenBtn === 'roomGoodsEdit') {
+                tableDataGoods[tableIndex] = newObj
+            }
+
+            this.refs.roomGoodsModal.resetFields()
+            this.handleModalCancel()
+        })
+    }
+
+    handleModalCancel = () => {
+        const {modalName} = this.state
+        if (modalName === 'roomGoods') {
+            this.refs.roomGoodsModal.resetFields()
+        }
+        this.setState({
+            modalVisible: false
+        })
+    }
+
     // 修改页面数据保存
     parentHandleSave = (oldObj) => {
         const id = parseInt(this.props.params.id)
-        const {actionLease} = this.props
+        const {actionLease, configLease} = this.props
 
         if (this.editType === 'room') {
             let newObj = Object.assign({}, oldObj, {
-                rentroomid: id
+                rentroomid: id,
+                rentroomconfig: JSON.stringify(this.state.tableDataGoods)
             })
             actionLease.fetchRoomUpdate(newObj)
         } else if (this.editType === 'classLine') {
@@ -96,11 +187,13 @@ class LeaseEdit extends Component {
             actionLease.fetchPolicyUpdate(newObj)
         } else if (this.editType === 'accountManager') {
             let newObj = Object.assign({}, oldObj, {
+                status: configLease.accountManagerEdit.data.status,
                 salerid: id
             })
             actionLease.fetchManagerUpdate(newObj)
         } else if (this.editType === 'contractTpl') {
             let newObj = Object.assign({}, oldObj, {
+                status: configLease.contractTplEdit.data.status,
                 pactprintmodelid: id
             })
             actionLease.fetchContractUpdate(newObj)
@@ -112,15 +205,21 @@ class LeaseEdit extends Component {
         const id = parseInt(this.props.params.id)
 
         if (this.editType === 'room') {
-            this.props.actionLease.fetchArea()
+            actionLease.fetchArea()
             actionLease.fetchRoomEdit({
                 rentroomid: id
             })
+            setTimeout(() => {
+                this.setState({
+                    tableDataGoods: this.props.configLease.roomEdit.tableSource
+                })
+            }, 2000)
         } else if (this.editType === 'classLine') {
             actionLease.fetchClassLineEdit({
                 transportlineid: id
             })
         } else if (this.editType === 'policy') {
+            actionLease.fetchArea()
             actionLease.fetchPolicyEdit({
                 rentpromotionid: id
             })
@@ -145,6 +244,10 @@ class LeaseEdit extends Component {
             contractTplEdit
         } = this.props.configLease
 
+        const {
+            modalName
+        } = this.state
+
         if (this.editType === 'classLine') {
             this.dataSource = classLineEdit
         } else if (this.editType === 'policy') {
@@ -167,20 +270,46 @@ class LeaseEdit extends Component {
             }
 
             roomEdit['room'][0].options = areaData.data
-
+            const roomSchema = roomEdit['tableColumns'].concat([
+                {
+                    key: 'operation',
+                    title: '操作',
+                    render: (text, record, index) => <div className="button-group">
+                        <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditGoods.bind(this, text, record, index)}>修改</a>
+                        <a href="javascript:;" className="s-blue" onClick={this.handleDelGoods.bind(this, text, record, index)}>删除</a>
+                    </div>
+                }
+            ])
+            let modalContent
+            if (modalName === "roomGoods") {
+                modalContent = <ModalForm
+                    ref="roomGoodsModal"
+                    schema={roomEdit['roomGoodsForm']} />
+            }
             return (
                 <section className="padding m-config-edit">
+                    <Modal
+                        visible={this.state.modalVisible}
+                        title={this.state.modalTitle}
+                        width={this.state.modalWidth}
+                        onOk={this.handleModalOk}
+                        onCancel={this.handleModalCancel}>
+                        {modalContent}
+                    </Modal>
                     <InnerForm
-                        schema={roomEdit[this.editType]}
+                        schema={roomEdit['room']}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
                         setFields={roomEdit.data}
                         sessionShouldGet={this.tableName}
                         parentHandleSave={this.parentHandleSave}>
                         <div className="padding-lr g-mt20">
+                            <div className="button-group g-mb10">
+                                <Button onClick={this.handleAddGoods}>新增物品</Button>
+                            </div>
                             <InnerTable
-                                columns={roomEdit.tableColumns}
-                                dataSource={roomEdit.tableSource}
+                                columns={roomSchema}
+                                dataSource={this.state.tableDataGoods}
                                 parentHandleClick={this.parentHandleClick}
                                 pagination={false}
                                 bordered={true} />
@@ -189,6 +318,13 @@ class LeaseEdit extends Component {
                 </section>
             )
         } else {
+            if (this.dataSource.loading) {
+                return <Loading />
+            }
+            if (this.editType === 'policy') {
+                this.editSchema['policy'][5].options = areaData.data
+            }
+
             return (
                 <section className="padding m-config-edit">
                     <InnerForm

@@ -85,6 +85,7 @@ module.exports = {
             key: 'money',
             dataType: 'float',
             placeholder: "请填写交款金额",
+            disabled: true,
             feedBackShow: true,
             validate: [
                 {

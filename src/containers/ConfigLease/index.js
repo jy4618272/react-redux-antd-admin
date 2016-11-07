@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import { Link, hashHistory } from 'react-router'
 
 import {
+    Button,
     Tabs,
     message,
     notification
@@ -35,6 +36,11 @@ const mapDispatchToProps = (dispatch) => ({
 class Lease extends Component {
     constructor(props) {
         super(props)
+        console.log('租赁配置props:', props)
+        this.state = {
+            selectedRowKeys: [],
+            selectedRows: []
+        }
         this.props.actionLease.fetchArea()
         this.initFetchSchema(this.props)
         this.status = sessionStorage.getItem('leaseTabs') || 'room'
@@ -70,16 +76,6 @@ class Lease extends Component {
             console.error('load query schema error: %o', e)
             this.inited = false
             this.errorMsg = `加载${tableName}表的querySchema出错, 请检查配置`
-            return false
-        }
-
-        try {
-            this.controlSchema = require(`SCHEMA/${tableName}/${tableName}.controlSchema.js`)
-            console.log(`加载${tableName}controlSchema`, this.controlSchema)
-        } catch (e) {
-            console.error('load query schema error: %o', e)
-            this.inited = false
-            this.errorMsg = `加载${tableName}controlSchema, 请检查配置`
             return false
         }
 
@@ -154,6 +150,11 @@ class Lease extends Component {
      * @param 
      */
     handlerTabs = (activeKey) => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+
         this.status = activeKey
         this.refs.form.resetFields()
         const {
@@ -181,6 +182,11 @@ class Lease extends Component {
     }
 
     handlerRoomTabs = (activeKey) => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+
         if (activeKey === 'searchAll') {
             this.queryStatus = {
                 status: ''
@@ -206,32 +212,6 @@ class Lease extends Component {
             }
             this.queryObj = Object.assign({}, this.queryData, this.queryStatus)
             this.select(this.queryObj, this.props.configLease.roomData.pageSize, 0, this.props.actionLease.fetchRoomTable)
-        }
-    }
-
-
-    /**
-     * 新增
-     */
-    parentHandleClick = (key, data) => {
-        if (key === 'add') {
-            hashHistory.push('config/config_lease/add?type=' + this.status)
-        } else if (key === 'edit') {
-            console.log('编辑修改数据', data)
-            data = data[0]
-            if (this.status === 'room') {
-                hashHistory.push('config/config_lease/edit/' + data.rentroomid + '?type=room')
-            } else if (this.status === 'classLine') {
-                hashHistory.push('config/config_lease/edit/' + data.transportlineid + '?type=classLine')
-            } else if (this.status === 'policy') {
-                hashHistory.push('config/config_lease/edit/' + data.rentpromotionid + '?type=policy')
-            } else if (this.status === 'accountManager') {
-                hashHistory.push('config/config_lease/edit/' + data.salerid + '?type=accountManager')
-            } else if (this.status === 'contractTpl') {
-                hashHistory.push('config/config_lease/edit/' + data.pactprintmodelid + '?type=contractTpl')
-            } else if (this.status === 'auditPerson') {
-                hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
-            }
         }
     }
 
@@ -271,6 +251,135 @@ class Lease extends Component {
         }
     }
 
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectedRowKeys: keys,
+            selectedRows: rows
+        })
+    }
+
+    // 新增
+    handleAddClick = () => {
+        hashHistory.push('config/config_lease/add?type=' + this.status)
+    }
+
+    // 修改
+    handleEditClick = () => {
+        const data = this.state.selectedRows[0]
+        if (this.status === 'room') {
+            hashHistory.push('config/config_lease/edit/' + data.rentroomid + '?type=room')
+        } else if (this.status === 'classLine') {
+            hashHistory.push('config/config_lease/edit/' + data.transportlineid + '?type=classLine')
+        } else if (this.status === 'policy') {
+            hashHistory.push('config/config_lease/edit/' + data.rentpromotionid + '?type=policy')
+        } else if (this.status === 'accountManager') {
+            hashHistory.push('config/config_lease/edit/' + data.salerid + '?type=accountManager')
+        } else if (this.status === 'contractTpl') {
+            hashHistory.push('config/config_lease/edit/' + data.pactprintmodelid + '?type=contractTpl')
+        } else if (this.status === 'auditPerson') {
+            hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
+        }
+    }
+
+    // 闲置
+    handleLieClick = () => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        const {selectedRows} = this.state
+        if (selectedRows.length === 1) {
+            this.props.actionLease.lieRoom({
+                status: "未出租",
+                rentroomid: selectedRows[0].rentroomid
+            })
+        }
+    }
+
+    // 作废
+    handleVoidClick = () => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        const {selectedRows} = this.state
+        if (selectedRows.length === 1) {
+            this.props.actionLease.voidRoom({
+                status: "作废",
+                rentroomid: selectedRows[0].rentroomid
+            })
+        }
+    }
+
+    // 历史
+    // handleHistoryClick = () => { }
+
+    // 开启
+    handleOpenClick = () => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        const {selectedRows} = this.state
+        if (selectedRows.length === 1) {
+            if (this.status === 'contractTpl') {
+                this.props.actionLease.changeStatusContract({
+                    status: "开启",
+                    pactprintmodelid: selectedRows[0].pactprintmodelid
+                })
+            } else if (this.status === 'accountManager') {
+                this.props.actionLease.changeStatusManager({
+                    status: "开启",
+                    salerid: selectedRows[0].salerid
+                })
+            } else if (this.status === 'policy') {
+                this.props.actionLease.changeStatusPolicy({
+                    status: "开启",
+                    rentpromotionid: selectedRows[0].rentpromotionid
+                })
+            } else if (this.status === 'classLine') {
+                this.props.actionLease.changeStatusClassLine({
+                    status: "开启",
+                    transportlineid: selectedRows[0].transportlineid
+                })
+            }
+        }
+    }
+
+    // 关闭
+    handleCloseClick = () => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        const {selectedRows} = this.state
+        if (selectedRows.length === 1) {
+            if (this.status === 'contractTpl') {
+                this.props.actionLease.changeStatusContract({
+                    status: "关闭",
+                    pactprintmodelid: selectedRows[0].pactprintmodelid
+                })
+            } else if (this.status === 'accountManager') {
+                this.props.actionLease.changeStatusManager({
+                    status: "关闭",
+                    salerid: selectedRows[0].salerid
+                })
+            } else if (this.status === 'policy') {
+                this.props.actionLease.changeStatusPolicy({
+                    status: "关闭",
+                    rentpromotionid: selectedRows[0].rentpromotionid
+                })
+            } else if (this.status === 'classLine') {
+                this.props.actionLease.changeStatusClassLine({
+                    status: "关闭",
+                    transportlineid: selectedRows[0].transportlineid
+                })
+            }
+        }
+    }
+
+
     /**
      * 刚进入页面时触发一次查询
      */
@@ -309,6 +418,34 @@ class Lease extends Component {
             auditPersonData
         } = this.props.configLease
 
+        const {selectedRowKeys} = this.state
+        const oneSelected = selectedRowKeys.length == 1
+        let isLie
+        let isVoid
+        let isOpen
+        let isClose
+        if (oneSelected) {
+            isLie = this.state.selectedRows[0].status === '已出租' ? true : false
+            isVoid = this.state.selectedRows[0].status === '未出租' ? true : false
+            isOpen = this.state.selectedRows[0].status === '关闭' ? true : false
+            isClose = this.state.selectedRows[0].status === '开启' ? true : false
+        }
+
+        const tableRoomControl = <div className="button-group g-mb10">
+            <Button onClick={this.handleAddClick}>新增</Button>
+            <Button disabled={!oneSelected} onClick={this.handleEditClick}>修改</Button>
+            <Button disabled={!isLie} onClick={this.handleLieClick}>闲置</Button>
+            <Button disabled={!isVoid} onClick={this.handleVoidClick}>作废</Button>
+            {/*<Button disabled={!oneSelected} onClick={this.handleHistoryClick}>历史</Button>*/}
+        </div>
+
+        const tableOtherControl = <div className="button-group g-mb10">
+            <Button onClick={this.handleAddClick}>新增</Button>
+            <Button disabled={!oneSelected} onClick={this.handleEditClick}>修改</Button>
+            <Button disabled={!isOpen} onClick={this.handleOpenClick}>开启</Button>
+            <Button disabled={!isClose} onClick={this.handleCloseClick}>关闭</Button>
+        </div>
+
         if (this.status === 'room') {
             roomData['room'][0].options = areaData.data
         }
@@ -331,15 +468,15 @@ class Lease extends Component {
                             parentHandleSubmit={this.handleFormSubmit} />
                         <Tabs defaultActiveKey="searchAll" animated="false" type="inline" onChange={this.handlerRoomTabs}>
                             <TabPane tab="全部" key="searchAll">
+                                {tableRoomControl}
                                 <InnerTable
                                     loading={roomData.tableLoading}
                                     columns={roomData.tableColumns}
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
-                                    schema={this.controlSchema['room']}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
-                                    pagination={false} />
+                                    pagination={false}
+                                    parentHandleSelectChange={this.parentHandleSelectChange} />
                                 <InnerPagination
                                     total={roomData.total}
                                     pageSize={roomData.pageSize}
@@ -347,14 +484,14 @@ class Lease extends Component {
                                     parentHandlePageChange={this.handlePageChange} />
                             </TabPane>
                             <TabPane tab="已出租" key="searchRented">
+                                {tableRoomControl}
                                 <InnerTable
                                     loading={roomData.tableLoading}
                                     columns={roomData.tableColumns}
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
-                                    schema={this.controlSchema['room']}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
+                                    parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                                 <InnerPagination
                                     total={roomData.total}
@@ -363,14 +500,14 @@ class Lease extends Component {
                                     parentHandlePageChange={this.handlePageChange} />
                             </TabPane>
                             <TabPane tab="未出租" key="searchNotRent">
+                                {tableRoomControl}
                                 <InnerTable
                                     loading={roomData.tableLoading}
                                     columns={roomData.tableColumns}
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
-                                    schema={this.controlSchema['room']}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
+                                    parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                                 <InnerPagination
                                     total={roomData.total}
@@ -379,14 +516,14 @@ class Lease extends Component {
                                     parentHandlePageChange={this.handlePageChange} />
                             </TabPane>
                             <TabPane tab="作废" key="searchVoid">
+                                {tableRoomControl}
                                 <InnerTable
                                     loading={roomData.tableLoading}
                                     columns={roomData.tableColumns}
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
-                                    schema={this.controlSchema['room']}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
+                                    parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                                 <InnerPagination
                                     total={roomData.total}
@@ -403,21 +540,20 @@ class Lease extends Component {
                             schema={this.querySchema['classLine']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
+                        {tableOtherControl}
                         <InnerTable
                             loading={classLineData.tableLoading}
                             columns={classLineData.tableColumns}
                             dataSource={classLineData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['classLine']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             pagination={false} />
                         <InnerPagination
                             total={classLineData.total}
                             pageSize={classLineData.pageSize}
                             skipCount={classLineData.skipCount}
-                            parentHandlePageChange={this.handlePageChange}
-                            />
+                            parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
                     <TabPane tab="政策优惠" key="policy">
                         <InnerForm
@@ -426,14 +562,14 @@ class Lease extends Component {
                             schema={this.querySchema['policy']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
+                        {tableOtherControl}
                         <InnerTable
                             loading={policyData.tableLoading}
                             columns={policyData.tableColumns}
                             dataSource={policyData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['policy']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             pagination={false} />
                         <InnerPagination
                             total={policyData.total}
@@ -448,14 +584,14 @@ class Lease extends Component {
                             schema={this.querySchema['accountManager']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
+                        {tableOtherControl}
                         <InnerTable
                             loading={accountManagerData.tableLoading}
                             columns={accountManagerData.tableColumns}
                             dataSource={accountManagerData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['accountManager']}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={accountManagerData.total}
@@ -470,14 +606,14 @@ class Lease extends Component {
                             schema={this.querySchema['contractTpl']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
+                        {tableOtherControl}
                         <InnerTable
                             loading={contractTplData.tableLoading}
                             columns={contractTplData.tableColumns}
                             dataSource={contractTplData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['contractTpl']}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={contractTplData.total}
@@ -499,7 +635,6 @@ class Lease extends Component {
                             isRowSelection={true}
                             schema={this.controlSchema['auditPerson']}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                         <InnerPagination
                             total={roomData.total}

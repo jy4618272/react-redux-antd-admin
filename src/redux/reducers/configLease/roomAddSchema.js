@@ -20,17 +20,31 @@ const initialState = {
             ]
         },
         {
-            key: 'room',
-            title: '房间号',
-            dataType: 'varchar',
-            placeholder: '请输入房间号',
-            showType: 'select',                        
-            options:[],
+            key: 'build',
+            title: '楼号',
+            showType: 'select',
+            options: [],
+            placeholder: "请选择楼号",
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请输入房间号' },
+                        { required: true, type: 'string', message: '必填，请选择楼号' },
+                    ],
+                    trigger: ['onBlur', 'onChange']
+                }
+            ]
+        },
+        {
+            key: 'room',
+            title: '房间号',
+            dataType: 'varchar',
+            placeholder: '请输入房间号',
+            feedBackShow: true,
+            validate: [
+                {
+                    rules: [
+                        { required: true, type: 'string', message: '必填，请输入房间号' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -81,15 +95,6 @@ const initialState = {
             }]
         }
     ],
-    tableControls: {
-        left: [
-            {
-                key: "addRoomGoods",
-                title: '新增房间物品'
-            }
-        ],
-        right: []
-    },
     tableColumns: [
         {
             title: "房间物品",
@@ -147,7 +152,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        {type: 'number', message: '请输入正确的数量' },
+                        { required: true, type: 'number', message: '请输入正确的数量' },
                     ],
                     trigger: ['onChange']
                 }
@@ -162,7 +167,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        {type: 'number', message: '请输入正确的价格' },
+                        { required: true, type: 'number', message: '请输入正确的价格' },
                     ],
                     trigger: ['onChange']
                 }

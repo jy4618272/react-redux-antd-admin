@@ -51,7 +51,7 @@ class InnerTable extends Component {
             selectedRowKeys,
             selectedRows
         })
-        parentHandleSelectChange && parentHandleSelectChange(selectedRows)
+        parentHandleSelectChange && parentHandleSelectChange(selectedRowKeys, selectedRows)
     }
 
     // 点击查看详情
@@ -71,13 +71,6 @@ class InnerTable extends Component {
         const {parentHandleClick} = this.props
         console.log('你刚点击按钮key+data', key, data)
         parentHandleClick && parentHandleClick(key, data)
-    }
-
-    isEmpty = (obj) => {
-        for (let name in obj) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -102,18 +95,16 @@ class InnerTable extends Component {
     render() {
         // 结构赋值，从父组件获取数据
         const {
-            modalSchema,
-            schema,
             loading,
             columns,
             dataSource,
             bordered,
             pagination,
-            isRowSelection,
             size,
             tableStyle,
             title,
-            footer
+            footer,
+            isRowSelection,            
         } = this.props
 
         const theTableStyle = tableStyle ? tableStyle : 'm-table m-table-primary'
@@ -124,11 +115,6 @@ class InnerTable extends Component {
             onChange: this.handleSelectChange,
             onSelectAll: this.handleSelectAll
         }
-
-        // checkbox是否有=>勾选/只有一项/多项
-        const hasSelected = this.state.selectedRowKeys.length > 0
-        const oneSelected = this.state.selectedRowKeys.length == 1
-        const multiSelected = this.state.selectedRowKeys.length > 1
 
         // 判断表格是否加上勾选列
         let tableContent = <Table
@@ -155,61 +141,6 @@ class InnerTable extends Component {
                 size={size}
                 title={title}
                 footer={footer} />
-        }
-
-        /**
-         * 表格操作按钮
-         * {
-         *     left:[],
-         *     right:[]
-         * }
-         */
-        let tableControl = ''
-        if (!this.isEmpty(schema)) {
-            const buttonGroupLeft = schema.left.map((item) => {
-                if (item.key === 'refund') {
-                    let dis
-                    if (!oneSelected) {
-                        // dis = (oneSelected) ? false : true
-                        // alert(dis)
-
-                    }
-                    return (
-                        <Button type="ghost" disabled={dis} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-                    )
-                }
-                if (item.key === 'receive') {
-                    return (
-                        <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-                    )
-                }
-                if (item.key.indexOf('add') > -1 || item.key.indexOf('default') > -1) {
-                    return (
-                        <Button type="ghost" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-                    )
-                }
-                return (
-                    <Button type="ghost" disabled={!oneSelected} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-                )
-            })
-            const buttonGroupRight = schema.right.map((item) => {
-                return (
-                    <Button type="primary" onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
-                )
-            })
-
-            tableControl = <div className="m-table-effect">
-                <div className="clearfix g-mb10">
-                    <Row className="button-group">
-                        <Col span={18}>
-                            {buttonGroupLeft}
-                        </Col>
-                        <Col span={6} className="button-group g-tar">
-                            {buttonGroupRight}
-                        </Col>
-                    </Row>
-                </div>
-            </div>
         }
 
         return (

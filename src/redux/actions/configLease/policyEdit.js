@@ -1,6 +1,6 @@
-import { 
-    message, 
-    notification 
+import {
+    message,
+    notification
 } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
@@ -56,9 +56,6 @@ const fetchPolicyEdit = (data) => {
 }
 
 // 政策优惠更新修改
-const requestPolicyUpdate = () => ({
-    type: REQUEST_POLICY_UPDATE
-})
 const receivePolicyUpdate = (res) => ({
     type: RECEIVE_POLICY_UPDATE,
     payload: res
@@ -70,6 +67,7 @@ const fetchPolicyUpdate = (data) => {
             const hide = message.loading('正在查询...', 0)
             console.log('政策优惠之表单更新保存', res)
             if (res.result === 'success') {
+                hide()
                 dispatch(receivePolicyUpdate(res))
                 notification.success({
                     message: '更新成功',
@@ -77,10 +75,10 @@ const fetchPolicyUpdate = (data) => {
                 });
                 history.back()
             } else {
+                hide()                
                 dispatch(receivePolicyUpdate({}))
                 errHandler(res.result)
             }
-            hide()
         })
     }
 }
@@ -102,7 +100,11 @@ export const ACTION_HANDLERS = {
         loading: false,
         data: res
     }),
-    [REQUEST_POLICY_UPDATE]: () => ({}),
-    [RECEIVE_POLICY_UPDATE]: () => ({})
+    [REQUEST_POLICY_UPDATE]: (policyData) => ({
+        ...policyData
+    }),
+    [RECEIVE_POLICY_UPDATE]: (policyData) => ({
+        ...policyData
+    })
 }
 

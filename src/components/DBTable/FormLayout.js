@@ -167,9 +167,12 @@ class FormLayout extends Component {
     transformSelect = (field) => {
         const options = []
         // console.debug('transform field %o to Select component', field)
+
+        console.log(field.options)
         field.options.map((option) => {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
+
         return this.colWrapper((
             <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)} disabled={field.disabled}>
                 {options}

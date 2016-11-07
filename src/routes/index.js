@@ -12,7 +12,7 @@ import Home from 'CONTAINER/Home'
 
 import Busi from 'CONTAINER/Home/Busi'
 import BusiFinance from 'CONTAINER/BusiFinance'
-import BusiFinanceDetail from 'CONTAINER/BusiFinance/FinanceDetail'
+import BusiFinanceShow from 'CONTAINER/BusiFinance/FinanceShow'
 
 import BusiLease from 'CONTAINER/BusiLease'
 import ContractAdd from 'CONTAINER/BusiLease/ContractAdd'
@@ -49,7 +49,7 @@ const routes = (
 				<Route path="busi_lease/contract/change/:id" tableName="busiLease" component={ContractChange} />			
 				<Route path="busi_lease/contract/pay" tableName="busiLease" component={ContractPay} />				
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
-				<Route path="busi_finance/:id" component={BusiFinanceDetail} />
+				<Route path="busi_finance/:id" component={BusiFinanceShow} />
 			</Route>
 
 			<Route path="config">

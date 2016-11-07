@@ -1,4 +1,7 @@
-import { message, notification } from 'antd'
+import { 
+    message, 
+    notification 
+} from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
 
@@ -51,12 +54,12 @@ const receiveContractUpdate = (res) => ({
 
 const fetchContractUpdate = (data) => {
     return dispatch => {
-        xhr('post', paths.leasePath + '/pactprintmodelcs/updatePactPrintModelStatus', data, function (res) {
+        xhr('post', paths.leasePath + '/pactprintmodelcs/updatePactPrintModel', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('合同模板之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveContractUpdate(res))
-                message, notification.success({
+                notification.success({
                     message: '更新成功',
                     description: '合同模板更新数据成功'
                 });

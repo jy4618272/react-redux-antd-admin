@@ -14,8 +14,6 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
-import actionFinance from 'ACTION/busiFinance'
-
 import {
     Err,
     InnerForm,
@@ -24,6 +22,8 @@ import {
 } from 'COMPONENT'
 
 import { paths } from 'SERVICE/config'
+
+import actionFinance from 'ACTION/busiFinance'
 
 const mapDispatchToProps = (dispatch) => ({
     actionFinance: bindActionCreators(actionFinance, dispatch)
@@ -36,6 +36,11 @@ const mapDispatchToProps = (dispatch) => ({
 class Finance extends Component {
     constructor(props) {
         super(props)
+        console.log('财务首页props:', props)
+        this.state = {
+            selectedRowKeys: [],
+            selectedRows: []
+        }
 
         // 组件初始化时尝试获取schema
         this.status = "未确认"
@@ -53,6 +58,11 @@ class Finance extends Component {
         } else if (activeKey == '2') {
             this.status = "已到账"
         }
+
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
 
         this.refs.form.resetFields()
         this.refresh()
@@ -90,16 +100,6 @@ class Finance extends Component {
             return false
         }
 
-        try {
-            this.controlSchema = require(`SCHEMA/${tableName}/${tableName}.controlSchema.js`)
-            console.log(`加载${tableName}controlSchema`, this.controlSchema)
-        } catch (e) {
-            console.error('load query schema error: %o', e)
-            this.inited = false
-            this.errorMsg = `加载${tableName}controlSchema, 请检查配置`
-            return false
-        }
-
         this.inited = true
     }
 
@@ -128,25 +128,7 @@ class Finance extends Component {
      */
     refresh = (queryObj = {}) => {
         const {busiFinance} = this.props
-        this.select(queryObj, busiFinance.pageSize, 0)
-    }
-
-    /**
-     * 获取所有选中项的数据
-     */
-    handleSelected = (data) => {
-        // 是否选择了多项
-        const multiSelected = data.length > 1
-        if (!multiSelected) {
-            const tmpObj = data.pop()
-            return tmpObj.financecollectionid
-        } else {
-            let tmpObj = []
-            data.map((item) => {
-                tmpObj.push(item.financecollectionid)
-            })
-            return tmpObj.join(',')
-        }
+        this.select(queryObj, busiFinance.home.pageSize, 0)
     }
 
     /**
@@ -158,7 +140,7 @@ class Finance extends Component {
         const tmpObj = Object.assign({}, newObj)
         const {busiFinance} = this.props
 
-        this.select(tmpObj, busiFinance.pageSize, 0)
+        this.select(tmpObj, busiFinance.home.pageSize, 0)
     }
 
     /**
@@ -170,7 +152,7 @@ class Finance extends Component {
         console.debug('handlePageChange, page = %d', page);
 
         page = (page <= 1) ? 0 : (page - 1) * 10
-        this.select(this.queryObj, busiFinance.pageSize, page)
+        this.select(this.queryObj, busiFinance.home.pageSize, page)
     }
 
 
@@ -197,7 +179,7 @@ class Finance extends Component {
         } else if (key === 'exportPage') {
             let arrParam = []
 
-            busiFinance.tableData.map(item => {
+            busiFinance.home.tableData.map(item => {
                 arrParam.push(item.financecollectionid)
             })
 
@@ -219,12 +201,87 @@ class Finance extends Component {
         }
     }
 
-    parentHandleDoubleClick = (record, index) => {
-        // alert(JSON.stringify(record))
-        if (record.type === '租赁合同') {
-            hashHistory.push(`busi/busi_finance/${record.financecollectionid}`)
-        }
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectedRowKeys: keys,
+            selectedRows: rows
+        })
+        console.log('$$$', rows)
+    }
 
+    // 确认收款
+    handleReceive = () => {
+        const {
+            actionFinance
+        } = this.props
+
+        const {selectedRows} = this.state
+        const tmpObj = Object.assign({}, {
+            financeCollectionIds: selectedRows[0].financecollectionid ? selectedRows[0].financecollectionid : 0
+        })
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        console.log('确认收款id:', tmpObj)
+        actionFinance.fetchReceive(tmpObj)
+    }
+
+    // 确认退款
+    handleRefund = () => {
+        const {
+            actionFinance
+        } = this.props
+
+        const {selectedRows} = this.state
+        const tmpObj = Object.assign({}, {
+            financeCollectionIds: selectedRows[0].financecollectionid ? selectedRows[0].financecollectionid : 0
+        })
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        console.log('确认退款id:', tmpObj)
+        actionFinance.fetchRefund(tmpObj)
+    }
+
+    // 导出本页
+    handleExportPage = () => {
+        const {
+            busiFinance,
+            actionFinance
+        } = this.props
+
+        let arrParam = []
+
+        busiFinance.home.tableData.map(item => {
+            arrParam.push(item.financecollectionid)
+        })
+
+        if (arrParam.length) {
+            notification.open({
+                message: '导出本页',
+                description: `导出${arrParam.length}条数据`,
+            });
+
+            window.location.href = paths.financePath + '/financecollectioncs/exportFinanceListExcel?financeCollectionIds=' + arrParam.join(',')
+        } else {
+            notification.open({
+                message: '导出本页',
+                description: '本页没有数据',
+            });
+        }
+    }
+
+    parentHandleDoubleClick = (record, index) => {
+        console.log('333', record)
+        // hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
+        // if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
+        //     hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
+        // }else{
+        //     alert(3)
+        // }
     }
 
     /**
@@ -236,6 +293,35 @@ class Finance extends Component {
 
     render() {
         const {busiFinance} = this.props
+
+        const {selectedRowKeys, selectedRows} = this.state
+        const oneSelected = selectedRowKeys.length == 1
+
+        // 按钮【可否点击】条件判断
+        let isReceive = false
+        let isRefund = false
+        if (oneSelected) {
+            isReceive = selectedRows[0].paytype == '收款' ? true : false
+            isRefund = selectedRows[0].paytype == '退款' ? true : false
+        }
+
+        const tableNotControl = <Row className="button-group g-mb10">
+            <Col sm={16}>
+                <Button disabled={!isReceive} onClick={this.handleReceive}>确认收款</Button>
+                <Button disabled={!isRefund} onClick={this.handleRefund}>确认退款</Button>
+            </Col>
+            <Col sm={8} className="g-tar">
+                <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+            </Col>
+        </Row>
+
+        const tableControl = <Row className="button-group g-mb10">
+            <Col sm={16}>
+            </Col>
+            <Col sm={8} className="g-tar">
+                <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+            </Col>
+        </Row>
 
         if (!this.inited) {
             return (
@@ -253,20 +339,20 @@ class Finance extends Component {
                             schema={this.querySchema}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
+                        {tableNotControl}
                         <InnerTable
-                            loading={busiFinance.tableLoading}
-                            columns={busiFinance.tableColumns}
-                            dataSource={busiFinance.tableData}
+                            loading={busiFinance.home.tableLoading}
+                            columns={busiFinance.home.tableColumns}
+                            dataSource={busiFinance.home.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['not']}
                             bordered={true}
                             pagination={false}
-                            parentHandleDoubleClick={this.parentHandleDoubleClick}
-                            parentHandleClick={this.parentHandleClick} />
+                            parentHandleSelectChange={this.parentHandleSelectChange}
+                            parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination
-                            total={busiFinance.total}
-                            pageSize={busiFinance.pageSize}
-                            skipCount={busiFinance.skipCount}
+                            total={busiFinance.home.total}
+                            pageSize={busiFinance.home.pageSize}
+                            skipCount={busiFinance.home.skipCount}
                             parentHandlePageChange={this.handlePageChange}
                             />
                     </TabPane>
@@ -278,20 +364,20 @@ class Finance extends Component {
                             schema={this.querySchema}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
-
+                        {tableControl}
                         <InnerTable
-                            loading={busiFinance.tableLoading}
-                            columns={busiFinance.tableColumns}
-                            dataSource={busiFinance.tableData}
+                            loading={busiFinance.home.tableLoading}
+                            columns={busiFinance.home.tableColumns}
+                            dataSource={busiFinance.home.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['done']}
                             bordered={true}
                             pagination={false}
-                            parentHandleClick={this.parentHandleClick} />
+                            parentHandleSelect={this.parentHandleSelect}
+                            parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination
-                            total={busiFinance.total}
-                            pageSize={busiFinance.pageSize}
-                            skipCount={busiFinance.skipCount}
+                            total={busiFinance.home.total}
+                            pageSize={busiFinance.home.pageSize}
+                            skipCount={busiFinance.home.skipCount}
                             parentHandlePageChange={this.handlePageChange}
                             />
                     </TabPane>

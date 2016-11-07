@@ -36,11 +36,13 @@ const fetchRoomAdd = (data) => {
                         if (res.data.rentroomid) {
                             xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
                                 rentroomid: res.data.rentroomid,
-                                itemname: data.roomGoods
+                                rentroomconfig: data.roomGoods
                             }, function (res) {
                                 console.log('房间设置之表单保存2', res)
                                 if (res.result === 'success') {
                                     dispatch(receiveRoomAdd(res))
+                                } else {
+                                    errHandler(res.result)
                                 }
                             })
                         }

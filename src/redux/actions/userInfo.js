@@ -25,6 +25,7 @@ const fetchUser = () => {
         xhr('post', '/financeParkAdmin/maincs/getUserInfo', {}, function (res) {
             const hide = message.loading('正在获取用户信息...', 0)
             if(res.result === 'success'){
+                sessionStorage.setItem('getFacility', res.data.facilityName)
                 dispatch(receiveUser(res))
             }
             hide()

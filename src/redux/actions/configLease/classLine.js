@@ -7,6 +7,7 @@ import {errHandler, paths} from 'SERVICE/config'
 // ================================
 const REQUEST_CLASSLINE_TABLE = 'REQUEST_CLASSLINE_TABLE'
 const RECEIVE_CLASSLINE_TABLE = 'RECEIVE_CLASSLINE_TABLE'
+const STATUS_CLASS_LINE = 'STATUS_CLASS_LINE'
 
 // ================================
 // Action Creator
@@ -42,9 +43,36 @@ const fetchClassLineTable = (data) => {
 }
 
 
+// 开启/关闭
+const statusClassLine = (res) => ({
+    type: STATUS_CLASS_LINE,
+    payload: res
+})
+const changeStatusClassLine = (data) => {
+    return dispatch => {
+        xhr('post', paths.leasePath + '/transportlinecs/updateTransportLineStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('班线之开启', newRes)
+            if (res.result === 'success') {
+                hide()
+                dispatch(statusClassLine(newRes))
+            } else {
+                hide()
+                dispatch(statusClassLine({}))
+                errHandler(res.result)
+            }
+        })
+    }
+}
+
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchClassLineTable
+    fetchClassLineTable,
+    changeStatusClassLine
 }
 
 export const ACTION_HANDLERS = {
@@ -59,6 +87,15 @@ export const ACTION_HANDLERS = {
         total: res.count,
         pageSize: 10,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
-    })
+    }),
+    [STATUS_CLASS_LINE]: (classLineData, {payload: res}) => {
+        const obj = classLineData.tableData
+        obj.map(item => {
+            if (item.transportlineid === res.sub.transportlineid) {
+                item.status = res.sub.status
+            }
+        })
+        return Object.assign({}, classLineData, { tableData: obj })
+    }
 }
 

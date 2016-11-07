@@ -1,5 +1,4 @@
 module.exports = {
-    room: [],
     classLine: [
         {
             key: 'site',
@@ -18,7 +17,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, min: 1, max: 100, message: '必填，班线名称不能重复' },
+                        { required: true, type: 'string', min: 1, message: '必填，班线名称不能重复' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -27,15 +26,15 @@ module.exports = {
         {
             key: 'linefee',
             title: '班线价格',
-            dataType: 'varchar',
+            dataType: 'float',
             placeholder: '请输入班线价格',
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, max: 10, message: '必填，请输入班线价格' },
+                        { required: true, type: 'number', message: '必填，请输入班线价格' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },
@@ -48,7 +47,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, max: 255, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
                 ],
                 trigger: 'onChange',
             }]
@@ -72,7 +71,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, max: 50, message: '必填，活动名称不能为空' },
+                        { required: true, type: 'string', message: '必填，活动名称不能为空' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -91,7 +90,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择优惠类型' },
+                        { required: true, type: 'string', message: '必填，请选择优惠类型' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -101,14 +100,15 @@ module.exports = {
             key: 'promotionnum',
             title: '优惠幅度',
             dataType: 'float',
+            step: 0.1,
             placeholder: '请输入优惠幅度',
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, type:'number', message: '必填，优惠幅度不能为空' },
+                        { required: true, type: 'number', message: '必填，优惠幅度不能为空' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },
@@ -125,7 +125,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择优惠对象' },
+                        { required: true, type: 'string', message: '必填，请选择优惠对象' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -135,13 +135,13 @@ module.exports = {
             key: 'area',
             title: '区域',
             showType: 'select',
-            options: JSON.parse(sessionStorage.getItem('areaBySite')),
+            options: [],
             placeholder: "请选择区域",
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择区域' },
+                        { required: true, type: 'string', message: '必填，请选择区域' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -149,7 +149,7 @@ module.exports = {
         },
         {
             key: 'startdate',
-            keyEnd:'enddate',
+            keyEnd: 'enddate',
             title: '活动期限',
             dataType: 'datetime',
             showType: 'between',
@@ -174,7 +174,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, max: 255, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
                 ],
                 trigger: 'onChange',
             }]
@@ -193,12 +193,11 @@ module.exports = {
             key: 'username',
             title: '姓名',
             dataType: 'varchar',
-            showType: 'two',
             placeholder: '请输入姓名',
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { required: true, max: 20, message: '必填，请输入姓名' },
+                    { type: 'string', required: true, message: '必填，请输入姓名' },
                 ],
                 trigger: 'onChange',
             }]
@@ -207,12 +206,11 @@ module.exports = {
             key: 'jobcard',
             title: '工号',
             dataType: 'varchar',
-            showType: 'two',
             placeholder: '请输入工号',
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { required: true, max: 100, message: '必填，请输入工号' },
+                    { required: true, type: 'string', message: '必填，请输入工号' },
                 ],
                 trigger: 'onChange',
             }]
@@ -226,7 +224,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, max: 255, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
                 ],
                 trigger: 'onChange',
             }]
@@ -243,7 +241,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, max: 255, message: '必填，请输入模板名称' },
+                        { required: true, type: 'string', message: '必填，请输入模板名称' },
                     ],
                     trigger: 'onChange',
                 }
@@ -252,13 +250,13 @@ module.exports = {
         {
             key: 'modeltext',
             title: '模板内容',
-            dataType: 'varchar',
-            showType: 'two',
+            dataType: 'textarea',
+            showType: 'full',
             placeholder: '请输入模板内容',
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { required: true, max: 255, message: '必填，请输入模板内容' },
+                    { required: true, type: 'string', message: '必填，请输入模板内容' },
                 ],
                 trigger: 'onChange',
             }]
@@ -276,7 +274,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择合同类型' },
+                        { required: true, type: 'string', message: '必填，请选择合同类型' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -291,7 +289,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, max: 255, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
                 ],
                 trigger: 'onChange',
             }]
