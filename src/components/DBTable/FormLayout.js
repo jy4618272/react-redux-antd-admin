@@ -153,7 +153,7 @@ class FormLayout extends Component {
 
 
     handleSelect = (key, value) => {
-        console.log(key, value)
+        // console.log(key, value)
         if (this.props.parentHandleSelect) {
             this.props.parentHandleSelect(key, value)
         }
@@ -168,7 +168,7 @@ class FormLayout extends Component {
         const options = []
         // console.debug('transform field %o to Select component', field)
 
-        console.log(field.options)
+        // console.log(field.options)
         field.options.map((option) => {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
@@ -361,7 +361,7 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber size="default" step={0.01} disabled={field.disabled} />
+                    <InputNumber size="default" disabled={field.disabled} />
                 ), field)
             case 'float':
                 // console.debug('transform field %o to float input component', field)
@@ -415,8 +415,8 @@ class FormLayout extends Component {
         const {form, parentHandleSubmit} = this.props
         const oldObj = form.getFieldsValue()
         const newObj = this.filterQueryObj(oldObj)
-        console.log('oldObj', oldObj)
-        console.log('newObj', newObj)
+        // console.log('oldObj', oldObj)
+        // console.log('newObj', newObj)
         // 还是要交给上层组件处理, 因为要触发table组件的状态变化...        
         parentHandleSubmit(newObj)
     }

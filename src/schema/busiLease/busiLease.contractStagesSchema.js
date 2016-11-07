@@ -90,7 +90,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'number', min: 1, message: '请填写交款金额' },
+                        { required: true, type: 'number', message: '请填写交款金额' },
                     ]
                 }
             ]

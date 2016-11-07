@@ -121,7 +121,7 @@ class RoomState extends Component {
                     <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
                         <Popover content={tips} title={item.status}>
                             <div>
-                                <Link to={`/busi/busi_lease/add?type=contract&rentroomid=${item.rentroomid}`}>
+                                <Link to={`/busi/busi_lease/contract/add?type=contract&rentroomid=${item.rentroomid}`}>
                                     <div className="list-img"><img src={imgStatus} /></div>
                                     <div className="list-txt">{item.build}- {item.room}</div>
                                 </Link>

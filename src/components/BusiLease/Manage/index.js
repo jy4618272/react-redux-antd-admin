@@ -164,42 +164,59 @@ class LeaseManage extends Component {
 
     // 合同审批
     handleApprovalContract = () => {
-        hashHistory.push('busi/busi_lease/contract/approval/' + data[0].rentpactid + '?type=view')
+        const data = this.state.selectedRows
+        if (data.length == 1) {
+            hashHistory.push('busi/busi_lease/contract/approval/' + data[0].rentpactid + '?type=view')
+        }
 
     }
 
     // 合同续租
     handleRenewContract = () => {
-        hashHistory.push('busi/busi_lease/contract/renew/' + data[0].rentpactid)
+        const data = this.state.selectedRows
+        if (data.length == 1) {
+            hashHistory.push('busi/busi_lease/contract/renew/' + data[0].rentpactid)
+        }
     }
 
     // 合同变更
     handleChangeContract = () => {
-        hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=change')
+        const data = this.state.selectedRows
+        if (data.length == 1) {
+            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=change')
+        }
 
     }
 
     // 合同编辑
     handleEditContract = () => {
-        hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=edit')
+        const data = this.state.selectedRows
+        if (data.length == 1) {
+            hashHistory.push('busi/busi_lease/contract/edit/' + data[0].rentpactid + '?type=edit')
+        }
 
     }
 
     // 合同退租
     handleRentContract = () => {
-
+        const data = this.state.selectedRows
+        if (data.length == 1) {
+            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=rent')
+        }
     }
 
     // 合同作废
     handleVoidContract = () => {
-
+        const data = this.state.selectedRows
+        if (data.length == 1) {
+            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=void')
+        }
     }
 
     // 合同交款
     handlePayContract = () => {
         hashHistory.push('busi/busi_lease/contract/pay')
     }
-
 
     parentHandleClick = (key, data) => {
         if (key === "addBond") {
@@ -401,7 +418,6 @@ class LeaseManage extends Component {
                 }
             }
         }
-
 
         const tableContractControl = <div className="button-group g-mb10">
             <Row>

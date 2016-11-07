@@ -64,19 +64,19 @@ class ModalForm extends Component {
         switch (field.dataType) {
             case 'int':
                 return this.colWrapper((
-                    <InputNumber size="default" />
+                    <InputNumber size="default" disabled={field.disabled} />
                 ), field)
             case 'float':
                 return this.colWrapper((
-                    <InputNumber step={field.step || 0.01} size="default" />
+                    <InputNumber step={field.step || 0.01} size="default" disabled={field.disabled} />
                 ), field)
             case 'datetime':
                 return this.colWrapper((
-                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} />
+                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} disabled={field.disabled} />
                 ), field)
             default:
                 return this.colWrapper((
-                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} disabled={field.disabled} />
                 ), field)
         }
     }
@@ -93,7 +93,7 @@ class ModalForm extends Component {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
         return this.colWrapper((
-            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)}>
+            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)} disabled={field.disabled} >
                 {options}
             </Select>
         ), field)
@@ -146,7 +146,7 @@ class ModalForm extends Component {
             options.push(<Option key={option.key} value={option.key}>{option.value}</Option>)
         })
         return this.colWrapper((
-            <Select multiple placeholder={field.placeholder || '请选择'} size="default">
+            <Select multiple placeholder={field.placeholder || '请选择'} size="default" disabled={field.disabled} >
                 {options}
             </Select>
         ), field)
