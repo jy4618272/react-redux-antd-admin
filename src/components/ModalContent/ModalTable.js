@@ -37,6 +37,7 @@ class ModalTable extends Component {
         const {
             dataSource,
             handlePageChange,
+            isRowSelection,
             parentHandleSelectChange
         } = this.props
 
@@ -47,7 +48,7 @@ class ModalTable extends Component {
                     columns={dataSource.tableColumns}
                     dataSource={dataSource.tableData}
                     parentHandleSelectChange={parentHandleSelectChange}
-                    isRowSelection={true}
+                    isRowSelection={isRowSelection}
                     bordered={true}
                     pagination={false} />
                 <InnerPagination

@@ -19,6 +19,7 @@ import {
     InnerTable,
     InnerPagination
 } from 'COMPONENT'
+import { paths } from 'SERVICE/config'
 
 import actionLease from 'ACTION/busiLease'
 
@@ -44,7 +45,7 @@ class LeaseManage extends Component {
             okText: '确定',
             modalWidth: '900'
         }
-        // console.log('props:', props)
+        console.log('租赁管理props:', props)
     }
 
     /**
@@ -175,24 +176,24 @@ class LeaseManage extends Component {
     handleRenewContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push('busi/busi_lease/contract/renew/' + data[0].rentpactid)
+            hashHistory.push(`busi/busi_lease/contract/renew/${data[0].rentpactid}`)
         }
     }
 
-    // 合同变更
+    // 合同变更-保存flowtype一定是‘变更’
     handleChangeContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=change')
+            hashHistory.push(`busi/busi_lease/contract/change/${data[0].rentpactid}?type="变更"`)
         }
 
     }
 
-    // 合同编辑
+    // 合同编辑-保存flowtype根据原来的状态
     handleEditContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push('busi/busi_lease/contract/edit/' + data[0].rentpactid + '?type=edit')
+            hashHistory.push(`busi/busi_lease/contract/change/${data[0].rentpactid}?type=${data[0].flowtype}`)
         }
 
     }
@@ -201,7 +202,7 @@ class LeaseManage extends Component {
     handleRentContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=rent')
+            hashHistory.push(`busi/busi_lease/contract/rent/${data[0].rentpactid}?type=rent`)
         }
     }
 
@@ -209,13 +210,43 @@ class LeaseManage extends Component {
     handleVoidContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push('busi/busi_lease/contract/change/' + data[0].rentpactid + '?type=void')
+            this.props.actionLease.voidContract({
+                rentpactid: data[0].rentpactid
+            })
         }
     }
 
     // 合同交款
     handlePayContract = () => {
         hashHistory.push('busi/busi_lease/contract/pay')
+    }
+
+    // 导出本页
+    handleExportPage = () => {
+        const {
+            busiLease
+        } = this.props
+
+        // alert('缺接口')
+        let arrParam = []
+
+        busiLease.contractData.tableData.map(item => {
+            arrParam.push(item.rentpactid)
+        })
+
+        if (arrParam.length) {
+            notification.open({
+                message: '导出本页',
+                description: `导出${arrParam.length}条数据`,
+            });
+
+            window.location.href = paths.leasePath + '/rentpactcs/selectByRentPactIdListToExcel?rentpactids=' + arrParam.join(',')
+        } else {
+            notification.open({
+                message: '导出本页',
+                description: '本页没有数据',
+            });
+        }
     }
 
     parentHandleClick = (key, data) => {
@@ -297,16 +328,20 @@ class LeaseManage extends Component {
         let isRent = false       // 退租
         let isVoid = false       // 作废
 
-        if (oneSelected) {
+        if (oneSelected && (selectedRows[0].endtype !== '作废')) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增/续租') {
                 if (selected.flowstatus === '录入未完成') {
                     if (selected.fistatus === '未提交') {
                         // 作废
-                        isVoid = true
+                        if(selectedRows[0].endtype !== '作废'){
+                            isVoid = true
+                        }
                     } else if (selected.fistatus === '待财务确认') {
                         // 作废
-                        isVoid = true
+                        if(selectedRows[0].endtype !== '作废'){
+                            isVoid = true
+                        }
                     } else if (selected.fistatus === '有效') {
                         // 续租、退租、变更
                         isRenew = true
@@ -315,7 +350,9 @@ class LeaseManage extends Component {
                     } else if (selected.fistatus === '已退') {
                         // 编辑、作废
                         isEdit = true
-                        isVoid = true
+                        if(selectedRows[0].endtype !== '作废'){
+                            isVoid = true
+                        }
                     }
                 } else if (selected.flowstatus === '审批中') {
                     if (selected.fistatus === '未提交') {
@@ -427,12 +464,12 @@ class LeaseManage extends Component {
                     <Button disabled={!isRenew} onClick={this.handleRenewContract}>续租</Button>
                     <Button disabled={!isChange} onClick={this.handleChangeContract}>变更</Button>
                     <Button disabled={!isEdit} onClick={this.handleEditContract}>编辑</Button>
-                    <Button disabled={!isRent} onClick={this.handleRentContract}>退租</Button>
+                    <Button disabled={false} onClick={this.handleRentContract}>退租</Button>
                     <Button disabled={!isVoid} onClick={this.handleVoidContract}>作废</Button>
                     <Button onClick={this.handlePayContract}>合同交款</Button>
                 </Col>
                 <Col sm={8} className="g-tar">
-                    <Button type="primary" onClick={this.handlePrintContract}>打印</Button>
+                    {/*<Button type="primary" onClick={this.handlePrintContract}>打印</Button>*/}
                     <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
                 </Col>
             </Row>
@@ -491,7 +528,6 @@ class LeaseManage extends Component {
                             loading={bondData.tableLoading}
                             columns={bondData.tableColumns}
                             dataSource={bondData.tableData}
-                            schema={controlSchema['bond']}
                             parentHandleClick={this.parentHandleClick}
                             isRowSelection={true}
                             bordered={true}
@@ -513,7 +549,6 @@ class LeaseManage extends Component {
                             loading={notContractData.tableLoading}
                             columns={notContractData.tableColumns}
                             dataSource={notContractData.tableData}
-                            schema={controlSchema['notContract']}
                             parentHandleClick={this.parentHandleClick}
                             isRowSelection={true}
                             bordered={true}

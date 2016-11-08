@@ -4,6 +4,8 @@ import { default as contractOrganizationActionCreators } from './contractInsert/
 import { default as contractInfoActionCreators } from './contractInsert/contractInfo'
 import { default as contractTabsActionCreators } from './contractInsert/contractTabs'
 
+import { default as changeHistoryActionCreators } from './contractChange/changeHistory'
+
 import { default as contractRenewActionCreators } from './contractRenew'
 
 import { default as contractApprovalActionCreators } from './contractApproval'
@@ -24,6 +26,7 @@ export default {
   ...contractOrganizationActionCreators,
   ...contractInfoActionCreators,
   ...contractTabsActionCreators,
+  ...changeHistoryActionCreators,
   
   ...contractRenewActionCreators,
   ...contractApprovalActionCreators,

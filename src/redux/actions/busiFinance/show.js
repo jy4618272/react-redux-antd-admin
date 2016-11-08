@@ -30,7 +30,7 @@ const fetchFinanceShow = (data) => {
         dispatch(requestFinanceShow())
         xhr('post', paths.financePath + '/financecollectioncs/getFinanceCollectionDetail', data, function (res) {
             const hide = message.loading('正在查询...', 0)
-            console.log('财务业务', data, res)
+            console.log('财务详情', data, res)
             if (res.result === 'success') {
                 hide()
                 dispatch(receiveFinanceShow(res))

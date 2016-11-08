@@ -67,15 +67,6 @@ module.exports = {
         }
     ],
     room: {
-        topButtons: {
-            left: [
-                {
-                    key: 'addRoom',
-                    title: '新增房间'
-                }
-            ],
-            right: []
-        },
         columns: [
             {
                 title: '区域',
@@ -94,8 +85,8 @@ module.exports = {
             },
             {
                 title: '面积',
-                dataIndex: 'romearea',
-                key: 'romearea'
+                dataIndex: 'roomarea',
+                key: 'roomarea'
             },
             {
                 title: '金额',

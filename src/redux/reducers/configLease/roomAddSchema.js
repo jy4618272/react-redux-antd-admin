@@ -6,32 +6,32 @@ const initialState = {
         {
             key: 'area',
             title: '区域',
-            showType: 'select',
+            dataType: 'varchar',
             options: [],
-            placeholder: "请选择区域",
+            placeholder: "请输入区域",
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请选择区域' },
+                        { required: true, type:'string', message: '必填，请输入区域' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },
         {
             key: 'build',
             title: '楼号',
-            showType: 'select',
+            dataType: 'varchar',
             options: [],
-            placeholder: "请选择楼号",
+            placeholder: "请输入楼号",
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请选择楼号' },
+                        { required: true, type: 'string', message: '必填，请输入楼号' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },

@@ -9,7 +9,7 @@ const initialState = [
         child: [
             {
                 key: 'busi',
-                name: '业务中心'
+                name: '首页'
             },
             {
                 key: 'busi_lease',
@@ -30,10 +30,10 @@ const initialState = [
                 key: 'config_base',
                 name: '基地配置'
             },
-            {
-                key: 'config_rights',
-                name: '权限配置'
-            },
+            // {
+            //     key: 'config_rights',
+            //     name: '权限配置'
+            // },
             {
                 key: 'config_lease',
                 name: '租赁配置'

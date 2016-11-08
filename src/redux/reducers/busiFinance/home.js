@@ -46,8 +46,8 @@ const initialState = {
         },
         {
             title: '提交日期',
-            dataIndex: 'collectiondate',
-            key: 'collectiondate'
+            dataIndex: 'inputdate',
+            key: 'inputdate'
         }
     ],
     tableData: [],

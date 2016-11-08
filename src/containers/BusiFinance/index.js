@@ -275,13 +275,11 @@ class Finance extends Component {
     }
 
     parentHandleDoubleClick = (record, index) => {
-        console.log('333', record)
-        // hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
-        // if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
-        //     hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
-        // }else{
-        //     alert(3)
-        // }
+        if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
+            hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
+        }else{
+            // alert(3)
+        }
     }
 
     /**

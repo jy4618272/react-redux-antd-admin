@@ -17,9 +17,11 @@ import BusiFinanceShow from 'CONTAINER/BusiFinance/FinanceShow'
 import BusiLease from 'CONTAINER/BusiLease'
 import ContractAdd from 'CONTAINER/BusiLease/ContractAdd'
 import ContractRenew from 'CONTAINER/BusiLease/ContractRenew'
+import ContractChange from 'CONTAINER/BusiLease/ContractChange'
+import ContractRent from 'CONTAINER/BusiLease/ContractRent'
+
 import contractApproval from 'CONTAINER/BusiLease/contractApproval'
 import contractApprovalShow from 'CONTAINER/BusiLease/contractApprovalShow'
-import ContractChange from 'CONTAINER/BusiLease/ContractChange'
 
 import ContractPay from 'CONTAINER/BusiLease/ContractPay'
 
@@ -42,12 +44,22 @@ const routes = (
 				<IndexRoute path="busi" component={Busi} />
 				<Route path="busi" tableName="busiLease" component={Busi} />
 				<Route path="busi_lease" tableName="busiLease" component={BusiLease} />
-				<Route path="busi_lease/contract/add" tableName="busiLease" component={ContractAdd} />				
+				{/* 新增合同 */}				
+				<Route path="busi_lease/contract/add" tableName="busiLease" component={ContractAdd} />
+				{/* 续租合同 */}				
 				<Route path="busi_lease/contract/renew/:id" tableName="busiLease" component={ContractRenew} />
-				<Route path="busi_lease/contract/approval" tableName="busiLease" component={contractApproval} />		
-				<Route path="busi_lease/contract/approval/:id" tableName="busiLease" component={contractApprovalShow} />		
-				<Route path="busi_lease/contract/change/:id" tableName="busiLease" component={ContractChange} />			
-				<Route path="busi_lease/contract/pay" tableName="busiLease" component={ContractPay} />				
+				
+				{/* 变更合同/编辑合同 */}				
+				<Route path="busi_lease/contract/change/:id" tableName="busiLease" component={ContractChange} />
+				{/* 退租合同 */}
+				<Route path="busi_lease/contract/rent/:id" tableName="busiLease" component={ContractRent} />
+
+				{/* 审批合同 */}
+				<Route path="busi_lease/contract/approval" tableName="busiLease" component={contractApproval} />
+				<Route path="busi_lease/contract/approval/:id" tableName="busiLease" component={contractApprovalShow} />
+
+				{/* 合同交款 */}
+				<Route path="busi_lease/contract/pay" tableName="busiLease" component={ContractPay} />
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
 				<Route path="busi_finance/:id" component={BusiFinanceShow} />
 			</Route>
@@ -57,7 +69,7 @@ const routes = (
 				<Route path="config_rights" tableName="configRights" component={ConfigRights} />,
 				<Route path="config_lease" tableName="configLease" component={ConfigLease} />
 				<Route path="config_lease/add" tableName="configLease" component={ConfigLeaseAdd} />
-				<Route path="config_lease/edit/:id" tableName="configLease" component={ConfigLeaseEdit} />				
+				<Route path="config_lease/edit/:id" tableName="configLease" component={ConfigLeaseEdit} />
 				<Route path="config_lease/:id" tableName="configLease" component={ConfigLeaseDetail} />
 			</Route>
 		</Route>

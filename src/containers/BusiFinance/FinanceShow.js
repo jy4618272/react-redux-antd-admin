@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
+import {
+    InnerTable
+} from 'COMPONENT'
 import action from 'ACTION/busiFinance/show'
 
 const mapDispatchToProps = (dispatch) => ({
@@ -28,24 +31,38 @@ class FinanceShow extends Component {
         const type = location.query.type
         console.log('参数：', id, type)
 
-        if (type === '租赁合同') {
-            action.fetchFinanceShow({
-                type: type,
-                businessnumber: id
-            })
-        } else if (type === '临时摊位') {
-
-        } else if (type === '履约保证金') {
-
-        }
+        action.fetchFinanceShow({
+            type: type,
+            businessnumber: id
+        })
     }
 
     render() {
-        return (
-            <div>
-                333ddd
-            </div>
-        )
+        const {
+            location,
+            busiFinance
+        } = this.props
+        const type = location.query.type
+        if (type === '履约保证金') {
+            const arr = []
+            arr.push(busiFinance.show.data)
+            
+            return (
+                <section className="padding">
+                    <InnerTable
+                        loading={busiFinance.show.loading}
+                        columns={busiFinance.show.init.bond}
+                        dataSource={arr}
+                        isRowSelection={false}
+                        bordered={true}
+                        pagination={false} />
+                </section>
+            )
+        } else {
+            return (
+                <div className="g-tac">接口返回数据有问题</div>
+            )
+        }
     }
 }
 

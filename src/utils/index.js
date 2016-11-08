@@ -33,9 +33,6 @@ const filterQueryObjMoment = (oldObj) => {
     return newObj
 }
 
-
-
-
 export {
     filterQueryObj,
     filterQueryObjMoment

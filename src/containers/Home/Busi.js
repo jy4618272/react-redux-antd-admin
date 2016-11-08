@@ -32,7 +32,8 @@ class Busi extends Component {
                         </ul>
                     </Col>
                 </Row>
-                <Row className="list-news-tips">
+                {/*
+                    <Row className="list-news-tips">
                     <Col span={3}>
                         <div className="title">租赁管理</div>
                     </Col>
@@ -61,7 +62,8 @@ class Busi extends Component {
                             </li>
                         </ul>
                     </Col>
-                </Row>
+                </Row>    
+                */}
             </section>
         )
     }

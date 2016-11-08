@@ -6,6 +6,8 @@ import contractRenewReducer from './contractRenew'
 import contractApprovalReducer from './contractApproval'
 import contractApprovalShowReducer from './contractApproval/show'
 
+import changeHistoryReducer from './contractChange/changeHistory'
+
 import contractPayReducer from './contractPay'
 import payShowReducer from './contractPay/payShow'
 import workFlowReducer from './contract/workFlow'
@@ -23,6 +25,8 @@ export default combineReducers({
     contractRenew: contractRenewReducer,
     contractApproval: contractApprovalReducer,
     contractApprovalShow: contractApprovalShowReducer,
+
+    changeHistory: changeHistoryReducer,
     
     contractPay: contractPayReducer,
     contractPayShow: payShowReducer,

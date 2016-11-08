@@ -3,18 +3,7 @@
  */
 import React, { Component } from 'react'
 import {
-    Form,
-    Row,
-    Col,
-    Select,
-    Radio,
-    Checkbox,
-    DatePicker,
-    Input,
-    InputNumber,
-    Button,
-    Icon,
-    notification
+    Form
 } from 'antd'
 import {
     FormLayout

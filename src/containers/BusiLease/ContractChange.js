@@ -28,6 +28,7 @@ import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
+    WorkFlow,
     FormLayout,
     InnerTable,
     InnerPagination,
@@ -55,6 +56,8 @@ class ContractInsert extends Component {
         super(props)
         this.state = {
             tabsStatus: 'room',
+            rentpactid: 0,
+            renttype: '',
             organizationValue: '',
             pactprintmodelid: 0,
             partyid: 0,
@@ -75,14 +78,20 @@ class ContractInsert extends Component {
             tableIndex: 0,
             stagesTableData: [],
             stagesShowTableData: [],
-            isSaveDisabeld: false
+            isSaveDisabeld: false,
+            footer: <div>
+                <Button size="large" onClick={this.handleModalCancel}>取消</Button>
+                <Button size="large" type="primary" onClick={this.handleModalOk}>确定</Button>
+            </div>
         }
 
         console.log('合同新增props:', props)
 
         this.initFetchSchema(props)
-        props.action.fetchContractFrom()
-        props.action.fetchManager()
+        props.action.fetchWorkFlow({
+            type: '新增',
+            modelname: '合同'
+        })
     }
 
     /**
@@ -143,7 +152,10 @@ class ContractInsert extends Component {
 
     // 分页
     handlePageChange = (page) => {
-        const {tabsStatus} = this.state
+        const {
+            tabsStatus,
+            modalName
+        } = this.state
         const {
             roomData,
             classLineData,
@@ -159,26 +171,34 @@ class ContractInsert extends Component {
         } = this.props.actionLease
 
         const {
-            fetchBondTable
+            fetchBondTable,
+            fetchContractHistory
         } = this.props.action
 
         page = (page <= 1) ? 0 : (page - 1) * 10
-        if (tabsStatus === 'room') {
+
+        if (modalName === 'changeHistory') {
             this.select({
-                status: '未出租'
-            }, roomData.pageSize, page, fetchRoomTable)
-        } else if (tabsStatus === 'classLine') {
-            this.select({
-                status: '有效'
-            }, classLineData.pageSize, page, fetchClassLineTable)
-        } else if (tabsStatus === 'policy') {
-            this.select({
-                status: '开启'
-            }, policyData.pageSize, page, fetchBusiPolicyTable)
-        } else if (tabsStatus === 'contractBond') {
-            this.select({
-                status: '有效'
-            }, bondData.pageSize, page, fetchBondTable)
+                rentpactid: 43445,
+            }, bondData.pageSize, page, fetchContractHistory)
+        } else {
+            if (tabsStatus === 'room') {
+                this.select({
+                    status: '未出租'
+                }, roomData.pageSize, page, fetchRoomTable)
+            } else if (tabsStatus === 'classLine') {
+                this.select({
+                    status: '有效'
+                }, classLineData.pageSize, page, fetchClassLineTable)
+            } else if (tabsStatus === 'policy') {
+                this.select({
+                    status: '开启'
+                }, policyData.pageSize, page, fetchBusiPolicyTable)
+            } else if (tabsStatus === 'contractBond') {
+                this.select({
+                    status: '有效'
+                }, bondData.pageSize, page, fetchBondTable)
+            }
         }
     }
 
@@ -242,6 +262,7 @@ class ContractInsert extends Component {
         })
     }
 
+    // 算法
     handleCalc = (room, line, bond) => {
         let tmp = {}
 
@@ -296,74 +317,92 @@ class ContractInsert extends Component {
         this.props.form.setFieldsValue(tmp)
     }
 
-    // 表格按钮点击
+    // 新增房间
+    handleAddRoom = () => {
+        this.setState({
+            modalVisible: true,
+            modalWidth: '900',
+            modalTitle: '选择房间',
+            modalName: 'room'
+        })
+        this.select({
+            status: '未出租'
+        }, 10, 0, this.props.actionLease.fetchRoomTable)
+    }
+
+    // 新增班线
+    handleAddLine = () => {
+        this.setState({
+            modalName: 'classLine',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '选择班线'
+        })
+        this.select({
+            status: '有效'
+        }, 10, 0, this.props.actionLease.fetchClassLineTable)
+    }
+
+    // 新增优惠
+    handleAddPolicy = () => {
+        this.setState({
+            modalName: 'policy',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '选择优惠'
+        })
+        this.select({
+            status: '开启'
+        }, 10, 0, this.props.actionLease.fetchBusiPolicyTable)
+    }
+
+    // 新增冲抵
+    handleAddBond = () => {
+        if (this.state.partyid === 0) {
+            notification.error({
+                message: '请选择客户',
+                description: '选择客户后才能新增保证金'
+            })
+            return false;
+        }
+
+        this.setState({
+            modalName: 'contractBond',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '选择保证金'
+        })
+        this.select({
+            partyid: this.state.partyid,
+            status: '有效'
+        }, 10, 0, this.props.action.fetchBondTable)
+    }
+
+    // 新增明细
+    handleStagesInsert = () => {
+        this.setState({
+            modalOpenBtn: 'stagesShowInsert',
+            modalVisible: true,
+            modalWidth: '600',
+            modalTitle: '新增第' + this.state.stagesNum + '期明细',
+            modalName: 'stagesShowModal'
+        })
+    }
+
+    // 关闭明细
+    handleStagesClose = () => {
+        this.setState({
+            isStagesShow: false
+        })
+    }
+
     parentHandleClick = (key) => {
-        const {
-            fetchRoomTable,
-            fetchClassLineTable,
-            fetchBusiPolicyTable
-        } = this.props.actionLease
-
-        const {
-            fetchBondTable,
-            fetchStagesInfo
-        } = this.props.action
-
-        const {getFieldValue} = this.props.form
-
-        if (key === 'addRoom' && this.state.tabsStatus === 'room') {
-            this.setState({
-                modalVisible: true,
-                modalWidth: '900',
-                modalTitle: '选择房间',
-                modalName: 'room'
-            })
-            this.select({
-                status: '未出租'
-            }, 10, 0, fetchRoomTable)
-        } else if (key === 'addLine' && this.state.tabsStatus === 'classLine') {
-            this.setState({
-                modalName: 'classLine',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择班线'
-            })
-            this.select({
-                status: '有效'
-            }, 10, 0, fetchClassLineTable)
-        } else if (key === 'addPolicy' && this.state.tabsStatus === 'policy') {
-            this.setState({
-                modalName: 'policy',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择优惠'
-            })
-            this.select({
-                status: '开启'
-            }, 10, 0, fetchBusiPolicyTable)
-        } else if (key === 'addBond' && this.state.tabsStatus === 'contractBond') {
-            if (this.state.partyid === 0) {
-                notification.error({
-                    message: '请选择客户',
-                    description: '选择客户后才能新增保证金'
-                })
-                return false;
-            }
-
-            this.setState({
-                modalName: 'contractBond',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择保证金'
-            })
-            this.select({
-                partyid: this.state.partyid,
-                status: '有效'
-            }, 10, 0, fetchBondTable)
-        } else if (key === 'makeDefault') {
+        if (key === 'makeDefault') {
             const {form} = this.props
             const oldObj = form.getFieldsValue()
             const newObj = this.filterQueryObj(oldObj)
+            newObj['totalstages'] = parseInt(newObj['totalstages'].match(/\d+/)[0])
+
             console.log('保存表单字段', newObj)
 
             this.props.form.validateFieldsAndScroll((errors, values) => {
@@ -399,18 +438,6 @@ class ContractInsert extends Component {
                     })
                 }
             })
-        } else if (key === 'stagesShowInsert') {
-            this.setState({
-                modalOpenBtn: key,
-                modalVisible: true,
-                modalWidth: '600',
-                modalTitle: '新增第' + this.state.stagesNum + '期明细',
-                modalName: 'stagesShowModal'
-            })
-        } else if (key === 'stagesShowClose') {
-            this.setState({
-                isStagesShow: false
-            })
         }
     }
 
@@ -420,12 +447,6 @@ class ContractInsert extends Component {
             modalVisible: true,
             modalTitle: '选择客户',
             modalName: 'selectOrganization'
-        })
-    }
-
-    handleSelectChange = (data) => {
-        this.setState({
-            selectDatas: data
         })
     }
 
@@ -560,6 +581,12 @@ class ContractInsert extends Component {
             })
 
             console.log('文件列表', this.state.dataAttachment)
+            // this.props.action.fetchFileUpload({
+            //     rentpactid: 3,
+            //     type: res.type,
+            //     filename: res.filename,
+            //     url: res.url
+            // })
         } else if (info.file.status === 'error') {
             message.error(`${info.file.name}文件上传失败`)
         }
@@ -617,8 +644,7 @@ class ContractInsert extends Component {
             stagesShowTableData: this.state.stagesTableData[record.stagesnumber - 1].rentpactpaylists
         })
     }
-
-    // 明细-修改
+    // 明细-修改、删除
     handleEditStagesShow = (text, record, index) => {
         this.setState({
             modalOpenBtn: 'stagesShowEdit',
@@ -633,7 +659,6 @@ class ContractInsert extends Component {
         }, 0)
     }
 
-    // 明细删除
     handleDelStagesShow = (text, record, index) => {
         const obj = this.state.stagesShowTableData
         obj.map((item, ind) => {
@@ -644,6 +669,27 @@ class ContractInsert extends Component {
         this.setState({
             stagesShowTableData: obj
         })
+    }
+
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectDatas: rows
+        })
+    }
+
+    // 变更历史
+    handleChangeHistory = () => {
+        this.setState({
+            modalName: 'changeHistory',
+            modalWidth: '900',
+            modalVisible: true,
+            modalTitle: '合同变更历史信息',
+            footer: ''
+        })
+        this.select({
+            rentpactid: 43445,
+        }, 10, 0, this.props.action.fetchContractHistory)
     }
 
     // 弹框确认
@@ -662,7 +708,6 @@ class ContractInsert extends Component {
 
         const {action, form} = this.props
         const {getFieldValue} = form
-
         if (modalName === 'room' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataRoom, selectDatas, 'rentroomid')
             const ids = []
@@ -677,7 +722,7 @@ class ContractInsert extends Component {
             })
             this.props.form.setFieldsValue(tmp)
             this.handleCalc(obj, this.state.dataLine, this.state.dataBond)
-            this.handleModalCancel()
+
         } else if (modalName === 'classLine' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataLine, selectDatas, 'transportlineid')
             const ids = []
@@ -693,7 +738,7 @@ class ContractInsert extends Component {
             })
             this.props.form.setFieldsValue(tmp)
             this.handleCalc(this.state.dataRoom, obj, this.state.dataBond)
-            this.handleModalCancel()
+
         } else if (modalName === 'policy' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataPolicy, selectDatas, 'rentpromotionid')
             const tmp = {}
@@ -710,7 +755,7 @@ class ContractInsert extends Component {
                 dataPolicy: obj
             })
             this.props.form.setFieldsValue(tmp)
-            this.handleModalCancel()
+
         } else if (modalName === 'contractBond' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataBond, selectDatas, 'marginid')
             const tmp = {}
@@ -718,7 +763,7 @@ class ContractInsert extends Component {
                 dataBond: obj
             })
             this.handleCalc(this.state.dataRoom, this.state.dataLine, obj)
-            this.handleModalCancel()
+
         } else if (modalName === 'selectOrganization') {
             if (this.state.selectDatas.length) {
                 this.setState({
@@ -727,7 +772,7 @@ class ContractInsert extends Component {
                 })
                 this.props.form.setFieldsValue(this.state.selectDatas[0])
             }
-            this.handleModalCancel()
+
         } else if (modalName === 'stagesModal') {
             const oldObj = this.refs.stagesModal.getFieldsValue()
             const newObj = this.filterQueryObj(oldObj)
@@ -749,7 +794,6 @@ class ContractInsert extends Component {
                 stagesTableData: obj
             })
             this.refs.stagesModal.resetFields()
-            this.handleModalCancel()
         } else if (modalName === 'stagesShowModal') {
             this.refs.stagesShowModal.validateFieldsAndScroll((errors, values) => {
                 if (errors) {
@@ -809,14 +853,14 @@ class ContractInsert extends Component {
                         stagesnumber: this.state.stagesNum
                     })
                 }
-
                 this.setState({
                     stagesShowTableData: obj
                 })
                 this.refs.stagesShowModal.resetFields()
-                this.handleModalCancel()
             })
         }
+
+        this.handleModalCancel()
     }
 
     // 弹框关闭
@@ -831,40 +875,6 @@ class ContractInsert extends Component {
             modalVisible: false
         })
     }
-
-    componentDidMount() {
-        this.props.action.fetchContractFrom()
-        this.props.action.fetchManager()
-
-        const id = parseInt(this.props.params.id)
-        xhr('post', paths.leasePath + '/rentpactfullinfocs/updateRentPactFullInfo', {
-            rentpactid: id
-        }, (res) => {
-            const hide = message.loading('正在查询...', 0)
-            console.log('获取【合同】数据：', res)
-            if (res.result === 'success') {
-                const oldObj = res.data.rentpact
-                const newObj = {}
-                for (const key in oldObj) {
-                    if (key.indexOf('date') > -1) {
-                        newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
-                    } else {
-                        newObj[key] = oldObj[key]
-                    }
-                }
-                this.props.form.setFieldsValue(newObj)
-                this.setState(Object.assign({}, newObj, {
-                    dataRoom: res.data.rentpactrooms,
-                    dataLine: res.data.rentpactlines
-                }))
-                hide()
-            } else {
-                hide()
-                errHandler(res.result)
-            }
-        })
-    }
-
 
     /**
      * 表单的查询条件不能直接传给后端, 要处理一下
@@ -890,19 +900,14 @@ class ContractInsert extends Component {
         return newObj
     }
 
-    // 取消
     handleGoBack = () => {
         hashHistory.push('busi/busi_lease')
     }
-
-    // 保存
     handleSaveAll = (e) => {
         e.preventDefault()
         this.setState({
             isSaveDisabeld: true
         })
-
-        const {query} = this.props.location
 
         this.props.form.validateFieldsAndScroll((errors, values) => {
             if (errors) {
@@ -913,12 +918,18 @@ class ContractInsert extends Component {
                 this.setState({
                     isSaveDisabeld: false
                 })
-                return false;
+                return false
             } else {
+                const type = this.props.location.query.type
+
                 const {form} = this.props
                 const oldObj = form.getFieldsValue()
                 const newObj = this.filterQueryObj(oldObj)
+                newObj['totalstages'] = parseInt(newObj['totalstages'].match(/\d+/)[0])
+
                 const {
+                    rentpactid,
+                    renttype,
                     pactprintmodelid,
                     partyid,
                     partyname,
@@ -933,19 +944,25 @@ class ContractInsert extends Component {
                 console.log('保存表单字段', newObj)
 
                 // 传给后端字段
-                if (query.type === 'change') {
-                    let renttype = '变更'
-                }
-
                 const rentValue = Object.assign({}, newObj, {
+                    rentpactid: rentpactid,
                     renttype: renttype,
-                    flowtype: '新租/续租',
+                    flowtype: type,
                     pactprintmodelid: pactprintmodelid,
                     partyid: partyid,
                     partyname: partyname
                 })
-                console.log('333', rentValue)
-
+                // renttype|pactprintmodelid|partyid|partyname
+                if (stagesTableData.length < 1) {
+                    notification.error({
+                        message: '分期明细没有生成',
+                        description: '请生成分期明细'
+                    })
+                    this.setState({
+                        isSaveDisabeld: false
+                    })
+                    return false
+                }
                 const tmp = Object.assign({}, {
                     rentpact: JSON.stringify(rentValue),
                     rentpactattachments: JSON.stringify(dataAttachment),
@@ -957,7 +974,7 @@ class ContractInsert extends Component {
                 })
                 console.log('传给后端数据：', tmp)
 
-                xhr('post', paths.leasePath + '/rentpactfullinfocs/insertRentPactFullInfo', tmp, (res) => {
+                xhr('post', paths.leasePath + '/rentpactfullinfocs/updateRentPactFullInfo', tmp, (res) => {
                     const hide = message.loading('正在查询...', 0)
                     console.log('保存合同新增数据：', res)
                     if (res.result === 'success') {
@@ -977,33 +994,55 @@ class ContractInsert extends Component {
         })
     }
 
-    // 变更提交
-    handleSubmitChange = () => {
+    componentDidMount() {
+        this.props.action.fetchContractFrom()
+        this.props.action.fetchManager()
 
-    }
-
-    // 打印预览
-    handlePrintView = () => {
-
-    }
-
-    // 变更历史
-    handleChangeHistory = () => {
-        this.setState({
-            modalVisible: true,
-            modalWidth: '900',
-            modalTitle: '合同变更历史信息',
-            modalName: 'changeHistory'
+        const id = parseInt(this.props.params.id)
+        xhr('post', paths.leasePath + '/rentpactfullinfocs/selectRentPactFullInfoById', {
+            rentpactid: id
+        }, (res) => {
+            const hide = message.loading('正在查询...', 0)
+            console.log('获取【合同】数据：', res)
+            if (res.result === 'success') {
+                const oldObj = res.data.rentpact
+                const newObj = {}
+                for (const key in oldObj) {
+                    if (key.indexOf('date') > -1) {
+                        newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
+                    } else if (key.indexOf('totalstages') > -1) {
+                        newObj[key] = '第' + oldObj[key] + '期'
+                    } else {
+                        newObj[key] = oldObj[key]
+                    }
+                }
+                this.props.form.setFieldsValue(newObj)
+                this.setState(Object.assign({}, newObj, {
+                    rentpactid: res.data.rentpact.rentpactid,
+                    renttype: res.data.rentpact.renttype,
+                    dataAttachment: res.data.rentpactattachments,
+                    prepactcode: res.data.rentpact.pactcode,
+                    dataRoom: res.data.rentpactrooms,
+                    dataLine: res.data.rentpactlines,
+                    stagesTableData: res.data.rentpactpayplanfullinfos
+                }))
+                hide()
+            } else {
+                hide()
+                errHandler(res.result)
+            }
         })
-        
     }
 
     render() {
         const {getFieldDecorator} = this.props.form
+        const type = this.props.location.query.type
+
         const {
             busiLease,
             configLease
         } = this.props
+
 
         const uploadProps = {
             action: "/tfPassParkAdmin/rentpactattachmentcs/uploadFiles",
@@ -1076,22 +1115,32 @@ class ContractInsert extends Component {
         if (modalName === 'room') {
             modalContent = <ModalTable
                 dataSource={configLease.roomData}
-                parentHandleSelectChange={this.handleSelectChange}
+                isRowSelection={true}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'classLine') {
             modalContent = <ModalTable
                 dataSource={configLease.classLineData}
-                parentHandleSelectChange={this.handleSelectChange}
+                isRowSelection={true}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'policy') {
             modalContent = <ModalTable
                 dataSource={configLease.policyData}
-                parentHandleSelectChange={this.handleSelectChange}
+                isRowSelection={true}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'contractBond') {
             modalContent = <ModalTable
                 dataSource={busiLease.bondData}
-                parentHandleSelectChange={this.handleSelectChange}
+                isRowSelection={true}
+                parentHandleSelectChange={this.parentHandleSelectChange}
+                handlePageChange={this.handlePageChange} />
+        } else if (modalName === 'changeHistory') {
+            modalContent = <ModalTable
+                dataSource={busiLease.changeHistory}
+                isRowSelection={false}
+                parentHandleSelectChange={this.parentHandleSelectChange}
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'selectOrganization') {
             const {
@@ -1110,8 +1159,7 @@ class ContractInsert extends Component {
                 <InnerTable
                     columns={contractOrganization.tableColumns}
                     dataSource={contractOrganization.tableData}
-                    schema={[]}
-                    parentHandleSelectChange={this.handleSelectChange}
+                    parentHandleSelectChange={this.parentHandleSelectChange}
                     isRowSelection={true}
                     bordered={true}
                     pagination={false} />
@@ -1124,11 +1172,10 @@ class ContractInsert extends Component {
             modalContent = <ModalForm
                 ref="stagesShowModal"
                 schema={this.stagesSchema.tableShowSchema} />
-        } else if (modalName === 'changeHistory') {
-            modalContent = <ModalTable
-                dataSource={busiLease.historyData}
-                parentHandleSelectChange={this.handleSelectChange}
-                handlePageChange={this.handlePageChange} />
+        }
+
+        const workFlowProps = {
+            flow: busiLease.contractWorkFlow
         }
 
         return (
@@ -1137,7 +1184,7 @@ class ContractInsert extends Component {
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
                     width={this.state.modalWidth}
-                    onOk={this.handleModalOk}
+                    footer={this.state.footer}
                     onCancel={this.handleModalCancel}>
                     {modalContent}
                 </Modal>
@@ -1148,6 +1195,11 @@ class ContractInsert extends Component {
                         form={this.props.form}
                         fromLayoutStyle="g-border-bottom"
                         parentHandleSelect={this.parentHandleSelect} />
+
+                    {/* 合同流程 */}
+                    <section className="g-border-bottom">
+                        <WorkFlow {...workFlowProps} />
+                    </section>
 
                     {/* 客户名称 */}
                     <div className="g-border-bottom">
@@ -1163,10 +1215,12 @@ class ContractInsert extends Component {
                     <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                         <TabPane tab="合同房间" key="room">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddRoom}>新增房间</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsRoom}
                                     dataSource={this.state.dataRoom}
-                                    schema={this.addSchema['room']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -1174,6 +1228,9 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="合同班线" key="classLine">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddLine}>新增班线</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsLine}
                                     dataSource={this.state.dataLine}
@@ -1185,10 +1242,12 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="合同优惠冲抵" key="policy">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddPolicy}>新增合同优惠</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsPolicy}
                                     dataSource={this.state.dataPolicy}
-                                    schema={this.addSchema['policy']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
@@ -1196,22 +1255,27 @@ class ContractInsert extends Component {
                         </TabPane>
                         <TabPane tab="履约保证金冲抵" key="contractBond">
                             <div className="padding-lr g-mb20">
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddBond}>新增保证金冲抵</Button>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsBond}
                                     dataSource={this.state.dataBond}
-                                    schema={this.addSchema['contractBond']['topButtons']}
                                     bordered={true}
                                     parentHandleClick={this.parentHandleClick}
+                                    parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                             </div>
                         </TabPane>
                         <TabPane tab="合同附件" key="contractAttachment">
                             <div className="padding-lr g-mb20">
-                                <Upload {...uploadProps} className="g-mb10">
-                                    <Button type="ghost">
-                                        <Icon type="upload" /> 文件上传
+                                <div className="g-mb10">
+                                    <Upload {...uploadProps}>
+                                        <Button type="ghost">
+                                            <Icon type="upload" />文件上传
                                     </Button>
-                                </Upload>
+                                    </Upload>
+                                </div>
                                 <InnerTable
                                     columns={tableColumnsAttachment}
                                     dataSource={this.state.dataAttachment}
@@ -1233,20 +1297,26 @@ class ContractInsert extends Component {
                         <FormLayout
                             schema={this.addSchema['stages']['form']}
                             form={this.props.form}
-                            parentHandleClick={this.parentHandleClick}
                             buttonSchema={this.addSchema['stages']['buttons']}
+                            parentHandleClick={this.parentHandleClick}
                             parentHandleSelect={this.parentHandleSelect} />
-
+                        {/*
+                            <div>
+                            <Button onClick={this.handleMakeDefault}>生成默认明细</Button>
+                        </div>
+                        */}
                         {
                             this.state.isStagesShow ?
                                 <div className="m-stages-show">
                                     <h2>{`第${this.state.stagesNum}期明细`}</h2>
+                                    <div className="button-group g-mb10">
+                                        <Button onClick={this.handleStagesInsert}>新增明细</Button>
+                                        <Button onClick={this.handleStagesClose}>关闭明细</Button>
+                                    </div>
                                     <InnerTable
                                         columns={tableStagesShowColumns}
                                         dataSource={this.state.stagesShowTableData}
                                         bordered={true}
-                                        schema={this.stagesSchema.tableShowControl}
-                                        parentHandleClick={this.parentHandleClick}
                                         size="middle"
                                         tableStyle="m-table"
                                         pagination={false} />
@@ -1258,14 +1328,13 @@ class ContractInsert extends Component {
                             columns={tableStagesColumns}
                             dataSource={this.state.stagesTableData}
                             bordered={true}
-                            parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                     </div>
                     <div className="g-tac button-group">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
-                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitChange}>变更提交</Button>
-                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handlePrintView}>打印预览</Button>
-                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleChangeHistory}>变更历史</Button>
+                        {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitChange}>变更提交</Button>*/}
+                        {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handlePrintView}>打印预览</Button>*/}
+                        {type === '变更' ? <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleChangeHistory}>变更历史</Button> : ''}
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>
                     </div>
                 </Form>
