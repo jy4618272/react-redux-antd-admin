@@ -21,8 +21,6 @@ import {
     notification
 } from 'antd'
 const TabPane = Tabs.TabPane
-const FormItem = Form.Item
-const Option = Select.Option
 
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
@@ -211,7 +209,7 @@ class ContractInsert extends Component {
                             })
                         } else {
                             hide()
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                     })
                 }
@@ -414,7 +412,7 @@ class ContractInsert extends Component {
                                 stagesTableData: res.data
                             })
                         } else {
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                         hide()
                     })
@@ -521,7 +519,7 @@ class ContractInsert extends Component {
                                 stagesTableData: res.data
                             })
                         } else {
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                         hide()
                     })
@@ -640,6 +638,13 @@ class ContractInsert extends Component {
         }
     }
 
+    /* 下载文件
+    handleViewDoc = (text, record, index) => {
+        const {dataAttachment} = this.state
+        window.location.href = rootPaths.imgPath + paths.imgPath + '/' + dataAttachment[index].url
+    }*/
+
+    // 删除文件
     handleDelDoc = (text, record, index) => {
         const {dataAttachment} = this.state
         const obj = dataAttachment
@@ -688,6 +693,7 @@ class ContractInsert extends Component {
             stagesShowTableData: this.state.stagesTableData[record.stagesnumber - 1].rentpactpaylists
         })
     }
+
     // 明细-修改、删除
     handleEditStagesShow = (text, record, index) => {
         this.setState({
@@ -722,6 +728,24 @@ class ContractInsert extends Component {
         })
     }
 
+    // 新增明细
+    handleStagesInsert = () => {
+        this.setState({
+            modalOpenBtn: 'stagesShowInsert',
+            modalVisible: true,
+            modalWidth: '600',
+            modalTitle: '新增第' + this.state.stagesNum + '期明细',
+            modalName: 'stagesShowModal'
+        })
+    }
+
+    // 关闭明细
+    handleStagesClose = () => {
+        this.setState({
+            isStagesShow: false
+        })
+    }
+
     // 弹框确认
     handleModalOk = () => {
         const {
@@ -743,7 +767,7 @@ class ContractInsert extends Component {
             const tmp = {}
 
             obj.map(item => {
-                ids.push(item.rentroomid)
+                ids.push(item.room)
             })
             tmp['roomlist'] = ids.join(',')
             this.setState({
@@ -758,7 +782,7 @@ class ContractInsert extends Component {
             const tmp = {}
 
             obj.map(item => {
-                ids.push(item.transportlineid)
+                ids.push(item.linename)
             })
             tmp['linelist'] = ids.join(',')
 
@@ -986,16 +1010,13 @@ class ContractInsert extends Component {
                     const hide = message.loading('正在查询...', 0)
                     console.log('保存合同新增数据：', res)
                     if (res.result === 'success') {
-                        this.setState({
-                            isSaveDisabeld: true
-                        })
                         hashHistory.push('busi/busi_lease')
                     } else {
-                        this.setState({
-                            isSaveDisabeld: false
-                        })
                         errHandler(res.msg)
                     }
+                    this.setState({
+                        isSaveDisabeld: false
+                    })
                     hide()
                 })
             }
@@ -1010,13 +1031,14 @@ class ContractInsert extends Component {
     // 续租提交
     handleSubmitRenew = () => { }
 
+
     // 渲染前调用一次
     componentDidMount() {
         this.props.action.fetchContractFrom()
         this.props.action.fetchManager()
 
         const id = parseInt(this.props.params.id)
-        xhr('post', paths.leasePath + '/rentpactfullinfocs/selectRentPactFullInfoById', {
+        xhr('post', paths.leasePath + '/rentpactfullinfocs/selectReletRentPactFullInfoById', {
             rentpactid: id
         }, (res) => {
             const hide = message.loading('正在查询...', 0)
@@ -1037,13 +1059,12 @@ class ContractInsert extends Component {
                 this.setState(Object.assign({}, newObj, {
                     prepactcode: res.data.rentpact.pactcode,
                     dataRoom: res.data.rentpactrooms,
-                    dataLine: res.data.rentpactlines,
-                    stagesTableData: res.data.rentpactpayplanfullinfos
+                    dataLine: res.data.rentpactlines
                 }))
                 hide()
             } else {
                 hide()
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
         // this.props.form.setFieldsValue({
@@ -1300,11 +1321,14 @@ class ContractInsert extends Component {
                             this.state.isStagesShow ?
                                 <div className="m-stages-show">
                                     <h2>{`第${this.state.stagesNum}期明细`}</h2>
+                                    <div className="button-group g-mb10">
+                                        <Button onClick={this.handleStagesInsert}>新增明细</Button>
+                                        <Button onClick={this.handleStagesClose}>关闭明细</Button>
+                                    </div>
                                     <InnerTable
                                         columns={tableStagesShowColumns}
                                         dataSource={this.state.stagesShowTableData}
                                         bordered={true}
-                                        schema={this.stagesSchema.tableShowControl}
                                         parentHandleClick={this.parentHandleClick}
                                         size="middle"
                                         tableStyle="m-table"

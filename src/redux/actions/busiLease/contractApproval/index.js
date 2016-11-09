@@ -42,7 +42,7 @@ const fetchApprovalTable = (data) => {
                 hide()
 
                 dispatch(receiveApprovalTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -64,7 +64,7 @@ const fetchReceive = (data) => {
                 dispatch(receiveReceive(res))
             } else {
                 dispatch(receiveReceive({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

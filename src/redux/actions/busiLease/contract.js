@@ -35,7 +35,7 @@ const fetchContractTable = (data) => {
                 dispatch(receiveContractTable(newRes))
             } else {
                 dispatch(receiveContractTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -62,7 +62,7 @@ const voidContract = (data) => {
             } else {
                 hide()
                 dispatch(statusContract({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

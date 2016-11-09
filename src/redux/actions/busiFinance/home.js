@@ -42,7 +42,7 @@ const fetchFinanceTable = (data) => {
                 dispatch(receiveFinanceTable(newRes))
             } else {
                 dispatch(receiveFinanceTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -65,7 +65,7 @@ const fetchReceive = (data) => {
                 dispatch(receiveReceive(res))
             } else {
                 dispatch(receiveReceive({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -88,7 +88,7 @@ const fetchRefund = (data) => {
                 dispatch(receiveRefund(res))
             } else {
                 dispatch(receiveRefund({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

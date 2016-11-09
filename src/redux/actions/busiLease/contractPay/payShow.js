@@ -37,7 +37,7 @@ const fetchContractPayShow = (data) => {
             } else {
                 hide()
                 dispatch(receivePayShow({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

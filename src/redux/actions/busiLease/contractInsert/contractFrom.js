@@ -41,7 +41,7 @@ const fetchContractFrom = (data) => {
                 hide()
 
                 dispatch(receiveContractFrom({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

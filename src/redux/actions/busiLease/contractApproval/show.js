@@ -31,7 +31,7 @@ const fetchApprovalShow = (data) => {
             } else {
                 hide()
                 dispatch(receiveApprovalShow({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

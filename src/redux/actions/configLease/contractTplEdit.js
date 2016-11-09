@@ -36,7 +36,7 @@ const fetchContractEdit = (data) => {
                 dispatch(receiveContractEdit(res))
             } else {
                 dispatch(receiveContractEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -66,7 +66,7 @@ const fetchContractUpdate = (data) => {
                 history.back()
             } else {
                 dispatch(receiveContractUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

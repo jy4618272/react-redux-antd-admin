@@ -35,7 +35,7 @@ const fetchClassLineEdit = (data) => {
                 dispatch(receiveLineEdit(res))
             } else {
                 dispatch(receiveLineEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -65,7 +65,7 @@ const fetchClassLineUpdate = (data) => {
                 history.back()
             } else {
                 dispatch(receiveClassLineUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

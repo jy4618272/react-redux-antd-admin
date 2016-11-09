@@ -8,6 +8,7 @@ import { errHandler, paths } from 'SERVICE/config'
 const REQUEST_MANAGER_TABLE = 'REQUEST_MANAGER_TABLE'
 const RECEIVE_MANAGER_TABLE = 'RECEIVE_MANAGER_TABLE'
 const STATUS_MANAGER = 'STATUS_MANAGER'
+const RECEIVE_BUSI_MANAGER_TABLE = 'RECEIVE_BUSI_MANAGER_TABLE'
 
 // ================================
 // Action Creator
@@ -25,7 +26,7 @@ const receiveManagerTable = (res) => ({
 const fetchManagerTable = (data) => {
     return dispatch => {
         dispatch(requestManagerTable())
-        xhr('post', paths.leasePath + '/salercs/selectByDetail', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/selectSalerBySite', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -40,11 +41,42 @@ const fetchManagerTable = (data) => {
                 hide()
 
                 dispatch(receiveManagerTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
 }
+
+// 获取
+const receiveBusiManagerTable = (res) => ({
+    type: RECEIVE_BUSI_MANAGER_TABLE,
+    payload: res
+})
+const fetchBusiManagerTable = (data) => {
+    return dispatch => {
+        dispatch(requestManagerTable())
+        xhr('post', paths.leasePath + '/salercs/selectByDetail', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('客户经理之列表', newRes)
+
+            if (res.result === 'success') {
+                hide()
+
+                dispatch(receiveBusiManagerTable(newRes))
+            } else {
+                hide()
+
+                dispatch(receiveBusiManagerTable({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
+
+
 
 // 开启/关闭
 const statusManager = (res) => ({
@@ -66,7 +98,7 @@ const changeStatusManager = (data) => {
             } else {
                 hide()
                 dispatch(statusManager({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -76,6 +108,7 @@ const changeStatusManager = (data) => {
 /* default 导出所有 Actions Creator */
 export default {
     fetchManagerTable,
+    fetchBusiManagerTable,
     changeStatusManager
 }
 
@@ -85,6 +118,14 @@ export const ACTION_HANDLERS = {
         tableLoading: true
     }),
     [RECEIVE_MANAGER_TABLE]: (accountManagerData, {payload: res}) => ({
+        ...accountManagerData,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
+    [RECEIVE_BUSI_MANAGER_TABLE]: (accountManagerData, {payload: res}) => ({
         ...accountManagerData,
         tableLoading: false,
         tableData: res.data,

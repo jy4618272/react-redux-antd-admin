@@ -464,7 +464,7 @@ class LeaseManage extends Component {
                     <Button disabled={!isRenew} onClick={this.handleRenewContract}>续租</Button>
                     <Button disabled={!isChange} onClick={this.handleChangeContract}>变更</Button>
                     <Button disabled={!isEdit} onClick={this.handleEditContract}>编辑</Button>
-                    <Button disabled={false} onClick={this.handleRentContract}>退租</Button>
+                    <Button disabled={!isRent} onClick={this.handleRentContract}>退租</Button>
                     <Button disabled={!isVoid} onClick={this.handleVoidContract}>作废</Button>
                     <Button onClick={this.handlePayContract}>合同交款</Button>
                 </Col>

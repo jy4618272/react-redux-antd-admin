@@ -40,7 +40,7 @@ const fetchBondTable = (data) => {
                 dispatch(receiveBondTable(newRes))
             } else {
                 dispatch(receiveBondTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -67,7 +67,7 @@ const bondInsert = (data) => {
                 dispatch(receiveBondInsert(res))
             } else {
                 dispatch(receiveBondInsert({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

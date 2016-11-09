@@ -29,39 +29,51 @@ const fetchRoomAdd = (data) => {
     return dispatch => {
         xhr('post', paths.leasePath + '/rentroomcs/queryRoom', data, function (res) {
             if (res.result === 'success') {
+                // xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
+                //     const hide = message.loading('正在查询...', 0)
+                //     console.log('房间设置之表单保存', res)
+                //     if (res.result === 'success') {
+                //         if (res.data.rentroomid) {
+                //             xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
+                //                 rentroomid: res.data.rentroomid,
+                //                 rentroomconfig: data.roomGoods
+                //             }, function (res) {
+                //                 console.log('房间设置之表单保存2', res)
+                //                 if (res.result === 'success') {
+                //                     dispatch(receiveRoomAdd(res))
+                //                 } else {
+                //                     errHandler(res.msg)
+                //                 }
+                //             })
+                //         }
+                //         notification.success({
+                //             message: '新增成功',
+                //             description: '房间设置新增数据成功'
+                //         });
+                //         history.back()
+                //     } else {
+                //         dispatch(receiveRoomAdd({}))
+                //         errHandler(res.msg)
+                //     }
+                //     hide()
+                // })
+
                 xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
                     const hide = message.loading('正在查询...', 0)
                     console.log('房间设置之表单保存', res)
                     if (res.result === 'success') {
-                        if (res.data.rentroomid) {
-                            xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
-                                rentroomid: res.data.rentroomid,
-                                rentroomconfig: data.roomGoods
-                            }, function (res) {
-                                console.log('房间设置之表单保存2', res)
-                                if (res.result === 'success') {
-                                    dispatch(receiveRoomAdd(res))
-                                } else {
-                                    errHandler(res.result)
-                                }
-                            })
-                        }
+                        hide()
                         notification.success({
                             message: '新增成功',
                             description: '房间设置新增数据成功'
                         });
                         history.back()
                     } else {
+                        hide()
                         dispatch(receiveRoomAdd({}))
-                        errHandler(res.result)
+                        errHandler(res.msg)
                     }
-                    hide()
                 })
-            } else {
-                notification.success({
-                    message: '新增失败',
-                    description: '房间已经存在'
-                });
             }
         })
     }
@@ -84,7 +96,7 @@ const fetchBuildList = (data) => {
                 dispatch(receiveBuildList(options))
             } else {
                 dispatch(receiveBuildList({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -109,7 +121,7 @@ const fetchClassLineAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receiveClassLineAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -134,7 +146,7 @@ const fetchPolicyAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receivePolicyAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -159,7 +171,7 @@ const fetchManagerAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receiveManagerAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -184,7 +196,7 @@ const fetchContractAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receiveContractAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

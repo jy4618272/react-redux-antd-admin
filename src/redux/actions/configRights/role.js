@@ -34,7 +34,7 @@ const fetchRoleTable = (data) => {
                 dispatch(receiveRoleTable(newRes))
             } else {
                 dispatch(receiveRoleTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

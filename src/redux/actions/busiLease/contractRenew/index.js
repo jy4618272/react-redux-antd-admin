@@ -31,7 +31,7 @@ const fetchContractRenew = (data) => {
             } else {
                 hide()
                 dispatch(receiveContractRenew({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

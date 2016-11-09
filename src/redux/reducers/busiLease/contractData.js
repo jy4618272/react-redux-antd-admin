@@ -25,6 +25,11 @@ const initialState = {
             key:'enddate'
         },
         {
+            title:'流程类型',            
+            dataIndex:'flowtype',            
+            key:'flowtype'
+        },
+        {
             title:'流程状态',            
             dataIndex:'flowstatus',            
             key:'flowstatus'

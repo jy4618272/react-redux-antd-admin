@@ -35,7 +35,7 @@ const fetchRoomState = (data) => {
                 dispatch(receiveRoomState(newRes))
             } else {
                 dispatch(receiveRoomState({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

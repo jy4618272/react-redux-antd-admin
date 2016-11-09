@@ -34,7 +34,7 @@ const fetchBuildList = (data) => {
                 dispatch(receiveBuildList(options))
             } else {
                 dispatch(receiveBuildList({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -61,7 +61,7 @@ const fetchRoomEdit = (data) => {
             } else {
                 hide()
                 dispatch(receiveRoomEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -90,7 +90,7 @@ const fetchRoomUpdate = (data) => {
                 history.back()
             } else {
                 dispatch(receiveRoomUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

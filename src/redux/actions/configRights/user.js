@@ -34,7 +34,7 @@ const fetchUserTable = (data) => {
                 dispatch(receiveUserTable(newRes))
             } else {
                 dispatch(receiveUserTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

@@ -60,8 +60,10 @@ const routes = (
 
 				{/* 合同交款 */}
 				<Route path="busi_lease/contract/pay" tableName="busiLease" component={ContractPay} />
+
+				{/* 财务-财务详情*/}				
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
-				<Route path="busi_finance/:id" component={BusiFinanceShow} />
+				<Route path="busi_finance/:id" tableName="busiFinance" component={BusiFinanceShow} />
 			</Route>
 
 			<Route path="config">

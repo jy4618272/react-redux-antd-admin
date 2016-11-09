@@ -35,7 +35,7 @@ const fetchClassLineTable = (data) => {
                 dispatch(receiveClassLineTable(newRes))
             } else {
                 dispatch(receiveClassLineTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -62,7 +62,7 @@ const changeStatusClassLine = (data) => {
             } else {
                 hide()
                 dispatch(statusClassLine({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

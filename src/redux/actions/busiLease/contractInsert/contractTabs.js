@@ -36,7 +36,7 @@ const fetchManager = (data) => {
                 dispatch(receiveManager(newRes))
             } else {
                 dispatch(receiveManager({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -60,7 +60,7 @@ const fetchPactCode = (data) => {
             } else {
                 hide()
                 dispatch(receivePactCode({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

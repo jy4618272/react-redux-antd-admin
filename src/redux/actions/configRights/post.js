@@ -34,7 +34,7 @@ const fetchPostTable = (data) => {
                 dispatch(receivePostTable(newRes))
             } else {
                 dispatch(receivePostTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

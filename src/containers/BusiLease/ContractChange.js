@@ -228,7 +228,7 @@ class ContractInsert extends Component {
                             })
                         } else {
                             hide()
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                     })
                 }
@@ -432,7 +432,7 @@ class ContractInsert extends Component {
                                 stagesTableData: res.data
                             })
                         } else {
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                         hide()
                     })
@@ -591,16 +591,18 @@ class ContractInsert extends Component {
             message.error(`${info.file.name}文件上传失败`)
         }
     }
-    // handleViewDoc = (text, record, index) => {
-    //     const {dataAttachment} = this.state
-    //     window.location.href = rootPaths.imgPath + paths.imgPath +'/'+ dataAttachment[index].url
-    // }
 
+    /* 下载文件 */
+    handleViewDoc = (text, record, index) => {
+        const {dataAttachment} = this.state
+        window.location.href = rootPaths.imgPath + paths.imgPath + '/' + dataAttachment[index].url
+    }
+
+    // 删除文件
     handleDelDoc = (text, record, index) => {
         const {dataAttachment} = this.state
         const obj = dataAttachment
         obj.splice(index, 1)
-        console.log('$1', obj)
 
         this.setState({
             dataAttachment: obj
@@ -714,7 +716,7 @@ class ContractInsert extends Component {
             const tmp = {}
 
             obj.map(item => {
-                ids.push(item.rentroomid)
+                ids.push(item.room)
             })
             tmp['roomlist'] = ids.join(',')
             this.setState({
@@ -729,7 +731,7 @@ class ContractInsert extends Component {
             const tmp = {}
 
             obj.map(item => {
-                ids.push(item.transportlineid)
+                ids.push(item.linename)
             })
             tmp['linelist'] = ids.join(',')
 
@@ -978,16 +980,13 @@ class ContractInsert extends Component {
                     const hide = message.loading('正在查询...', 0)
                     console.log('保存合同新增数据：', res)
                     if (res.result === 'success') {
-                        this.setState({
-                            isSaveDisabeld: false
-                        })
                         hashHistory.push('busi/busi_lease')
                     } else {
-                        this.setState({
-                            isSaveDisabeld: true
-                        })
                         errHandler(res.msg)
                     }
+                    this.setState({
+                        isSaveDisabeld: false
+                    })
                     hide()
                 })
             }
@@ -1029,7 +1028,7 @@ class ContractInsert extends Component {
                 hide()
             } else {
                 hide()
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -1082,7 +1081,10 @@ class ContractInsert extends Component {
             {
                 title: '操作',
                 key: 'operation',
-                render: (text, record, index) => <a href="javascript:;" className="s-blue" onClick={this.handleDelDoc.bind(this, text, record, index)}>删除</a>
+                render: (text, record, index) => <div className="button-group">
+                    <a href="javascript:;" className="s-blue" onClick={this.handleViewDoc.bind(this, text, record, index)}>下载</a>
+                    <a href="javascript:;" className="s-blue" onClick={this.handleDelDoc.bind(this, text, record, index)}>删除</a>
+                </div>
             }
         ])
 
@@ -1102,7 +1104,7 @@ class ContractInsert extends Component {
             {
                 title: '操作',
                 key: 'operation',
-                render: (text, record, index) => <div class="button-group">
+                render: (text, record, index) => <div className="button-group">
                     <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditStagesShow.bind(this, text, record, index)}>修改</a>
                     <a href="javascript:;" className="s-blue" onClick={this.handleDelStagesShow.bind(this, text, record, index)}>删除</a>
                 </div>

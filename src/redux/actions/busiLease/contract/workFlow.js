@@ -34,7 +34,7 @@ const fetchWorkFlow = (data) => {
             } else {
                 hide()
                 dispatch(receiveWorkFlow({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

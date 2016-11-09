@@ -213,7 +213,7 @@ class ContractInsert extends Component {
                             })
                         } else {
                             hide()
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                     })
                 }
@@ -415,7 +415,7 @@ class ContractInsert extends Component {
                                 stagesTableData: res.data
                             })
                         } else {
-                            errHandler(res.result)
+                            errHandler(res.msg)
                         }
                         hide()
                     })
@@ -590,9 +590,6 @@ class ContractInsert extends Component {
         })
     }
 
-    // 分期-打印
-    handlePrintStages = () => { }
-
     // 分期-修改
     handleEditStages = (text, record, index) => {
         this.setState({
@@ -683,7 +680,7 @@ class ContractInsert extends Component {
             const tmp = {}
 
             obj.map(item => {
-                ids.push(item.rentroomid)
+                ids.push(item.room)
             })
             tmp['roomlist'] = ids.join(',')
             this.setState({
@@ -698,7 +695,7 @@ class ContractInsert extends Component {
             const tmp = {}
 
             obj.map(item => {
-                ids.push(item.transportlineid)
+                ids.push(item.linename)
             })
             tmp['linelist'] = ids.join(',')
 
@@ -741,6 +738,8 @@ class ContractInsert extends Component {
                 })
                 this.props.form.setFieldsValue(this.state.selectDatas[0])
             }
+
+            this.props.action.resetContractOrganization()
             this.handleModalCancel()
         } else if (modalName === 'stagesModal') {
             const oldObj = this.refs.stagesModal.getFieldsValue()
@@ -957,16 +956,13 @@ class ContractInsert extends Component {
                     const hide = message.loading('正在查询...', 0)
                     console.log('保存合同新增数据：', res)
                     if (res.result === 'success') {
-                        this.setState({
-                            isSaveDisabeld: false
-                        })
                         hashHistory.push('busi/busi_lease')
                     } else {
-                        this.setState({
-                            isSaveDisabeld: true
-                        })
                         errHandler(res.msg)
                     }
+                    this.setState({
+                        isSaveDisabeld: false
+                    })
                     hide()
                 })
             }
@@ -1029,7 +1025,6 @@ class ContractInsert extends Component {
                 render: (text, record, index) => <div className="button-group">
                     <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditStages.bind(this, text, record, index)}>修改</a>
                     <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleShowStages.bind(this, record, index)}>明细</a>
-                    <a href="javascript:;" className="s-blue" onClick={this.handlePrintStages.bind(this, record, index)}>打印交款单</a>
                 </div>
             }
         ])

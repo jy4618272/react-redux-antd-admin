@@ -7,8 +7,9 @@ import { errHandler, paths } from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const REQUEST_CONTRACT_ORGANIZATION = 'REQUEST_CONTRACT_ORGANIZATION'  // 获取合同模板
-const RECEIVE_CONTRACT_ORGANIZATION = 'RECEIVE_CONTRACT_ORGANIZATION'  // 获取合同模板
+const REQUEST_CONTRACT_ORGANIZATION = 'REQUEST_CONTRACT_ORGANIZATION'
+const RECEIVE_CONTRACT_ORGANIZATION = 'RECEIVE_CONTRACT_ORGANIZATION'
+const RESET_CONTRACT_ORGANIZATION = 'RESET_CONTRACT_ORGANIZATION'
 
 // ================================
 // Action Creator
@@ -54,19 +55,34 @@ const fetchContractOrganization = (data) => {
     }
 }
 
+
+// 重置
+const resetContract = () => ({
+    type: RESET_CONTRACT_ORGANIZATION
+})
+const resetContractOrganization = (data) => {
+    return dispatch => {
+        dispatch(resetContract())
+    }
+}
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractOrganization
+    fetchContractOrganization,
+    resetContractOrganization
 }
 
 export const ACTION_HANDLERS = {
     [REQUEST_CONTRACT_ORGANIZATION]: (organization) => ({
         ...organization,
-        tableLoading: true
+    tableLoading: true
     }),
     [RECEIVE_CONTRACT_ORGANIZATION]: (organization, {payload: res}) => ({
-        ...organization,
+            ...organization,
         tableLoading: false,
         tableData: res
+    }),
+    [RESET_CONTRACT_ORGANIZATION]: (organization) => ({
+        ...organization,
+        tableData: []
     })
 }

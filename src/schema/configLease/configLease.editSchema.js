@@ -195,6 +195,7 @@ module.exports = {
             dataType: 'varchar',
             placeholder: '请输入姓名',
             feedBackShow: true,
+            disabled:true,
             validate: [{
                 rules: [
                     { type: 'string', required: true, message: '必填，请输入姓名' },
@@ -207,6 +208,7 @@ module.exports = {
             title: '工号',
             dataType: 'varchar',
             placeholder: '请输入工号',
+            disabled:true,
             feedBackShow: true,
             validate: [{
                 rules: [

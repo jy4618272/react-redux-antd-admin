@@ -106,7 +106,7 @@ class LeaseAdd extends Component {
 
         if (this.addType === 'room') {
             newObj = Object.assign({}, newObj, {
-                roomGoods: JSON.stringify(this.state.tableDataGoods)
+                rentroomconfig: JSON.stringify(this.state.tableDataGoods)
             })
             actionLeaseAdd.fetchRoomAdd(newObj)
         } else if (this.addType === 'classLine') {

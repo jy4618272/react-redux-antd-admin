@@ -32,7 +32,7 @@ const fetchBaseInsert = (data) => {
             } else {
                 hide()
                 dispatch(receiveBaseInsert({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -63,7 +63,7 @@ const saveBaseInsert = (data) => {
             } else {
                 hide()
                 dispatch(receiveBaseSave({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

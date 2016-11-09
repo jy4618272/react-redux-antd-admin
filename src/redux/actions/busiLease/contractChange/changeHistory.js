@@ -33,7 +33,7 @@ const fetchContractHistory = (data) => {
                 dispatch(receiveContractHistory(newRes))
             } else {
                 dispatch(receiveContractHistory({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, paths} from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -26,25 +26,26 @@ const receivePolicyTable = (res) => ({
 const fetchPolicyTable = (data) => {
     return dispatch => {
         dispatch(requestPolicyTable())
-        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionDetail', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionBySite', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
             console.log('政策优惠之列表', newRes)
-            
+
             if (res.result === 'success') {
+                hide()
                 dispatch(receivePolicyTable(newRes))
             } else {
+                hide()
                 dispatch(receivePolicyTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
-            hide()
         })
     }
 }
 
-// 获取
+// 查询获取
 const receiveBusiPolicyTable = (res) => ({
     type: RECEIVE_BUSI_POLICY_TABLE,
     payload: res
@@ -52,18 +53,18 @@ const receiveBusiPolicyTable = (res) => ({
 const fetchBusiPolicyTable = (data) => {
     return dispatch => {
         dispatch(requestPolicyTable())
-        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionBySite', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionDetail', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
             })
             console.log('政策优惠之列表', newRes)
-            
+
             if (res.result === 'success') {
                 dispatch(receiveBusiPolicyTable(newRes))
             } else {
                 dispatch(receiveBusiPolicyTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -90,7 +91,7 @@ const changeStatusPolicy = (data) => {
             } else {
                 hide()
                 dispatch(statusPolicy({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -107,32 +108,32 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_POLICY_TABLE]: (policyData) => ({
         ...policyData,
-        tableLoading: true
+    tableLoading: true
     }),
-    [RECEIVE_POLICY_TABLE]: (policyData, {payload: res}) => ({
+[RECEIVE_POLICY_TABLE]: (policyData, {payload: res}) => ({
         ...policyData,
-        tableLoading: false,
-        tableData: res.data,
-        total: res.count,
-        pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
-    }),
+    tableLoading: false,
+    tableData: res.data,
+    total: res.count,
+    pageSize: 10,
+    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+}),
     [RECEIVE_BUSI_POLICY_TABLE]: (policyData, {payload: res}) => ({
         ...policyData,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
         pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
     }),
-    [STATUS_POPLICY]: (policyData, {payload: res}) => {
-        const obj = policyData.tableData
-        obj.map(item => {
-            if (item.rentpromotionid === res.sub.rentpromotionid) {
-                item.status = res.sub.status
-            }
-        })
-        return Object.assign({}, policyData, { tableData: obj })
-    }
+        [STATUS_POPLICY]: (policyData, {payload: res}) => {
+            const obj = policyData.tableData
+            obj.map(item => {
+                if (item.rentpromotionid === res.sub.rentpromotionid) {
+                    item.status = res.sub.status
+                }
+            })
+            return Object.assign({}, policyData, { tableData: obj })
+        }
 }
 

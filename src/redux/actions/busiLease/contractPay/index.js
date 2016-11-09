@@ -42,7 +42,7 @@ const fetchContractPay = (data) => {
             } else {
                 hide()
                 dispatch(receiveContractPay({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -71,7 +71,7 @@ const fetchCommitFinance = (data) => {
             } else {
                 hide()
                 dispatch(commitFinance({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

@@ -40,7 +40,7 @@ const fetchRoomTable = (data) => {
                 dispatch(receiveRoomTable(newRes))
             } else {
                 dispatch(receiveRoomTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -62,7 +62,7 @@ const searchRoomTable = (data) => {
                 dispatch(receiveRoomTable(newRes))
             } else {
                 dispatch(receiveRoomTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -83,7 +83,7 @@ const searchButtonRoomTable = (data) => {
                 dispatch(receiveRoomTable(newRes))
             } else {
                 dispatch(receiveRoomTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -105,7 +105,7 @@ const lieRoom = (data) => {
                 dispatch(receiveLieRoom(newRes))
             } else {
                 dispatch(receiveLieRoom({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -127,7 +127,7 @@ const voidRoom = (data) => {
                 dispatch(receiveVoidRoom(newRes))
             } else {
                 dispatch(receiveVoidRoom({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

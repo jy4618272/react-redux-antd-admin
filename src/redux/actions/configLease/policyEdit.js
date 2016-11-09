@@ -45,12 +45,13 @@ const fetchPolicyEdit = (data) => {
             }
 
             if (res.result === 'success') {
+                hide()
                 dispatch(receivePolicyEdit(newObj))
             } else {
+                hide()
                 dispatch(receivePolicyEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
-            hide()
         })
     }
 }
@@ -75,9 +76,9 @@ const fetchPolicyUpdate = (data) => {
                 });
                 history.back()
             } else {
-                hide()                
+                hide()
                 dispatch(receivePolicyUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -93,18 +94,18 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_POLICY_EDIT]: (policyEdit) => ({
         ...policyEdit,
-        loading: true
+    loading: true
     }),
-    [RECEIVE_POLICY_EDIT]: (policyEdit, {payload: res}) => ({
+[RECEIVE_POLICY_EDIT]: (policyEdit, {payload: res}) => ({
         ...policyEdit,
-        loading: false,
-        data: res
-    }),
+    loading: false,
+    data: res
+}),
     [REQUEST_POLICY_UPDATE]: (policyData) => ({
         ...policyData
     }),
-    [RECEIVE_POLICY_UPDATE]: (policyData) => ({
+        [RECEIVE_POLICY_UPDATE]: (policyData) => ({
         ...policyData
-    })
+        })
 }
 

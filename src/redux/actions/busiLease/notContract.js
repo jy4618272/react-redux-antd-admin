@@ -35,7 +35,7 @@ const fetchNotContractTable = (data) => {
                 dispatch(receiveNotContractTable(newRes))
             } else {
                 dispatch(receiveNotContractTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

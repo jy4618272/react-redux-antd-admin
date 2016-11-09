@@ -232,6 +232,8 @@ class Lease extends Component {
             fetchRoomTable,
             fetchClassLineTable,
             fetchPolicyTable,
+            fetchBusiPolicyTable,
+            fetchBusiManagerTable,
             fetchManagerTable,
             fetchContractTable
         } = this.props.actionLease
@@ -243,9 +245,9 @@ class Lease extends Component {
         } else if (this.status === 'classLine') {
             this.select(this.queryObj, classLineData.pageSize, 0, fetchClassLineTable)
         } else if (this.status === 'policy') {
-            this.select(this.queryObj, policyData.pageSize, 0, fetchPolicyTable)
+            this.select(this.queryObj, policyData.pageSize, 0, fetchBusiPolicyTable)
         } else if (this.status === 'accountManager') {
-            this.select(this.queryObj, accountManagerData.pageSize, 0, fetchManagerTable)
+            this.select(this.queryObj, accountManagerData.pageSize, 0, fetchBusiManagerTable)
         } else if (this.status === 'contractTpl') {
             this.select(this.queryObj, contractTplData.pageSize, 0, fetchContractTable)
         }
@@ -317,10 +319,6 @@ class Lease extends Component {
 
     // 开启
     handleOpenClick = () => {
-        this.setState({
-            selectedRowKeys: [],
-            selectedRows: []
-        })
         const {selectedRows} = this.state
         if (selectedRows.length === 1) {
             if (this.status === 'contractTpl') {
@@ -349,10 +347,6 @@ class Lease extends Component {
 
     // 关闭
     handleCloseClick = () => {
-        this.setState({
-            selectedRowKeys: [],
-            selectedRows: []
-        })
         const {selectedRows} = this.state
         if (selectedRows.length === 1) {
             if (this.status === 'contractTpl') {
@@ -424,7 +418,9 @@ class Lease extends Component {
         let isVoid
         let isOpen
         let isClose
+        let isEdit
         if (oneSelected) {
+            isEdit = this.state.selectedRows[0].status !== '作废' ? true : false
             isLie = this.state.selectedRows[0].status === '已出租' ? true : false
             isVoid = this.state.selectedRows[0].status === '未出租' ? true : false
             isOpen = this.state.selectedRows[0].status === '关闭' ? true : false
@@ -433,7 +429,7 @@ class Lease extends Component {
 
         const tableRoomControl = <div className="button-group g-mb10">
             <Button onClick={this.handleAddClick}>新增</Button>
-            <Button disabled={!oneSelected} onClick={this.handleEditClick}>修改</Button>
+            <Button disabled={!isEdit} onClick={this.handleEditClick}>修改</Button>
             <Button disabled={!isLie} onClick={this.handleLieClick}>闲置</Button>
             <Button disabled={!isVoid} onClick={this.handleVoidClick}>作废</Button>
             {/*<Button disabled={!oneSelected} onClick={this.handleHistoryClick}>历史</Button>*/}
@@ -516,7 +512,9 @@ class Lease extends Component {
                                     parentHandlePageChange={this.handlePageChange} />
                             </TabPane>
                             <TabPane tab="作废" key="searchVoid">
-                                {tableRoomControl}
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleAddClick}>新增</Button>
+                                </div>
                                 <InnerTable
                                     loading={roomData.tableLoading}
                                     columns={roomData.tableColumns}

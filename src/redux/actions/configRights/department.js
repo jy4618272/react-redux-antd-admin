@@ -34,7 +34,7 @@ const fetchDepartmentTable = (data) => {
                 dispatch(receiveDepartmentTable(newRes))
             } else {
                 dispatch(receiveDepartmentTable({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })

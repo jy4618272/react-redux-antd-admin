@@ -32,7 +32,7 @@ const fetchManagerEdit = (data) => {
                 dispatch(receiveManagerEdit(res))
             } else {
                 dispatch(receiveManagerEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
@@ -62,7 +62,7 @@ const fetchManagerUpdate = (data) => {
                 hide()
 
                 dispatch(receiveMangerUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }

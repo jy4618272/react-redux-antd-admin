@@ -33,7 +33,7 @@ const fetchContractInfo = (data) => {
                 dispatch(receiveContractInfo(newRes))
             } else {
                 dispatch(receiveContractInfo({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
             hide()
         })
