@@ -156,7 +156,7 @@ class ContractInsert extends Component {
         const {
             fetchRoomTable,
             fetchClassLineTable,
-            fetchBusiPolicyTable
+            fetchPolicyTable
         } = this.props.actionLease
 
         const {
@@ -175,7 +175,7 @@ class ContractInsert extends Component {
         } else if (tabsStatus === 'policy') {
             this.select({
                 status: '开启'
-            }, policyData.pageSize, page, fetchBusiPolicyTable)
+            }, policyData.pageSize, page, fetchPolicyTable)
         } else if (tabsStatus === 'contractBond') {
             this.select({
                 status: '有效'
@@ -334,7 +334,7 @@ class ContractInsert extends Component {
         })
         this.select({
             status: '开启'
-        }, 10, 0, this.props.actionLease.fetchBusiPolicyTable)
+        }, 10, 0, this.props.actionLease.fetchPolicyTable)
     }
 
     // 新增冲抵
@@ -488,7 +488,7 @@ class ContractInsert extends Component {
         } else if (key === 'makeDefault') {
             const {form} = this.props
             const oldObj = form.getFieldsValue()
-            const newObj = filterQueryObj(oldObj)
+            const newObj = filterQueryObj(oldObj, 'YYYY-MM-DD')
             newObj['totalstages'] = parseInt(newObj['totalstages'].match(/\d+/)[0])
             console.log('保存表单字段', newObj)
 

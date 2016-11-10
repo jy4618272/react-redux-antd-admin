@@ -1,7 +1,3 @@
-// 定义某个表的querySchema
-// schema的结构和含义参考下面的例子
-// 注意: 所有的key不能重复
-
 module.exports = {
     contractFrom: [
         {
@@ -78,6 +74,87 @@ module.exports = {
             disabled: true
         }
     ],
+    room: {
+        columns: [
+            {
+                title: '区域',
+                dataIndex: 'area',
+                key: 'area'
+            },
+            {
+                title: '楼号',
+                dataIndex: 'build',
+                key: 'build'
+            },
+            {
+                title: '房间号',
+                dataIndex: 'room',
+                key: 'room'
+            },
+            {
+                title: '面积',
+                dataIndex: 'roomarea',
+                key: 'roomarea'
+            },
+            {
+                title: '金额',
+                dataIndex: 'money',
+                key: 'money'
+            },
+            {
+                title: '状态',
+                dataIndex: 'status',
+                key: 'status'
+            }
+        ]
+    },
+    line: {
+        columns: [
+            {
+                title: '班线名称',
+                dataIndex: 'linename',
+                key: 'linename'
+            },
+            {
+                title: '班线价格',
+                dataIndex: 'linefee',
+                key: 'linefee'
+            }
+        ]
+    },
+    policy: {
+        columns: [
+            {
+                title: '活动名称',
+                dataIndex: 'promotionname',
+                key: 'promotionname'
+            },
+            {
+                title: '优惠类型',
+                dataIndex: 'promotiontype',
+                key: 'promotiontype'
+            },
+            {
+                title: '优惠幅度',
+                dataIndex: 'promotionnum',
+                key: 'promotionnum'
+            },
+            {
+                title: '范围',
+                dataIndex: 'area',
+                key: 'area'
+            }
+        ]
+    },
+    contractBond: {
+        columns: [
+            {
+                title: '履约保证金金额',
+                dataIndex: 'marginmoney',
+                key: 'marginmoney'
+            }
+        ]
+    },
     attachment: {
         columns: [
             {
@@ -100,7 +177,6 @@ module.exports = {
             title: '合同签订时间',
             dataType: 'datetime',
             format: 'YYYY-MM-DD',
-            placeholder: "请选择合同签订时间",
             disabled: true
         },
         {
@@ -108,7 +184,6 @@ module.exports = {
             title: '合同开始时间',
             dataType: 'datetime',
             format: 'YYYY-MM-DD',
-            placeholder: "请选择合同开始时间",
             disabled: true
         },
         {
@@ -116,7 +191,6 @@ module.exports = {
             title: '合同结束时间',
             dataType: 'datetime',
             format: 'YYYY-MM-DD',
-            placeholder: "请选择合同结束时间",
             disabled: true
         },
         {
@@ -165,8 +239,8 @@ module.exports = {
             key: 'marginmoney',
             title: '履约保证金',
             dataType: 'float',
-            placeholder: "请选择履约保证金",
-            disabled: true
+            disabled: true,
+            placeholder: "请选择履约保证金"
         },
         {
             key: 'marginmoneyoffset',
@@ -181,10 +255,10 @@ module.exports = {
             title: '优惠租期',
             dataType: 'datetime',
             showType: 'between',
+            disabled: true,
             format: 'YYYY-MM-DD HH:mm:ss',
             placeholderBegin: '租期开始',
-            placeholderEnd: '租期结束',
-            disabled: true
+            placeholderEnd: '租期结束'
         },
         {
             key: 'promotionmoneyoffset',
@@ -204,23 +278,23 @@ module.exports = {
             key: 'saler',
             title: '客户经理',
             showType: 'select',
+            disabled: true,
             placeholder: "请选择客户经理",
-            options: [],
-            disabled: true
+            options: []
         },
         {
             key: 'manager',
             title: '委托代理人',
             dataType: 'varchar',
-            placeholder: "请输入委托代理人",
-            disabled: true
+            disabled: true,
+            placeholder: "请输入委托代理人"
         },
         {
             key: 'memo',
             title: '备注',
             dataType: 'varchar',
-            placeholder: "请输入备注",
-            disabled: true
+            disabled: true,
+            placeholder: "请输入备注"
         }
     ],
     stages: {
@@ -233,90 +307,60 @@ module.exports = {
                 placeholder: "请选择分期数",
                 disabled: true
             },
-        ]
-    },
-    stagesColumns: [
-        {
-            title: '分期数',
-            dataIndex: 'stagesnumber',
-            key: 'stagesnumber'
-        },
-        {
-            title: '交款日期',
-            dataIndex: 'plandate',
-            key: 'plandate'
-        },
-        {
-            title: '生效日期',
-            dataIndex: 'validdate',
-            key: 'validdate'
-        },
-        {
-            title: '失效日期',
-            dataIndex: 'invaliddate',
-            key: 'invaliddate'
-        },
-        {
-            title: '交款金额',
-            dataIndex: 'money',
-            key: 'money'
-        },
-        {
-            title: '备注',
-            dataIndex: 'memo',
-            key: 'memo'
-        }
-    ],
-    stagesShowControl: {
-        left: [
+        ],
+        columns: [
             {
-                key: 'defaultStagesShowClose',
-                title: '关闭明细'
+                title: '分期数',
+                dataIndex: 'stagesnumber',
+                key: 'stagesnumber'
+            },
+            {
+                title: '交款日期',
+                dataIndex: 'plandate',
+                key: 'plandate'
+            },
+            {
+                title: '生效日期',
+                dataIndex: 'validdate',
+                key: 'validdate'
+            },
+            {
+                title: '失效日期',
+                dataIndex: 'invaliddate',
+                key: 'invaliddate'
+            },
+            {
+                title: '交款金额',
+                dataIndex: 'money',
+                key: 'money'
+            },
+            {
+                title: '备注',
+                dataIndex: 'memo',
+                key: 'memo'
             }
         ],
-        right: []
-    },
-    stagesShowColumns: [
-        {
-            title: '分期阶段',
-            dataIndex: 'stagesnumber',
-            key: 'stagesnumber'
-        },
-        {
-            title: '交款类型',
-            dataIndex: 'itemname',
-            key: 'itemname'
-        },
-        {
-            title: '交款金额',
-            dataIndex: 'money',
-            key: 'money'
-        },
-        {
-            title: '备注',
-            dataIndex: 'memo',
-            key: 'memo'
-        }
-    ],
-    approval: [
-        {
-            key: 'nodestatus',
-            title: '审核结果',
-            dataType: 'varchar',
-            showType: 'radio',
-            styleType: 'full',
-            default: '同意',
-            options: [
-                { key: '同意', value: '同意' },
-                { key: '不同意', value: '不同意' }
-            ]
-        },
-        {
-            key: 'nodecontent',
-            title: '审核内容',
-            dataType: 'textarea',
-            placeholder: '请填写审核内容',
-            showType: 'full'
-        }
-    ]
+        showColumns: [
+            {
+                title: '分期阶段',
+                dataIndex: 'stagesnumber',
+                key: 'stagesnumber'
+            },
+            {
+                title: '交款类型',
+                dataIndex: 'itemname',
+                key: 'itemname'
+            },
+            {
+                title: '交款金额',
+                dataIndex: 'money',
+                key: 'money'
+            },
+            {
+                title: '备注',
+                dataIndex: 'memo',
+                key: 'memo'
+            }
+        ],
+    }
 }

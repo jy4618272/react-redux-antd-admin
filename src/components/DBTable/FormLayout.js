@@ -189,17 +189,17 @@ class FormLayout extends Component {
         const options = []
         // console.debug('transform field %o to Radio component', field)
         field.options.map((option) => {
-            options.push(<Radio key={option.key} value={option.key}>{option.value}</Radio>)
+            options.push(<Radio key={option.key} value={option.value}>{option.value}</Radio>)
         })
         if (field.styleType) {
             return this.fullColWrapper((
-                <RadioGroup value={field.default}>
-                    {options}
+                <RadioGroup initialValue={field.default}>
+                   {options}
                 </RadioGroup>
             ), field)
         }
         return this.colWrapper((
-            <RadioGroup value={field.value}>
+            <RadioGroup value={field.default}>
                 {options}
             </RadioGroup>
         ), field)
@@ -574,6 +574,5 @@ class FormLayout extends Component {
         )
     }
 }
-
 
 export default FormLayout

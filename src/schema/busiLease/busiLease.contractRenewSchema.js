@@ -106,7 +106,7 @@ module.exports = {
                 key: 'money'
             },
             {
-                title: '流程状态',
+                title: '状态',
                 dataIndex: 'status',
                 key: 'status'
             }

@@ -2,16 +2,17 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { hashHistory } from 'react-router'
-
-import action from 'ACTION/busiLease'
-
+import {
+    notification
+} from 'antd'
 import {
     Err,
     InnerTable,
     InnerPagination
 } from 'COMPONENT'
-
 import { paths } from 'SERVICE/config'
+
+import action from 'ACTION/busiLease'
 
 const mapDispatchToProps = (dispatch) => ({
     action: bindActionCreators(action, dispatch)
@@ -68,8 +69,18 @@ class ContractApproval extends Component {
         this.select(this.queryObj, contractApproval.pageSize, page)
     }
 
-    handleRowClick = (record, index) => {
-        hashHistory.push(`/busi/busi_lease/contract/approval/${record.businessno}`)
+    // 双击查看详情
+    handleDoubleClick = (record, index) => {
+        console.log('单条数据：', record)
+        if (!record.businessno) {
+            notification.error({
+                message: '字段有误',
+                description: '请联系管理员'
+            })
+            return false
+        }
+        sessionStorage.setItem('arrovalContractShow', JSON.stringify(record))
+        hashHistory.push(`/busi/busi_lease/contract/approval/${record.businessno}?type=${record.flowtype}`)
     }
 
     /**
@@ -90,7 +101,7 @@ class ContractApproval extends Component {
                     columns={contractApproval.tableColumns}
                     dataSource={contractApproval.tableData}
                     bordered={true}
-                    parentHandleRowClick={this.handleRowClick}
+                    parentHandleDoubleClick={this.handleDoubleClick}
                     pagination={false} />
                 <InnerPagination
                     total={contractApproval.total}

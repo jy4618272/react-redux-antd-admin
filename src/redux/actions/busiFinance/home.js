@@ -1,6 +1,6 @@
-import { 
+import {
     message,
-    notification 
+    notification
 } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
@@ -12,6 +12,7 @@ const REQUEST_FINANCE_TABLE = 'REQUEST_FINANCE_TABLE'
 const RECEIVE_FINANCE_TABLE = 'RECEIVE_FINANCE_TABLE'
 const RECEIVE_RECEIVE = 'RECEIVE_RECEIVE'
 const RECEIVE_REFUND = 'RECEIVE_REFUND'
+const RECEIVE_BACK = 'RECEIVE_BACK'
 
 
 // ================================
@@ -96,11 +97,38 @@ const fetchRefund = (data) => {
 }
 
 
+// 退回
+const receiveBack = (res) => ({
+    type: RECEIVE_BACK,
+    payload: res
+})
+
+const fetchBack = (data) => {
+    return dispatch => {
+        xhr('post', paths.financePath + '/financecollectioncs/financeBack', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            console.log('退回', res)
+            if (res.result === 'success') {
+                hide()
+
+                dispatch(receiveBack(res))
+            } else {
+                hide()
+
+                dispatch(receiveBack({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
+
+
 /* default 导出所有 Actions Creator */
 export default {
     fetchFinanceTable,
     fetchReceive,
-    fetchRefund
+    fetchRefund,
+    fetchBack
 }
 
 export const ACTION_HANDLERS = {
@@ -109,7 +137,7 @@ export const ACTION_HANDLERS = {
         tableLoading: true
     }),
     [RECEIVE_FINANCE_TABLE]: (finance, {payload: res}) => ({
-        ...finance,
+                ...finance,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
@@ -123,6 +151,12 @@ export const ACTION_HANDLERS = {
         )
     }),
     [RECEIVE_REFUND]: (finance, {payload: res}) => ({
+        ...finance,
+        tableData: finance.tableData.filter(item =>
+            item.financecollectionid !== res.data[0].financeCollectionId
+        )
+    }),
+    [RECEIVE_BACK]: (finance, {payload: res}) => ({
         ...finance,
         tableData: finance.tableData.filter(item =>
             item.financecollectionid !== res.data[0].financeCollectionId

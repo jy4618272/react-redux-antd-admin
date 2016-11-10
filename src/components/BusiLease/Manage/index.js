@@ -163,13 +163,14 @@ class LeaseManage extends Component {
         hashHistory.push('busi/busi_lease/contract/add')
     }
 
-    // 合同审批
+    // 提交审核
     handleApprovalContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push('busi/busi_lease/contract/approval/' + data[0].rentpactid + '?type=view')
+            this.props.actionLease.approvalContract({
+                rentpactid: data[0].rentpactid
+            })
         }
-
     }
 
     // 合同续租
@@ -321,7 +322,7 @@ class LeaseManage extends Component {
         } = this.state
         const oneSelected = selectedRowKeys.length == 1
 
-        let isApproval = false   // 审批
+        let isApproval = false   // 提交审核
         let isRenew = false      // 续租
         let isChange = false     // 变更
         let isEdit = false       // 编辑
@@ -332,14 +333,15 @@ class LeaseManage extends Component {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增/续租') {
                 if (selected.flowstatus === '录入未完成') {
+                    isApproval = true
                     if (selected.fistatus === '未提交') {
                         // 作废
-                        if(selectedRows[0].endtype !== '作废'){
+                        if (selectedRows[0].endtype !== '作废') {
                             isVoid = true
                         }
                     } else if (selected.fistatus === '待财务确认') {
                         // 作废
-                        if(selectedRows[0].endtype !== '作废'){
+                        if (selectedRows[0].endtype !== '作废') {
                             isVoid = true
                         }
                     } else if (selected.fistatus === '有效') {
@@ -350,7 +352,7 @@ class LeaseManage extends Component {
                     } else if (selected.fistatus === '已退') {
                         // 编辑、作废
                         isEdit = true
-                        if(selectedRows[0].endtype !== '作废'){
+                        if (selectedRows[0].endtype !== '作废') {
                             isVoid = true
                         }
                     }
@@ -380,6 +382,7 @@ class LeaseManage extends Component {
                         isEdit = true
                     }
                 } else if (selected.flowstatus === '审批退回') {
+                    isApproval = true
                     if (selected.fistatus === '未提交') {
                         // 作废、编辑
                         isVoid = true
@@ -398,7 +401,9 @@ class LeaseManage extends Component {
                     }
                 }
             } else if (selected.flowtype === '变更') {
-                if (selected.flowstatus === '审批中') {
+                if (selected.flowstatus === '录入未完成') {
+                    isApproval = true
+                } else if (selected.flowstatus === '审批中') {
                     if (selected.fistatus === '未提交') {
                         // 催办
                     } else if (selected.fistatus === '待财务确认') {
@@ -424,6 +429,8 @@ class LeaseManage extends Component {
                         isEdit = true
                     }
                 } else if (selected.flowstatus === '审批退回') {
+                    isApproval = true
+
                     if (selected.fistatus === '未提交') {
                         // 编辑
                         isEdit = true
@@ -440,7 +447,9 @@ class LeaseManage extends Component {
                     }
                 }
             } else if (selected.flowtype === '退租') {
-                if (selected.flowstatus === '审批中') {
+                if (selected.flowstatus === '录入未完成') {
+                    isApproval = true
+                } else if (selected.flowstatus === '审批中') {
                     // 催办
                 } else if (selected.flowstatus === '审批通过') {
                     if (selected.fistatus === '已退') {
@@ -448,6 +457,7 @@ class LeaseManage extends Component {
                         isEdit = true
                     }
                 } else if (selected.flowstatus === '审批退回') {
+                    isApproval = true
                     if (selected.fistatus === '已退') {
                         // 编辑
                         isEdit = true
@@ -460,7 +470,7 @@ class LeaseManage extends Component {
             <Row>
                 <Col sm={16}>
                     <Button onClick={this.handleAddContract}>新增</Button>
-                    <Button disabled={!isApproval} onClick={this.handleApprovalContract}>审批</Button>
+                    <Button disabled={!isApproval} onClick={this.handleApprovalContract}>提交审核</Button>
                     <Button disabled={!isRenew} onClick={this.handleRenewContract}>续租</Button>
                     <Button disabled={!isChange} onClick={this.handleChangeContract}>变更</Button>
                     <Button disabled={!isEdit} onClick={this.handleEditContract}>编辑</Button>
@@ -474,7 +484,6 @@ class LeaseManage extends Component {
                 </Col>
             </Row>
         </div>
-
 
         let modalContent = ''
         if (this.state.modalName === 'insertBond') {

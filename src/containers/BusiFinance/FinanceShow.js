@@ -52,9 +52,9 @@ class FinanceShow extends Component {
      * @param tableName
      */
     initFetchSchema(props) {
-        const routes = props.routes
-        const tableName = routes.pop().tableName
-
+        const route = props.route
+        const tableName = route.tableName
+        const commonName = route.commonName
         if (tableName) {
             console.info('init component BusiLease with tableName = %s', tableName)
         } else {
@@ -64,15 +64,27 @@ class FinanceShow extends Component {
             return false
         }
 
+        if (commonName) {
+            console.info('init component BusiLease with commonName = %s', commonName)
+        } else {
+            console.error('can not find commonName, check your router config')
+            this.inited = false  // 是否成功获取schema
+            this.errorMsg = '找不到公共表名, 请检查路由配置'
+            return false
+        }
+
         this.tableName = tableName
+        this.commonName = commonName
 
         try {
             this.showSchema = require(`SCHEMA/${tableName}/${tableName}.showSchema.js`)
-            console.log(this.showSchema)
+            this.financeShowSchema = require(`SCHEMA/${commonName}/finance.showSchema.js`)
+            console.log('其他详情：', this.showSchema)
+            console.log('财务详情：', this.financeShowSchema)
         } catch (e) {
             console.error('load add schema error: %o', e)
             this.inited = false
-            this.errorMsg = `加载${tableName}表的showSchema出错, 请检查配置`
+            this.errorMsg = `加载${commonName}表的showSchema出错, 请检查配置`
             return false
         }
         this.inited = true;
@@ -121,6 +133,7 @@ class FinanceShow extends Component {
 
         xhr('post', paths.financePath + '/financecollectioncs/getFinanceCollectionDetail', {
             type: type,
+            // paytype:'',
             businessnumber: id
         }, (res) => {
             const hide = message.loading('正在查询...', 0)
@@ -194,7 +207,7 @@ class FinanceShow extends Component {
             if (loading) {
                 return <Loading />
             }
-            const tableStagesColumns = this.showSchema['contract']['stages']['columns'].concat([
+            const tableStagesColumns = this.financeShowSchema['stages']['columns'].concat([
                 {
                     title: '操作',
                     key: 'operation',
@@ -204,7 +217,7 @@ class FinanceShow extends Component {
                 }
             ])
 
-            const tableAttachmentColumns = this.showSchema['contract']['attachment']['columns'].concat([
+            const tableAttachmentColumns = this.financeShowSchema['attachment']['columns'].concat([
                 {
                     title: '操作',
                     key: 'operation',
@@ -217,14 +230,14 @@ class FinanceShow extends Component {
                     <Form horizontal>
                         {/* 获取合同模板 */}
                         <FormLayout
-                            schema={this.showSchema['contract']['contractFrom']}
+                            schema={this.financeShowSchema['contractFrom']}
                             form={this.props.form}
                             fromLayoutStyle="g-border-bottom" />
 
                         {/* 客户名称 */}
                         <div className="g-border-bottom">
                             <FormLayout
-                                schema={this.showSchema['contract']['organization']}
+                                schema={this.financeShowSchema['organization']}
                                 form={this.props.form} />
                         </div>
 
@@ -233,7 +246,7 @@ class FinanceShow extends Component {
                             <TabPane tab="合同房间" key="room">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.showSchema['contract']['room']['columns']}
+                                        columns={this.financeShowSchema['room']['columns']}
                                         dataSource={res.rentpactrooms}
                                         bordered={true}
                                         pagination={false} />
@@ -242,7 +255,7 @@ class FinanceShow extends Component {
                             <TabPane tab="合同班线" key="classLine">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.showSchema['contract']['line']['columns']}
+                                        columns={this.financeShowSchema['line']['columns']}
                                         dataSource={res.rentpactlines}
                                         bordered={true}
                                         pagination={false} />
@@ -251,7 +264,7 @@ class FinanceShow extends Component {
                             <TabPane tab="合同优惠冲抵" key="policy">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.showSchema['contract']['policy']['columns']}
+                                        columns={this.financeShowSchema['policy']['columns']}
                                         dataSource={res.rentpactpromotions}
                                         bordered={true}
                                         pagination={false} />
@@ -260,7 +273,7 @@ class FinanceShow extends Component {
                             <TabPane tab="履约保证金冲抵" key="contractBond">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.showSchema['contract']['contractBond']['columns']}
+                                        columns={this.financeShowSchema['contractBond']['columns']}
                                         dataSource={res.offsetmargins}
                                         bordered={true}
                                         pagination={false} />
@@ -280,14 +293,14 @@ class FinanceShow extends Component {
 
                         {/* 客户数据录入*/}
                         <FormLayout
-                            schema={this.showSchema['contract']['contractTabs']}
+                            schema={this.financeShowSchema['contractTabs']}
                             form={this.props.form}
                             fromLayoutStyle="g-border-bottom" />
 
                         {/* 分期明细 */}
                         <div className="padding-lr g-mb20">
                             <FormLayout
-                                schema={this.showSchema['contract']['stages']['form']}
+                                schema={this.financeShowSchema['stages']['form']}
                                 form={this.props.form}
                                 parentHandleSelect={this.parentHandleSelect} />
 
@@ -299,7 +312,7 @@ class FinanceShow extends Component {
                                             <Button onClick={this.handleStagesClose}>关闭明细</Button>
                                         </div>
                                         <InnerTable
-                                            columns={this.showSchema['contract']['stages']['showColumns']}
+                                            columns={this.financeShowSchema['stages']['showColumns']}
                                             dataSource={this.state.stagesShowTableData}
                                             bordered={true}
                                             size="middle"

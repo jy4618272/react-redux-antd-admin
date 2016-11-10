@@ -8,6 +8,7 @@ import { errHandler, paths } from 'SERVICE/config'
 const REQUEST_CONTRACT_TABLE = 'REQUEST_CONTRACT_TABLE'
 const RECEIVE_CONTRACT_TABLE = 'RECEIVE_CONTRACT_TABLE'
 const RECEIVE_CONTRACT_VOID = 'RECEIVE_CONTRACT_VOID'
+const RECEIVE_CONTRACT_APPROVAL = 'RECEIVE_CONTRACT_APPROVAL'
 
 
 // ================================
@@ -42,6 +43,33 @@ const fetchContractTable = (data) => {
     }
 }
 
+
+// 提交审核
+const statusApprovalContract = (res) => ({
+    type: RECEIVE_CONTRACT_APPROVAL,
+    payload: res
+})
+
+const approvalContract = (data) => {
+    return dispatch => {
+        xhr('POST', paths.leasePath + '/rentpactcs/submitRentPact', data, (res) => {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('合同提交审核数据：', newRes)
+            if (res.result === 'success') {
+                hide()
+                dispatch(statusApprovalContract(newRes))
+            } else {
+                hide()
+                dispatch(statusApprovalContract({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
+
 // 作废
 const statusContract = (res) => ({
     type: RECEIVE_CONTRACT_VOID,
@@ -71,6 +99,7 @@ const voidContract = (data) => {
 /* default 导出所有 Actions Creator */
 export default {
     fetchContractTable,
+    approvalContract,
     voidContract
 }
 
@@ -79,19 +108,31 @@ export const ACTION_HANDLERS = {
         ...contract,
     tableLoading: true
     }),
-[RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
-            ...contract,
-    tableLoading: false,
-    tableData: res.data,
-    total: res.count,
-    pageSize: 10,
-    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
-}),
+    [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
+                ...contract,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
     [RECEIVE_CONTRACT_VOID]: (contract, {payload: res}) => {
         const obj = contract.tableData
         obj.map(item => {
             if(item.rentpactid == res.sub.rentpactid){
                 item.endtype = '作废'
+            }
+        })
+
+        return Object.assign({}, contract, {
+            tableData: obj
+        })
+    },
+    [RECEIVE_CONTRACT_APPROVAL]: (contract, {payload: res}) => {
+        const obj = contract.tableData
+        obj.map(item => {
+            if(item.rentpactid == res.sub.rentpactid){
+                item.flowstatus = '审批中'
             }
         })
 

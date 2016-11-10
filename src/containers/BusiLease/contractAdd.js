@@ -23,7 +23,9 @@ import {
 const TabPane = Tabs.TabPane
 const FormItem = Form.Item
 const Option = Select.Option
-
+import {
+    filterQueryObj
+} from 'UTIL'
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
@@ -160,7 +162,7 @@ class ContractInsert extends Component {
         const {
             fetchRoomTable,
             fetchClassLineTable,
-            fetchBusiPolicyTable
+            fetchPolicyTable
         } = this.props.actionLease
 
         const {
@@ -179,7 +181,7 @@ class ContractInsert extends Component {
         } else if (tabsStatus === 'policy') {
             this.select({
                 status: '开启'
-            }, policyData.pageSize, page, fetchBusiPolicyTable)
+            }, policyData.pageSize, page, fetchPolicyTable)
         } else if (tabsStatus === 'contractBond') {
             this.select({
                 status: '有效'
@@ -338,7 +340,7 @@ class ContractInsert extends Component {
         })
         this.select({
             status: '开启'
-        }, 10, 0, this.props.actionLease.fetchBusiPolicyTable)
+        }, 10, 0, this.props.actionLease.fetchPolicyTable)
     }
 
     // 新增冲抵
@@ -385,7 +387,7 @@ class ContractInsert extends Component {
         if (key === 'makeDefault') {
             const {form} = this.props
             const oldObj = form.getFieldsValue()
-            const newObj = this.filterQueryObj(oldObj)
+            const newObj = filterQueryObj(oldObj, 'YYYY-MM-DD')
             console.log('保存表单字段', newObj)
 
             this.props.form.validateFieldsAndScroll((errors, values) => {
@@ -743,7 +745,7 @@ class ContractInsert extends Component {
             this.handleModalCancel()
         } else if (modalName === 'stagesModal') {
             const oldObj = this.refs.stagesModal.getFieldsValue()
-            const newObj = this.filterQueryObj(oldObj)
+            const newObj = filterQueryObj(oldObj)
             console.log('保存表单字段', newObj)
             const obj = this.state.stagesTableData
             if (newObj['money'] <= 0) {
@@ -792,7 +794,7 @@ class ContractInsert extends Component {
                         return false;
                     }
                 }
-                const newObj = this.filterQueryObj(oldObj)
+                const newObj = filterQueryObj(oldObj)
                 console.log('保存表单字段', newObj)
 
                 if (modalOpenBtn === 'stagesShowInsert') {
@@ -845,49 +847,12 @@ class ContractInsert extends Component {
         })
     }
 
-    componentDidMount() {
-        this.props.form.setFieldsValue({
-            roommoney: 0, // 房间租金
-            linemoney: 0, // 班线费用
-            standardmoney: 0, // 合同标准金额 = 房间租金 + 班线费用
-            promotionmoneyoffset: 0,   // 优惠金额
-            marginmoneyoffset: 0,// 履约保证金冲抵,
-            totaloffsetmoney: 0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
-            money: 0, // 合同金额  
-            signdate: moment().locale('en').utcOffset(0),
-            startdate: moment().locale('en').utcOffset(0),
-            enddate: moment().add(1, 'year').subtract(1, 'days')
-        })
-    }
-
-
-    /**
-     * 表单的查询条件不能直接传给后端, 要处理一下
-     *
-     * @param oldObj
-     * @returns {{}}
-     */
-    filterQueryObj(oldObj) {
-        // 将提交的值中undefined的去掉
-        const newObj = {}
-
-        for (const key in oldObj) {
-            if (oldObj[key]) {
-                // 对于js的日期类型, 要转换成字符串再传给后端
-                if (key.indexOf('date') > -1) {
-                    newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
-                } else {
-                    newObj[key] = oldObj[key]
-                }
-            }
-        }
-        // console.debug('old queryObj: %o, new queryObj %o', oldObj, newObj)
-        return newObj
-    }
-
+    // 返回
     handleGoBack = () => {
         hashHistory.push('busi/busi_lease')
     }
+
+    // 保存全部
     handleSaveAll = (e) => {
         e.preventDefault()
         this.setState({
@@ -907,7 +872,7 @@ class ContractInsert extends Component {
             } else {
                 const {form} = this.props
                 const oldObj = form.getFieldsValue()
-                const newObj = this.filterQueryObj(oldObj)
+                const newObj = filterQueryObj(oldObj)
                 const {
                     pactprintmodelid,
                     partyid,
@@ -966,6 +931,42 @@ class ContractInsert extends Component {
                     hide()
                 })
             }
+        })
+    }
+
+    componentDidMount() {
+        // 房态图
+        if (this.props.location.query.rentroomid) {
+            xhr('post', paths.leasePath + '/rentroomcs/selectRentRoomById ', {
+                rentroomid: this.props.location.query.rentroomid
+            }, (res) => {
+                const hide = message.loading('正在查询...', 0)
+                console.log('获取房态图房间数据：', res.data)
+                if (res.result === 'success') {
+                    const obj = []
+                    obj.push(res.data)
+                    console.log('11111', obj)
+                    this.setState({
+                        dataRoom: obj
+                    })
+                    hide()
+                } else {
+                    hide()
+                    errHandler(res.msg)
+                }
+            })
+        }
+        this.props.form.setFieldsValue({
+            roommoney: 0, // 房间租金
+            linemoney: 0, // 班线费用
+            standardmoney: 0, // 合同标准金额 = 房间租金 + 班线费用
+            promotionmoneyoffset: 0,   // 优惠金额
+            marginmoneyoffset: 0,// 履约保证金冲抵,
+            totaloffsetmoney: 0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
+            money: 0, // 合同金额  
+            signdate: moment().locale('en').utcOffset(0),
+            startdate: moment().locale('en').utcOffset(0),
+            enddate: moment().add(1, 'year').subtract(1, 'days')
         })
     }
 

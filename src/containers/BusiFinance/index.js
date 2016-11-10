@@ -220,10 +220,7 @@ class Finance extends Component {
         const tmpObj = Object.assign({}, {
             financeCollectionIds: selectedRows[0].financecollectionid ? selectedRows[0].financecollectionid : 0
         })
-        this.setState({
-            selectedRowKeys: [],
-            selectedRows: []
-        })
+
         console.log('确认收款id:', tmpObj)
         actionFinance.fetchReceive(tmpObj)
     }
@@ -238,12 +235,26 @@ class Finance extends Component {
         const tmpObj = Object.assign({}, {
             financeCollectionIds: selectedRows[0].financecollectionid ? selectedRows[0].financecollectionid : 0
         })
-        this.setState({
-            selectedRowKeys: [],
-            selectedRows: []
-        })
+
         console.log('确认退款id:', tmpObj)
         actionFinance.fetchRefund(tmpObj)
+    }
+
+    // 退回
+    handleReturn = () => {
+        const {selectedRows} = this.state
+        const { actionFinance } = this.props
+        if (selectedRows.length === 1) {
+            const type = selectedRows[0].paytype
+            actionFinance.fetchBack({
+                financeCollectionIds: selectedRows[0].financecollectionid ? selectedRows[0].financecollectionid : 0
+            })
+        }
+    }
+
+    // 资金列表
+    handleFinanceList = () => {
+        hashHistory.push('busi/busi_finance/finance_list?type="资金文件"')
     }
 
     // 导出本页
@@ -277,7 +288,7 @@ class Finance extends Component {
     parentHandleDoubleClick = (record, index) => {
         if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
             hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
-        }else{
+        } else {
             // alert(3)
         }
     }
@@ -293,7 +304,7 @@ class Finance extends Component {
         const {busiFinance} = this.props
 
         const {selectedRowKeys, selectedRows} = this.state
-        const oneSelected = selectedRowKeys.length == 1
+        const oneSelected = selectedRowKeys.length === 1
 
         // 按钮【可否点击】条件判断
         let isReceive = false
@@ -307,6 +318,7 @@ class Finance extends Component {
             <Col sm={16}>
                 <Button disabled={!isReceive} onClick={this.handleReceive}>确认收款</Button>
                 <Button disabled={!isRefund} onClick={this.handleRefund}>确认退款</Button>
+                <Button onClick={this.handleReturn}>退回</Button>
             </Col>
             <Col sm={8} className="g-tar">
                 <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
@@ -315,6 +327,7 @@ class Finance extends Component {
 
         const tableControl = <Row className="button-group g-mb10">
             <Col sm={16}>
+                <Button onClick={this.handleFinanceList}>资金文件列表</Button>
             </Col>
             <Col sm={8} className="g-tar">
                 <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
@@ -370,7 +383,7 @@ class Finance extends Component {
                             isRowSelection={true}
                             bordered={true}
                             pagination={false}
-                            parentHandleSelect={this.parentHandleSelect}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination
                             total={busiFinance.home.total}

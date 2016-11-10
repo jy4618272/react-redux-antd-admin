@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import { hashHistory } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
 import {
     Tabs,
     Row,
@@ -109,26 +108,6 @@ class RoomState extends Component {
                         <p>房间号：{item.room}</p>
                     </div>
                 )
-            } else if (item.status === '未出租') {
-                imgStatus = roomBlue
-                tips = (
-                    <div>
-                        <p>房间号：{item.room}</p>
-                    </div>
-                )
-                
-                return (
-                    <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
-                        <Popover content={tips} title={item.status}>
-                            <div>
-                                <Link to='#'>
-                                    <div className="list-img"><img src={imgStatus} /></div>
-                                    <div className="list-txt">{item.build}- {item.room}</div>
-                                </Link>
-                            </div>
-                        </Popover>
-                    </Col>
-                )
             } else if (item.status === '已出租') {
                 imgStatus = roomOrange
                 tips = (
@@ -136,6 +115,23 @@ class RoomState extends Component {
                         <p>客户名称：{item.organization}</p>
                         <p>合同编码：{item.pactCode}</p>
                     </div>
+                )
+            } else if (item.status === '未出租') {
+                imgStatus = roomBlue
+                tips = (
+                    <div>
+                        <p>房间号：{item.room}</p>
+                    </div>
+                )
+                return (
+                    <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
+                        <Popover content={tips} title={item.status} onClick={()=>{ hashHistory.push(`busi/busi_lease/contract/add?rentroomid=${item.rentroomid}`)}}>
+                            <div>
+                                <div className="list-img"><img src={imgStatus} /></div>
+                                <div className="list-txt">{item.build}- {item.room}</div>
+                            </div>
+                        </Popover>
+                    </Col>
                 )
             }
             return (

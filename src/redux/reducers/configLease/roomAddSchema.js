@@ -46,22 +46,22 @@ const initialState = {
                     rules: [
                         { required: true, type: 'string', message: '必填，请输入房间号' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },
         {
             key: 'roomarea',
             title: '面积',
-            dataType: 'varchar',
+            dataType: 'float',
             placeholder: '请输入面积',
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请输入面积' },
+                        { required: true, type:'number', message: '必填，请输入面积' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },
@@ -76,7 +76,7 @@ const initialState = {
                     rules: [
                         { required: true, message: '必填，请输入金额' },
                     ],
-                    trigger: ['onBlur', 'onChange']
+                    trigger: ['onChange']
                 }
             ]
         },

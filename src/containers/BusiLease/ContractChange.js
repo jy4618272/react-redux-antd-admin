@@ -23,7 +23,9 @@ import {
 const TabPane = Tabs.TabPane
 const FormItem = Form.Item
 const Option = Select.Option
-
+import {
+    filterQueryObj
+} from 'UTIL'
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
@@ -167,7 +169,7 @@ class ContractInsert extends Component {
         const {
             fetchRoomTable,
             fetchClassLineTable,
-            fetchBusiPolicyTable
+            fetchPolicyTable
         } = this.props.actionLease
 
         const {
@@ -193,7 +195,7 @@ class ContractInsert extends Component {
             } else if (tabsStatus === 'policy') {
                 this.select({
                     status: '开启'
-                }, policyData.pageSize, page, fetchBusiPolicyTable)
+                }, policyData.pageSize, page, fetchPolicyTable)
             } else if (tabsStatus === 'contractBond') {
                 this.select({
                     status: '有效'
@@ -353,7 +355,7 @@ class ContractInsert extends Component {
         })
         this.select({
             status: '开启'
-        }, 10, 0, this.props.actionLease.fetchBusiPolicyTable)
+        }, 10, 0, this.props.actionLease.fetchPolicyTable)
     }
 
     // 新增冲抵
@@ -400,7 +402,7 @@ class ContractInsert extends Component {
         if (key === 'makeDefault') {
             const {form} = this.props
             const oldObj = form.getFieldsValue()
-            const newObj = this.filterQueryObj(oldObj)
+            const newObj = filterQueryObj(oldObj,  'YYYY-MM-DD')
             newObj['totalstages'] = parseInt(newObj['totalstages'].match(/\d+/)[0])
 
             console.log('保存表单字段', newObj)
@@ -777,7 +779,7 @@ class ContractInsert extends Component {
 
         } else if (modalName === 'stagesModal') {
             const oldObj = this.refs.stagesModal.getFieldsValue()
-            const newObj = this.filterQueryObj(oldObj)
+            const newObj = filterQueryObj(oldObj)
             console.log('保存表单字段', newObj)
             const obj = this.state.stagesTableData
             if (newObj['money'] <= 0) {
@@ -825,7 +827,7 @@ class ContractInsert extends Component {
                         return false;
                     }
                 }
-                const newObj = this.filterQueryObj(oldObj)
+                const newObj = filterQueryObj(oldObj)
                 console.log('保存表单字段', newObj)
 
                 if (modalOpenBtn === 'stagesShowInsert') {
@@ -878,30 +880,6 @@ class ContractInsert extends Component {
         })
     }
 
-    /**
-     * 表单的查询条件不能直接传给后端, 要处理一下
-     *
-     * @param oldObj
-     * @returns {{}}
-     */
-    filterQueryObj(oldObj) {
-        // 将提交的值中undefined的去掉
-        const newObj = {}
-
-        for (const key in oldObj) {
-            if (oldObj[key]) {
-                // 对于js的日期类型, 要转换成字符串再传给后端
-                if (key.indexOf('date') > -1) {
-                    newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
-                } else {
-                    newObj[key] = oldObj[key]
-                }
-            }
-        }
-        // console.debug('old queryObj: %o, new queryObj %o', oldObj, newObj)
-        return newObj
-    }
-
     handleGoBack = () => {
         hashHistory.push('busi/busi_lease')
     }
@@ -926,7 +904,7 @@ class ContractInsert extends Component {
 
                 const {form} = this.props
                 const oldObj = form.getFieldsValue()
-                const newObj = this.filterQueryObj(oldObj)
+                const newObj = filterQueryObj(oldObj)
                 newObj['totalstages'] = parseInt(newObj['totalstages'].match(/\d+/)[0])
 
                 const {
