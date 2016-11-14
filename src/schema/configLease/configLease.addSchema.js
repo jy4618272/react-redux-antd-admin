@@ -21,7 +21,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', min: 1, message: '必填，班线名称不能重复' },
+                        { required: true, type: 'string', message: '班线名称不能重复' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -36,7 +36,7 @@ module.exports = {
             step: 0.1,
             validate: [{
                 rules: [
-                    { required: true, type: 'number', message: '必填，请输入正确的班线价格' },
+                    { required: true, type: 'number', message: '请输入正确的班线价格' },
                 ],
                 trigger: ['onChange']
             }]
@@ -50,7 +50,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, type: 'string', message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]
@@ -74,7 +74,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，活动名称不能为空' },
+                        { required: true, type: 'string', message: '活动名称不能为空' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -93,7 +93,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请选择优惠类型' },
+                        { required: true, type: 'string', message: '请选择优惠类型' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -109,7 +109,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'number', message: '必填，优惠幅度不能为空' },
+                        { required: true, type: 'number', message: '优惠幅度不能为空' },
                     ],
                     trigger: ['onChange']
                 }
@@ -120,7 +120,7 @@ module.exports = {
             title: '优惠对象',
             showType: 'select',
             options: [
-                { key: '合同', value: '合同' },
+                { key: '房间', value: '房间' },
                 { key: '班线', value: '班线' }
             ],
             placeholder: "请选择优惠对象",
@@ -128,7 +128,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请选择优惠对象' },
+                        { required: true, type: 'string', message: '请选择优惠对象' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -144,7 +144,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请选择区域' },
+                        { required: true, type: 'string', message: '请选择区域' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -158,7 +158,7 @@ module.exports = {
             showType: 'between',
             format: 'YYYY-MM-DD HH:mm:ss',
             feedBackShow: true,
-            help: "必填，请选择活动期限",
+            help: "请选择活动期限",
             validate: [
                 {
                     rules: [
@@ -177,7 +177,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, type: 'string', message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]
@@ -200,7 +200,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { required: true, type: 'string', message: '必填，请输入姓名' },
+                    { required: true, type: 'string', message: '请输入姓名' },
                 ],
                 trigger: 'onChange',
             }]
@@ -213,7 +213,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { required: true, type: 'string', message: '必填，请输入工号' },
+                    { required: true, type: 'string', message: '请输入工号' },
                 ],
                 trigger: 'onChange',
             }]
@@ -227,7 +227,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]
@@ -244,7 +244,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请输入模板名称' },
+                        { required: true, type: 'string', message: '请输入模板名称' },
                     ],
                     trigger: 'onChange',
                 }
@@ -259,7 +259,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { required: true, type: 'string', message: '必填，请输入模板内容' },
+                    { required: true, type: 'string', message: '请输入模板内容' },
                 ],
                 trigger: 'onChange',
             }]
@@ -277,7 +277,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请选择合同类型' },
+                        { required: true, type: 'string', message: '请选择合同类型' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -292,7 +292,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]

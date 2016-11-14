@@ -82,7 +82,7 @@ const initialState = [
         validate: [
             {
                 rules: [
-                    { required: true, type:'number', min:1, message: '请选择合同房间' },
+                    { required: true, type: 'number', message: '请选择合同房间' },
                 ]
             }
         ]

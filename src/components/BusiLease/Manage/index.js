@@ -15,16 +15,17 @@ import {
 const TabPane = Tabs.TabPane
 
 import {
+    Loading,
     InnerForm,
     InnerTable,
     InnerPagination
 } from 'COMPONENT'
 import { paths } from 'SERVICE/config'
 
-import actionLease from 'ACTION/busiLease'
+import action from 'ACTION/busiLease'
 
 const mapDispatchToProps = (dispatch) => ({
-    actionLease: bindActionCreators(actionLease, dispatch)
+    action: bindActionCreators(action, dispatch)
 })
 
 @connect(
@@ -43,7 +44,11 @@ class LeaseManage extends Component {
             modalVisible: false,
             modalTitle: '新增',
             okText: '确定',
-            modalWidth: '900'
+            modalWidth: '900',
+            footer: <div>
+                <Button size="large" onClick={this.handleModalCancel}>取消</Button>
+                <Button size="large" type="primary" onClick={this.handleModalOk}>确定</Button>
+            </div>
         }
         console.log('租赁管理props:', props)
     }
@@ -86,7 +91,7 @@ class LeaseManage extends Component {
             fetchContractTable,
             fetchBondTable,
             fetchNotContractTable
-        } = this.props.actionLease
+        } = this.props.action
 
         if (this.status === 'contract') {
             this.select(newData, contractData.pageSize, 0, fetchContractTable)
@@ -113,7 +118,7 @@ class LeaseManage extends Component {
             fetchContractTable,
             fetchBondTable,
             fetchNotContractTable
-        } = this.props.actionLease
+        } = this.props.action
 
         page = (page <= 1) ? 0 : (page - 1) * 10
         if (this.status === 'contract') {
@@ -137,7 +142,7 @@ class LeaseManage extends Component {
             fetchContractTable,
             fetchBondTable,
             fetchNotContractTable
-        } = this.props.actionLease
+        } = this.props.action
 
         if (this.status === 'contract') {
             this.refresh(fetchContractTable)
@@ -159,17 +164,29 @@ class LeaseManage extends Component {
     }
 
     // 合同新增
-    handleAddContract = () => {
-        hashHistory.push('busi/busi_lease/contract/add')
+    handleAdd = (key) => {
+        if (key === 'contract') {
+            hashHistory.push('busi/busi_lease/contract/add')
+        } else if (key === 'bond') {
+            hashHistory.push('busi/busi_lease/add?type=bond')
+        } else if (key === 'notContract') {
+            hashHistory.push('busi/busi_lease/add?type=notContract')
+        }
     }
 
     // 提交审核
-    handleApprovalContract = () => {
+    handleApproval = (key) => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            this.props.actionLease.approvalContract({
-                rentpactid: data[0].rentpactid
-            })
+            if (key === 'contract') {
+                this.props.action.approvalContract({
+                    rentpactid: data[0].rentpactid
+                })
+            } else if (key === 'bond') {
+                this.props.action.approvalBond({
+                    rentpactid: data[0].offsetrentpactid
+                })
+            }
         }
     }
 
@@ -208,12 +225,26 @@ class LeaseManage extends Component {
     }
 
     // 合同作废
-    handleVoidContract = () => {
+    handleVoid = (key) => {
         const data = this.state.selectedRows
+        const { action } = this.props
+
         if (data.length == 1) {
-            this.props.actionLease.voidContract({
-                rentpactid: data[0].rentpactid
-            })
+            if (key === 'contract') {
+                action.voidContract({
+                    rentpactid: data[0].rentpactid
+                })
+            } else if (key === 'bond') {
+                action.voidBond({
+                    offsetrentpactid: data[0].offsetrentpactid,
+                    status: "作废"
+                })
+            } else if (key === 'notContract') {
+                action.voidNotContract({
+                    boothpaymentid: data[0].boothpaymentid,
+                    status: "作废"
+                })
+            }
         }
     }
 
@@ -223,25 +254,34 @@ class LeaseManage extends Component {
     }
 
     // 导出本页
-    handleExportPage = () => {
+    handleExportPage = (key) => {
+        // alert(key)
         const {
             busiLease
         } = this.props
 
-        // alert('缺接口')
         let arrParam = []
 
-        busiLease.contractData.tableData.map(item => {
-            arrParam.push(item.rentpactid)
-        })
+        if (key === 'contract') {
+            busiLease.contractData.tableData.map(item => {
+                arrParam.push(item.rentpactid)
+            })
+        } else if (key === 'bond') {
+            busiLease.bondData.tableData.map(item => {
+                arrParam.push(item.marginid)
+            })
+        }
 
         if (arrParam.length) {
             notification.open({
                 message: '导出本页',
                 description: `导出${arrParam.length}条数据`,
             });
-
-            window.location.href = paths.leasePath + '/rentpactcs/selectByRentPactIdListToExcel?rentpactids=' + arrParam.join(',')
+            if (key === 'contract') {
+                window.location.href = paths.leasePath + '/rentpactcs/selectByRentPactIdListToExcel?rentpactids=' + arrParam.join(',')
+            } else if (key === 'bond') {
+                window.location.href = paths.leasePath + '/margincs/selectByMarginIdListToExcel?marginids=' + arrParam.join(',')
+            }
         } else {
             notification.open({
                 message: '导出本页',
@@ -250,37 +290,96 @@ class LeaseManage extends Component {
         }
     }
 
-    parentHandleClick = (key, data) => {
-        if (key === "addBond") {
-            this.setState({
-                modalVisible: true,
-                modalTitle: '新增保证金',
-                okText: '保存'
-            })
-        }
-    }
-
-    handleModalOk = () => {
-        const {
-            busiLease
-        } = this.props.actionLease
-        if (this.status === 'bond') {
-            console.log(this.refs.formInsert.getFieldsValue());
-            const tmp = {}
-            busiLease.bondInsert(tmp)
-            this.refs.formInsert.resetFields()
-            this.handleModalCancel()
-        }
+    // 打印
+    handlePrint = () => {
+        this.handleModalCancel()
     }
 
     // 弹框关闭
     handleModalCancel = () => {
-        if (this.status === 'bond') {
-            this.refs.formInsert.resetFields()
-        }
         this.setState({
             modalVisible: false
         })
+    }
+
+    // 双击查看详情
+    parentHandleDoubleClick = (record, index) => {
+        if (record.rentpactid) {
+            hashHistory.push(`busi/busi_lease/${record.rentpactid}?type=rentpact`)
+        } else {
+            // alert(3)
+        }
+    }
+
+
+    // 临时摊位打印交款单
+    handlePrintPayMent = (key, record) => {
+        if (key === 'bond') {
+            this.props.action.fetchBondPayMent({
+                marginid: parseInt(record.marginid)
+            })
+            this.setState({
+                modalName: 'bondPayMent',
+                modalVisible: true,
+                modalTitle: '保证金打印交款单',
+                footer: <div>
+                    <Button type="default" onClick={this.handleModalCancel}>取消</Button>
+                    <Button type="primary" onClick={this.handlePrint}>打印</Button>
+                </div>
+            })
+        } else if (key === 'notContract') {
+            this.props.action.fetchNotContractPayMent({
+                boothpaymentid: parseInt(record.boothpaymentid)
+            })
+            let status
+            if (record.status === '已提交') {
+                status = '财务已提交'
+            } else if (record.status === '已到账') {
+                status = '财务已到账'
+            } else {
+                status = '提交财务'
+            }
+
+            this.setState({
+                modalName: 'notContractPayMent',
+                modalVisible: true,
+                modalTitle: '临时摊位打印交款单',
+                footer: <div>
+                    <Button type="default" onClick={this.handleModalCancel}>取消</Button>
+                    <Button type="primary" disabled={record.status !== '未确认'} onClick={this.handleCommitFinance.bind(this, 'notContract')}>{status}</Button>
+                    <Button type="primary" onClick={this.handlePrint}>打印</Button>
+                </div>
+            })
+        }
+    }
+
+    // 提交财务
+    handleCommitFinance = (key) => {
+        const {
+            busiLease,
+            action
+        } = this.props
+
+        if (key === 'bond' && this.state.selectedRows.length === 1) {
+            const data = this.state.selectedRows[0]
+            action.fetchCommitFinanceBond({
+                businessnumber: data.businessnumber,
+                organization: data.organization,
+                marginmoney: data.marginmoney,
+                partyid: data.partyid
+            })
+        } else if (key === 'notContract') {
+            action.fetchCommitFinanceNotContract({
+                boothpaymentid: busiLease.payMent.data.boothpaymentid,
+                businessnumber: busiLease.payMent.data.businessnumber,
+                status: busiLease.payMent.data.status,
+                validdate: busiLease.payMent.data.validdate,
+                invaliddate: busiLease.payMent.data.invaliddate,
+                money: busiLease.payMent.data.money,
+                organization: busiLease.payMent.data.organization
+            })
+            this.handleModalCancel()
+        }
     }
 
 
@@ -292,7 +391,7 @@ class LeaseManage extends Component {
             fetchContractTable,
             fetchBondTable,
             fetchNotContractTable
-        } = this.props.actionLease
+        } = this.props.action
 
         if (this.status === 'contract') {
             this.refresh(fetchContractTable)
@@ -306,8 +405,7 @@ class LeaseManage extends Component {
 
     render() {
         const {
-            querySchema,
-            controlSchema
+            querySchema
         } = this.props
 
         const {
@@ -318,43 +416,40 @@ class LeaseManage extends Component {
 
         const {
             selectedRowKeys,
-            selectedRows
+            selectedRows,
+            modalName
         } = this.state
         const oneSelected = selectedRowKeys.length == 1
 
-        let isApproval = false   // 提交审核
-        let isRenew = false      // 续租
-        let isChange = false     // 变更
-        let isEdit = false       // 编辑
-        let isRent = false       // 退租
-        let isVoid = false       // 作废
 
+        // 合同
+        let isContractApproval = false   // 提交审核
+        let isContractRenew = false      // 续租
+        let isContractChange = false     // 变更
+        let isContractEdit = false       // 编辑
+        let isContractRent = false       // 退租
+        let isContractVoid = false       // 作废
+
+        // 按钮操作
         if (oneSelected && (selectedRows[0].endtype !== '作废')) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增/续租') {
                 if (selected.flowstatus === '录入未完成') {
-                    isApproval = true
                     if (selected.fistatus === '未提交') {
-                        // 作废
-                        if (selectedRows[0].endtype !== '作废') {
-                            isVoid = true
-                        }
+                        // 作废、编辑、提交审核
+                        isContractVoid = true
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '待财务确认') {
                         // 作废
-                        if (selectedRows[0].endtype !== '作废') {
-                            isVoid = true
-                        }
+                        isContractVoid = true
                     } else if (selected.fistatus === '有效') {
                         // 续租、退租、变更
-                        isRenew = true
-                        isRent = true
-                        isChange = true
+                        isContractRenew = true
+                        isContractRent = true
+                        isContractChange = true
                     } else if (selected.fistatus === '已退') {
-                        // 编辑、作废
-                        isEdit = true
-                        if (selectedRows[0].endtype !== '作废') {
-                            isVoid = true
-                        }
+
                     }
                 } else if (selected.flowstatus === '审批中') {
                     if (selected.fistatus === '未提交') {
@@ -364,8 +459,7 @@ class LeaseManage extends Component {
                     } else if (selected.fistatus === '有效') {
                         // 催办
                     } else if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
+
                     }
                 } else if (selected.flowstatus === '审批通过') {
                     if (selected.fistatus === '未提交') {
@@ -374,35 +468,37 @@ class LeaseManage extends Component {
 
                     } else if (selected.fistatus === '有效') {
                         // 续租、退租、变更
-                        isRenew = true
-                        isRent = true
-                        isChange = true
+                        isContractRenew = true
+                        isContractRent = true
+                        isContractChange = true
                     } else if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
+
                     }
                 } else if (selected.flowstatus === '审批退回') {
-                    isApproval = true
                     if (selected.fistatus === '未提交') {
-                        // 作废、编辑
-                        isVoid = true
-                        isEdit = true
+                        // 作废、编辑、提交审核
+                        isContractVoid = true
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '待财务确认') {
-                        // 作废、编辑
-                        isVoid = true
-                        isEdit = true
+                        // 作废、编辑、提交审核
+                        isContractVoid = true
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '有效') {
-                        // 编辑
-                        isEdit = true
+                        // 编辑、审批
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '已退') {
-                        // 作废、编辑
-                        isVoid = true
-                        isEdit = true
+
                     }
                 }
             } else if (selected.flowtype === '变更') {
                 if (selected.flowstatus === '录入未完成') {
-                    isApproval = true
+                    // 作废、编辑、提交审核
+                    isContractVoid = true
+                    isContractEdit = true
+                    isContractApproval = true
                 } else if (selected.flowstatus === '审批中') {
                     if (selected.fistatus === '未提交') {
                         // 催办
@@ -411,8 +507,7 @@ class LeaseManage extends Component {
                     } else if (selected.fistatus === '有效') {
                         // 催办
                     } else if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
+
                     }
                 } else if (selected.flowstatus === '审批通过') {
                     if (selected.fistatus === '未提交') {
@@ -421,47 +516,44 @@ class LeaseManage extends Component {
 
                     } else if (selected.fistatus === '有效') {
                         // 续租、退租、变更
-                        isRenew = true
-                        isRent = true
-                        isChange = true
+                        isContractRenew = true
+                        isContractRent = true
+                        isContractChange = true
                     } else if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
+
                     }
                 } else if (selected.flowstatus === '审批退回') {
-                    isApproval = true
-
                     if (selected.fistatus === '未提交') {
-                        // 编辑
-                        isEdit = true
+                        // 编辑、提交审核
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '待财务确认') {
-                        // 作废、编辑
-                        isVoid = true
-                        isEdit = true
+                        // 作废、编辑、提交审核
+                        isContractVoid = true
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '有效') {
-                        // 编辑
-                        isEdit = true
+                        // 编辑、提交审核
+                        isContractEdit = true
+                        isContractApproval = true
                     } else if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
+
                     }
                 }
             } else if (selected.flowtype === '退租') {
                 if (selected.flowstatus === '录入未完成') {
-                    isApproval = true
+                    // 作废、编辑、提交审核
+                    isContractVoid = true
+                    isContractEdit = true
+                    isContractApproval = true
                 } else if (selected.flowstatus === '审批中') {
                     // 催办
                 } else if (selected.flowstatus === '审批通过') {
-                    if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
-                    }
+
                 } else if (selected.flowstatus === '审批退回') {
-                    isApproval = true
-                    if (selected.fistatus === '已退') {
-                        // 编辑
-                        isEdit = true
-                    }
+                    // 编辑、提交审核
+                    isContractEdit = true
+                    isContractApproval = true
                 }
             }
         }
@@ -469,38 +561,216 @@ class LeaseManage extends Component {
         const tableContractControl = <div className="button-group g-mb10">
             <Row>
                 <Col sm={16}>
-                    <Button onClick={this.handleAddContract}>新增</Button>
-                    <Button disabled={!isApproval} onClick={this.handleApprovalContract}>提交审核</Button>
-                    <Button disabled={!isRenew} onClick={this.handleRenewContract}>续租</Button>
-                    <Button disabled={!isChange} onClick={this.handleChangeContract}>变更</Button>
-                    <Button disabled={!isEdit} onClick={this.handleEditContract}>编辑</Button>
-                    <Button disabled={!isRent} onClick={this.handleRentContract}>退租</Button>
-                    <Button disabled={!isVoid} onClick={this.handleVoidContract}>作废</Button>
+                    <Button onClick={this.handleAdd.bind(this, 'contract')}>新增</Button>
+                    <Button disabled={!isContractApproval} onClick={this.handleApproval.bind(this, 'contract')}>提交审核</Button>
+                    <Button disabled={!isContractRenew} onClick={this.handleRenewContract}>续租</Button>
+                    <Button disabled={!isContractChange} onClick={this.handleChangeContract}>变更</Button>
+                    <Button disabled={!isContractEdit} onClick={this.handleEditContract}>编辑</Button>
+                    <Button disabled={!isContractRent} onClick={this.handleRentContract}>退租</Button>
+                    <Button disabled={!isContractVoid} onClick={this.handleVoid.bind(this, 'contract')}>作废</Button>
                     <Button onClick={this.handlePayContract}>合同交款</Button>
                 </Col>
                 <Col sm={8} className="g-tar">
-                    {/*<Button type="primary" onClick={this.handlePrintContract}>打印</Button>*/}
-                    <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                    <Button type="primary" onClick={this.handleExportPage.bind(this, 'contract')}>导出本页</Button>
                 </Col>
             </Row>
         </div>
 
-        let modalContent = ''
-        if (this.state.modalName === 'insertBond') {
-            modalContent = <InnerForm
-                ref="formInsert"
-                schema={this.props.insertBondSchema}
-                parentHandleSubmit={this.handleFormSubmit} />
+        // 履约保证金
+        let isBondApproval = false            // 提交审核
+        let isEdit = false
+        let isBondCommitFinance = false       // 提交财务
+        let isBondVoid = false                // 作废
+
+        // 按钮操作
+        if (oneSelected) {
+            const selected = selectedRows[0]
+            if (selected.flowtype === '新增') {
+                if (selected.flowstatus === '录入未完成') {
+                    // 作废、编辑、提交审核
+                    isBondVoid = true
+                    isEdit = true
+                    isBondApproval = true
+                } else if (selected.flowstatus === '审批中') {
+                    if (selected.fistatus === '未提交') {
+                        // 提交财务
+                        isBondCommitFinance = true
+                    } else if (selected.fistatus === '待财务确认') {
+                        // 催办
+                    } else if (selected.fistatus === '有效') {
+                        // 催办
+                    }
+                } else if (selected.flowstatus === '审批通过') {
+                    if (selected.fistatus === '未提交') {
+                        // 提交财务
+                        isBondCommitFinance = true
+                    }
+                } else if (selected.flowstatus === '审批退回') {
+                    if (selected.fistatus === '未提交' || selected.fistatus === '待财务确认') {
+                        // 作废、编辑、提交审核
+                        isBondVoid = true
+                        isEdit = true
+                        isBondApproval = true
+                    } else if (selected.fistatus === '有效') {
+                        // 编辑、提交审核
+                        isEdit = true
+                        isBondApproval = true
+                    }
+                }
+            } else if (selected.flowtype === '退款') {
+                if (selected.flowstatus === '审批中') {
+                    // 催办
+                } else if (selected.flowstatus === '审批通过') {
+                    if (selected.fistatus === '未提交') {
+                        // 提交财务
+                        isBondCommitFinance = true
+                    }
+                } else if (selected.flowstatus === '审批退回') {
+                    if (selected.fistatus !== '已冲抵') {
+                        // 编辑、提交审核
+                        isEdit = true
+                        isBondApproval = true
+                    }
+                }
+            }
         }
+
+        const tableBondControl = <div className="button-group g-mb10">
+            <Row>
+                <Col sm={16}>
+                    <Button onClick={this.handleAdd.bind(this, 'bond')}>新增</Button>
+                    <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, 'bond')}>提交审核</Button>
+                    <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, 'bond')}>提交财务</Button>
+                    <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, 'bond')}>作废</Button>
+                </Col>
+                <Col sm={8} className="g-tar">
+                    <Button type="primary" onClick={this.handleExportPage.bind(this, 'bond')}>导出本页</Button>
+                </Col>
+            </Row>
+        </div>
+
+        const tableColumnsBond = bondData.tableColumns.concat([
+            {
+                title: '操作',
+                key: 'operation',
+                render: (text, record, index) => <a href="javascript:;" onClick={this.handlePrintPayMent.bind(this, 'bond', record)} className="s-blue">打印缴款单</a>
+            }
+        ])
+
+        /*
+         * 临时摊位
+         */
+        let isNotContractVoid = false                // 作废
+
+        // 按钮操作
+        if (oneSelected && (selectedRows[0].endtype !== '作废')) {
+            const selected = selectedRows[0]
+            isNotContractVoid = true
+        }
+
+        const tableNotContractControl = <div className="button-group g-mb10">
+            <Button onClick={this.handleAdd.bind(this, 'notContract')}>新增临时摊位协议</Button>
+            <Button disabled={!isNotContractVoid} onClick={this.handleVoid.bind(this, 'notContract')}>作废</Button>
+        </div>
+
+        const tableColumnsNotContract = notContractData.tableColumns.concat([
+            {
+                title: '操作',
+                key: 'operation',
+                render: (text, record, index) => <a href="javascript:;" onClick={this.handlePrintPayMent.bind(this, 'notContract', record)} className="s-blue">打印缴款单</a>
+            }
+        ])
+
+        let modalContent = ''
+        if (modalName === 'bondPayMent') {
+            const {
+                loading,
+                data
+            } = this.props.busiLease.payMent
+
+            if (loading) {
+                modalContent = <Loading />
+            }
+            modalContent = <div className="modal-with-title contract-pay-print">
+                <h3 className="clearfix">保证金交款单<span className="u-mark">{data.businessnumber}</span></h3>
+                <table className="m-table-print">
+                    <tr>
+                        <td className="title">交款单位（个人）</td>
+                        <td className="g-tac">{data.organization}</td>
+                    </tr>
+                    <tr>
+                        <td className="title">金额</td>
+                        <td className="g-tac">{data.marginmoney}</td>
+                    </tr>
+                    <tr>
+                        <td className="title">备注</td>
+                        <td className="g-tac">{data.memo}</td>
+                    </tr>
+                    <tr>
+                        <td colSpan="2">
+                            <Row>
+                                <Col sm={6}>主管：</Col>
+                                <Col sm={6}>内勤：</Col>
+                                <Col sm={6}>销售经理：</Col>
+                                <Col sm={6}>收款人：</Col>
+                            </Row>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        } else if (modalName === 'notContractPayMent') {
+            const {
+                loading,
+                data
+            } = this.props.busiLease.payMent
+
+            if (loading) {
+                modalContent = <Loading />
+            }
+
+            modalContent = <div className="modal-with-title contract-pay-print">
+                <h3 className="clearfix">临时摊位交款单<span className="u-mark">{data.businessnumber}</span></h3>
+                <table className="m-table-print">
+                    <tr>
+                        <td className="title">交款人</td>
+                        <td className="g-tac">{data.organization}</td>
+                    </tr>
+                    <tr>
+                        <td className="title">金额</td>
+                        <td className="g-tac">{data.money}</td>
+                    </tr>
+                    <tr>
+                        <td className="title">有效期限</td>
+                        <td className="g-tac">{data.validdate}至{data.invaliddate}</td>
+                    </tr>
+                    <tr>
+                        <td className="title">备注</td>
+                        <td className="g-tac">{data.memo}</td>
+                    </tr>
+                    <tr>
+                        <td colSpan="2">
+                            <Row>
+                                <Col sm={6}>主管：</Col>
+                                <Col sm={6}>内勤：</Col>
+                                <Col sm={6}>销售经理：</Col>
+                                <Col sm={6}>收款人：</Col>
+                            </Row>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
         return (
-            <section>
+            <section className="padding">
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
                     okText={this.state.okText}
                     width={this.state.modalWidth}
                     onOk={this.handleModalOk}
-                    onCancel={this.handleModalCancel}>
+                    onCancel={this.handleModalCancel}
+                    footer={this.state.footer}>
                     {modalContent}
                 </Modal>
                 <Tabs defaultActiveKey={this.status} animated="false" type="inline" onChange={this.handlerTabs}>
@@ -517,6 +787,7 @@ class LeaseManage extends Component {
                             columns={contractData.tableColumns}
                             dataSource={contractData.tableData}
                             parentHandleSelectChange={this.parentHandleSelectChange}
+                            parentHandleDoubleClick={this.parentHandleDoubleClick}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />
@@ -533,11 +804,12 @@ class LeaseManage extends Component {
                             schema={querySchema['bond']}
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true} />
+                        {tableBondControl}
                         <InnerTable
                             loading={bondData.tableLoading}
-                            columns={bondData.tableColumns}
+                            columns={tableColumnsBond}
                             dataSource={bondData.tableData}
-                            parentHandleClick={this.parentHandleClick}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />
@@ -554,11 +826,12 @@ class LeaseManage extends Component {
                             schema={querySchema['notContract']}
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true} />
+                        {tableNotContractControl}
                         <InnerTable
                             loading={notContractData.tableLoading}
-                            columns={notContractData.tableColumns}
+                            columns={tableColumnsNotContract}
                             dataSource={notContractData.tableData}
-                            parentHandleClick={this.parentHandleClick}
+                            parentHandleSelectChange={this.parentHandleSelectChange}
                             isRowSelection={true}
                             bordered={true}
                             pagination={false} />

@@ -37,7 +37,7 @@ import {
 import {
     filterQueryObj
 } from 'UTIL'
-import './contractAdd.less'
+import './contract.less'
 
 import actionBusiLease from 'ACTION/busiLease'
 import actionLease from 'ACTION/configLease'
@@ -56,7 +56,6 @@ class ContractInsert extends Component {
         super(props)
         this.state = {
             tabsStatus: 'room',
-            organizationValue: '',
             prepactcode: 0,
             pactprintmodelid: 0,
             partyid: 0,
@@ -74,6 +73,7 @@ class ContractInsert extends Component {
             dataAttachment: [],
             isStagesShow: false,
             stagesNum: 1,
+            stagesShowNum: 1,
             tableIndex: 0,
             stagesTableData: [],
             stagesShowTableData: [],
@@ -156,7 +156,7 @@ class ContractInsert extends Component {
         const {
             fetchRoomTable,
             fetchClassLineTable,
-            fetchPolicyTable
+            fetchFilterPolicyTable
         } = this.props.actionLease
 
         const {
@@ -173,9 +173,7 @@ class ContractInsert extends Component {
                 status: '有效'
             }, classLineData.pageSize, page, fetchClassLineTable)
         } else if (tabsStatus === 'policy') {
-            this.select({
-                status: '开启'
-            }, policyData.pageSize, page, fetchPolicyTable)
+            this.select({}, policyData.pageSize, page, fetchFilterPolicyTable)
         } else if (tabsStatus === 'contractBond') {
             this.select({
                 status: '有效'
@@ -226,20 +224,24 @@ class ContractInsert extends Component {
         })
     }
 
-    /**
-     * 点击获取客户信息
-     */
-    handleInputChange = (e) => {
-        this.setState({
-            organizationValue: e.target.value,
-        })
+    // 表单点击
+    parentHandleInput = (key) => {
+        if (key === 'organization') {
+            // 获取用户
+            this.setState({
+                modalName: 'selectOrganization',
+                modalVisible: true,
+                modalTitle: '选择客户',
+                modalWidth: '900'
+            })
+        }
     }
 
-    // 获取客户信息-搜索
-    handleSearch = () => {
-        const { action } = this.props
-        action.fetchContractOrganization({
-            keywords: this.state.organizationValue
+    // 搜索用户
+    handleSearchOrganization = () => {
+        const val = this.props.form.getFieldsValue()
+        this.props.action.fetchOrganization({
+            keywords: val.organizationnum
         })
     }
 
@@ -332,9 +334,7 @@ class ContractInsert extends Component {
             modalVisible: true,
             modalTitle: '选择优惠'
         })
-        this.select({
-            status: '开启'
-        }, 10, 0, this.props.actionLease.fetchPolicyTable)
+        this.select({}, 10, 0, this.props.actionLease.fetchFilterPolicyTable)
     }
 
     // 新增冲抵
@@ -661,11 +661,14 @@ class ContractInsert extends Component {
 
     // 分期-修改
     handleEditStages = (text, record, index) => {
+        console.log('修改前', record)
+
         this.setState({
             modalVisible: true,
             modalWidth: '600',
             modalTitle: '修改第' + record.stagesnumber + '期',
             modalName: 'stagesModal',
+            stagesNum: record.stagesnumber,
             tableIndex: index
         })
         const newObj = {}
@@ -689,7 +692,7 @@ class ContractInsert extends Component {
     handleShowStages = (record) => {
         this.setState({
             isStagesShow: true,
-            stagesNum: record.stagesnumber,
+            stagesShowNum: record.stagesnumber,
             stagesShowTableData: this.state.stagesTableData[record.stagesnumber - 1].rentpactpaylists
         })
     }
@@ -824,6 +827,7 @@ class ContractInsert extends Component {
                     partyname: this.state.selectDatas[0].partyname
                 })
                 this.props.form.setFieldsValue(this.state.selectDatas[0])
+                this.props.action.resetOrganization()
             }
             this.handleModalCancel()
         } else if (modalName === 'stagesModal') {
@@ -839,9 +843,10 @@ class ContractInsert extends Component {
                 return false;
             }
 
-            obj[this.state.tableIndex] = Object.assign({}, newObj, {
+            obj[this.state.tableIndex] = Object.assign({}, obj[this.state.tableIndex], newObj, {
                 stagesnumber: this.state.stagesNum
             })
+            console.log('保存前', obj)
 
             this.setState({
                 stagesTableData: obj
@@ -1123,7 +1128,6 @@ class ContractInsert extends Component {
                 render: (text, record, index) => <div className="button-group">
                     <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditStages.bind(this, text, record, index)}>修改</a>
                     <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleShowStages.bind(this, record, index)}>明细</a>
-                    <a href="javascript:;" className="s-blue" onClick={this.handlePrintStages.bind(this, record, index)}>打印交款单</a>
                 </div>
             }
         ])
@@ -1168,21 +1172,19 @@ class ContractInsert extends Component {
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'selectOrganization') {
             const {
-                contractOrganization
+                organization
             } = this.props.busiLease
             modalContent = <div className="m-search-modal">
-                <div className="m-search-bar">
-                    <Input
-                        placeholder="请选择身份证号|邮箱|手机号|会员名|会员卡号"
-                        onChange={this.handleInputChange}
-                        onFocus={this.handleFocusBlur}
-                        onBlur={this.handleFocusBlur}
-                        onPressEnter={this.handleSearch} />
-                    <Button icon="search" type="primary" size="default" onClick={this.handleSearch}>搜索</Button>qq123456222swe
-                </div>
+                <FormLayout
+                    schema={organization.querySchema}
+                    form={this.props.form}
+                    buttonSchema={organization.queryButtons}
+                    parentHandleClick={this.handleSearchOrganization}
+                    parentHandleSelect={this.parentHandleSelect} />
+                测试可用数据：qq123456222swe
                 <InnerTable
-                    columns={contractOrganization.tableColumns}
-                    dataSource={contractOrganization.tableData}
+                    columns={organization.tableColumns}
+                    dataSource={organization.tableData}
                     schema={[]}
                     parentHandleSelectChange={this.parentHandleSelectChange}
                     isRowSelection={true}
@@ -1219,10 +1221,8 @@ class ContractInsert extends Component {
 
                     {/* 客户名称 */}
                     <div className="g-border-bottom">
-                        <div className="button-get-organization">
-                            <Button type="primary" onClick={this.handleGetOrganization}>点击获取客户信息</Button>
-                        </div>
                         <FormLayout
+                            parentHandleInput={this.parentHandleInput}
                             schema={this.addSchema['organization']}
                             form={this.props.form} />
                     </div>
@@ -1320,7 +1320,7 @@ class ContractInsert extends Component {
                         {
                             this.state.isStagesShow ?
                                 <div className="m-stages-show">
-                                    <h2>{`第${this.state.stagesNum}期明细`}</h2>
+                                    <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
                                     <div className="button-group g-mb10">
                                         <Button onClick={this.handleStagesInsert}>新增明细</Button>
                                         <Button onClick={this.handleStagesClose}>关闭明细</Button>

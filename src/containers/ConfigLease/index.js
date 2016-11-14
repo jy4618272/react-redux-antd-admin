@@ -631,7 +631,6 @@ class Lease extends Component {
                             columns={auditPersonData.tableColumns}
                             dataSource={auditPersonData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['auditPerson']}
                             bordered={true}
                             pagination={false} />
                         <InnerPagination

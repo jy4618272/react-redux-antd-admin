@@ -15,7 +15,7 @@ module.exports = [
         validate: [
             {
                 rules: [
-                    { required: true, type: 'string', min: 1, message: '请输入交款单号' },
+                    { required: true, type: 'string', message: '请输入交款单号' },
                 ]
             }
         ]
@@ -51,7 +51,7 @@ module.exports = [
     {
         key: '4',
         title: '金额',
-        dataType: 'flat',
+        dataType: 'float',
         placeholder: '请输入金额',
         feedBackShow: true,
         validate: [

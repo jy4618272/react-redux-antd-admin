@@ -6,15 +6,15 @@ module.exports = {
             dataType: 'varchar',
             placeholder: "请输入客户名称",
             feedBackShow: true,
+            readonly:true,
             validate: [
                 {
                     rules: [
-                        { required: true, message: '必填，请输入客户名称' },
+                        { required: true, message: '请输入客户名称' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
-            ],
-            disabled: true
+            ]
         },
         {
             key: 'operationrange',

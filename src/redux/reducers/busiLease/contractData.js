@@ -38,12 +38,12 @@ const initialState = {
             title:'财务业务状态',            
             dataIndex:'fistatus',            
             key:'fistatus'
-        },
-        {
-            title:'结束类型',            
-            dataIndex:'endtype',            
-            key:'endtype'
         }
+        // {
+        //     title:'结束类型',            
+        //     dataIndex:'endtype',            
+        //     key:'endtype'
+        // }
     ],
     tableData: [],
     skipCount: 1,

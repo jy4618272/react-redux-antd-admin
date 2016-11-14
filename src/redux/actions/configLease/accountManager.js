@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
 
@@ -9,6 +9,7 @@ const REQUEST_MANAGER_TABLE = 'REQUEST_MANAGER_TABLE'
 const RECEIVE_MANAGER_TABLE = 'RECEIVE_MANAGER_TABLE'
 const STATUS_MANAGER = 'STATUS_MANAGER'
 const RECEIVE_BUSI_MANAGER_TABLE = 'RECEIVE_BUSI_MANAGER_TABLE'
+const RECEIVE_FILTER_MANAGER_TABLE = 'RECEIVE_FILTER_MANAGER_TABLE'
 
 // ================================
 // Action Creator
@@ -18,7 +19,7 @@ const requestManagerTable = () => ({
     type: REQUEST_MANAGER_TABLE
 })
 
-// 获取
+// 列表获取
 const receiveManagerTable = (res) => ({
     type: RECEIVE_MANAGER_TABLE,
     payload: res
@@ -26,7 +27,7 @@ const receiveManagerTable = (res) => ({
 const fetchManagerTable = (data) => {
     return dispatch => {
         dispatch(requestManagerTable())
-        xhr('post', paths.leasePath + '/salercs/selectSalerBySite', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/selectByIndex', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -47,7 +48,7 @@ const fetchManagerTable = (data) => {
     }
 }
 
-// 获取
+// 查询-获取
 const receiveBusiManagerTable = (res) => ({
     type: RECEIVE_BUSI_MANAGER_TABLE,
     payload: res
@@ -76,6 +77,35 @@ const fetchBusiManagerTable = (data) => {
     }
 }
 
+// 过滤获取
+const receiveFilterManagerTable = (res) => ({
+    type: RECEIVE_FILTER_MANAGER_TABLE,
+    payload: res
+})
+const fetchFilterManagerTable = (data) => {
+    return dispatch => {
+        dispatch(requestManagerTable())
+        xhr('post', paths.leasePath + '/salercs/selectSalerBySite', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('客户经理之列表', newRes)
+
+            if (res.result === 'success') {
+                hide()
+
+                dispatch(receiveFilterManagerTable(newRes))
+            } else {
+                hide()
+
+                dispatch(receiveFilterManagerTable({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
+
 
 
 // 开启/关闭
@@ -94,6 +124,10 @@ const changeStatusManager = (data) => {
 
             if (res.result === 'success') {
                 hide()
+                notification.success({
+                    message: '状态' + data.status,
+                    description: '状态' + data.status + '成功'
+                })
                 dispatch(statusManager(newRes))
             } else {
                 hide()
@@ -109,6 +143,7 @@ const changeStatusManager = (data) => {
 export default {
     fetchManagerTable,
     fetchBusiManagerTable,
+    receiveFilterManagerTable,
     changeStatusManager
 }
 
@@ -126,6 +161,14 @@ export const ACTION_HANDLERS = {
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
     }),
     [RECEIVE_BUSI_MANAGER_TABLE]: (accountManagerData, {payload: res}) => ({
+        ...accountManagerData,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
+    [RECEIVE_FILTER_MANAGER_TABLE]: (accountManagerData, {payload: res}) => ({
         ...accountManagerData,
         tableLoading: false,
         tableData: res.data,

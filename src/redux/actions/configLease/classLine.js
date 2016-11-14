@@ -1,6 +1,6 @@
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
-import {errHandler, paths} from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -30,7 +30,7 @@ const fetchClassLineTable = (data) => {
                 sub: data
             })
             console.log('班线管理之列表', newRes)
-            
+
             if (res.result === 'success') {
                 dispatch(receiveClassLineTable(newRes))
             } else {
@@ -58,6 +58,10 @@ const changeStatusClassLine = (data) => {
             console.log('班线之开启', newRes)
             if (res.result === 'success') {
                 hide()
+                notification.success({
+                    message: '状态' + data.status,
+                    description: '状态' + data.status + '成功'
+                })
                 dispatch(statusClassLine(newRes))
             } else {
                 hide()
@@ -78,16 +82,16 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_CLASSLINE_TABLE]: (classLineData) => ({
         ...classLineData,
-        tableLoading: true
+    tableLoading: true
     }),
-    [RECEIVE_CLASSLINE_TABLE]: (classLineData, {payload: res}) => ({
+[RECEIVE_CLASSLINE_TABLE]: (classLineData, {payload: res}) => ({
         ...classLineData,
-        tableLoading: false,
-        tableData: res.data,
-        total: res.count,
-        pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount)/10 + 1)
-    }),
+    tableLoading: false,
+    tableData: res.data,
+    total: res.count,
+    pageSize: 10,
+    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+}),
     [STATUS_CLASS_LINE]: (classLineData, {payload: res}) => {
         const obj = classLineData.tableData
         obj.map(item => {

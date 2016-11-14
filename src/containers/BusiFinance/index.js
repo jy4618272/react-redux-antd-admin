@@ -43,7 +43,8 @@ class Finance extends Component {
         }
 
         // 组件初始化时尝试获取schema
-        this.status = "未确认"
+        this.tabsDefault = sessionStorage.getItem('busiFinanceTabs') || 'notConfirmed'
+        this.status = (this.tabsDefault === 'notConfirmed') ? "未确认" : "已到账"
         this.initFetchSchema(this.props)
     }
 
@@ -53,9 +54,11 @@ class Finance extends Component {
      * @param 
      */
     handlerTabs = (activeKey) => {
-        if (activeKey == '1') {
+        if (activeKey == 'notConfirmed') {
             this.status = "未确认"
-        } else if (activeKey == '2') {
+            sessionStorage.setItem('busiFinanceTabs', 'notConfirmed')
+        } else if (activeKey == 'confirmed') {
+            sessionStorage.setItem('busiFinanceTabs', 'confirmed')            
             this.status = "已到账"
         }
 
@@ -135,7 +138,6 @@ class Finance extends Component {
      * 点击查询按钮时触发查询
      * @param 
      */
-
     handleFormSubmit = (newObj) => {
         const tmpObj = Object.assign({}, newObj)
         const {busiFinance} = this.props
@@ -285,9 +287,10 @@ class Finance extends Component {
         }
     }
 
+    // 双击查看详情
     parentHandleDoubleClick = (record, index) => {
         if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
-            hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}`)
+            hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}&paytype=${record.paytype}`)
         } else {
             // alert(3)
         }
@@ -342,8 +345,8 @@ class Finance extends Component {
 
         return (
             <section className="padding">
-                <Tabs defaultActiveKey="1" animated="false" type="card" onTabClick={this.handlerTabs}>
-                    <TabPane tab="未确认" key="1">
+                <Tabs defaultActiveKey={this.tabsDefault} animated="false" type="card" onTabClick={this.handlerTabs}>
+                    <TabPane tab="未确认" key="notConfirmed">
                         <InnerForm
                             ref="form"
                             formStyle="g-mb20 m-advance-filter"
@@ -368,7 +371,7 @@ class Finance extends Component {
                             />
                     </TabPane>
 
-                    <TabPane tab="已到账" key="2">
+                    <TabPane tab="已到账" key="confirmed">
                         <InnerForm
                             ref="form"
                             formStyle="g-mb20 m-advance-filter"

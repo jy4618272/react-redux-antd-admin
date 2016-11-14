@@ -1,4 +1,7 @@
-import { message } from 'antd'
+import {
+    message,
+    notification
+} from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
 
@@ -60,6 +63,10 @@ const approvalContract = (data) => {
             console.log('合同提交审核数据：', newRes)
             if (res.result === 'success') {
                 hide()
+                notification.success({
+                    message: '合同提交审核',
+                    description: '合同提交审核成功'
+                })
                 dispatch(statusApprovalContract(newRes))
             } else {
                 hide()
@@ -86,6 +93,10 @@ const voidContract = (data) => {
             console.log('合同作废数据：', newRes)
             if (res.result === 'success') {
                 hide()
+                notification.success({
+                    message: '合同作废',
+                    description: '合同作废成功'
+                })
                 dispatch(statusContract(newRes))
             } else {
                 hide()
@@ -109,7 +120,7 @@ export const ACTION_HANDLERS = {
     tableLoading: true
     }),
     [RECEIVE_CONTRACT_TABLE]: (contract, {payload: res}) => ({
-                ...contract,
+                    ...contract,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
@@ -119,7 +130,7 @@ export const ACTION_HANDLERS = {
     [RECEIVE_CONTRACT_VOID]: (contract, {payload: res}) => {
         const obj = contract.tableData
         obj.map(item => {
-            if(item.rentpactid == res.sub.rentpactid){
+            if (item.rentpactid == res.sub.rentpactid) {
                 item.endtype = '作废'
             }
         })
@@ -128,16 +139,16 @@ export const ACTION_HANDLERS = {
             tableData: obj
         })
     },
-    [RECEIVE_CONTRACT_APPROVAL]: (contract, {payload: res}) => {
-        const obj = contract.tableData
-        obj.map(item => {
-            if(item.rentpactid == res.sub.rentpactid){
-                item.flowstatus = '审批中'
-            }
-        })
+        [RECEIVE_CONTRACT_APPROVAL]: (contract, {payload: res}) => {
+            const obj = contract.tableData
+            obj.map(item => {
+                if (item.rentpactid == res.sub.rentpactid) {
+                    item.flowstatus = '审批中'
+                }
+            })
 
-        return Object.assign({}, contract, {
-            tableData: obj
-        })
-    }
+            return Object.assign({}, contract, {
+                tableData: obj
+            })
+        }
 }

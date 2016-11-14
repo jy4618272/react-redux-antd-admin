@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
 
@@ -8,6 +8,7 @@ import { errHandler, paths } from 'SERVICE/config'
 const REQUEST_POLICY_TABLE = 'REQUEST_POLICY_TABLE'
 const RECEIVE_POLICY_TABLE = 'RECEIVE_POLICY_TABLE'
 const RECEIVE_BUSI_POLICY_TABLE = 'RECEIVE_BUSI_POLICY_TABLE'
+const RECEIVE_FILTER_POLICY_TABLE = 'RECEIVE_FILTER_POLICY_TABLE'
 const STATUS_POPLICY = 'STATUS_POPLICY'
 
 // ================================
@@ -18,7 +19,7 @@ const requestPolicyTable = () => ({
     type: REQUEST_POLICY_TABLE
 })
 
-// 获取
+// 列表获取
 const receivePolicyTable = (res) => ({
     type: RECEIVE_POLICY_TABLE,
     payload: res
@@ -26,7 +27,7 @@ const receivePolicyTable = (res) => ({
 const fetchPolicyTable = (data) => {
     return dispatch => {
         dispatch(requestPolicyTable())
-        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionBySite', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/selectByIndex', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -71,6 +72,32 @@ const fetchBusiPolicyTable = (data) => {
     }
 }
 
+// 过滤获取
+const receiveFilterPolicyTable = (res) => ({
+    type: RECEIVE_FILTER_POLICY_TABLE,
+    payload: res
+})
+const fetchFilterPolicyTable = (data) => {
+    return dispatch => {
+        dispatch(requestPolicyTable())
+        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionBySite', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('政策优惠之列表', newRes)
+
+            if (res.result === 'success') {
+                hide()
+                dispatch(receiveFilterPolicyTable(newRes))
+            } else {
+                hide()
+                dispatch(receiveFilterPolicyTable({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
 
 // 开启/关闭
 const statusPolicy = (res) => ({
@@ -87,6 +114,10 @@ const changeStatusPolicy = (data) => {
             console.log('政策优惠之开启', newRes)
             if (res.result === 'success') {
                 hide()
+                notification.success({
+                    message: '状态' + data.status,
+                    description: '状态' + data.status + '成功'
+                })
                 dispatch(statusPolicy(newRes))
             } else {
                 hide()
@@ -102,6 +133,7 @@ const changeStatusPolicy = (data) => {
 export default {
     fetchPolicyTable,
     fetchBusiPolicyTable,
+    fetchFilterPolicyTable,
     changeStatusPolicy
 }
 
@@ -119,6 +151,14 @@ export const ACTION_HANDLERS = {
     skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
 }),
     [RECEIVE_BUSI_POLICY_TABLE]: (policyData, {payload: res}) => ({
+        ...policyData,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
+    [RECEIVE_FILTER_POLICY_TABLE]: (policyData, {payload: res}) => ({
         ...policyData,
         tableLoading: false,
         tableData: res.data,

@@ -1,10 +1,10 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/busiLease/contractPay/payShow'
+import { ACTION_HANDLERS } from 'ACTION/busiLease/payMent'
 
 const initialState = {
     loading: true,
     data: {},
-    tableColumns: [
+    tableContractColumns: [
         {
             title: '期数',
             dataIndex: 'stagesnumber',

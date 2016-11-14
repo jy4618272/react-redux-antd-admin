@@ -34,42 +34,6 @@ class Lease extends Component {
     constructor(props) {
         super(props)
         console.log('11111', props)
-        this.initFetchSchema(this.props)
-    }
-
-    /**
-     * 尝试获取某个表的querySchema和dataSchema
-     * 无论是从远端获取还是从本地配置读取, 这个方法必须是同步的
-     *
-     * @param dbName
-     * @param tableName
-     */
-    initFetchSchema(props) {
-        const that = this
-        const routes = props.routes
-        const tableName = routes.pop().tableName // lease
-        if (tableName) {
-            console.info('init component Finance with tableName = %s', tableName)
-        } else {
-            console.error('can not find tableName, check your router config')
-            this.inited = false  // 是否成功获取schema
-            this.errorMsg = '找不到表名, 请检查路由配置'
-            return false
-        }
-
-        this.tableName = tableName
-
-        try {
-            this.controlSchema = require(`SCHEMA/${tableName}/${tableName}.controlSchema.js`)
-            console.log(`加载${tableName}controlSchema`, this.controlSchema)
-        } catch (e) {
-            console.error('load query schema error: %o', e)
-            this.inited = false
-            this.errorMsg = `加载${tableName}controlSchema, 请检查配置`
-            return false
-        }
-
-        this.inited = true
     }
 
     /**
@@ -197,7 +161,6 @@ class Lease extends Component {
                             columns={departmentData.tableColumns}
                             dataSource={departmentData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['department']}
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />
@@ -214,7 +177,6 @@ class Lease extends Component {
                             columns={postData.tableColumns}
                             dataSource={postData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['post']}
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />
@@ -231,7 +193,6 @@ class Lease extends Component {
                             columns={roleData.tableColumns}
                             dataSource={roleData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['role']}
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />
@@ -247,7 +208,6 @@ class Lease extends Component {
                             columns={userData.tableColumns}
                             dataSource={userData.tableData}
                             isRowSelection={true}
-                            schema={this.controlSchema['user']}
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />

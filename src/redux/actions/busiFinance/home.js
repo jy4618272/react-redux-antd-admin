@@ -63,6 +63,10 @@ const fetchReceive = (data) => {
             const hide = message.loading('正在查询...', 0)
             console.log('确认收款', res)
             if (res.result === 'success') {
+                notification.success({
+                    message: '确认收款',
+                    description: '确认收款成功'
+                })
                 dispatch(receiveReceive(res))
             } else {
                 dispatch(receiveReceive({}))
@@ -86,6 +90,10 @@ const fetchRefund = (data) => {
             const hide = message.loading('正在查询...', 0)
             console.log('确认退款', res)
             if (res.result === 'success') {
+                notification.success({
+                    message: '确认退款',
+                    description: '确认退款成功'
+                })
                 dispatch(receiveRefund(res))
             } else {
                 dispatch(receiveRefund({}))
@@ -110,7 +118,10 @@ const fetchBack = (data) => {
             console.log('退回', res)
             if (res.result === 'success') {
                 hide()
-
+                notification.success({
+                    message: '财务退回',
+                    description: '财务退回成功'
+                })
                 dispatch(receiveBack(res))
             } else {
                 hide()

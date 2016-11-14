@@ -15,7 +15,6 @@ import InnerPagination from './DBTable/InnerPagination'
 import ModalTable from './ModalContent/ModalTable'
 import ModalForm from './ModalContent/ModalForm'
 
-import ConstractStagesEditModal from './BusiLease/Manage/ConstractStagesEditModal'
 
 export {
     Header,
@@ -32,6 +31,5 @@ export {
     InnerTable,
     InnerPagination,
     ModalTable,
-    ModalForm,
-    ConstractStagesEditModal
+    ModalForm
 }

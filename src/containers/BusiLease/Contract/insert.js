@@ -30,6 +30,8 @@ import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
+    Err,
+    Loading,
     WorkFlow,
     FormLayout,
     InnerTable,
@@ -39,7 +41,7 @@ import {
     ConstractStagesEditModal
 } from 'COMPONENT'
 
-import './contractAdd.less'
+import './contract.less'
 
 import actionBusiLease from 'ACTION/busiLease'
 import actionLease from 'ACTION/configLease'
@@ -58,7 +60,6 @@ class ContractInsert extends Component {
         super(props)
         this.state = {
             tabsStatus: 'room',
-            organizationValue: '',
             pactprintmodelid: 0,
             partyid: 0,
             partyname: '',
@@ -75,6 +76,7 @@ class ContractInsert extends Component {
             dataAttachment: [],
             isStagesShow: false,
             stagesNum: 1,
+            stagesShowNum: 1,
             tableIndex: 0,
             stagesTableData: [],
             stagesShowTableData: [],
@@ -124,6 +126,7 @@ class ContractInsert extends Component {
             this.errorMsg = `加载${tableName}表的contractAddSchema出错, 请检查配置`
             return false
         }
+        this.inited = true
     }
 
     /**
@@ -162,7 +165,7 @@ class ContractInsert extends Component {
         const {
             fetchRoomTable,
             fetchClassLineTable,
-            fetchPolicyTable
+            fetchFilterPolicyTable
         } = this.props.actionLease
 
         const {
@@ -179,9 +182,7 @@ class ContractInsert extends Component {
                 status: '有效'
             }, classLineData.pageSize, page, fetchClassLineTable)
         } else if (tabsStatus === 'policy') {
-            this.select({
-                status: '开启'
-            }, policyData.pageSize, page, fetchPolicyTable)
+            this.select({}, policyData.pageSize, page, fetchFilterPolicyTable)
         } else if (tabsStatus === 'contractBond') {
             this.select({
                 status: '有效'
@@ -232,20 +233,24 @@ class ContractInsert extends Component {
         })
     }
 
-    /**
-     * 点击获取客户信息
-     */
-    handleInputChange = (e) => {
-        this.setState({
-            organizationValue: e.target.value,
-        })
+    // 表单点击
+    parentHandleInput = (key) => {
+        if (key === 'organization') {
+            // 获取用户
+            this.setState({
+                modalName: 'selectOrganization',
+                modalVisible: true,
+                modalTitle: '选择客户',
+                modalWidth: '900'
+            })
+        }
     }
 
-    // 获取客户信息-搜索
-    handleSearch = () => {
-        const { action } = this.props
-        action.fetchContractOrganization({
-            keywords: this.state.organizationValue
+    // 搜索用户
+    handleSearchOrganization = () => {
+        const val = this.props.form.getFieldsValue()
+        this.props.action.fetchOrganization({
+            keywords: val.organizationnum
         })
     }
 
@@ -338,9 +343,7 @@ class ContractInsert extends Component {
             modalVisible: true,
             modalTitle: '选择优惠'
         })
-        this.select({
-            status: '开启'
-        }, 10, 0, this.props.actionLease.fetchPolicyTable)
+        this.select({}, 10, 0, this.props.actionLease.fetchFilterPolicyTable)
     }
 
     // 新增冲抵
@@ -576,10 +579,6 @@ class ContractInsert extends Component {
             message.error(`${info.file.name}文件上传失败`)
         }
     }
-    // handleViewDoc = (text, record, index) => {
-    //     const {dataAttachment} = this.state
-    //     window.location.href = rootPaths.imgPath + paths.imgPath +'/'+ dataAttachment[index].url
-    // }
 
     handleDelDoc = (text, record, index) => {
         const {dataAttachment} = this.state
@@ -594,11 +593,13 @@ class ContractInsert extends Component {
 
     // 分期-修改
     handleEditStages = (text, record, index) => {
+        console.log('修改前', record)
         this.setState({
             modalVisible: true,
             modalWidth: '600',
             modalTitle: '修改第' + record.stagesnumber + '期',
             modalName: 'stagesModal',
+            stagesNum: record.stagesnumber,
             tableIndex: index
         })
         const newObj = {}
@@ -615,14 +616,14 @@ class ContractInsert extends Component {
 
         setTimeout(() => {
             this.refs.stagesModal.setFieldsValue(newObj)
-        }, 0)
+        }, 100)
     }
 
     // 明细    
     handleShowStages = (record) => {
         this.setState({
             isStagesShow: true,
-            stagesNum: record.stagesnumber,
+            stagesShowNum: record.stagesnumber,
             stagesShowTableData: this.state.stagesTableData[record.stagesnumber - 1].rentpactpaylists
         })
     }
@@ -741,7 +742,8 @@ class ContractInsert extends Component {
                 this.props.form.setFieldsValue(this.state.selectDatas[0])
             }
 
-            this.props.action.resetContractOrganization()
+            form.resetFields(['organizationnum'])
+            this.props.action.resetOrganization()
             this.handleModalCancel()
         } else if (modalName === 'stagesModal') {
             const oldObj = this.refs.stagesModal.getFieldsValue()
@@ -756,9 +758,11 @@ class ContractInsert extends Component {
                 return false;
             }
 
-            obj[this.state.tableIndex] = Object.assign({}, newObj, {
+            obj[this.state.tableIndex] = Object.assign({}, obj[this.state.tableIndex], newObj, {
                 stagesnumber: this.state.stagesNum
             })
+
+            console.log('保存前', obj)
 
             this.setState({
                 stagesTableData: obj
@@ -807,7 +811,7 @@ class ContractInsert extends Component {
                         return false;
                     }
                     obj.push(Object.assign({}, newObj, {
-                        stagesnumber: this.state.stagesNum
+                        stagesnumber: this.state.stagesShowNum
                     }))
                 } else if (modalOpenBtn === 'stagesShowEdit') {
                     const tmpEdit = this.state.stagesShowTableData[this.state.tableIndex].itemname
@@ -821,7 +825,7 @@ class ContractInsert extends Component {
                         return false;
                     }
                     obj[this.state.tableIndex] = Object.assign({}, newObj, {
-                        stagesnumber: this.state.stagesNum
+                        stagesnumber: this.state.stagesShowNum
                     })
                 }
 
@@ -837,7 +841,14 @@ class ContractInsert extends Component {
     // 弹框关闭
     handleModalCancel = () => {
         const {modalName} = this.state
-        if (modalName === 'stagesShowModal') {
+        const {
+            form,
+            action
+        } = this.props
+        if (modalName === 'selectOrganization') {
+            form.resetFields(['organizationnum'])
+            action.resetOrganization()
+        } else if (modalName === 'stagesShowModal') {
             this.refs.stagesShowModal.resetFields()
         } else if (modalName === 'stagesModal') {
             this.refs.stagesModal.resetFields()
@@ -945,7 +956,6 @@ class ContractInsert extends Component {
                 if (res.result === 'success') {
                     const obj = []
                     obj.push(res.data)
-                    console.log('11111', obj)
                     this.setState({
                         dataRoom: obj
                     })
@@ -1070,21 +1080,19 @@ class ContractInsert extends Component {
                 handlePageChange={this.handlePageChange} />
         } else if (modalName === 'selectOrganization') {
             const {
-                contractOrganization
+                organization
             } = this.props.busiLease
             modalContent = <div className="m-search-modal">
-                <div className="m-search-bar">
-                    <Input
-                        placeholder="请选择身份证号|邮箱|手机号|会员名|会员卡号"
-                        onChange={this.handleInputChange}
-                        onFocus={this.handleFocusBlur}
-                        onBlur={this.handleFocusBlur}
-                        onPressEnter={this.handleSearch} />
-                    <Button icon="search" type="primary" size="default" onClick={this.handleSearch}>搜索</Button>qq123456222swe
-                </div>
+                <FormLayout
+                    schema={organization.querySchema}
+                    form={this.props.form}
+                    buttonSchema={organization.queryButtons}
+                    parentHandleClick={this.handleSearchOrganization}
+                    parentHandleSelect={this.parentHandleSelect} />
+                测试可用数据：qq123456222swe
                 <InnerTable
-                    columns={contractOrganization.tableColumns}
-                    dataSource={contractOrganization.tableData}
+                    columns={organization.tableColumns}
+                    dataSource={organization.tableData}
                     parentHandleSelectChange={this.parentHandleSelectChange}
                     isRowSelection={true}
                     bordered={true}
@@ -1102,6 +1110,10 @@ class ContractInsert extends Component {
 
         const workFlowProps = {
             flow: busiLease.contractWorkFlow
+        }
+
+        if (!this.inited) {
+            return <Err errorMsg={this.errorMsg} />
         }
 
         return (
@@ -1129,10 +1141,8 @@ class ContractInsert extends Component {
 
                     {/* 客户名称 */}
                     <div className="g-border-bottom">
-                        <div className="button-get-organization">
-                            <Button type="primary" onClick={this.handleGetOrganization}>点击获取客户信息</Button>
-                        </div>
                         <FormLayout
+                            parentHandleInput={this.parentHandleInput}
                             schema={this.addSchema['organization']}
                             form={this.props.form} />
                     </div>
@@ -1234,7 +1244,7 @@ class ContractInsert extends Component {
                         {
                             this.state.isStagesShow ?
                                 <div className="m-stages-show">
-                                    <h2>{`第${this.state.stagesNum}期明细`}</h2>
+                                    <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
                                     <div className="button-group g-mb10">
                                         <Button onClick={this.handleStagesInsert}>新增明细</Button>
                                         <Button onClick={this.handleStagesClose}>关闭明细</Button>

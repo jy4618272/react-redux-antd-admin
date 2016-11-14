@@ -17,7 +17,7 @@ module.exports = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', min: 1, message: '必填，班线名称不能重复' },
+                        { required: true, type: 'string', message: '必填，班线名称不能重复' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }
@@ -47,7 +47,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]
@@ -117,7 +117,7 @@ module.exports = {
             title: '优惠对象',
             showType: 'select',
             options: [
-                { key: '合同', value: '合同' },
+                { key: '房间', value: '房间' },
                 { key: '班线', value: '班线' }
             ],
             placeholder: "请选择优惠对象",
@@ -174,7 +174,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]
@@ -195,7 +195,7 @@ module.exports = {
             dataType: 'varchar',
             placeholder: '请输入姓名',
             feedBackShow: true,
-            disabled:true,
+            disabled: true,
             validate: [{
                 rules: [
                     { type: 'string', required: true, message: '必填，请输入姓名' },
@@ -208,7 +208,7 @@ module.exports = {
             title: '工号',
             dataType: 'varchar',
             placeholder: '请输入工号',
-            disabled:true,
+            disabled: true,
             feedBackShow: true,
             validate: [{
                 rules: [
@@ -226,7 +226,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]
@@ -291,7 +291,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { type: 'string', min: 4, message: '非必填，如果填写至少4个汉字' },
+                    { type: 'string', message: '备注' },
                 ],
                 trigger: 'onChange',
             }]

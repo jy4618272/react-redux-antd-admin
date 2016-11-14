@@ -1,6 +1,6 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 
-import { 
+import {
     Tabs
 } from 'antd'
 const TabPane = Tabs.TabPane
@@ -12,7 +12,7 @@ import {
 
 
 class BusiLease extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.initFetchSchema(this.props)
     }
@@ -24,7 +24,7 @@ class BusiLease extends Component {
      * @param dbName
      * @param tableName
      */
-    initFetchSchema(props){
+    initFetchSchema(props) {
         const routes = props.routes
         const tableName = routes.pop().tableName
 
@@ -49,16 +49,7 @@ class BusiLease extends Component {
             this.errorMsg = `加载${tableName}表的querySchema出错, 请检查配置`
             return false
         }
-
-         try {
-            this.controlSchema = require(`SCHEMA/${tableName}/${tableName}.controlSchema.js`)
-            console.log(this.controlSchema)
-        } catch (e) {
-            console.error('load query schema error: %o', e)
-            this.inited = false
-            this.errorMsg = `加载${tableName}表的querySchema出错, 请检查配置`
-            return false
-        }
+        this.inited = true
     }
 
     render() {
@@ -69,10 +60,9 @@ class BusiLease extends Component {
                         <RoomState />
                     </TabPane>
                     <TabPane tab="租赁管理" key="leaseManage">
-                        <Manage 
+                        <Manage
                             querySchema={this.querySchema}
-                            insertBondSchema={this.insertBondSchema}
-                            controlSchema={this.controlSchema} />
+                            insertBondSchema={this.insertBondSchema} />
                     </TabPane>
                 </Tabs>
             </section>

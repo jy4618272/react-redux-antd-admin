@@ -15,7 +15,7 @@ const initialState = [
         validate: [
             {
                 rules: [
-                    { required: true, message: '必填，请选择合同模板' },
+                    { required: true, message: '请选择合同模板' },
                 ],
                 trigger: ['onBlur', 'onChange']
             }

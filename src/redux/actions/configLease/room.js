@@ -102,6 +102,10 @@ const lieRoom = (data) => {
             })
             console.log('房间设置之闲置', newRes)         
             if (res.result === 'success') {
+                notification.success({
+                    message: '房间闲置',
+                    description: '房间闲置成功'
+                })
                 dispatch(receiveLieRoom(newRes))
             } else {
                 dispatch(receiveLieRoom({}))
@@ -124,6 +128,10 @@ const voidRoom = (data) => {
             })
             console.log('房间设置之作废', newRes)         
             if (res.result === 'success') {
+                notification.success({
+                    message: '房间作废',
+                    description: '房间作废成功'
+                })
                 dispatch(receiveVoidRoom(newRes))
             } else {
                 dispatch(receiveVoidRoom({}))
@@ -132,8 +140,6 @@ const voidRoom = (data) => {
         })
     }
 }
-
-
 
 /* default 导出所有 Actions Creator */
 export default {
@@ -150,29 +156,23 @@ export const ACTION_HANDLERS = {
         tableLoading: true
     }),
     [RECEIVE_ROOM_TABLE]: (roomData, {payload: res}) => ({
-            ...roomData,
+         ...roomData,
         tableLoading: false,
         tableData: res.data,
         total: res.count,
         pageSize: 10,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
     }),
-    [LIE_ROOM]:(roomData, {payload: res}) => {
-        const obj = roomData.tableData
-        obj.map(item => {
-            if(item.rentroomid === res.sub.rentroomid){
-                item.status = '未出租'
-            }
-        })
-        return Object.assign({}, roomData, {tableData: obj})
-    },
-    [VOID_ROOM]:(roomData, {payload: res}) => {
-        const obj = roomData.tableData
-        obj.map(item => {
-            if(item.rentroomid === res.sub.rentroomid){
-                item.status = '作废'
-            }
-        })
-        return Object.assign({}, roomData, {tableData: obj})
-    }
+    [LIE_ROOM]:(roomData, {payload: res}) => ({
+        ...roomData,
+        tableData: roomData.tableData.filter(item=>
+            item.rentroomid !== res.sub.rentroomid
+        )
+    }),
+    [VOID_ROOM]:(roomData, {payload: res}) => ({
+        ...roomData,
+        tableData: roomData.tableData.filter(item=>
+            item.rentroomid !== res.sub.rentroomid
+        )
+    })
 }

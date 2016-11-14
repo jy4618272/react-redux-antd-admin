@@ -46,7 +46,10 @@ class ContractPay extends Component {
             modalVisible: false,
             modalTitle: '新增',
             modalWidth: '900',
-            footer: ''
+            footer: <div>
+                <Button size="large" onClick={this.handleModalCancel}>取消</Button>
+                <Button size="large" type="primary" onClick={this.handleModalOk}>确定</Button>
+            </div>
         }
     }
 
@@ -208,7 +211,7 @@ class ContractPay extends Component {
     }
 
     handleShow = (text, record, index) => {
-        this.props.action.fetchContractPayShow({
+        this.props.action.fetchContractPayMent({
             rentpactpayplanid: parseInt(record.rentpactpayplanid)
         })
         this.setState({
@@ -220,7 +223,7 @@ class ContractPay extends Component {
     }
 
     handlePrint = (text, record, index) => {
-        this.props.action.fetchContractPayShow({
+        this.props.action.fetchContractPayMent({
             rentpactpayplanid: parseInt(record.rentpactpayplanid)
         })
         let status
@@ -236,9 +239,9 @@ class ContractPay extends Component {
             modalTitle: '合同交款打印交款单',
             modalName: 'print',
             footer: <div>
-                <Button type="primary">打印</Button>
+                <Button type="default" onClick={this.handleModalCancel}>取消</Button>                
                 <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}>{status}</Button>
-                <Button type="default" onClick={this.handleModalCancel}>取消</Button>
+                <Button type="primary">打印</Button>                
             </div>
         })
     }
@@ -249,7 +252,7 @@ class ContractPay extends Component {
             action
         } = this.props
         action.fetchCommitFinance({
-            rentpactpayplanid: parseInt(busiLease.contractPayShow.data.rentpactpayplanid)
+            rentpactpayplanid: parseInt(busiLease.payMent.data.rentpactpayplanid)
         })
         this.handleModalCancel()
     }
@@ -295,9 +298,9 @@ class ContractPay extends Component {
         if (this.state.modalName === 'show') {
             const {
                 loading,
-                tableColumns,
+                tableContractColumns,
                 data
-            } = this.props.busiLease.contractPayShow
+            } = this.props.busiLease.payMent
             if (loading) {
                 modalContent = <Loading />
             }
@@ -337,7 +340,7 @@ class ContractPay extends Component {
                 </Row>
                 <h3>档期收款计划详情</h3>
                 <InnerTable
-                    columns={tableColumns}
+                    columns={tableContractColumns}
                     dataSource={data.rentpactpaylists}
                     bordered={true}
                     pagination={false} />
@@ -346,7 +349,7 @@ class ContractPay extends Component {
             const {
                 loading,
                 data
-            } = this.props.busiLease.contractPayShow
+            } = this.props.busiLease.payMent
             if (loading) {
                 modalContent = <Loading />
             } else {

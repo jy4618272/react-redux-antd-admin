@@ -1,6 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import {
     Form,
     Tabs,
@@ -21,10 +19,7 @@ import {
     FormLayout
 } from 'COMPONENT'
 
-@connect(
-    ({}) => ({})
-)
-class FinanceShow extends Component {
+class Detail extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -78,7 +73,7 @@ class FinanceShow extends Component {
 
         try {
             this.showSchema = require(`SCHEMA/${tableName}/${tableName}.showSchema.js`)
-            this.financeShowSchema = require(`SCHEMA/${commonName}/contract.showSchema.js`)
+            this.financeShowSchema = require(`SCHEMA/${commonName}/finance.showSchema.js`)
             console.log('其他详情：', this.showSchema)
             console.log('财务详情：', this.financeShowSchema)
         } catch (e) {
@@ -122,51 +117,19 @@ class FinanceShow extends Component {
 
     componentDidMount() {
         const {
-            action,
-            params,
-            location
+            loading,
+            res,
+            stagesTableData,
+            dataAttachment,
+            newObj
         } = this.props
-
-        const id = params.id
-        const type = location.query.type
-        const paytype = location.query.paytype
-        console.log('参数：', id, type)
-
-        xhr('post', paths.financePath + '/financecollectioncs/getFinanceCollectionDetail', {
-            type: type,
-            paytype: paytype,
-            businessnumber: id
-        }, (res) => {
-            const hide = message.loading('正在查询...', 0)
-            console.log('财务详情', res)
-            if (res.result === 'success') {
-                hide()
-                this.setState({
-                    loading: false,
-                    res: res.data,
-                    stagesTableData: res.data.rentpactpayplanfullinfos,
-                    dataAttachment: res.data.rentpactattachments
-                })
-                if (type === '租赁合同') {
-                    const oldObj = res.data.rentpact
-                    const newObj = {}
-                    for (const key in oldObj) {
-                        if (key.indexOf('date') > -1) {
-                            newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
-                        } else if (key.indexOf('totalstages') > -1) {
-                            newObj[key] = '第' + oldObj[key] + '期'
-                        } else {
-                            newObj[key] = oldObj[key]
-                        }
-                    }
-                    this.props.form.setFieldsValue(newObj)
-                }
-            } else {
-                hide()
-                errHandler(res.msg + '，正在前往列表页')
-                history.back()
-            }
+        this.setState({
+            loading,
+            res,
+            stagesTableData,
+            dataAttachment
         })
+        this.props.form.setFieldsValue(newObj)
     }
 
     render() {
@@ -338,6 +301,6 @@ class FinanceShow extends Component {
     }
 }
 
-FinanceShow = Form.create()(FinanceShow)
+Detail = Form.create()(Detail)
 
-export default FinanceShow
+export default Detail

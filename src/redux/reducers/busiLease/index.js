@@ -9,10 +9,10 @@ import contractApprovalShowReducer from './contractApproval/show'
 import changeHistoryReducer from './contractChange/changeHistory'
 
 import contractPayReducer from './contractPay'
-import payShowReducer from './contractPay/payShow'
+import payMentReducer from './payMent'
 import workFlowReducer from './contract/workFlow'
 
-import contractOrganizationReducer from './contractInsert/contractOrganization'
+import organizationReducer from './organization'
 import notContractDataReducer from './notContractData'
 import bondDataReducer from './bondData'
 import roomStateReducer from './roomState'
@@ -20,7 +20,7 @@ import roomStateReducer from './roomState'
 export default combineReducers({
     contractData: contractDataReducer,
     contractFrom: contractFromReducer,
-    contractOrganization: contractOrganizationReducer,
+    organization: organizationReducer,
     contractTabs: contractTabsReducer,
     contractRenew: contractRenewReducer,
     contractApproval: contractApprovalReducer,
@@ -29,7 +29,7 @@ export default combineReducers({
     changeHistory: changeHistoryReducer,
     
     contractPay: contractPayReducer,
-    contractPayShow: payShowReducer,
+    payMent: payMentReducer,
     contractWorkFlow: workFlowReducer,
     notContractData: notContractDataReducer,
     bondData: bondDataReducer,

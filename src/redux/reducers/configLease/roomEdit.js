@@ -13,7 +13,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请输入区域' },
+                        { required: true, type: 'string', message: '请输入区域' },
                     ],
                     trigger: ['onChange']
                 }
@@ -29,7 +29,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请输入楼号' },
+                        { required: true, type: 'string', message: '请输入楼号' },
                     ],
                     trigger: ['onChange']
                 }
@@ -44,7 +44,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'string', message: '必填，请输入房间号' },
+                        { required: true, type: 'string', message: '请输入房间号' },
                     ],
                     trigger: ['onChange']
                 }
@@ -59,7 +59,7 @@ const initialState = {
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'number', message: '必填，请输入面积' },
+                        { required: true, type: 'number', message: '请输入面积' },
                     ],
                     trigger: ['onChange']
                 }
@@ -68,13 +68,13 @@ const initialState = {
         {
             key: 'money',
             title: '金额',
-            dataType: 'varchar',
+            dataType: 'float',
             placeholder: '请输入金额',
             feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'number', message: '必填，请输入金额' },
+                        { required: true, type: 'number', message: '请输入金额' },
                     ],
                     trigger: ['onChange']
                 }
@@ -89,7 +89,7 @@ const initialState = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, max: 255, message: '非必填，如果填写至少4个汉字' },
+                    {message: '非如果填写至少4个汉字' },
                 ],
                 trigger: 'onChange',
             }]

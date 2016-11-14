@@ -22,7 +22,7 @@ const receiveContractOrganization = (res) => ({
     payload: res
 })
 
-const fetchContractOrganization = (data) => {
+const fetchOrganization = (data) => {
     return dispatch => {
         dispatch(requestContractOrganization())
         xhr('post', paths.leasePath + '/rentpactfullinfocs/selectOrganizationByPhoneOrPartyName', data, (res) => {
@@ -60,15 +60,15 @@ const fetchContractOrganization = (data) => {
 const resetContract = () => ({
     type: RESET_CONTRACT_ORGANIZATION
 })
-const resetContractOrganization = (data) => {
+const resetOrganization = (data) => {
     return dispatch => {
         dispatch(resetContract())
     }
 }
 /* default 导出所有 Actions Creator */
 export default {
-    fetchContractOrganization,
-    resetContractOrganization
+    fetchOrganization,
+    resetOrganization
 }
 
 export const ACTION_HANDLERS = {

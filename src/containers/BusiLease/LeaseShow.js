@@ -1,60 +1,30 @@
-// ================================
-// 租赁管理-合同-合同审核详情
-// ================================
 import React, { Component, PropTypes } from 'react'
-import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { Link, hashHistory } from 'react-router'
-import moment from 'moment'
+import { connect } from 'react-redux'
 import {
     Form,
     Tabs,
-    Select,
-    Button,
-    Modal,
-    Input,
-    Row,
-    Col,
     message,
-    Upload,
-    Icon,
-    notification,
-    Radio
+    Button,
+    notification
 } from 'antd'
 const TabPane = Tabs.TabPane
-const FormItem = Form.Item
-const RadioGroup = Radio.Group
+import moment from 'moment'
+
+import xhr from 'SERVICE'
+import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
     Err,
     Loading,
-    FormLayout,
     InnerTable,
-    InnerPagination,
-    ModalTable,
-    ModalForm,
-    ConstractStagesEditModal
+    FormLayout
 } from 'COMPONENT'
 
-import xhr from 'SERVICE'
-import { errHandler, rootPaths, paths } from 'SERVICE/config'
-import action from 'ACTION/busiLease'
-
-import {
-    filterQueryObj
-} from 'UTIL'
-
-import './contractAdd.less'
-
-const mapDispatchToProps = (dispatch) => ({
-    action: bindActionCreators(action, dispatch)
-})
-
 @connect(
-    ({ busiLease, configLease }) => ({ busiLease, configLease }),
-    mapDispatchToProps
+    ({}) => ({})
 )
-class ContractInsert extends Component {
+class FinanceShow extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -62,15 +32,15 @@ class ContractInsert extends Component {
             tableIndex: 0,
             isStagesShow: false,
             stagesNum: 0,
-            rentpact: '',
             dataAttachment: [],
             stagesTableData: [],
             stagesShowTableData: [],
             loading: true,
             res: {}
         }
+        console.log('财务详情props', props)
 
-        console.log('合同续租props:', props)
+
         this.initFetchSchema(props)
     }
 
@@ -85,29 +55,37 @@ class ContractInsert extends Component {
         const route = props.route
         const tableName = route.tableName
         const commonName = route.commonName
+        if (tableName) {
+            console.info('init component BusiLease with tableName = %s', tableName)
+        } else {
+            console.error('can not find tableName, check your router config')
+            this.inited = false  // 是否成功获取schema
+            this.errorMsg = '找不到表名, 请检查路由配置'
+            return false
+        }
 
         if (commonName) {
             console.info('init component BusiLease with commonName = %s', commonName)
         } else {
             console.error('can not find commonName, check your router config')
             this.inited = false  // 是否成功获取schema
-            this.errorMsg = '找不到表名, 请检查路由配置'
+            this.errorMsg = '找不到公共表名, 请检查路由配置'
             return false
         }
 
+        this.tableName = tableName
         this.commonName = commonName
 
         try {
-            this.financeShowSchema = require(`SCHEMA/${commonName}/finance.showSchema.js`)
-            this.approvalShowSchema = require(`SCHEMA/${commonName}/approval.showSchema.js`)
-            console.log(this.financeShowSchema)
+            this.contractShowSchema = require(`SCHEMA/${commonName}/contract.showSchema.js`)
+            console.log('合同详情：', this.contractShowSchema)
         } catch (e) {
             console.error('load add schema error: %o', e)
             this.inited = false
-            this.errorMsg = `加载${tableName}表的financeShowSchema出错, 请检查配置`
+            this.errorMsg = `加载${commonName}表的showSchema出错, 请检查配置`
             return false
         }
-        this.inited = true
+        this.inited = true;
     }
 
     // 合同数据来源-选项卡
@@ -140,63 +118,6 @@ class ContractInsert extends Component {
         window.location.href = rootPaths.imgPath + paths.imgPath + '/' + dataAttachment[index].url
     }
 
-    // 返回
-    handleGoBack = () => {
-        hashHistory.push('busi/busi_lease/contract/approval')
-    }
-
-    // 保存全部
-    handleSaveAll = (e) => {
-        e.preventDefault()
-        this.setState({
-            isSaveDisabeld: true
-        })
-
-        this.props.form.validateFieldsAndScroll((errors, values) => {
-            if (errors) {
-                notification.error({
-                    message: '表单填写有误',
-                    description: '请按要求正确填写表单'
-                })
-                this.setState({
-                    isSaveDisabeld: false
-                })
-                return false
-            } else {
-                const arrovalContractShow = JSON.parse(sessionStorage.getItem('arrovalContractShow'))
-
-                const {form} = this.props
-                const oldObj = form.getFieldsValue()
-
-                const newObj = filterQueryObj({
-                    businessno: this.props.params.id,
-                    nodestatus: oldObj['nodestatus'],
-                    nodecontent: oldObj['nodecontent']
-                })
-
-                console.log('保存表单字段newObj:', newObj)
-                const tmp = Object.assign({}, arrovalContractShow, newObj, {
-                    pactkind: this.state.rentpact.modelname
-                })
-                console.log('保存表单字段tmp：', tmp)
-                xhr('post', paths.workFlowPath + '/flownodecs/submitTaskPMSTwo', tmp, (res) => {
-                    const hide = message.loading('正在查询...', 0)
-                    console.log('保存审批数据：', res)
-                    if (res.result === 'success') {
-                        hide()
-                        this.handleGoBack()
-                    } else {
-                        hide()
-                        errHandler(res.msg)
-                    }
-                    this.setState({
-                        isSaveDisabeld: false
-                    })
-                })
-            }
-        })
-    }
-
     componentDidMount() {
         const {
             action,
@@ -206,22 +127,22 @@ class ContractInsert extends Component {
 
         const id = params.id
         const type = location.query.type
+        const paytype = location.query.paytype
         console.log('参数：', id, type)
 
-        xhr('post', paths.workFlowPath + '/flowrecordcs/selectFlowDetailsByBusinessNo', {
-            businessno: id
+        xhr('post', paths.leasePath + '/rentpactfullinfocs/selectRentPactFullInfoById', {
+            rentpactid: id
         }, (res) => {
             const hide = message.loading('正在查询...', 0)
-            console.log('财务详情', res)
+            console.log('合同详情', res)
             if (res.result === 'success') {
                 hide()
                 this.setState({
                     loading: false,
                     res: res.data
                 })
-                if (type === '合同审批park') {
+                if (type === 'rentpact') {
                     this.setState({
-                        rentpact: res.data.rentpact,
                         stagesTableData: res.data.rentpactpayplanfullinfos,
                         dataAttachment: res.data.rentpactattachments
                     })
@@ -252,13 +173,11 @@ class ContractInsert extends Component {
         if (!this.inited) {
             return <Err errorMsg={this.errorMsg} />
         }
-
-        if (type === '合同审批park') {
+        if (type === 'rentpact') {
             if (loading) {
                 return <Loading />
             }
-
-            const tableStagesColumns = this.financeShowSchema['stages']['columns'].concat([
+            const tableStagesColumns = this.contractShowSchema['stages']['columns'].concat([
                 {
                     title: '操作',
                     key: 'operation',
@@ -268,7 +187,7 @@ class ContractInsert extends Component {
                 }
             ])
 
-            const tableAttachmentColumns = this.financeShowSchema['attachment']['columns'].concat([
+            const tableAttachmentColumns = this.contractShowSchema['attachment']['columns'].concat([
                 {
                     title: '操作',
                     key: 'operation',
@@ -281,14 +200,14 @@ class ContractInsert extends Component {
                     <Form horizontal>
                         {/* 获取合同模板 */}
                         <FormLayout
-                            schema={this.financeShowSchema['contractFrom']}
+                            schema={this.contractShowSchema['contractFrom']}
                             form={this.props.form}
                             fromLayoutStyle="g-border-bottom" />
 
                         {/* 客户名称 */}
                         <div className="g-border-bottom">
                             <FormLayout
-                                schema={this.financeShowSchema['organization']}
+                                schema={this.contractShowSchema['organization']}
                                 form={this.props.form} />
                         </div>
 
@@ -297,7 +216,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同房间" key="room">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.financeShowSchema['room']['columns']}
+                                        columns={this.contractShowSchema['room']['columns']}
                                         dataSource={res.rentpactrooms}
                                         bordered={true}
                                         pagination={false} />
@@ -306,7 +225,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同班线" key="classLine">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.financeShowSchema['line']['columns']}
+                                        columns={this.contractShowSchema['line']['columns']}
                                         dataSource={res.rentpactlines}
                                         bordered={true}
                                         pagination={false} />
@@ -315,7 +234,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同优惠冲抵" key="policy">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.financeShowSchema['policy']['columns']}
+                                        columns={this.contractShowSchema['policy']['columns']}
                                         dataSource={res.rentpactpromotions}
                                         bordered={true}
                                         pagination={false} />
@@ -324,7 +243,7 @@ class ContractInsert extends Component {
                             <TabPane tab="履约保证金冲抵" key="contractBond">
                                 <div className="padding-lr g-mb20">
                                     <InnerTable
-                                        columns={this.financeShowSchema['contractBond']['columns']}
+                                        columns={this.contractShowSchema['contractBond']['columns']}
                                         dataSource={res.offsetmargins}
                                         bordered={true}
                                         pagination={false} />
@@ -344,14 +263,14 @@ class ContractInsert extends Component {
 
                         {/* 客户数据录入*/}
                         <FormLayout
-                            schema={this.financeShowSchema['contractTabs']}
+                            schema={this.contractShowSchema['contractTabs']}
                             form={this.props.form}
                             fromLayoutStyle="g-border-bottom" />
 
                         {/* 分期明细 */}
                         <div className="padding-lr g-mb20">
                             <FormLayout
-                                schema={this.financeShowSchema['stages']['form']}
+                                schema={this.contractShowSchema['stages']['form']}
                                 form={this.props.form}
                                 parentHandleSelect={this.parentHandleSelect} />
 
@@ -363,7 +282,7 @@ class ContractInsert extends Component {
                                             <Button onClick={this.handleStagesClose}>关闭明细</Button>
                                         </div>
                                         <InnerTable
-                                            columns={this.financeShowSchema['stages']['showColumns']}
+                                            columns={this.contractShowSchema['stages']['showColumns']}
                                             dataSource={this.state.stagesShowTableData}
                                             bordered={true}
                                             size="middle"
@@ -380,27 +299,13 @@ class ContractInsert extends Component {
                                 parentHandleClick={this.parentHandleClick}
                                 pagination={false} />
                         </div>
-
-                        <div>
-                            <FormLayout
-                                schema={this.approvalShowSchema}
-                                form={this.props.form} />
-                        </div>
-
-                        <div className="g-tac button-group">
-                            <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
-                            <Button type="default" onClick={this.handleGoBack}>取消</Button>
-                        </div>
                     </Form>
                 </section>
             )
-        } else {
-            return <Err errorMsg="类型不存在" />
         }
     }
 }
 
-ContractInsert = Form.create({})(ContractInsert)
+FinanceShow = Form.create()(FinanceShow)
 
-export default ContractInsert
-
+export default FinanceShow

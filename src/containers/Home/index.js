@@ -1,232 +1,72 @@
-import React, { Component, PropTypes } from 'react'
-import { Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button } from 'antd'
-const FormItem = Form.Item;
-const Option = Select.Option;
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import {
+    Badge,
+    Row,
+    Col
+} from 'antd'
 
-const residences = [{
-	value: 'zhejiang',
-	label: 'Zhejiang',
-	children: [{
-		value: 'hangzhou',
-		label: 'Hangzhou',
-		children: [{
-			value: 'xihu',
-			label: 'West Lake',
-		}],
-	}],
-}, {
-	value: 'jiangsu',
-	label: 'Jiangsu',
-	children: [{
-		value: 'nanjing',
-		label: 'Nanjing',
-		children: [{
-			value: 'zhonghuamen',
-			label: 'Zhong Hua Men',
-		}],
-	}],
-}]
+import {
+    Title
+} from 'COMPONENT'
 
-const children = [];
-for (let i = 10; i < 36; i++) {
-	children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+import './index.less'
+
+class Busi extends Component {
+    componentDidMount() {
+
+    }
+
+    render() {
+        return (
+            <section className="padding-lr m-busi">
+                <Row className="list-news-tips">
+                    <Col span={3}>
+                        <div className="title">我的代办</div>
+                    </Col>
+                    <Col span={21}>
+                        <ul className="clearfix list-badge">
+                            <li>
+                                <Link to="/busi/approval"><Badge count={20} overflowCount={99} /></Link>
+                            </li>
+                        </ul>
+                    </Col>
+                </Row>
+                {/*
+                    <Row className="list-news-tips">
+                    <Col span={3}>
+                        <div className="title">租赁管理</div>
+                    </Col>
+                    <Col span={21}>
+                        <ul className="clearfix list-badge">
+                            <li>
+                                <Link to="/"><span className="name">将到期</span><Badge count={20} overflowCount={99} /></Link>
+                            </li>
+                            <li>
+                                <Link to="/"><span className="name">将到期</span><Badge count={20} overflowCount={99} /></Link>
+                            </li>
+                        </ul>
+                    </Col>
+                </Row>
+                <Row className="list-news-tips">
+                    <Col span={3}>
+                        <div className="title">资产管理</div>
+                    </Col>
+                    <Col span={21}>
+                        <ul className="clearfix list-badge">
+                            <li>
+                                <Link to="/"><span className="name">将到期</span><Badge count={20} overflowCount={99} /></Link>
+                            </li>
+                            <li>
+                                <Link to="/"><span className="name">被退回</span><Badge count={20} overflowCount={99} /></Link>
+                            </li>
+                        </ul>
+                    </Col>
+                </Row>    
+                */}
+            </section>
+        )
+    }
 }
 
-class Home extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			passwordDirty: false,
-		}
-	}
-	handleSubmit = (e) => {
-		e.preventDefault();
-		this.props.form.validateFieldsAndScroll((err, values) => {
-			if (!err) {
-				console.log('Received values of form: ', values);
-			}
-		});
-	}
-	handlePasswordBlur = (e) => {
-		const value = e.target.value;
-		this.setState({ passwordDirty: this.state.passwordDirty || !!value });
-	}
-	checkPassowrd = (rule, value, callback) => {
-		const form = this.props.form;
-		if (value && value !== form.getFieldValue('password')) {
-			callback('Two passwords that you enter is inconsistent!');
-		} else {
-			callback();
-		}
-	}
-	checkConfirm = (rule, value, callback) => {
-		const form = this.props.form;
-		if (value && this.state.passwordDirty) {
-			form.validateFields(['confirm'], { force: true });
-		}
-		callback();
-	}
-
-	render() {
-		const { getFieldDecorator } = this.props.form;
-		const formItemLayout = {
-			labelCol: { span: 6 },
-			wrapperCol: { span: 14 },
-		};
-		const tailFormItemLayout = {
-			wrapperCol: {
-				span: 14,
-				offset: 6,
-			},
-		};
-		const prefixSelector = getFieldDecorator('prefix', {
-			initialValue: '86',
-		})(
-			<Select className="icp-selector">
-				<Option value="86">+86</Option>
-			</Select>
-			);
-		return (
-			<Form horizontal onSubmit={this.handleSubmit}>
-				<FormItem
-					{...formItemLayout}
-					label="E-mail"
-					hasFeedback
-					>
-					{getFieldDecorator('email', {
-						rules: [{
-							type: 'email', message: 'The input is not valid E-mail!',
-						}, {
-							required: true, message: 'Please input your E-mail!',
-						}],
-					})(
-						<Input />
-						)}
-				</FormItem>
-				<FormItem
-					{...formItemLayout}
-					label="Password"
-					hasFeedback
-					>
-					{getFieldDecorator('password', {
-						rules: [{
-							required: true, message: 'Please input your password!',
-						}, {
-							validator: this.checkConfirm,
-						}],
-					})(
-						<Input type="password" onBlur={this.handlePasswordBlur} />
-						)}
-				</FormItem>
-
-				<FormItem
-					{...formItemLayout}
-					label="love"
-					hasFeedback
-					>
-					{getFieldDecorator('love', {
-						rules: [{
-							required: true, message: 'Please input your password!',
-						}, {
-							validator: this.checkConfirm,
-						}],
-					})(
-						<Select
-							multiple
-							style={{ width: '100%' }}
-							placeholder="Please select"
-							defaultValue={['a10', 'c12']}
-							>
-							{children}
-						</Select>
-						)}
-				</FormItem>
-
-				<FormItem
-					{...formItemLayout}
-					label="Confirm Password"
-					hasFeedback
-					>
-					{getFieldDecorator('confirm', {
-						rules: [{
-							required: true, message: 'Please confirm your password!',
-						}, {
-							validator: this.checkPassowrd,
-						}],
-					})(
-						<Input type="password" />
-						)}
-				</FormItem>
-				<FormItem
-					{...formItemLayout}
-					label={(
-						<span>
-							Nickname&nbsp;
-              <Tooltip title="What do you want other to call you?">
-								<Icon type="question-circle-o" />
-							</Tooltip>
-						</span>
-					)}
-					hasFeedback
-					>
-					{getFieldDecorator('nickname', {
-						rules: [{ required: true, message: 'Please input your nickname!' }],
-					})(
-						<Input />
-						)}
-				</FormItem>
-				<FormItem
-					{...formItemLayout}
-					label="Habitual Residence"
-					>
-					{getFieldDecorator('residence', {
-						initialValue: ['zhejiang', 'hangzhou', 'xihu'],
-						rules: [{ type: 'array', required: true, message: 'Please select your habitual residence!' }],
-					})(
-						<Cascader options={residences} />
-						)}
-				</FormItem>
-				<FormItem
-					{...formItemLayout}
-					label="Phone Number"
-					>
-					{getFieldDecorator('phone', {
-						rules: [{ required: true, message: 'Please input your phone number!' }],
-					})(
-						<Input addonBefore={prefixSelector} />
-						)}
-				</FormItem>
-				<FormItem
-					{...formItemLayout}
-					label="Captcha"
-					>
-					<Row gutter={8}>
-						<Col span={12}>
-							{getFieldDecorator('captcha', {
-								rules: [{ required: true, message: 'Please input the captcha you got!' }],
-							})(
-								<Input size="large" />
-								)}
-						</Col>
-						<Col span={12}>
-							<Button size="large">Get captcha</Button>
-						</Col>
-					</Row>
-				</FormItem>
-				<FormItem {...tailFormItemLayout} style={{ marginBottom: 8 }}>
-					{getFieldDecorator('agreement', {
-						valuePropName: 'checked',
-					})(
-						<Checkbox>I had read the <a>agreement</a></Checkbox>
-						)}
-				</FormItem>
-				<FormItem {...tailFormItemLayout}>
-					<Button type="primary" htmlType="submit" size="large">Register</Button>
-				</FormItem>
-			</Form>
-		);
-	}
-}
-
-Home = Form.create()(Home)
-export default Home
+export default Busi

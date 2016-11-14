@@ -19,7 +19,12 @@ const receiveArea = (res) => ({
 const fetchArea = (data) => {
     return dispatch =>
         xhr('post', paths.leasePath + '/rentroomcs/seleAreaBySite', data, function (res) {
-            console.log('房间设置之区域', res)
+            if (data && data.add) {
+                res.data.unshift({
+                    area: data.add
+                })
+            }
+            console.log('房间设置之区域', data, res)
 
             if (res.result === 'success') {
                 const options = []
@@ -43,7 +48,7 @@ export default {
 export const ACTION_HANDLERS = {
     [RECEIVE_AREA]: (roomData, {payload: res}) => ({
         ...roomData,
-        loading: false,
+    loading: false,
         data: res
     })
 }

@@ -2,9 +2,33 @@
  * 客户信息获取
  */
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/busiLease/contractInsert/contractOrganization'
+import { ACTION_HANDLERS } from 'ACTION/busiLease/organization'
 
 const initialState = {
+    querySchema: [
+        {
+            key: 'organizationnum',
+            title: '客户名称',
+            showType: 'varchar',
+            placeholder: "请输入客户名称"
+            // feedBackShow: true,
+            // validate: [
+            //     {
+            //         rules: [
+            //             { required: true, type: 'string', message: '请输入客户名称' },
+            //         ],
+            //         trigger: ['onChange']
+            //     }
+            // ]
+        },
+    ],
+    queryButtons: [
+        {
+            key: 'searchOrganization',
+            type: 'primary',
+            title: '搜索'
+        }
+    ],
     tableColumns: [
         {
             title: '客户名称',

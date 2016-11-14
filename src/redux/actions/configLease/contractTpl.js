@@ -1,4 +1,4 @@
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
 
@@ -57,6 +57,10 @@ const changeStatusContract = (data) => {
             console.log('合同模板之开启', newRes)
 
             if (res.result === 'success') {
+                notification.success({
+                    message: '状态' + data.status,
+                    description: '状态' + data.status + '成功'
+                })
                 dispatch(statusContract(newRes))
             } else {
                 dispatch(statusContract({}))

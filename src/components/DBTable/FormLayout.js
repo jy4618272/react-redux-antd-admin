@@ -24,6 +24,10 @@ const Option = Select.Option
 const RadioGroup = Radio.Group
 const CheckboxGroup = Checkbox.Group
 
+import {
+    filterQueryObj
+} from 'UTIL'
+
 class FormLayout extends Component {
     /**
      * 辅助函数, 将一个input元素包装下
@@ -38,6 +42,7 @@ class FormLayout extends Component {
             <Col key={field.key} sm={8} className="form-col-wrapper">
                 <FormItem
                     key={field.key}
+                    ref={field.key}
                     label={field.title}
                     labelCol={{ span: 6 }}
                     wrapperCol={{ span: 18 }}
@@ -194,7 +199,7 @@ class FormLayout extends Component {
         if (field.styleType) {
             return this.fullColWrapper((
                 <RadioGroup initialValue={field.default}>
-                   {options}
+                    {options}
                 </RadioGroup>
             ), field)
         }
@@ -256,7 +261,7 @@ class FormLayout extends Component {
             default:
                 // console.debug('transform field %o to varchar input component', field)
                 return this.fullColWrapper((
-                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} />
                 ), field)
         }
     }
@@ -344,9 +349,13 @@ class FormLayout extends Component {
         switch (field.dataType) {
             default:
                 return this.twoColWrapper((
-                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} />
                 ), field)
         }
+    }
+
+    handleInputClick = (key) => {
+        this.props.parentHandleInput && this.props.parentHandleInput(key)
     }
 
     /**
@@ -361,12 +370,12 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber size="default" disabled={field.disabled} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} />
                 ), field)
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber step={0.01} size="default" disabled={field.disabled} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
@@ -376,33 +385,9 @@ class FormLayout extends Component {
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
                 return this.colWrapper((
-                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} />
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} />
                 ), field)
         }
-    }
-
-    /**
-     * 表单的查询条件不能直接传给后端, 要处理一下
-     *
-     * @param oldObj
-     * @returns {{}}
-     */
-    filterQueryObj(oldObj) {
-        // 将提交的值中undefined的去掉
-        const newObj = {}
-
-        for (const key in oldObj) {
-            if (oldObj[key]) {
-                // 对于js的日期类型, 要转换成字符串再传给后端
-                if (key.indexOf('date') > -1 && key !== 'plandate') {
-                    newObj[key] = oldObj[key].format('YYYY-MM-DD HH:mm:ss')
-                } else {
-                    newObj[key] = oldObj[key]
-                }
-            }
-        }
-        // console.debug('old queryObj: %o, new queryObj %o', oldObj, newObj)
-        return newObj
     }
 
     /**
@@ -414,11 +399,11 @@ class FormLayout extends Component {
         e.preventDefault()
         const {form, parentHandleSubmit} = this.props
         const oldObj = form.getFieldsValue()
-        const newObj = this.filterQueryObj(oldObj)
+        const newObj = filterQueryObj(oldObj)
         // console.log('oldObj', oldObj)
         // console.log('newObj', newObj)
         // 还是要交给上层组件处理, 因为要触发table组件的状态变化...        
-        parentHandleSubmit(newObj)
+        parentHandleSubmit && parentHandleSubmit(newObj)
     }
 
     // 清除查询条件
@@ -432,8 +417,8 @@ class FormLayout extends Component {
         e.preventDefault()
         const {form, parentHandleSave} = this.props
         const oldObj = form.getFieldsValue()
-        const newObj = this.filterQueryObj(oldObj)
-        console.log('保存表单字段', newObj)
+        const newObj = filterQueryObj(oldObj)
+        console.log('保存表单字段', oldObj)
 
         this.props.form.validateFields((errors, values) => {
             if (errors) {
@@ -443,7 +428,7 @@ class FormLayout extends Component {
                 })
                 return false
             }
-            parentHandleSave(newObj)
+            this.props.parentHandleSave && this.props.parentHandleSave(newObj)
         })
     }
 

@@ -29,35 +29,6 @@ const fetchRoomAdd = (data) => {
     return dispatch => {
         xhr('post', paths.leasePath + '/rentroomcs/queryRoom', data, function (res) {
             if (res.result === 'success') {
-                // xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
-                //     const hide = message.loading('正在查询...', 0)
-                //     console.log('房间设置之表单保存', res)
-                //     if (res.result === 'success') {
-                //         if (res.data.rentroomid) {
-                //             xhr('post', paths.leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
-                //                 rentroomid: res.data.rentroomid,
-                //                 rentroomconfig: data.roomGoods
-                //             }, function (res) {
-                //                 console.log('房间设置之表单保存2', res)
-                //                 if (res.result === 'success') {
-                //                     dispatch(receiveRoomAdd(res))
-                //                 } else {
-                //                     errHandler(res.msg)
-                //                 }
-                //             })
-                //         }
-                //         notification.success({
-                //             message: '新增成功',
-                //             description: '房间设置新增数据成功'
-                //         });
-                //         history.back()
-                //     } else {
-                //         dispatch(receiveRoomAdd({}))
-                //         errHandler(res.msg)
-                //     }
-                //     hide()
-                // })
-
                 xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
                     const hide = message.loading('正在查询...', 0)
                     console.log('房间设置之表单保存', res)

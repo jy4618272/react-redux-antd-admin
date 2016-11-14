@@ -10,7 +10,7 @@ import {
     Title
 } from 'COMPONENT'
 
-import './busi.less'
+import './index.less'
 
 class Busi extends Component {
     componentDidMount() {
@@ -27,7 +27,7 @@ class Busi extends Component {
                     <Col span={21}>
                         <ul className="clearfix list-badge">
                             <li>
-                                <Link to="/busi/busi_lease/contract/approval"><Badge count={20} overflowCount={99} /></Link>
+                                <Link to="/busi/approval"><Badge count={20} overflowCount={99} /></Link>
                             </li>
                         </ul>
                     </Col>

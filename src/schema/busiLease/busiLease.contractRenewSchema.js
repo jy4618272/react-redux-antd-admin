@@ -73,12 +73,7 @@ module.exports = {
             disabled: true
         }
     ],
-
     room: {
-        topButtons: {
-            left: [],
-            right: []
-        },
         columns: [
             {
                 title: '区域',
@@ -113,10 +108,6 @@ module.exports = {
         ]
     },
     line: {
-        topButtons: {
-            left: [],
-            right: []
-        },
         columns: [
             {
                 title: '班线名称',
@@ -131,10 +122,6 @@ module.exports = {
         ]
     },
     policy: {
-        topButtons: {
-            left: [],
-            right: []
-        },
         columns: [
             {
                 title: '活动名称',
@@ -159,10 +146,6 @@ module.exports = {
         ]
     },
     contractBond: {
-        topButtons: {
-            left: [],
-            right: []
-        },
         columns: [
             {
                 title: '履约保证金金额',
@@ -172,10 +155,6 @@ module.exports = {
         ]
     },
     attachment: {
-        topButtons: {
-            left: [],
-            right: []
-        },
         columns: [
             {
                 title: '文件名称',
@@ -284,7 +263,7 @@ module.exports = {
             title: '履约保证金',
             dataType: 'float',
             placeholder: "请选择履约保证金",
-            disabled:true            
+            disabled: true
         },
         {
             key: 'marginmoneyoffset',
@@ -302,14 +281,14 @@ module.exports = {
             format: 'YYYY-MM-DD HH:mm:ss',
             placeholderBegin: '租期开始',
             placeholderEnd: '租期结束',
-            disabled:true
+            disabled: true
         },
         {
             key: 'promotionmoneyoffset',
             title: '优惠金额',
             dataType: 'float',
             placeholder: "请输入优惠金额",
-            disabled: true            
+            disabled: true
         },
         {
             key: 'totaloffsetmoney',
@@ -323,20 +302,20 @@ module.exports = {
             title: '客户经理',
             showType: 'varchar',
             placeholder: "请选择客户经理",
-            disabled:true            
+            disabled: true
         },
         {
             key: 'manager',
             title: '委托代理人',
             dataType: 'varchar',
             placeholder: "请输入委托代理人",
-            disabled:true                        
+            disabled: true
         },
         {
             key: 'memo',
             title: '备注',
             dataType: 'varchar',
-            placeholder: "请输入备注"            
+            placeholder: "请输入备注"
         }
     ],
     stages: {

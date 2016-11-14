@@ -80,7 +80,7 @@ class ContractApproval extends Component {
             return false
         }
         sessionStorage.setItem('arrovalContractShow', JSON.stringify(record))
-        hashHistory.push(`/busi/busi_lease/contract/approval/${record.businessno}?type=${record.flowtype}`)
+        hashHistory.push(`/busi/approval/${record.businessno}?type=${record.flowtype}`)
     }
 
     /**
