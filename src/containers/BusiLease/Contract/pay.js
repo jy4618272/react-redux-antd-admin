@@ -13,7 +13,8 @@ import {
     Modal,
     Button,
     Row,
-    Col
+    Col,
+    Icon
 } from 'antd'
 const TabPane = Tabs.TabPane
 
@@ -24,6 +25,10 @@ import {
     InnerTable,
     InnerPagination
 } from 'COMPONENT'
+
+import {
+    goBack
+} from 'UTIL'
 
 import action from 'ACTION/busiLease'
 
@@ -407,6 +412,8 @@ class ContractPay extends Component {
             }
         }
 
+        const goBack = <Button onClick={()=>{ history.back() }}><Icon type="rollback" />返回</Button>
+
         return (
             <section className="padding">
                 <Modal
@@ -423,7 +430,8 @@ class ContractPay extends Component {
                     defaultActiveKey="notConfirmed"
                     animated="false"
                     type="card"
-                    onChange={this.handlerTabs}>
+                    onChange={this.handlerTabs}
+                    tabBarExtraContent={goBack}>
                     <TabPane tab="财务未确认合同" key="notConfirmed">
                         <InnerForm
                             ref="form"

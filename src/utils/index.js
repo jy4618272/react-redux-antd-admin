@@ -1,5 +1,9 @@
 import moment from 'moment'
 
+const goBack = (page = 0) => {
+    history.goBack(page)
+}
+
 const filterQueryObj = (oldObj, dateType = 'YYYY-MM-DD HH:mm:ss') => {
     // 将提交的值中undefined的去掉
     const newObj = {}
@@ -16,6 +20,7 @@ const filterQueryObj = (oldObj, dateType = 'YYYY-MM-DD HH:mm:ss') => {
     }
     return newObj
 }
+
 
 const filterQueryObjMoment = (oldObj) => {
     // 将提交的值中undefined的去掉
@@ -34,6 +39,7 @@ const filterQueryObjMoment = (oldObj) => {
 }
 
 export {
+    goBack,
     filterQueryObj,
     filterQueryObjMoment
 }

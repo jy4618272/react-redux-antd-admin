@@ -8,7 +8,7 @@ import { errHandler, paths } from 'SERVICE/config'
 const REQUEST_CLASSLINE_TABLE = 'REQUEST_CLASSLINE_TABLE'
 const RECEIVE_CLASSLINE_TABLE = 'RECEIVE_CLASSLINE_TABLE'
 const STATUS_CLASS_LINE = 'STATUS_CLASS_LINE'
-
+const RECEIVE_FILTER_CLASSLINE_TABLE = 'RECEIVE_FILTER_CLASSLINE_TABLE'
 // ================================
 // Action Creator
 // ================================
@@ -43,6 +43,32 @@ const fetchClassLineTable = (data) => {
 }
 
 
+// 合同新增过滤
+const receiveFilterClassLineTable = (res) => ({
+    type: RECEIVE_FILTER_CLASSLINE_TABLE,
+    payload: res
+})
+const fetchFilterClassLineTable = (data) => {
+    return dispatch => {
+        dispatch(requestClassLineTable())
+        xhr('post', paths.leasePath + '/transportlinecs/selectBySiteAndStatus', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('班线管理之过滤列表', newRes)
+
+            if (res.result === 'success') {
+                dispatch(receiveFilterClassLineTable(newRes))
+            } else {
+                dispatch(receiveFilterClassLineTable({}))
+                errHandler(res.msg)
+            }
+            hide()
+        })
+    }
+}
+
 // 开启/关闭
 const statusClassLine = (res) => ({
     type: STATUS_CLASS_LINE,
@@ -76,6 +102,7 @@ const changeStatusClassLine = (data) => {
 /* default 导出所有 Actions Creator */
 export default {
     fetchClassLineTable,
+    fetchFilterClassLineTable,
     changeStatusClassLine
 }
 
@@ -84,14 +111,22 @@ export const ACTION_HANDLERS = {
         ...classLineData,
     tableLoading: true
     }),
-[RECEIVE_CLASSLINE_TABLE]: (classLineData, {payload: res}) => ({
+    [RECEIVE_CLASSLINE_TABLE]: (classLineData, {payload: res}) => ({
+            ...classLineData,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
+    [RECEIVE_FILTER_CLASSLINE_TABLE]: (classLineData, {payload: res}) => ({
         ...classLineData,
-    tableLoading: false,
-    tableData: res.data,
-    total: res.count,
-    pageSize: 10,
-    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
-}),
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
     [STATUS_CLASS_LINE]: (classLineData, {payload: res}) => {
         const obj = classLineData.tableData
         obj.map(item => {

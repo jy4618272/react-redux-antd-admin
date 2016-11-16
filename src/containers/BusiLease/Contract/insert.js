@@ -165,7 +165,7 @@ class ContractInsert extends Component {
         } = this.props.busiLease
         const {
             fetchRoomTable,
-            fetchClassLineTable,
+            fetchFilterClassLineTable,
             fetchFilterPolicyTable
         } = this.props.actionLease
 
@@ -181,7 +181,7 @@ class ContractInsert extends Component {
         } else if (tabsStatus === 'classLine') {
             this.select({
                 status: '开启'
-            }, classLineData.pageSize, page, fetchClassLineTable)
+            }, classLineData.pageSize, page, fetchFilterClassLineTable)
         } else if (tabsStatus === 'policy') {
             this.select({}, policyData.pageSize, page, fetchFilterPolicyTable)
         } else if (tabsStatus === 'contractBond') {
@@ -333,7 +333,7 @@ class ContractInsert extends Component {
         })
         this.select({
             status: '开启'
-        }, 10, 0, this.props.actionLease.fetchClassLineTable)
+        }, 10, 0, this.props.actionLease.fetchFilterClassLineTable)
     }
 
     // 新增优惠
@@ -966,8 +966,9 @@ class ContractInsert extends Component {
                                 },
                                 onCancel() { }
                             })
+                        } else {
+                            errHandler(res.msg)
                         }
-                        errHandler(res.msg)
                     }
                     this.setState({
                         isSaveDisabeld: false

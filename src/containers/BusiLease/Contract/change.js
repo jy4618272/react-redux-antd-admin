@@ -168,7 +168,7 @@ class ContractInsert extends Component {
         } = this.props.busiLease
         const {
             fetchRoomTable,
-            fetchClassLineTable,
+            fetchFilterClassLineTable,
             fetchFilterPolicyTable
         } = this.props.actionLease
 
@@ -190,13 +190,13 @@ class ContractInsert extends Component {
                 }, roomData.pageSize, page, fetchRoomTable)
             } else if (tabsStatus === 'classLine') {
                 this.select({
-                    status: '有效'
-                }, classLineData.pageSize, page, fetchClassLineTable)
+                    status: '开启'
+                }, classLineData.pageSize, page, fetchFilterClassLineTable)
             } else if (tabsStatus === 'policy') {
                 this.select({}, policyData.pageSize, page, fetchFilterPolicyTable)
             } else if (tabsStatus === 'contractBond') {
                 this.select({
-                    status: '有效'
+                    status: '开启'
                 }, bondData.pageSize, page, fetchFilterBondTable)
             }
         }
@@ -343,8 +343,8 @@ class ContractInsert extends Component {
             modalTitle: '选择班线'
         })
         this.select({
-            status: '有效'
-        }, 10, 0, this.props.actionLease.fetchClassLineTable)
+            status: '开启'
+        }, 10, 0, this.props.actionLease.fetchFilterClassLineTable)
     }
 
     // 新增优惠
@@ -376,7 +376,7 @@ class ContractInsert extends Component {
         })
         this.select({
             partyid: this.state.partyid,
-            status: '有效'
+            status: '开启'
         }, 10, 0, this.props.action.fetchFilterBondTable)
     }
 
