@@ -4,9 +4,12 @@ import store from 'STORE'
 import layout from 'REDUCER/layout'
 import userInfo from 'REDUCER/userInfo'
 import menuList from 'REDUCER/menuList'
+import home from 'REDUCER/home'
 import busiFinance from 'REDUCER/busiFinance'
 import busiLease from 'REDUCER/busiLease'
 import configLease from 'REDUCER/configLease'
+import configBase from 'REDUCER/configBase/insert'
+import configRights from 'REDUCER/configRights'
 
 // ================================
 // 同步的 Reducers（即应用初始化所必需的）
@@ -16,10 +19,14 @@ const syncReducers = {
 	layout: layout,
 	userInfo: userInfo,
 	menuList: menuList,
+	home: home,
 	busiFinance: busiFinance,
 	busiLease: busiLease,
-	configLease: configLease
+	configLease: configLease,
+	configBase: configBase,
+	configRights: configRights
 }
+
 
 // ================================
 // 异步加载的 Reducers（Code Splitting 按需加载的）

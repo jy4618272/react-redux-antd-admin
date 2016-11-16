@@ -1,6 +1,9 @@
-import { notification } from 'antd'
+import { 
+    message, 
+    notification 
+} from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -26,14 +29,16 @@ const receiveContractEdit = (res) => ({
 const fetchContractEdit = (data) => {
     return dispatch => {
         dispatch(requestContractEdit())
-        xhr('post', leasePath + '/pactprintmodelcs/selectPactPrintModelById', data, function (res) {
+        xhr('post', paths.leasePath + '/pactprintmodelcs/selectPactPrintModelById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('合同模板之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveContractEdit(res))
             } else {
                 dispatch(receiveContractEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }
@@ -49,7 +54,8 @@ const receiveContractUpdate = (res) => ({
 
 const fetchContractUpdate = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/pactprintmodelcs/updatePactPrintModelStatus', data, function (res) {
+        xhr('post', paths.leasePath + '/pactprintmodelcs/updatePactPrintModel', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('合同模板之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveContractUpdate(res))
@@ -60,8 +66,9 @@ const fetchContractUpdate = (data) => {
                 history.back()
             } else {
                 dispatch(receiveContractUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }

@@ -1,8 +1,8 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
 import {
     errHandler,
-    leasePath
+    paths
 } from 'SERVICE/config'
 
 // ================================
@@ -27,28 +27,24 @@ const receiveRoomAdd = (res) => ({
 
 const fetchRoomAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
-            console.log('房间设置之表单保存', res)
+        xhr('post', paths.leasePath + '/rentroomcs/queryRoom', data, function (res) {
             if (res.result === 'success') {
-                if (res.data.rentroomid) {
-                    xhr('post', leasePath + '/rentroomconfigcs/insertRentRoomConfig', {
-                        rentroomid: res.data.rentroomid,
-                        itemname: '32323'
-                    }, function (res) {
-                        console.log('房间设置之表单保存2', res)
-                        if (res.result === 'success') {
-                            dispatch(receiveRoomAdd(res))
-                        }
-                    })
-                }
-                notification.success({
-                    message: '新增成功',
-                    description: '房间设置新增数据成功'
-                });
-                history.back()
-            } else {
-                dispatch(receiveRoomAdd({}))
-                errHandler(res.result)
+                xhr('post', paths.leasePath + '/rentroomcs/insertRentRoom', data, function (res) {
+                    const hide = message.loading('正在查询...', 0)
+                    console.log('房间设置之表单保存', res)
+                    if (res.result === 'success') {
+                        hide()
+                        notification.success({
+                            message: '新增成功',
+                            description: '房间设置新增数据成功'
+                        });
+                        history.back()
+                    } else {
+                        hide()
+                        dispatch(receiveRoomAdd({}))
+                        errHandler(res.msg)
+                    }
+                })
             }
         })
     }
@@ -61,17 +57,17 @@ const receiveBuildList = (res) => ({
 })
 const fetchBuildList = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
             console.log('房间设置之获取楼号：', data, res)
-            const options = []
-            res.data.map(item => {
-                options.push({ key: item.build, value: item.build })
-            })
             if (res.result === 'success') {
+                const options = []
+                res.data.map(item => {
+                    options.push({ key: item.build, value: item.build })
+                })
                 dispatch(receiveBuildList(options))
             } else {
                 dispatch(receiveBuildList({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -85,7 +81,7 @@ const receiveClassLineAdd = (res) => ({
 
 const fetchClassLineAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/transportlinecs/insertTransportLine', data, function (res) {
+        xhr('post', paths.leasePath + '/transportlinecs/insertTransportLine', data, function (res) {
             console.log('班线管理之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receiveClassLineAdd(res))
@@ -96,7 +92,7 @@ const fetchClassLineAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receiveClassLineAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -110,7 +106,7 @@ const receivePolicyAdd = (res) => ({
 
 const fetchPolicyAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentpromotioncs/insertRentPromotion', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/insertRentPromotion', data, function (res) {
             console.log('政策优惠之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receivePolicyAdd(res))
@@ -121,7 +117,7 @@ const fetchPolicyAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receivePolicyAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -135,7 +131,7 @@ const receiveManagerAdd = (res) => ({
 
 const fetchManagerAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/salercs/insertSaler', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/insertSaler', data, function (res) {
             console.log('客户经理之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receiveManagerAdd(res))
@@ -146,7 +142,7 @@ const fetchManagerAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receiveManagerAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -160,7 +156,7 @@ const receiveContractAdd = (res) => ({
 
 const fetchContractAdd = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/pactprintmodelcs/insertPactPrintModel ', data, function (res) {
+        xhr('post', paths.leasePath + '/pactprintmodelcs/insertPactPrintModel ', data, function (res) {
             console.log('合同模板之表单保存', res)
             if (res.result === 'success') {
                 dispatch(receiveContractAdd(res))
@@ -171,7 +167,7 @@ const fetchContractAdd = (data) => {
                 history.back()
             } else {
                 dispatch(receiveContractAdd({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -191,16 +187,16 @@ export const ACTION_HANDLERS = {
     [RECEIVE_ROOM_ADD]: (roomAdd) => ({
         ...roomAdd
     }),
-    [RECEIVE_BUILD_LIST]: (roomAdd, {payload: res}) => {
-        roomAdd.room.map((item, index) => {
-            if (index == 1) {
-                item.options = res
-            }
-        })
-        return roomAdd
-    },
+[RECEIVE_BUILD_LIST]: (roomAdd, {payload: res}) => {
+    roomAdd.roomForm.map((item, index) => {
+        if (index == 1) {
+            item.options = res
+        }
+    })
+    return roomAdd
+},
     [RECEIVE_CLASSLINE_ADD]: ({ payload: res }) => [],
-    [RECEIVE_POLICY_ADD]: ({payload: res}) => [],
-    [RECEIVE_MANAGER_ADD]: ({payload: res}) => [],
-    [RECEIVE_CONSTRACT_ADD]: ({payload: res}) => []
+        [RECEIVE_POLICY_ADD]: ({payload: res}) => [],
+            [RECEIVE_MANAGER_ADD]: ({payload: res}) => [],
+                [RECEIVE_CONSTRACT_ADD]: ({payload: res}) => []
 }

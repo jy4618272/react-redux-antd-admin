@@ -1,3 +1,4 @@
+import { default as areaActionCreators } from './area'
 import { default as roomActionCreators } from './room'
 import { default as roomEditActionCreators } from './roomEdit'
 
@@ -17,6 +18,7 @@ import { default as leaseAddActionCreators } from './leaseAdd'
 
 
 export default {
+  ...areaActionCreators,
   ...roomActionCreators,
   ...roomEditActionCreators,
   ...classLineActionCreators,

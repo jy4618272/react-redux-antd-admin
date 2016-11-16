@@ -1,6 +1,9 @@
-import { notification } from 'antd'
+import {
+    message,
+    notification
+} from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 import moment from 'moment'
 
 // ================================
@@ -26,7 +29,8 @@ const receivePolicyEdit = (res) => ({
 const fetchPolicyEdit = (data) => {
     return dispatch => {
         dispatch(requestPolicyEdit())
-        xhr('post', leasePath + '/rentpromotioncs/selectRentPromotionById', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/selectRentPromotionById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('政策优惠之编辑', res)
             const oldObj = res.data
             const newObj = {}
@@ -40,21 +44,19 @@ const fetchPolicyEdit = (data) => {
                 }
             }
 
-            console.log('1111', newObj)
             if (res.result === 'success') {
+                hide()
                 dispatch(receivePolicyEdit(newObj))
             } else {
+                hide()
                 dispatch(receivePolicyEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
 }
 
 // 政策优惠更新修改
-const requestPolicyUpdate = () => ({
-    type: REQUEST_POLICY_UPDATE
-})
 const receivePolicyUpdate = (res) => ({
     type: RECEIVE_POLICY_UPDATE,
     payload: res
@@ -62,9 +64,11 @@ const receivePolicyUpdate = (res) => ({
 
 const fetchPolicyUpdate = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentpromotioncs/updateRentPromotion', data, function (res) {
+        xhr('post', paths.leasePath + '/rentpromotioncs/updateRentPromotion', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('政策优惠之表单更新保存', res)
             if (res.result === 'success') {
+                hide()
                 dispatch(receivePolicyUpdate(res))
                 notification.success({
                     message: '更新成功',
@@ -72,8 +76,9 @@ const fetchPolicyUpdate = (data) => {
                 });
                 history.back()
             } else {
+                hide()
                 dispatch(receivePolicyUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -89,14 +94,18 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_POLICY_EDIT]: (policyEdit) => ({
         ...policyEdit,
-        loading: true
+    loading: true
     }),
-    [RECEIVE_POLICY_EDIT]: (policyEdit, {payload: res}) => ({
+[RECEIVE_POLICY_EDIT]: (policyEdit, {payload: res}) => ({
         ...policyEdit,
-        loading: false,
-        data: res
+    loading: false,
+    data: res
+}),
+    [REQUEST_POLICY_UPDATE]: (policyData) => ({
+        ...policyData
     }),
-    [REQUEST_POLICY_UPDATE]: () => ({}),
-    [RECEIVE_POLICY_UPDATE]: () => ({})
+        [RECEIVE_POLICY_UPDATE]: (policyData) => ({
+        ...policyData
+        })
 }
 

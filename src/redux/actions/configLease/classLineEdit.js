@@ -1,6 +1,6 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -28,14 +28,16 @@ const receiveLineEdit = (res) => ({
 const fetchClassLineEdit = (data) => {
     return dispatch => {
         dispatch(requestLineEdit())
-        xhr('post', leasePath + '/transportlinecs/selectTransportLineById', data, function (res) {
+        xhr('post', paths.leasePath + '/transportlinecs/selectTransportLineById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('班线管理之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveLineEdit(res))
             } else {
                 dispatch(receiveLineEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }
@@ -51,7 +53,8 @@ const receiveClassLineUpdate = (res) => ({
 
 const fetchClassLineUpdate = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/transportlinecs/updateTransportLine', data, function (res) {
+        xhr('post', paths.leasePath + '/transportlinecs/updateTransportLine', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('班线管理之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveClassLineUpdate(res))
@@ -62,8 +65,9 @@ const fetchClassLineUpdate = (data) => {
                 history.back()
             } else {
                 dispatch(receiveClassLineUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }

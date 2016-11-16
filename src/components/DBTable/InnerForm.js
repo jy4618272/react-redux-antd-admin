@@ -3,18 +3,7 @@
  */
 import React, { Component } from 'react'
 import {
-    Form,
-    Row,
-    Col,
-    Select,
-    Radio,
-    Checkbox,
-    DatePicker,
-    Input,
-    InputNumber,
-    Button,
-    Icon,
-    notification
+    Form
 } from 'antd'
 import {
     FormLayout
@@ -32,11 +21,14 @@ class InnerForm extends Component {
                         form={this.props.form}
                         showSearch={this.props.showSearch}
                         showSave={this.props.showSave}
+                        parentHandleInputBlur={this.props.parentHandleInputBlur}
                         parentHandleSelect={this.props.parentHandleSelect}
                         parentHandleSubmit={this.props.parentHandleSubmit}
                         parentHandleSave ={this.props.parentHandleSave}
                         setFields={this.props.setFields}
-                        sessionShouldGet={this.props.sessionShouldGet} />
+                        sessionShouldGet={this.props.sessionShouldGet}>
+                        {this.props.children}
+                    </FormLayout>
                 </Form>
             </section>
         )

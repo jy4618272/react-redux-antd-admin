@@ -1,6 +1,6 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
@@ -23,7 +23,8 @@ const receiveBuildList = (res) => ({
 })
 const fetchBuildList = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/seleBuildBySiteAndArea', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之获取楼号：', data, res)
             const options = []
             res.data.map(item => {
@@ -33,8 +34,9 @@ const fetchBuildList = (data) => {
                 dispatch(receiveBuildList(options))
             } else {
                 dispatch(receiveBuildList({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }
@@ -51,13 +53,16 @@ const receiveRoomEdit = (res) => ({
 const fetchRoomEdit = (data) => {
     return dispatch => {
         dispatch(requestRoomEdit())
-        xhr('post', leasePath + '/rentroomcs/selectRentRoomById', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/selectRentRoomById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之编辑', data, res)
             if (res.result === 'success') {
+                hide()
                 dispatch(receiveRoomEdit(res))
             } else {
+                hide()
                 dispatch(receiveRoomEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -74,7 +79,8 @@ const receiveRoomUpdate = (res) => ({
 
 const fetchRoomUpdate = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/rentroomcs/updateRentRoomStatus', data, function (res) {
+        xhr('post', paths.leasePath + '/rentroomcs/updateRentRoom', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('房间设置之表单更新保存', res)
             if (res.result === 'success') {
                 dispatch(receiveRoomUpdate(res))
@@ -85,8 +91,9 @@ const fetchRoomUpdate = (data) => {
                 history.back()
             } else {
                 dispatch(receiveRoomUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }
@@ -94,6 +101,7 @@ const fetchRoomUpdate = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
+    fetchBuildList,
     fetchRoomEdit,
     fetchRoomUpdate
 }
@@ -109,14 +117,16 @@ export const ACTION_HANDLERS = {
     },
     [REQUEST_ROOM_EDIT]: (roomEdit) => ({
         ...roomEdit,
-        loading: true
+        loading: true,
+        data: {}
     }),
     [RECEIVE_ROOM_EDIT]: (roomEdit, {payload: res}) => ({
         ...roomEdit,
         loading: false,
-        data: res.data
+        data: res.data,
+        tableSource: res.data.data
     }),
-    [REQUEST_ROOM_UPDATE]: (roomEdit) => ({...roomEdit}),
-    [RECEIVE_ROOM_UPDATE]: (roomEdit) => ({...roomEdit})
+    [REQUEST_ROOM_UPDATE]: (roomEdit) => ({...roomEdit }),
+    [RECEIVE_ROOM_UPDATE]: (roomEdit) => ({...roomEdit })
 }
 

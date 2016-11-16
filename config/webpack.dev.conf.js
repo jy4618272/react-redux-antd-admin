@@ -19,14 +19,14 @@ config.entry.app = [
     config.entry.app
 ];
 
-// // generate loader string to be used with extract text plugin
+// generate loader string to be used with extract text plugin
 function generateExtractLoaders(loaders) {
   return loaders.map(function (loader) {
     return loader + '-loader' + (SOURCE_MAP ? '?sourceMap' : '');
   }).join('!');
 }
 
-// // config.output.publicPath = '/';
+// config.output.publicPath = '/';
 
 config.plugins = (config.plugins || []).concat([
   new OpenBrowserPlugin({ url: 'http://localhost:3000' }),

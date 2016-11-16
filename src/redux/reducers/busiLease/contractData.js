@@ -25,6 +25,16 @@ const initialState = {
             key:'enddate'
         },
         {
+            title:'流程类型',            
+            dataIndex:'flowtype',            
+            key:'flowtype'
+        },
+        {
+            title:'租赁类型',            
+            dataIndex:'renttype',            
+            key:'renttype'
+        },
+        {
             title:'流程状态',            
             dataIndex:'flowstatus',            
             key:'flowstatus'
@@ -34,6 +44,11 @@ const initialState = {
             dataIndex:'fistatus',            
             key:'fistatus'
         }
+        // {
+        //     title:'结束类型',            
+        //     dataIndex:'endtype',            
+        //     key:'endtype'
+        // }
     ],
     tableData: [],
     skipCount: 1,

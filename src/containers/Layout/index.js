@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {bindActionCreators} from 'redux'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { BackTop } from 'antd'
@@ -8,8 +8,12 @@ import SlideNav from 'COMPONENT/SlideBar'
 import Breadcrumb from 'COMPONENT/Breadcrumb'
 import Footer from 'COMPONENT/Footer'
 import actionLayout from 'ACTION/layout'
+import actionMenu from 'ACTION/menuList'
 
-import './index.less'
+import {
+	Loading
+} from 'COMPONENT'
+import 'STYLE/index.less'
 import logo from './img/logo.png'
 
 let DevTools
@@ -19,7 +23,8 @@ if (__DEV__ && __COMPONENT_DEVTOOLS__) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-	actionLayout: bindActionCreators(actionLayout, dispatch)
+	actionLayout: bindActionCreators(actionLayout, dispatch),
+	actionMenu: bindActionCreators(actionMenu, dispatch)
 })
 
 @connect(
@@ -29,32 +34,41 @@ const mapDispatchToProps = (dispatch) => ({
 class App extends Component {
 	constructor(props) {
 		super(props)
+		console.log('框架', props)
+	}
+
+	componentDidMount(){
+		this.props.actionMenu.fetchMenuList()
 	}
 
 	render() {
 		const {layout, menuList, actionLayout} = this.props
 		const layoutStyle = layout.slideBar ? 'm-layout' : 'm-layout m-layout-full'
+		if(menuList.loading){
+			return <Loading />
+		}
+
 		return (
 			<section className={layoutStyle}>
 				<aside className="m-aside" location={this.props.location}>
 					<div className="m-logo g-tac">
 						<Link to="/"><img src={logo} alt="传化物流园区通" /></Link>
 					</div>
-					<SlideNav menuList= {menuList} mode="inline" />
+					<SlideNav menuList={menuList.data} mode="inline" />
 				</aside>
 
 				<article className="m-container" id="container">
 					<Header layout={layout} slideBarToggle={actionLayout.slideBarToggle} />
+					{/*
+						<Breadcrumb {...this.props} />
+					相当于 Vue Demo 中的根 router-view */}
 
-					<Breadcrumb {...this.props} />
-					{/* 相当于 Vue Demo 中的根 router-view */}
-
-					{ this.props.children }
+					{this.props.children}
 					<Footer />
 				</article>
 
 				<BackTop />
-				{ DevTools && <DevTools /> }
+				{DevTools && <DevTools />}
 			</section>
 		)
 	}

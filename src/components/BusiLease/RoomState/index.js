@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react'
-import {Link} from 'react-router'
+import { hashHistory } from 'react-router'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
 import {
     Tabs,
     Row,
@@ -13,6 +12,7 @@ import {
 const TabPane = Tabs.TabPane
 
 import {
+    Loading,
     InnerPagination,
     Err
 } from 'COMPONENT'
@@ -22,19 +22,22 @@ import roomRed from './img/house-red.png'
 import roomBlue from './img/house-blue.png'
 import roomOrange from './img/house-orange.png'
 import actionBusiLease from 'ACTION/busiLease'
+import actionConfigLease from 'ACTION/configLease'
 
 import './index.less'
 
 const mapDispatchToProps = (dispatch) => ({
-    actionBusiLease: bindActionCreators(actionBusiLease, dispatch)
+    actionBusiLease: bindActionCreators(actionBusiLease, dispatch),
+    actionConfigLease: bindActionCreators(actionConfigLease, dispatch)
 })
 @connect(
-    ({ busiLease }) => ({ busiLease }),
+    ({ busiLease, configLease }) => ({ busiLease, configLease }),
     mapDispatchToProps
 )
 class RoomState extends Component {
     constructor(props) {
         super(props)
+        console.log('房态图props:', props)
         this.area = "全部"
     }
 
@@ -89,41 +92,53 @@ class RoomState extends Component {
         this.select(this.queryObj, roomState.pageSize, page)
     }
 
-
     /**
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
+        this.props.actionConfigLease.fetchArea({
+            add: '全部'
+        })
         this.refresh()
     }
 
     render() {
+        const { areaData } = this.props.configLease
         const {roomState} = this.props.busiLease
+
+        if (areaData.loading) {
+            return <Loading />
+        }
+
+        // 内容
         const roomStateList = roomState.roomStateData.map(item => {
             let imgStatus
+            let tips
             if (item.status === '预定') {
                 imgStatus = roomRed
-            } else if (item.status === '未出租') {
-                imgStatus = roomBlue
-                return (
-                    <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
-                        <Link to="/busi/busi_lease/add?type=contract&rentroomid=${item.rentroomid}">
-                            <div className="list-img"><img src={imgStatus} /></div>
-                            <div className="list-txt">{item.build}- {item.room}</div>
-                        </Link>
-                    </Col>
+                tips = (
+                    <div>
+                        <p>房间号：{item.room}</p>
+                    </div>
                 )
             } else if (item.status === '已出租') {
                 imgStatus = roomOrange
-                const tips = (
+                tips = (
                     <div>
                         <p>客户名称：{item.organization}</p>
                         <p>合同编码：{item.pactCode}</p>
                     </div>
                 )
+            } else if (item.status === '未出租') {
+                imgStatus = roomBlue
+                tips = (
+                    <div>
+                        <p>房间号：{item.room}</p>
+                    </div>
+                )
                 return (
-                    <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
-                        <Popover content={tips} title={item.status}>
+                    <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
+                        <Popover content={tips} title={item.status} onClick={() => { hashHistory.push(`busi/busi_lease/contract/add?rentroomid=${item.rentroomid}`) } }>
                             <div>
                                 <div className="list-img"><img src={imgStatus} /></div>
                                 <div className="list-txt">{item.build}- {item.room}</div>
@@ -132,11 +147,14 @@ class RoomState extends Component {
                     </Col>
                 )
             }
-
             return (
-                <Col xs={24} sm={12} md={6} lg={4} className="g-mb20">
-                    <div className="list-img"><img src={imgStatus} /></div>
-                    <div className="list-txt">{item.build}- {item.room}</div>
+                <Col xs={24} sm={12} md={6} lg={4} className="popover-theme-primary g-mb20">
+                    <Popover content={tips} title={item.status}>
+                        <div>
+                            <div className="list-img"><img src={imgStatus} /></div>
+                            <div className="list-txt">{item.build}- {item.room}</div>
+                        </div>
+                    </Popover>
                 </Col>
             )
         })
@@ -161,47 +179,21 @@ class RoomState extends Component {
         }
 
         return (
-            <section className="m-room-state">
+            <section className="sm-room-state">
                 <ul className="clearfix list-room-state-map">
                     <li><img src={roomRed} />预定</li>
                     <li><img src={roomBlue} />未出租</li>
                     <li><img src={roomOrange} />已出租</li>
                 </ul>
                 <div className="tabs-vertical">
-                    <Tabs defaultActiveKey="全部" onChange={this.handlerTabs}>
-                        <TabPane tab="全部" key="全部">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="信息交易中心" key="信息交易中心">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="大仓" key="大仓">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="零担" key="零担">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="汽修汽配汽贸" key="汽修汽配汽贸">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="司机之家" key="司机之家">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="饭店餐饮" key="饭店餐饮">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="第3方物流" key="第3方物流">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="广告位" key="广告位">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="席位" key="席位">
-                            {content}
-                        </TabPane>
-                        <TabPane tab="其它" key="其它">
-                            {content}
-                        </TabPane>
+                    <Tabs defaultActiveKey={areaData.data[0].key} onChange={this.handlerTabs}>
+                        {
+                            areaData.data.map(pane =>
+                                <TabPane tab={pane.value} key={pane.key}>
+                                    {content}
+                                </TabPane>
+                            )
+                        }
                     </Tabs>
                 </div>
             </section>
@@ -210,3 +202,4 @@ class RoomState extends Component {
 }
 
 export default RoomState
+

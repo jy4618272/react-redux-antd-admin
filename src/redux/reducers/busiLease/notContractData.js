@@ -17,7 +17,7 @@ const initialState = {
         },
         {
             title: '金额',
-            dataIndex: 'money    ',
+            dataIndex: 'money',
             key: 'money  '
         },
         {
@@ -34,18 +34,6 @@ const initialState = {
             title: '备注',
             dataIndex: 'memo',
             key: 'memo'
-        }, 
-        {
-            title: '操作',
-            key: 'operator',
-            render: (text, record, index) => {
-                return(
-                    <div>
-                        <a href="javascript:;" onClick={() => {this.handleDd.bind(this, record)}} className="s-blue">打印缴款单</a>
-                        <a href="javascript:;" onClick={() => {console.log(record)}} className="s-blue g-ml10">作废</a>
-                    </div>
-                )
-            }
         }
     ],
     tableData: [],

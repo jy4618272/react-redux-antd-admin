@@ -1,13 +1,12 @@
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, leasePath } from 'SERVICE/config'
+import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
 // ================================
 const REQUEST_MANAGER_EDIT = 'REQUEST_MANAGER_EDIT'
 const RECEIVE_MANAGER_EDIT = 'RECEIVE_MANAGER_EDIT'
-const REQUEST_MANAGER_UPDATE = 'REQUEST_MANAGER_UPDATE'
 const RECEIVE_MANAGER_UPDATE = 'RECEIVE_MANAGER_UPDATE'
 
 
@@ -26,22 +25,21 @@ const receiveManagerEdit = (res) => ({
 const fetchManagerEdit = (data) => {
     return dispatch => {
         dispatch(requestManagerEdit())
-        xhr('post', leasePath + '/salercs/selectSalerById', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/selectSalerById', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('客户经理之编辑', data, res)
             if (res.result === 'success') {
                 dispatch(receiveManagerEdit(res))
             } else {
                 dispatch(receiveManagerEdit({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
+            hide()
         })
     }
 }
 
 // 客户经理更新修改
-const requestMangerUpdate = () => ({
-    type: REQUEST_MANAGER_UPDATE
-})
 const receiveMangerUpdate = (res) => ({
     type: RECEIVE_MANAGER_UPDATE,
     payload: res
@@ -49,9 +47,11 @@ const receiveMangerUpdate = (res) => ({
 
 const fetchManagerUpdate = (data) => {
     return dispatch => {
-        xhr('post', leasePath + '/salercs/updateSaler', data, function (res) {
+        xhr('post', paths.leasePath + '/salercs/updateSaler', data, function (res) {
+            const hide = message.loading('正在查询...', 0)
             console.log('客户经理之表单更新保存', res)
             if (res.result === 'success') {
+                hide()
                 dispatch(receiveMangerUpdate(res))
                 notification.success({
                     message: '更新成功',
@@ -59,8 +59,10 @@ const fetchManagerUpdate = (data) => {
                 });
                 history.back()
             } else {
+                hide()
+
                 dispatch(receiveMangerUpdate({}))
-                errHandler(res.result)
+                errHandler(res.msg)
             }
         })
     }
@@ -83,7 +85,6 @@ export const ACTION_HANDLERS = {
         loading: false,
         data: res.data
     }),
-    [REQUEST_MANAGER_UPDATE]: () => ({}),
-    [RECEIVE_MANAGER_UPDATE]: () => ({})
+    [RECEIVE_MANAGER_UPDATE]: (managerData) => ({...managerData})
 }
 

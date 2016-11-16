@@ -9,20 +9,26 @@ import {
     Form,
     InputNumber,
     Input,
-    DatePicker
+    DatePicker,
+    notification
 } from 'antd'
+
 const FormItem = Form.Item
 
-import InnerForm from 'COMPONENT/DBTable/InnerForm'
-import InnerTable from 'COMPONENT/DBTable/InnerTable'
+import {
+    Loading,
+    ModalForm,
+    InnerForm,
+    InnerTable
+} from 'COMPONENT'
 
 import actionLeaseAdd from 'ACTION/configLease/leaseAdd'
-
-import moment from 'moment'
-
+import actionLease from 'ACTION/configLease'
+import { filterQueryObj } from 'UTIL'
 
 const mapDispatchToProps = (dispatch) => ({
-    actionLeaseAdd: bindActionCreators(actionLeaseAdd, dispatch)
+    actionLease: bindActionCreators(actionLease, dispatch),
+    actionLeaseAdd: bindActionCreators(actionLeaseAdd, dispatch),
 })
 
 @connect(
@@ -32,8 +38,16 @@ const mapDispatchToProps = (dispatch) => ({
 class LeaseAdd extends Component {
     constructor(props) {
         super(props)
-        console.log(props)
-
+        console.log('props:', props)
+        this.state = {
+            modalOpenBtn: 'roomGoodsInsert',
+            modalName: 'roomGoods',
+            modalVisible: false,
+            modalTitle: '新增',
+            modalWidth: '500',
+            tableIndex: 0,
+            tableDataGoods: []
+        }
         this.initFetchSchema(props)
     }
 
@@ -91,15 +105,30 @@ class LeaseAdd extends Component {
         const {actionLeaseAdd} = this.props
 
         if (this.addType === 'room') {
+            newObj = Object.assign({}, newObj, {
+                rentroomconfig: JSON.stringify(this.state.tableDataGoods)
+            })
             actionLeaseAdd.fetchRoomAdd(newObj)
         } else if (this.addType === 'classLine') {
             actionLeaseAdd.fetchClassLineAdd(newObj)
         } else if (this.addType === 'policy') {
+            const val = this.refs.otherForm.getFieldsValue()
+            if (val.promotiontype === "折扣" && val.promotionnum > 10) {
+                notification.error({
+                    message: '优惠幅度填写有误',
+                    description: '【折扣】类型优惠幅度为[1-10】'
+                })
+                return false;   
+            }
+
             actionLeaseAdd.fetchPolicyAdd(newObj)
         } else if (this.addType === 'accountManager') {
             actionLeaseAdd.fetchManagerAdd(newObj)
         } else if (this.addType === 'contractTpl') {
-            actionLeaseAdd.fetchContractAdd(newObj)
+            const saveObj = Object.assign({}, newObj, {
+                status: '开启'
+            })
+            actionLeaseAdd.fetchContractAdd(saveObj)
         }
     }
 
@@ -112,50 +141,174 @@ class LeaseAdd extends Component {
             })
         }
     }
-    parentHandleClick = (key) => {
+
+    handleAddGoods = (key) => {
+        this.setState({
+            modalOpenBtn: 'roomGoodsInsert',
+            modalVisible: true,
+            modalTitle: '新增房间物品'
+        })
+    }
+
+    handleEditGoods = (text, record, index) => {
+        this.setState({
+            modalOpenBtn: 'roomGoodsEdit',
+            modalVisible: true,
+            modalTitle: '修改房间物品',
+            tableIndex: index
+        })
+
+        setTimeout(() => {
+            this.refs.roomGoodsModal.setFieldsValue(record)
+        }, 0)
+    }
+
+    handleDelGoods = (text, record, index) => {
+        const {tableDataGoods} = this.state
+        tableDataGoods.splice(index, 1)
+        this.setState({
+            tableDataGoods
+        })
+    }
+
+    // 弹框确认
+    handleModalOk = () => {
+        const {
+            modalOpenBtn,
+            tableDataGoods,
+            tableIndex
+        } = this.state
+        this.refs.roomGoodsModal.validateFieldsAndScroll((errors, values) => {
+            if (errors) {
+                notification.error({
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
+                })
+                return false;
+            }
+
+            const obj = this.state.tableDataGoods
+            const oldObj = this.refs.roomGoodsModal.getFieldsValue()
+            const newObj = filterQueryObj(oldObj)
+            if (modalOpenBtn === 'roomGoodsInsert') {
+                obj.push(Object.assign({}, newObj))
+                this.setState({
+                    tableDataGoods: obj
+                })
+            } else if (modalOpenBtn === 'roomGoodsEdit') {
+                tableDataGoods[tableIndex] = newObj
+            }
+
+            this.refs.roomGoodsModal.resetFields()
+            this.handleModalCancel()
+        })
+    }
+
+    handleModalCancel = () => {
+        const {modalName} = this.state
+        if (modalName === 'roomGoods') {
+            this.refs.roomGoodsModal.resetFields()
+        }
+        this.setState({
+            modalVisible: false
+        })
+    }
+
+    /* 表单更改
+    handleInputBlur = (key) => {
+        if (key === 'promotionnum') {
+            
+        }
+    }*/
+
+    componentDidMount() {
+        this.props.actionLease.fetchArea()
     }
 
     // 渲染
     render() {
-        const {roomAddSchema} = this.props.configLease
-        return (
-            <section className="m-config m-config-room">
-                {this.addType == 'room' ?
+        const {
+            areaData,
+            roomAddSchema
+        } = this.props.configLease
+
+        if (this.addType == 'room') {
+            const {modalName} = this.state
+            const roomSchema = roomAddSchema['tableColumns'].concat([
+                {
+                    key: 'operation',
+                    title: '操作',
+                    render: (text, record, index) => <div className="button-group">
+                        <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleEditGoods.bind(this, text, record, index)}>修改</a>
+                        <a href="javascript:;" className="s-blue" onClick={this.handleDelGoods.bind(this, text, record, index)}>删除</a>
+                    </div>
+                }
+            ])
+
+            let modalContent
+            if (modalName === "roomGoods") {
+                modalContent = <ModalForm
+                    ref="roomGoodsModal"
+                    schema={roomAddSchema['roomGoodsForm']} />
+            }
+
+            if (areaData.loading) {
+                return <Loading />
+            }
+            roomAddSchema['roomForm'][0].options = areaData.data
+
+            return (
+                <section className="m-config m-config-room">
+                    <Modal
+                        visible={this.state.modalVisible}
+                        title={this.state.modalTitle}
+                        width={this.state.modalWidth}
+                        onOk={this.handleModalOk}
+                        onCancel={this.handleModalCancel}>
+                        {modalContent}
+                    </Modal>
                     <InnerForm
-                        formStyle="padding m-advance-fill"
-                        schema={roomAddSchema['room']}
-                        sessionShouldGet={this.addType}
+                        formStyle="padding"
+                        schema={roomAddSchema['roomForm']}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
                         parentHandleSave={this.parentHandleSave}>
-                        {/*
-                        <InnerTable
-                            columns={roomAddSchema.tableColumns}
-                            modalSchema={roomAddSchema['room']}
-                            schema={{
-                                left: [
-                                    {
-                                        title: '新增',
-                                        key: 'add'
-                                    }
-                                ],
-                                center: [],
-                                right: []
-                            }}
-                            dataSource={roomAddSchema.tableSource}
-                            parentHandleClick={this.parentHandleClick}
-                            bordered={true} />
-                        */}
-                    </InnerForm> :
+                        <div className="padding-lr g-mt20">
+                            <div className="button-group g-mb10">
+                                <Button onClick={this.handleAddGoods}>新增物品</Button>
+                            </div>
+                            <InnerTable
+                                columns={roomSchema}
+                                schema={roomAddSchema['tableControls']}
+                                dataSource={this.state.tableDataGoods}
+                                pagination={false}
+                                bordered={true} />
+                        </div>
+                    </InnerForm>
+                </section>
+            )
+        } else {
+            if (areaData.loading) {
+                return <Loading />
+            }
+            if (this.addType === 'policy') {
+                this.addSchema['policy'][5].options = areaData.data
+            }
+
+            return (
+                <section className="m-config m-config-room">
                     <InnerForm
                         formStyle="padding m-advance-fill"
                         schema={this.addSchema[this.addType]}
                         showSave={true}
+                        ref='otherForm'
                         sessionShouldGet={this.addType}
                         parentHandleSave={this.parentHandleSave} />
-                }
-            </section>
-        )
+                </section>
+            )
+        }
     }
 }
+
+
 export default LeaseAdd

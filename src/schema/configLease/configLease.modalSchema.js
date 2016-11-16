@@ -37,7 +37,7 @@ module.exports = {
             feedBackShow: true,
             validate: [{
                 rules: [
-                    { min: 4, max: 255, message: '非必填，如果填写至少4个汉字' },
+                    {message: '备注' },
                 ],
                 trigger: 'onChange',
             }]

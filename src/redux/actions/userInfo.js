@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import xhr from 'SERVICE'
 
 // import xhr from 'SERVICE/xhr'
@@ -22,7 +23,15 @@ const receiveUser = (res) => ({
 const fetchUser = () => {
     return dispatch => {
         xhr('post', '/financeParkAdmin/maincs/getUserInfo', {}, function (res) {
-            dispatch(receiveUser(res))
+            const hide = message.loading('正在获取用户信息...', 0)
+            if (res.result === 'success') {
+                hide()
+                sessionStorage.setItem('getFacility', res.data.facilityName)
+                dispatch(receiveUser(res))
+            } else {
+                hide()
+                errHandler(res.msg)
+            }
         })
     }
 }

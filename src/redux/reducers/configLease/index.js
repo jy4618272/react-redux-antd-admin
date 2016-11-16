@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 
+import areaReducer from './area'
 import roomReducer from './room'
 import roomAddSchemaReducer from './roomAddSchema'
 import roomEditReducer from './roomEdit'
@@ -19,6 +20,7 @@ import contractTplEditReducer from './contractTplEdit'
 import auditPersonReducer from './auditPerson'
 
 export default combineReducers({
+    areaData: areaReducer,
     roomData: roomReducer,
     roomAddSchema: roomAddSchemaReducer,
     roomEdit: roomEditReducer,
