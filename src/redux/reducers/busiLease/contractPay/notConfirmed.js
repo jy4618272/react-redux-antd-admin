@@ -21,8 +21,8 @@ const initialState = {
         },
         {
             title: '房间号',
-            dataIndex: 'name',
-            key: 'name'
+            dataIndex: 'roomlist',
+            key: 'roomlist'
         },
         {
             title: '交款金额',

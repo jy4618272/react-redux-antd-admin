@@ -11,15 +11,6 @@ const initialState = {
             title: '客户名称',
             showType: 'varchar',
             placeholder: "请输入客户名称"
-            // feedBackShow: true,
-            // validate: [
-            //     {
-            //         rules: [
-            //             { required: true, type: 'string', message: '请输入客户名称' },
-            //         ],
-            //         trigger: ['onChange']
-            //     }
-            // ]
         },
     ],
     queryButtons: [
@@ -52,8 +43,8 @@ const initialState = {
         },
         {
             title: '联系电话',
-            dataIndex: 'telephone',
-            key: 'telephone'
+            dataIndex: 'tel',
+            key: 'tel'
         },
         {
             title: '开户银行',

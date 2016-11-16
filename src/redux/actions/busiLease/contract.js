@@ -139,16 +139,16 @@ export const ACTION_HANDLERS = {
             tableData: obj
         })
     },
-        [RECEIVE_CONTRACT_APPROVAL]: (contract, {payload: res}) => {
-            const obj = contract.tableData
-            obj.map(item => {
-                if (item.rentpactid == res.sub.rentpactid) {
-                    item.flowstatus = '审批中'
-                }
-            })
+    [RECEIVE_CONTRACT_APPROVAL]: (contract, {payload: res}) => {
+        const obj = contract.tableData
+        obj.map(item => {
+            if (item.rentpactid == res.sub.rentpactid) {
+                item.flowstatus = '审批中'
+            }
+        })
 
-            return Object.assign({}, contract, {
-                tableData: obj
-            })
-        }
+        return Object.assign({}, contract, {
+            tableData: obj
+        })
+    }
 }

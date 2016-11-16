@@ -47,6 +47,7 @@ class InnerTable extends Component {
         const {parentHandleSelectChange} = this.props
         console.log('selectedRowKeys', selectedRowKeys)
         console.log('selectedRows', selectedRows)
+
         this.setState({
             selectedRowKeys,
             selectedRows
@@ -66,11 +67,11 @@ class InnerTable extends Component {
     }
 
     // 点击按钮
-    handleClick = (key) => {
-        const data = this.state.selectedRows
-        const {parentHandleClick} = this.props
-        console.log('你刚点击按钮key+data', key, data)
-        parentHandleClick && parentHandleClick(key, data)
+    hanldeCancelSelect = () => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
     }
 
     /**
@@ -104,7 +105,7 @@ class InnerTable extends Component {
             tableStyle,
             title,
             footer,
-            isRowSelection,            
+            isRowSelection,
         } = this.props
 
         const theTableStyle = tableStyle ? tableStyle : 'm-table m-table-primary'

@@ -22,7 +22,7 @@ module.exports = {
             ]
         },
         {
-            key: 'plandate',
+            key: 'plandayremain',
             title: '计划收款时间',
             dataType: 'varchar',
             showType: 'select',

@@ -199,7 +199,8 @@ class ContractRent extends Component {
                     oldObj.refundreason = oldObj.refundreason.join(',')
                 }
                 const newObj = filterQueryObj(oldObj)
-                const tmp = Object.assign({}, newObj, {
+                const rentData = JSON.parse(sessionStorage.getItem('rentData'))
+                const tmp = Object.assign({}, newObj, rentData, {
                     rentpactrefundlist: JSON.stringify(this.state.rentTableData)
                 })
                 console.log('提交字段', tmp)
@@ -220,6 +221,11 @@ class ContractRent extends Component {
                 })
             }
         })
+    }
+
+    // 取消
+    handleCancel = () => {
+        history.back()
     }
 
     componentDidMount() {

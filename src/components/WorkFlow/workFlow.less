@@ -1,9 +1,12 @@
+@import '../../style/variable.less';
+
+
 .m-work-flow{
     padding-bottom: 20px;
     .ant-col{
         padding:0 10px;
         position:relative;
-        padding-left:50px;
+        padding:0 90px 0 45px;
         &:last-child{
             .u-line{
                 display: none;
@@ -14,14 +17,23 @@
         position: absolute;
         top:0;
         left:10px;
-        width:30px;
+        width:45px;
         i{
             font-size: 22px;
         }
     }
+    .u-line{
+        position: absolute;
+        width:35px;
+        right:10px;
+        top:50%;
+        border-top:1px solid @base-color;
+    }
     .flow-content{
         position: relative;
         h3{
+            position: relative;
+            z-index: 2;
             font-size: 16px;
             margin-bottom: 8px;
         }
@@ -30,13 +42,6 @@
             span{
                 margin:0 5px;
             }
-        }
-        .u-line{
-            position: absolute;
-            top:50%;
-            right:20%;
-            height:1px;
-            line-height: 0;
         }
     }
 }

@@ -338,7 +338,7 @@ class ContractPay extends Component {
                         备注内容：<span className="s-primary">{data.memo}</span>
                     </Col>
                 </Row>
-                <h3>档期收款计划详情</h3>
+                <h3>当期收款计划详情</h3>
                 <InnerTable
                     columns={tableContractColumns}
                     dataSource={data.rentpactpaylists}
@@ -436,7 +436,7 @@ class ContractPay extends Component {
                             columns={notConfirmedTableColumns}
                             dataSource={notConfirmedData.tableData}
                             parentHandleClick={this.parentHandleClick}
-                            isRowSelection={true}
+                            isRowSelection={false}
                             bordered={true}
                             pagination={false} />
                         <InnerPagination
@@ -457,7 +457,7 @@ class ContractPay extends Component {
                             columns={confirmedTableColumns}
                             dataSource={confirmedData.tableData}
                             parentHandleClick={this.parentHandleClick}
-                            isRowSelection={true}
+                            isRowSelection={false}
                             bordered={true}
                             pagination={false} />
                         <InnerPagination

@@ -23,6 +23,7 @@ import {
 const TabPane = Tabs.TabPane
 const FormItem = Form.Item
 const Option = Select.Option
+const confirm = Modal.confirm
 import {
     filterQueryObj
 } from 'UTIL'
@@ -169,7 +170,7 @@ class ContractInsert extends Component {
         } = this.props.actionLease
 
         const {
-            fetchBondTable
+            fetchFilterBondTable
         } = this.props.action
 
         page = (page <= 1) ? 0 : (page - 1) * 10
@@ -179,14 +180,14 @@ class ContractInsert extends Component {
             }, roomData.pageSize, page, fetchRoomTable)
         } else if (tabsStatus === 'classLine') {
             this.select({
-                status: '有效'
+                status: '开启'
             }, classLineData.pageSize, page, fetchClassLineTable)
         } else if (tabsStatus === 'policy') {
             this.select({}, policyData.pageSize, page, fetchFilterPolicyTable)
         } else if (tabsStatus === 'contractBond') {
             this.select({
-                status: '有效'
-            }, bondData.pageSize, page, fetchBondTable)
+                partid: this.state.partyid
+            }, bondData.pageSize, page, fetchFilterBondTable)
         }
     }
 
@@ -331,7 +332,7 @@ class ContractInsert extends Component {
             modalTitle: '选择班线'
         })
         this.select({
-            status: '有效'
+            status: '开启'
         }, 10, 0, this.props.actionLease.fetchClassLineTable)
     }
 
@@ -363,9 +364,8 @@ class ContractInsert extends Component {
             modalTitle: '选择保证金'
         })
         this.select({
-            partyid: this.state.partyid,
-            status: '有效'
-        }, 10, 0, this.props.action.fetchBondTable)
+            partyid: this.state.partyid
+        }, 10, 0, this.props.action.fetchFilterBondTable)
     }
 
     // 新增明细
@@ -473,7 +473,7 @@ class ContractInsert extends Component {
             }
         })
         obj.map(item => {
-            ids.push(item.rentroomid)
+            ids.push(item.room)
         })
         tmp['roomlist'] = ids.join(',')
 
@@ -496,7 +496,7 @@ class ContractInsert extends Component {
             }
         })
         obj.map(item => {
-            ids.push(item.transportlineid)
+            ids.push(item.linename)
         })
 
         tmp['linelist'] = ids.join(',')
@@ -860,7 +860,9 @@ class ContractInsert extends Component {
 
     // 返回
     handleGoBack = () => {
-        hashHistory.push('busi/busi_lease')
+        // return false
+        history.back()
+        // hashHistory.push('busi/busi_lease')
     }
 
     // 保存全部
@@ -883,7 +885,7 @@ class ContractInsert extends Component {
             } else {
                 const {form} = this.props
                 const oldObj = form.getFieldsValue()
-                const newObj = filterQueryObj(oldObj)
+                let newObj = filterQueryObj(oldObj)
                 const {
                     pactprintmodelid,
                     partyid,
@@ -897,11 +899,12 @@ class ContractInsert extends Component {
                 } = this.state
 
                 console.log('保存表单字段', newObj)
+                // newObj.pactcode = 'ZX16190021'
 
                 // 传给后端字段
-                const rentValue = Object.assign({}, newObj, {
+                let rentValue = Object.assign({}, newObj, {
                     renttype: '新租',
-                    flowtype: '新租/续租',
+                    flowtype: '新增/续租',
                     pactprintmodelid: pactprintmodelid,
                     partyid: partyid,
                     partyname: partyname
@@ -917,8 +920,7 @@ class ContractInsert extends Component {
                     })
                     return false
                 }
-                const tmp = Object.assign({}, {
-                    rentpact: JSON.stringify(rentValue),
+                const listData = Object.assign({}, {
                     rentpactattachments: JSON.stringify(dataAttachment),
                     rentpactrooms: JSON.stringify(dataRoom),
                     rentpactlines: JSON.stringify(dataLine),
@@ -926,6 +928,10 @@ class ContractInsert extends Component {
                     offsetmargins: JSON.stringify(dataBond),
                     rentpactpayplanfullinfos: JSON.stringify(stagesTableData)
                 })
+                let tmp = Object.assign({}, listData, {
+                    rentpact: JSON.stringify(rentValue)
+                })
+
                 console.log('传给后端数据：', tmp)
 
                 xhr('post', paths.leasePath + '/rentpactfullinfocs/insertRentPactFullInfo', tmp, (res) => {
@@ -934,6 +940,33 @@ class ContractInsert extends Component {
                     if (res.result === 'success') {
                         hashHistory.push('busi/busi_lease')
                     } else {
+                        if (res.code) {
+                            newObj.pactcode = res.code
+                            const rentValueAgain = Object.assign({}, rentValue, newObj)
+                            tmp = Object.assign({}, listData, {
+                                rentpact: JSON.stringify(rentValueAgain)
+                            })
+                            console.log('传给后端数据2：', tmp)
+
+                            confirm({
+                                title: '合同新增',
+                                content: '合同号重复，变更为' + res.code,
+                                onOk() {
+                                    xhr('post', paths.leasePath + '/rentpactfullinfocs/insertRentPactFullInfo', tmp, (res) => {
+                                        const hide = message.loading('再次查询...', 0)
+                                        console.log('保存合同新增数据：', res)
+                                        if (res.result === 'success') {
+                                            hide()
+                                            hashHistory.push('busi/busi_lease')
+                                        } else {
+                                            hide()
+                                            errHandler(res.msg)
+                                        }
+                                    })
+                                },
+                                onCancel() { }
+                            })
+                        }
                         errHandler(res.msg)
                     }
                     this.setState({

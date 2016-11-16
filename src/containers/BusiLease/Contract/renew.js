@@ -21,6 +21,7 @@ import {
     notification
 } from 'antd'
 const TabPane = Tabs.TabPane
+const confirm = Modal.confirm
 
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
@@ -160,7 +161,7 @@ class ContractInsert extends Component {
         } = this.props.actionLease
 
         const {
-            fetchBondTable
+            fetchFilterBondTable
         } = this.props.action
 
         page = (page <= 1) ? 0 : (page - 1) * 10
@@ -177,7 +178,7 @@ class ContractInsert extends Component {
         } else if (tabsStatus === 'contractBond') {
             this.select({
                 status: '有效'
-            }, bondData.pageSize, page, fetchBondTable)
+            }, bondData.pageSize, page, fetchFilterBondTable)
         }
     }
 
@@ -356,7 +357,7 @@ class ContractInsert extends Component {
         this.select({
             partyid: this.state.partyid,
             status: '有效'
-        }, 10, 0, this.props.action.fetchBondTable)
+        }, 10, 0, this.props.action.fetchFilterBondTable)
     }
 
     // 新增明细
@@ -430,7 +431,7 @@ class ContractInsert extends Component {
         } = this.props.actionLease
 
         const {
-            fetchBondTable,
+            fetchFilterBondTable,
             fetchStagesInfo
         } = this.props.action
 
@@ -484,7 +485,7 @@ class ContractInsert extends Component {
             this.select({
                 partyid: this.state.partyid,
                 status: '有效'
-            }, 10, 0, fetchBondTable)
+            }, 10, 0, fetchFilterBondTable)
         } else if (key === 'makeDefault') {
             const {form} = this.props
             const oldObj = form.getFieldsValue()
@@ -977,9 +978,10 @@ class ContractInsert extends Component {
                 } = this.state
 
                 console.log('保存表单字段', newObj)
+                newObj.pactcode = 'ZX16190021'
 
                 // 传给后端字段
-                const rentValue = Object.assign({}, newObj, {
+                let rentValue = Object.assign({}, newObj, {
                     renttype: '续租',
                     flowtype: '新租/续租',
                     prepactcode: prepactcode,
@@ -999,15 +1001,17 @@ class ContractInsert extends Component {
                     })
                     return false
                 }
-
-                const tmp = Object.assign({}, {
-                    rentpact: JSON.stringify(rentValue),
+                const listData = Object.assign({}, {
                     rentpactattachments: JSON.stringify(dataAttachment),
                     rentpactrooms: JSON.stringify(dataRoom),
                     rentpactlines: JSON.stringify(dataLine),
                     rentpactpromotions: JSON.stringify(dataPolicy),
                     offsetmargins: JSON.stringify(dataBond),
                     rentpactpayplanfullinfos: JSON.stringify(stagesTableData)
+                })
+
+                let tmp = Object.assign({}, listData, {
+                    rentpact: JSON.stringify(rentValue)
                 })
                 console.log('传给后端数据：', tmp)
 
@@ -1017,6 +1021,33 @@ class ContractInsert extends Component {
                     if (res.result === 'success') {
                         hashHistory.push('busi/busi_lease')
                     } else {
+                        if (res.code) {
+                            newObj.pactcode = res.code
+                            const rentValueAgain = Object.assign({}, rentValue, newObj)
+                            tmp = Object.assign({}, listData, {
+                                rentpact: JSON.stringify(rentValueAgain)
+                            })
+                            console.log('传给后端数据2：', tmp)
+
+                            confirm({
+                                title: '合同续租',
+                                content: '合同号重复，变更为' + res.code,
+                                onOk() {
+                                    xhr('post', paths.leasePath + '/rentpactfullinfocs/insertRentPactFullInfo', tmp, (res) => {
+                                        const hide = message.loading('再次查询...', 0)
+                                        console.log('保存合同新增数据：', res)
+                                        if (res.result === 'success') {
+                                            hide()
+                                            hashHistory.push('busi/busi_lease')
+                                        } else {
+                                            hide()
+                                            errHandler(res.msg)
+                                        }
+                                    })
+                                },
+                                onCancel() { }
+                            })
+                        }
                         errHandler(res.msg)
                     }
                     this.setState({
@@ -1055,7 +1086,7 @@ class ContractInsert extends Component {
                     if (key.indexOf('date') > -1) {
                         newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
                     } else if (key.indexOf('totalstages') > -1) {
-                        newObj[key] = '第' + oldObj[key] + '期'
+                        newObj[key] = oldObj[key] + '期'
                     } else {
                         newObj[key] = oldObj[key]
                     }
@@ -1072,14 +1103,6 @@ class ContractInsert extends Component {
                 errHandler(res.msg)
             }
         })
-        // this.props.form.setFieldsValue({
-        //     standardmoney: 0, // 合同标准金额 = 房间租金 + 班线费用
-        //     promotionmoneyoffset: 0,   // 优惠金额
-        //     marginmoneyoffset: 0,// 履约保证金冲抵,
-        //     totaloffsetmoney: 0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
-        //     money: 0, // 合同金额  
-        // })
-
     }
 
     render() {

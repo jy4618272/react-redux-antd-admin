@@ -4,6 +4,7 @@ import store from 'STORE'
 import layout from 'REDUCER/layout'
 import userInfo from 'REDUCER/userInfo'
 import menuList from 'REDUCER/menuList'
+import home from 'REDUCER/home'
 import busiFinance from 'REDUCER/busiFinance'
 import busiLease from 'REDUCER/busiLease'
 import configLease from 'REDUCER/configLease'
@@ -18,12 +19,14 @@ const syncReducers = {
 	layout: layout,
 	userInfo: userInfo,
 	menuList: menuList,
+	home: home,
 	busiFinance: busiFinance,
 	busiLease: busiLease,
 	configLease: configLease,
 	configBase: configBase,
 	configRights: configRights
 }
+
 
 // ================================
 // 异步加载的 Reducers（Code Splitting 按需加载的）

@@ -3,7 +3,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
     Modal,
-    Button
+    Button,
+    notification
 } from 'antd'
 import xhr from 'SERVICE'
 import { errHandler, paths } from 'SERVICE/config'
@@ -181,6 +182,15 @@ class LeaseEdit extends Component {
             })
             actionLease.fetchClassLineUpdate(newObj)
         } else if (this.editType === 'policy') {
+            const val = this.refs.otherForm.getFieldsValue()
+            if (val.promotiontype === "折扣" && val.promotionnum > 10) {
+                notification.error({
+                    message: '优惠幅度填写有误',
+                    description: '【折扣】类型优惠幅度为[1-10】'
+                })
+                return false;
+            }
+
             let newObj = Object.assign({}, oldObj, {
                 rentpromotionid: id
             })
@@ -213,7 +223,7 @@ class LeaseEdit extends Component {
                 this.setState({
                     tableDataGoods: this.props.configLease.roomEdit.tableSource
                 })
-            }, 2000)
+            }, 500)
         } else if (this.editType === 'classLine') {
             actionLease.fetchClassLineEdit({
                 transportlineid: id
@@ -248,7 +258,15 @@ class LeaseEdit extends Component {
             modalName
         } = this.state
 
-        if (this.editType === 'classLine') {
+        if (!this.inited) {
+            return (
+                <Error errorMsg={this.errorMsg} />
+            )
+        }
+
+        if (this.editType === 'room') {
+            this.dataSource = roomEdit
+        } else if (this.editType === 'classLine') {
             this.dataSource = classLineEdit
         } else if (this.editType === 'policy') {
             this.dataSource = policyEdit
@@ -258,19 +276,13 @@ class LeaseEdit extends Component {
             this.dataSource = contractTplEdit
         }
 
-        if (!this.inited) {
-            return (
-                <Error errorMsg={this.errorMsg} />
-            )
+        if (this.dataSource.loading) {
+            return <Loading />
         }
 
         if (this.editType === 'room') {
-            if (roomEdit.loading) {
-                return <Loading />
-            }
-
-            roomEdit['room'][0].options = areaData.data
-            const roomSchema = roomEdit['tableColumns'].concat([
+            this.dataSource['room'][0].options = areaData.data
+            const roomSchema = this.dataSource['tableColumns'].concat([
                 {
                     key: 'operation',
                     title: '操作',
@@ -284,7 +296,7 @@ class LeaseEdit extends Component {
             if (modalName === "roomGoods") {
                 modalContent = <ModalForm
                     ref="roomGoodsModal"
-                    schema={roomEdit['roomGoodsForm']} />
+                    schema={this.dataSource['roomGoodsForm']} />
             }
             return (
                 <section className="padding m-config-edit">
@@ -297,12 +309,13 @@ class LeaseEdit extends Component {
                         {modalContent}
                     </Modal>
                     <InnerForm
-                        schema={roomEdit['room']}
+                        schema={this.dataSource[this.editType]}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
-                        setFields={roomEdit.data}
+                        setFields={this.dataSource.data}
                         sessionShouldGet={this.tableName}
                         parentHandleSave={this.parentHandleSave}>
+
                         <div className="padding-lr g-mt20">
                             <div className="button-group g-mb10">
                                 <Button onClick={this.handleAddGoods}>新增物品</Button>
@@ -314,13 +327,11 @@ class LeaseEdit extends Component {
                                 pagination={false}
                                 bordered={true} />
                         </div>
+
                     </InnerForm>
                 </section>
             )
         } else {
-            if (this.dataSource.loading) {
-                return <Loading />
-            }
             if (this.editType === 'policy') {
                 this.editSchema['policy'][5].options = areaData.data
             }
@@ -331,8 +342,8 @@ class LeaseEdit extends Component {
                         schema={this.editSchema[this.editType]}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
+                        ref='otherForm'
                         setFields={this.dataSource.data}
-                        sessionShouldGet={this.tableName}
                         parentHandleSave={this.parentHandleSave} />
                 </section>
             )

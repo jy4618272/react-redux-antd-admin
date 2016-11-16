@@ -25,7 +25,7 @@ module.exports = {
             disabled: true
         },
         {
-            key: 'operationrange',
+            key: 'businessscope',
             title: '经营范围',
             dataType: 'varchar',
             placeholder: '请输入经营范围',
@@ -46,7 +46,7 @@ module.exports = {
             disabled: true
         },
         {
-            key: 'telephone',
+            key: 'tel',
             title: '联系电话',
             dataType: 'varchar',
             placeholder: '请输入联系电话',
@@ -100,11 +100,6 @@ module.exports = {
                 title: '金额',
                 dataIndex: 'money',
                 key: 'money'
-            },
-            {
-                title: '状态',
-                dataIndex: 'status',
-                key: 'status'
             }
         ]
     },
@@ -140,9 +135,9 @@ module.exports = {
                 key: 'promotionnum'
             },
             {
-                title: '范围',
-                dataIndex: 'area',
-                key: 'area'
+                title: '优惠范围',
+                dataIndex: 'promotionbody',
+                key: 'promotionbody'
             }
         ]
     },

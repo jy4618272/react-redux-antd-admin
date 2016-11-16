@@ -4,6 +4,7 @@ import {
     Col,
     Icon
 } from 'antd'
+
 import {
     Loading
 } from 'COMPONENT'
@@ -16,7 +17,6 @@ class WorkFlow extends Component {
             flow
         } = this.props
 
-        const colNum = 24 / (flow.data.length)
         const workFlow = flow.data.map(item => {
             let status
             if (item.nodestatus === '通过') {
@@ -28,15 +28,25 @@ class WorkFlow extends Component {
             } else {
                 status = <Icon className="s-gray" type="minus-circle" />
             }
+
+            let steps
+            if (item.people && item.people.length) {
+                steps = item.people.map(des => {
+                    return (
+                        <p>{des.userName}<span>/</span>{des.flowName}</p>
+                    )
+                })
+            }
+
             return (
-                <Col className="ant-col" sm={colNum}>
+                <Col className="ant-col">
                     <div className="u-icon">
                         {status}
                     </div>
+                    <span className="u-line"></span>
                     <div className="flow-content">
-                        <span className="u-line s-primary">——</span>
                         <h3 className="s-primary">{item.nodeName}</h3>
-                        <p>{item.userName}<span>/</span>{item.flowName}</p>
+                        {steps}
                     </div>
                 </Col>
             )
@@ -48,7 +58,7 @@ class WorkFlow extends Component {
 
         return (
             <section className="m-work-flow">
-                <Row>
+                <Row type="flex" justify="start">
                     {workFlow}
                 </Row>
             </section>

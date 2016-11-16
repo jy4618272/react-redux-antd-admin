@@ -14,7 +14,8 @@ if (__DEV__) {
 if (__PROD__) {
 	rootPaths = {
 		rootPath: 'http://myportal.tf56.com',
-		imgPath: 'http://image.tf56.com'
+		imgPath: 'http://10.7.15.56'		
+		// imgPath: 'http://image.tf56.com'
 	}
 }
 

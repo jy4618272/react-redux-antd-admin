@@ -27,6 +27,7 @@ const RadioGroup = Radio.Group
 
 import {
     Err,
+    Title,
     Loading,
     FormLayout,
     InnerTable,
@@ -83,6 +84,7 @@ class ContractInsert extends Component {
         const route = props.route
         const tableName = route.tableName
         const commonName = route.commonName
+        const type = props.location.query.type
 
         if (commonName) {
             console.info('init component BusiLease with commonName = %s', commonName)
@@ -96,13 +98,18 @@ class ContractInsert extends Component {
         this.commonName = commonName
 
         try {
-            this.contractShowSchema = require(`SCHEMA/${commonName}/contract.showSchema.js`)
+            if (type === 'rentpact') {
+                this.contractShowSchema = require(`SCHEMA/${commonName}/contract.showSchema.js`)
+                console.log(this.contractShowSchema)
+            } else if (type === 'margin') {
+                this.bondShowSchema = require(`SCHEMA/${commonName}/bond.showSchema.js`)
+                console.log(this.bondShowSchema)
+            }
             this.approvalShowSchema = require(`SCHEMA/${commonName}/approval.showSchema.js`)
-            console.log(this.contractShowSchema)
         } catch (e) {
             console.error('load add schema error: %o', e)
             this.inited = false
-            this.errorMsg = `加载${tableName}表的contractShowSchema出错, 请检查配置`
+            this.errorMsg = `加载${tableName}表的${type}ShowSchema出错, 请检查配置`
             return false
         }
         this.inited = true
@@ -140,11 +147,11 @@ class ContractInsert extends Component {
 
     // 返回
     handleGoBack = () => {
-        hashHistory.push('busi/approval')
+        history.back()
     }
 
     // 保存全部
-    handleSaveAll = (e) => {
+    handleSave = (e) => {
         e.preventDefault()
         this.setState({
             isSaveDisabeld: true
@@ -177,6 +184,7 @@ class ContractInsert extends Component {
                     pactkind: this.state.rentpact.modelname
                 })
                 console.log('保存表单字段tmp：', tmp)
+
                 xhr('post', paths.workFlowPath + '/flownodecs/submitTaskPMSTwo', tmp, (res) => {
                     const hide = message.loading('正在查询...', 0)
                     console.log('保存审批数据：', res)
@@ -217,25 +225,29 @@ class ContractInsert extends Component {
                     loading: false,
                     res: res.data
                 })
-                if (type === '合同审批park') {
+                let oldObj
+                if (type === 'rentpact') {
                     this.setState({
                         rentpact: res.data.rentpact,
                         stagesTableData: res.data.rentpactpayplanfullinfos,
                         dataAttachment: res.data.rentpactattachments
                     })
-                    const oldObj = res.data.rentpact
-                    const newObj = {}
-                    for (const key in oldObj) {
-                        if (key.indexOf('date') > -1) {
-                            newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
-                        } else if (key.indexOf('totalstages') > -1) {
-                            newObj[key] = '第' + oldObj[key] + '期'
-                        } else {
-                            newObj[key] = oldObj[key]
-                        }
-                    }
-                    this.props.form.setFieldsValue(newObj)
+                    oldObj = res.data.rentpact
+                } else if (type === 'margin') {
+                    oldObj = res.data
                 }
+
+                const newObj = {}
+                for (const key in oldObj) {
+                    if (key.indexOf('date') > -1) {
+                        newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
+                    } else if (key.indexOf('totalstages') > -1) {
+                        newObj[key] = oldObj[key] + '期'
+                    } else {
+                        newObj[key] = oldObj[key]
+                    }
+                }
+                this.props.form.setFieldsValue(newObj)
             } else {
                 hide()
                 errHandler(res.msg)
@@ -251,11 +263,12 @@ class ContractInsert extends Component {
             return <Err errorMsg={this.errorMsg} />
         }
 
-        if (type === '合同审批park') {
-            if (loading) {
-                return <Loading />
-            }
+        // 合同新增审批
+        if (loading) {
+            return <Loading />
+        }
 
+        if (type === 'rentpact') {
             const tableStagesColumns = this.contractShowSchema['stages']['columns'].concat([
                 {
                     title: '操作',
@@ -276,6 +289,7 @@ class ContractInsert extends Component {
 
             return (
                 <section className="padding g-mt20">
+                    <Title style="g-tac g-mb10" title="合同新增审批" />
                     <Form horizontal>
                         {/* 获取合同模板 */}
                         <FormLayout
@@ -379,14 +393,32 @@ class ContractInsert extends Component {
                                 pagination={false} />
                         </div>
 
-                        <div>
-                            <FormLayout
-                                schema={this.approvalShowSchema}
-                                form={this.props.form} />
-                        </div>
+                        <FormLayout
+                            schema={this.approvalShowSchema}
+                            form={this.props.form} />
 
                         <div className="g-tac button-group">
-                            <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
+                            <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSave}>保存</Button>
+                            <Button type="default" onClick={this.handleGoBack}>取消</Button>
+                        </div>
+                    </Form>
+                </section>
+            )
+        } else if (type === 'margin') {
+            // 保证金新增审批
+            return (
+                <section className="padding g-mt20">
+                    <Title style="g-tac g-mb10" title="履约保证金新增审批" />
+                    <Form horizontal>
+                        <FormLayout
+                            schema={this.bondShowSchema}
+                            form={this.props.form}
+                            fromLayoutStyle="g-border-bottom" />
+                        <FormLayout
+                            schema={this.approvalShowSchema}
+                            form={this.props.form} />
+                        <div className="g-tac button-group">
+                            <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSave}>保存</Button>
                             <Button type="default" onClick={this.handleGoBack}>取消</Button>
                         </div>
                     </Form>

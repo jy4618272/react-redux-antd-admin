@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import {
     Badge,
@@ -7,63 +9,66 @@ import {
 } from 'antd'
 
 import {
+    Loading,
     Title
 } from 'COMPONENT'
-
+import actionHome from 'ACTION/home'
 import './index.less'
 
-class Busi extends Component {
-    componentDidMount() {
 
+const mapDispatchToProps = (dispatch) => ({
+    actionHome: bindActionCreators(actionHome, dispatch)
+})
+
+@connect(
+    ({ home }) => ({ home }),
+    mapDispatchToProps
+)
+class Busi extends Component {
+    constructor(props) {
+        super(props)
+        console.log('首页', props)
+    }
+
+    componentDidMount() {
+        this.props.actionHome.fetchHome()
     }
 
     render() {
+        const {
+            home
+        } = this.props
+        if (home.loading) {
+            return <Loading />
+        }
+
+        const dd = home.data.rentpact.map(item => {
+            if (item.name === '待办') {
+                return (
+                    <Link to="/approval">
+                        <Col span={6}>
+                            <Row>
+                                <Col span={6}>
+                                    <div className="title">{item.name}</div>
+                                </Col>
+                                <Col span={18}>
+                                    <div className="val">
+                                        <Badge count={item.number} overflowCount={99} />
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Link>
+                )
+            }
+        })
+
+
         return (
             <section className="padding-lr m-busi">
                 <Row className="list-news-tips">
-                    <Col span={3}>
-                        <div className="title">我的代办</div>
-                    </Col>
-                    <Col span={21}>
-                        <ul className="clearfix list-badge">
-                            <li>
-                                <Link to="/busi/approval"><Badge count={20} overflowCount={99} /></Link>
-                            </li>
-                        </ul>
-                    </Col>
+                    {dd}
                 </Row>
-                {/*
-                    <Row className="list-news-tips">
-                    <Col span={3}>
-                        <div className="title">租赁管理</div>
-                    </Col>
-                    <Col span={21}>
-                        <ul className="clearfix list-badge">
-                            <li>
-                                <Link to="/"><span className="name">将到期</span><Badge count={20} overflowCount={99} /></Link>
-                            </li>
-                            <li>
-                                <Link to="/"><span className="name">将到期</span><Badge count={20} overflowCount={99} /></Link>
-                            </li>
-                        </ul>
-                    </Col>
-                </Row>
-                <Row className="list-news-tips">
-                    <Col span={3}>
-                        <div className="title">资产管理</div>
-                    </Col>
-                    <Col span={21}>
-                        <ul className="clearfix list-badge">
-                            <li>
-                                <Link to="/"><span className="name">将到期</span><Badge count={20} overflowCount={99} /></Link>
-                            </li>
-                            <li>
-                                <Link to="/"><span className="name">被退回</span><Badge count={20} overflowCount={99} /></Link>
-                            </li>
-                        </ul>
-                    </Col>
-                </Row>    
-                */}
             </section>
         )
     }

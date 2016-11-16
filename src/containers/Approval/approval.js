@@ -79,8 +79,11 @@ class ContractApproval extends Component {
             })
             return false
         }
+
+        const type = record.formurl.replace(/(\w)-(\w\d+)/, '$1')
+
         sessionStorage.setItem('arrovalContractShow', JSON.stringify(record))
-        hashHistory.push(`/busi/approval/${record.businessno}?type=${record.flowtype}`)
+        hashHistory.push(`approval/${record.businessno}?type=${type}`)
     }
 
     /**

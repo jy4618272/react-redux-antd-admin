@@ -25,7 +25,7 @@ module.exports = {
             showType: 'multiSelect',  // 另一种多选
             options: [
                 { key: '利润薄', value: '利润薄' },
-                { key: '主动节约', value: '主动节约' },
+                { key: '主动解约', value: '主动解约' },
                 { key: '期满解约', value: '期满解约' },
                 { key: '其他', value: '其他' }
             ],

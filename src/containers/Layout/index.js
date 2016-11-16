@@ -34,7 +34,7 @@ const mapDispatchToProps = (dispatch) => ({
 class App extends Component {
 	constructor(props) {
 		super(props)
-		console.log('首页', props)
+		console.log('框架', props)
 	}
 
 	componentDidMount(){

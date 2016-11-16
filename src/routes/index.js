@@ -9,10 +9,10 @@ import {
 // 路由指向
 import Layout from 'CONTAINER/Layout'
 import Home from 'CONTAINER/Home'
+import Approval from 'CONTAINER/Approval/approval'
+import ApprovalShow from 'CONTAINER/Approval/ApprovalDetail'
 
 import Busi from 'CONTAINER/Home/Busi'
-import BusiApproval from 'CONTAINER/Busi/approval'
-import BusiApprovalShow from 'CONTAINER/Busi/approvalDetail'
 import BusiFinance from 'CONTAINER/BusiFinance'
 import BusiFinanceList from 'CONTAINER/BusiFinance/FinanceList'
 import BusiFinanceShow from 'CONTAINER/BusiFinance/FinanceShow'
@@ -42,12 +42,15 @@ const routes = (
 		<Route path="/" component={Layout}>
 			<IndexRoute component={Home} />
 
+			{/* 审批 */}
+			<Route path="approval">
+				<IndexRoute path="approval" component={Approval} />
+				<Route path=":id" commonName="common" component={ApprovalShow} />
+			</Route>
+
 			<Route path="busi">
 				<IndexRoute path="busi" component={Busi} />
-				{/* 审批 */}
-				<Route path="approval" tableName="busiLease" component={BusiApproval} />
-				<Route path="approval/:id" tableName="busiLease" commonName="common" component={BusiApprovalShow} />
-				
+
 				{/* 财务-财务详情*/}
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
 				<Route path="busi_finance/finance_list" tableName="busiFinance" component={BusiFinanceList} />

@@ -147,7 +147,8 @@ class FormLayout extends Component {
                     wrapperCol={{ span: 22 }}
                     hasFeedback={field.feedBackShow}>
                     {getFieldDecorator(field.key, {
-                        validate: field.validate || []
+                        validate: field.validate || [],
+                        initialValue: field.initialValue
                     })(
                         formItem
                         )}
@@ -354,8 +355,14 @@ class FormLayout extends Component {
         }
     }
 
+    // 表单点击
     handleInputClick = (key) => {
         this.props.parentHandleInput && this.props.parentHandleInput(key)
+    }
+
+    // 表单修改
+    handleInputBlur = (key) => {
+        this.props.parentHandleInputBlur && this.props.parentHandleInputBlur(key)
     }
 
     /**
@@ -375,7 +382,7 @@ class FormLayout extends Component {
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" onBlur={this.handleInputBlur.bind(this, field.key)} disabled={field.disabled} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)

@@ -163,6 +163,15 @@ class LeaseManage extends Component {
         })
     }
 
+    // 取消勾选
+    handleCancel = (key) => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        this.refs[key].hanldeCancelSelect()
+    }
+
     // 合同新增
     handleAdd = (key) => {
         if (key === 'contract') {
@@ -179,10 +188,12 @@ class LeaseManage extends Component {
         const data = this.state.selectedRows
         if (data.length == 1) {
             if (key === 'contract') {
+                this.handleCancel('contractTable')
                 this.props.action.approvalContract({
                     rentpactid: data[0].rentpactid
                 })
             } else if (key === 'bond') {
+                this.handleCancel('bondTable')
                 this.props.action.approvalBond({
                     rentpactid: data[0].offsetrentpactid
                 })
@@ -202,7 +213,7 @@ class LeaseManage extends Component {
     handleChangeContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
-            hashHistory.push(`busi/busi_lease/contract/change/${data[0].rentpactid}?type="变更"`)
+            hashHistory.push(`busi/busi_lease/contract/change/${data[0].rentpactid}?type=变更`)
         }
 
     }
@@ -220,6 +231,10 @@ class LeaseManage extends Component {
     handleRentContract = () => {
         const data = this.state.selectedRows
         if (data.length == 1) {
+            sessionStorage.setItem('rentData', JSON.stringify({
+                modelname: data[0].modelname,
+                rentpactid: data[0].rentpactid
+            }))
             hashHistory.push(`busi/busi_lease/contract/rent/${data[0].rentpactid}?type=rent`)
         }
     }
@@ -231,15 +246,21 @@ class LeaseManage extends Component {
 
         if (data.length == 1) {
             if (key === 'contract') {
+                this.handleCancel('contractTable')
+
                 action.voidContract({
                     rentpactid: data[0].rentpactid
                 })
             } else if (key === 'bond') {
+                this.handleCancel('bondTable')
+
                 action.voidBond({
                     offsetrentpactid: data[0].offsetrentpactid,
                     status: "作废"
                 })
             } else if (key === 'notContract') {
+                this.handleCancel('notContractTable')
+
                 action.voidNotContract({
                     boothpaymentid: data[0].boothpaymentid,
                     status: "作废"
@@ -263,10 +284,14 @@ class LeaseManage extends Component {
         let arrParam = []
 
         if (key === 'contract') {
+            this.handleCancel('contractTable')
+
             busiLease.contractData.tableData.map(item => {
                 arrParam.push(item.rentpactid)
             })
         } else if (key === 'bond') {
+            this.handleCancel('bondTable')
+
             busiLease.bondData.tableData.map(item => {
                 arrParam.push(item.marginid)
             })
@@ -361,6 +386,8 @@ class LeaseManage extends Component {
         } = this.props
 
         if (key === 'bond' && this.state.selectedRows.length === 1) {
+            this.handleCancel('bondTable')
+
             const data = this.state.selectedRows[0]
             action.fetchCommitFinanceBond({
                 businessnumber: data.businessnumber,
@@ -434,7 +461,7 @@ class LeaseManage extends Component {
         if (oneSelected && (selectedRows[0].endtype !== '作废')) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增/续租') {
-                if (selected.flowstatus === '录入未完成') {
+                if (selected.flowstatus === '草稿') {
                     if (selected.fistatus === '未提交') {
                         // 作废、编辑、提交审核
                         isContractVoid = true
@@ -494,7 +521,7 @@ class LeaseManage extends Component {
                     }
                 }
             } else if (selected.flowtype === '变更') {
-                if (selected.flowstatus === '录入未完成') {
+                if (selected.flowstatus === '草稿') {
                     // 作废、编辑、提交审核
                     isContractVoid = true
                     isContractEdit = true
@@ -541,7 +568,7 @@ class LeaseManage extends Component {
                     }
                 }
             } else if (selected.flowtype === '退租') {
-                if (selected.flowstatus === '录入未完成') {
+                if (selected.flowstatus === '草稿') {
                     // 作废、编辑、提交审核
                     isContractVoid = true
                     isContractEdit = true
@@ -586,7 +613,7 @@ class LeaseManage extends Component {
         if (oneSelected) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增') {
-                if (selected.flowstatus === '录入未完成') {
+                if (selected.flowstatus === '草稿') {
                     // 作废、编辑、提交审核
                     isBondVoid = true
                     isEdit = true
@@ -786,6 +813,7 @@ class LeaseManage extends Component {
                             loading={contractData.tableLoading}
                             columns={contractData.tableColumns}
                             dataSource={contractData.tableData}
+                            ref='contractTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             parentHandleDoubleClick={this.parentHandleDoubleClick}
                             isRowSelection={true}
@@ -809,6 +837,7 @@ class LeaseManage extends Component {
                             loading={bondData.tableLoading}
                             columns={tableColumnsBond}
                             dataSource={bondData.tableData}
+                            ref='bondTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             isRowSelection={true}
                             bordered={true}
@@ -831,6 +860,7 @@ class LeaseManage extends Component {
                             loading={notContractData.tableLoading}
                             columns={tableColumnsNotContract}
                             dataSource={notContractData.tableData}
+                            ref='notContractTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             isRowSelection={true}
                             bordered={true}

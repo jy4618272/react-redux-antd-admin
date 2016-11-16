@@ -52,6 +52,7 @@ const receiveRoomEdit = (res) => ({
 })
 const fetchRoomEdit = (data) => {
     return dispatch => {
+        dispatch(requestRoomEdit())
         xhr('post', paths.leasePath + '/rentroomcs/selectRentRoomById', data, function (res) {
             const hide = message.loading('正在查询...', 0)
             console.log('房间设置之编辑', data, res)
@@ -114,10 +115,11 @@ export const ACTION_HANDLERS = {
         })
         return roomEdit
     },
-    // [REQUEST_ROOM_EDIT]: (roomEdit) => ({
-    //     ...roomEdit,
-    //     loading: true
-    // }),
+    [REQUEST_ROOM_EDIT]: (roomEdit) => ({
+        ...roomEdit,
+        loading: true,
+        data: {}
+    }),
     [RECEIVE_ROOM_EDIT]: (roomEdit, {payload: res}) => ({
         ...roomEdit,
         loading: false,

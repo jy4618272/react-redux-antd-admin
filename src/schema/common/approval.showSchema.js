@@ -9,7 +9,7 @@ module.exports = [
         dataType: 'varchar',
         showType: 'radio',
         styleType: 'full',
-        default: '同意',
+        initialValue: '同意',
         options: [
             { key: '同意', value: '同意' },
             { key: '不同意', value: '不同意' }

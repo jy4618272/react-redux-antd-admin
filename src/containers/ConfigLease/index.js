@@ -261,6 +261,15 @@ class Lease extends Component {
         })
     }
 
+    // 取消勾选
+    handleCancel = (key) => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        this.refs[key].hanldeCancelSelect()
+    }
+
     // 新增
     handleAddClick = () => {
         hashHistory.push('config/config_lease/add?type=' + this.status)
@@ -282,14 +291,11 @@ class Lease extends Component {
         } else if (this.status === 'auditPerson') {
             hashHistory.push('config/config_lease/edit/' + 3 + '?type=auditPerson')
         }
+
     }
 
     // 闲置
     handleLieClick = () => {
-        this.setState({
-            selectedRowKeys: [],
-            selectedRows: []
-        })
         const {selectedRows} = this.state
         if (selectedRows.length === 1) {
             this.props.actionLease.lieRoom({
@@ -297,6 +303,7 @@ class Lease extends Component {
                 rentroomid: selectedRows[0].rentroomid
             })
         }
+        this.handleCancel('roomTable')
     }
 
     // 作废
@@ -312,6 +319,7 @@ class Lease extends Component {
                 rentroomid: selectedRows[0].rentroomid
             })
         }
+        this.handleCancel('roomTable')
     }
 
     // 历史
@@ -326,21 +334,25 @@ class Lease extends Component {
                     status: "开启",
                     pactprintmodelid: selectedRows[0].pactprintmodelid
                 })
+                this.handleCancel('tplTable')
             } else if (this.status === 'accountManager') {
                 this.props.actionLease.changeStatusManager({
                     status: "开启",
                     salerid: selectedRows[0].salerid
                 })
+                this.handleCancel('managerTable')
             } else if (this.status === 'policy') {
                 this.props.actionLease.changeStatusPolicy({
                     status: "开启",
                     rentpromotionid: selectedRows[0].rentpromotionid
                 })
+                this.handleCancel('policyTable')
             } else if (this.status === 'classLine') {
                 this.props.actionLease.changeStatusClassLine({
                     status: "开启",
                     transportlineid: selectedRows[0].transportlineid
                 })
+                this.handleCancel('lineTable')
             }
         }
     }
@@ -354,21 +366,25 @@ class Lease extends Component {
                     status: "关闭",
                     pactprintmodelid: selectedRows[0].pactprintmodelid
                 })
+                this.handleCancel('tplTable')
             } else if (this.status === 'accountManager') {
                 this.props.actionLease.changeStatusManager({
                     status: "关闭",
                     salerid: selectedRows[0].salerid
                 })
+                this.handleCancel('managerTable')
             } else if (this.status === 'policy') {
                 this.props.actionLease.changeStatusPolicy({
                     status: "关闭",
                     rentpromotionid: selectedRows[0].rentpromotionid
                 })
+                this.handleCancel('policyTable')
             } else if (this.status === 'classLine') {
                 this.props.actionLease.changeStatusClassLine({
                     status: "关闭",
                     transportlineid: selectedRows[0].transportlineid
                 })
+                this.handleCancel('lineTable')
             }
         }
     }
@@ -419,8 +435,8 @@ class Lease extends Component {
         let isOpen
         let isClose
         let isEdit
-        if (oneSelected) {
-            isEdit = this.state.selectedRows[0].status !== '作废' ? true : false
+        if (oneSelected && this.state.selectedRows[0].status !== '作废') {
+            isEdit = this.state.selectedRows[0].status !== '已出租' ? true : false
             isLie = this.state.selectedRows[0].status === '已出租' ? true : false
             isVoid = this.state.selectedRows[0].status === '未出租' ? true : false
             isOpen = this.state.selectedRows[0].status === '关闭' ? true : false
@@ -472,6 +488,7 @@ class Lease extends Component {
                                     isRowSelection={true}
                                     bordered={true}
                                     pagination={false}
+                                    ref='roomTable'
                                     parentHandleSelectChange={this.parentHandleSelectChange} />
                                 <InnerPagination
                                     total={roomData.total}
@@ -487,6 +504,7 @@ class Lease extends Component {
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
                                     bordered={true}
+                                    ref='roomTable'
                                     parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                                 <InnerPagination
@@ -503,6 +521,7 @@ class Lease extends Component {
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
                                     bordered={true}
+                                    ref='roomTable'
                                     parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                                 <InnerPagination
@@ -521,6 +540,7 @@ class Lease extends Component {
                                     dataSource={roomData.tableData}
                                     isRowSelection={true}
                                     bordered={true}
+                                    ref='roomTable'
                                     parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                                 <InnerPagination
@@ -545,6 +565,7 @@ class Lease extends Component {
                             dataSource={classLineData.tableData}
                             isRowSelection={true}
                             bordered={true}
+                            ref='lineTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             pagination={false} />
                         <InnerPagination
@@ -567,6 +588,7 @@ class Lease extends Component {
                             dataSource={policyData.tableData}
                             isRowSelection={true}
                             bordered={true}
+                            ref='policyTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             pagination={false} />
                         <InnerPagination
@@ -588,6 +610,7 @@ class Lease extends Component {
                             columns={accountManagerData.tableColumns}
                             dataSource={accountManagerData.tableData}
                             isRowSelection={true}
+                            ref='managerTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             bordered={true}
                             pagination={false} />
@@ -610,6 +633,7 @@ class Lease extends Component {
                             columns={contractTplData.tableColumns}
                             dataSource={contractTplData.tableData}
                             isRowSelection={true}
+                            ref='tplTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             bordered={true}
                             pagination={false} />

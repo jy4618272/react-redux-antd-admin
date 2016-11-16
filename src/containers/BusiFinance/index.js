@@ -58,7 +58,7 @@ class Finance extends Component {
             this.status = "未确认"
             sessionStorage.setItem('busiFinanceTabs', 'notConfirmed')
         } else if (activeKey == 'confirmed') {
-            sessionStorage.setItem('busiFinanceTabs', 'confirmed')            
+            sessionStorage.setItem('busiFinanceTabs', 'confirmed')
             this.status = "已到账"
         }
 
@@ -160,7 +160,7 @@ class Finance extends Component {
 
     /**
      * 点击按钮
-     */
+     
     parentHandleClick = (key, data) => {
         const {
             busiFinance,
@@ -201,7 +201,7 @@ class Finance extends Component {
         } else if (key === 'document') {
             alert('资源文件开发中')
         }
-    }
+    }*/
 
     // 筛选
     parentHandleSelectChange = (keys, rows) => {
@@ -210,6 +210,15 @@ class Finance extends Component {
             selectedRows: rows
         })
         console.log('$$$', rows)
+    }
+
+    // 取消勾选
+    handleCancel = (key) => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+        this.refs[key].hanldeCancelSelect()
     }
 
     // 确认收款
@@ -225,6 +234,7 @@ class Finance extends Component {
 
         console.log('确认收款id:', tmpObj)
         actionFinance.fetchReceive(tmpObj)
+        this.handleCancel('notConfirmedTable')
     }
 
     // 确认退款
@@ -240,6 +250,8 @@ class Finance extends Component {
 
         console.log('确认退款id:', tmpObj)
         actionFinance.fetchRefund(tmpObj)
+        this.handleCancel('notConfirmedTable')
+
     }
 
     // 退回
@@ -252,6 +264,8 @@ class Finance extends Component {
                 financeCollectionIds: selectedRows[0].financecollectionid ? selectedRows[0].financecollectionid : 0
             })
         }
+        this.handleCancel('notConfirmedTable')
+
     }
 
     // 资金列表
@@ -361,6 +375,7 @@ class Finance extends Component {
                             isRowSelection={true}
                             bordered={true}
                             pagination={false}
+                            ref='notConfirmedTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination
@@ -386,6 +401,7 @@ class Finance extends Component {
                             isRowSelection={true}
                             bordered={true}
                             pagination={false}
+                            ref='confirmedTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
                             parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination

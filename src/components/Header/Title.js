@@ -3,11 +3,11 @@ import {
     Badge
 } from 'antd'
 
-import './index.less'
 class Title extends Component {
     render () {
+        const style = this.props.style ? this.props.style : ''
         return (
-            <div className="clearfix m-title">
+            <div className={style}>
                 <h2>{this.props.title}</h2>
                 <Badge count={this.props.number} />
             </div>

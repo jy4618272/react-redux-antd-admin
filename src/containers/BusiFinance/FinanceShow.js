@@ -154,7 +154,7 @@ class FinanceShow extends Component {
                         if (key.indexOf('date') > -1) {
                             newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
                         } else if (key.indexOf('totalstages') > -1) {
-                            newObj[key] = '第' + oldObj[key] + '期'
+                            newObj[key] = oldObj[key] + '期'
                         } else {
                             newObj[key] = oldObj[key]
                         }

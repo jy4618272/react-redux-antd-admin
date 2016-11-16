@@ -105,11 +105,12 @@ module.exports = {
             dataType: 'float',
             step: 0.1,
             placeholder: '请输入优惠幅度',
-            feedBackShow: true,
+            // feedBackShow: true,
             validate: [
                 {
                     rules: [
-                        { required: true, type: 'number', message: '优惠幅度不能为空' },
+                        { required: true, min: 1, type: 'number', message: '请按要求输入优惠幅度' },
+                        // { validator: this.checkConfirm }
                     ],
                     trigger: ['onChange']
                 }

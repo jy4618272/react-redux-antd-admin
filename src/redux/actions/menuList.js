@@ -56,6 +56,7 @@ const fetchMenuList = () => {
 				dispatch(receiveMenuList(list))
 			} else {
 				hide()
+				window.location.href = 'http://myportaltest.tf56.com/myportal/logincs/login'
 				errHandler(res.msg)
 			}
 		})
@@ -75,11 +76,11 @@ export default {
 // 故在此直接给出处理逻辑
 // ================================
 export const ACTION_HANDLERS = {
-[RECEIVE_MENU_LIST]: (menuList, { payload: res}) => ({
-		...menuList,
-	loading: false,
-	data: res
-})
+	[RECEIVE_MENU_LIST]: (menuList, { payload: res}) => ({
+			...menuList,
+		loading: false,
+		data: res
+	})
 }
 
 

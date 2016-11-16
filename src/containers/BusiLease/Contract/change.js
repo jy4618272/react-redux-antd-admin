@@ -173,7 +173,7 @@ class ContractInsert extends Component {
         } = this.props.actionLease
 
         const {
-            fetchBondTable,
+            fetchFilterBondTable,
             fetchContractHistory
         } = this.props.action
 
@@ -197,7 +197,7 @@ class ContractInsert extends Component {
             } else if (tabsStatus === 'contractBond') {
                 this.select({
                     status: '有效'
-                }, bondData.pageSize, page, fetchBondTable)
+                }, bondData.pageSize, page, fetchFilterBondTable)
             }
         }
     }
@@ -377,7 +377,7 @@ class ContractInsert extends Component {
         this.select({
             partyid: this.state.partyid,
             status: '有效'
-        }, 10, 0, this.props.action.fetchBondTable)
+        }, 10, 0, this.props.action.fetchFilterBondTable)
     }
 
     // 新增明细
@@ -487,7 +487,7 @@ class ContractInsert extends Component {
             }
         })
         obj.map(item => {
-            ids.push(item.rentroomid)
+            ids.push(item.room)
         })
         tmp['roomlist'] = ids.join(',')
 
@@ -510,7 +510,7 @@ class ContractInsert extends Component {
             }
         })
         obj.map(item => {
-            ids.push(item.transportlineid)
+            ids.push(item.linename)
         })
 
         tmp['linelist'] = ids.join(',')
@@ -992,19 +992,22 @@ class ContractInsert extends Component {
                     if (key.indexOf('date') > -1) {
                         newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
                     } else if (key.indexOf('totalstages') > -1) {
-                        newObj[key] = '第' + oldObj[key] + '期'
+                        newObj[key] = oldObj[key] + '期'
                     } else {
                         newObj[key] = oldObj[key]
                     }
                 }
+                
                 this.props.form.setFieldsValue(newObj)
                 this.setState(Object.assign({}, newObj, {
                     rentpactid: res.data.rentpact.rentpactid,
                     renttype: res.data.rentpact.renttype,
-                    dataAttachment: res.data.rentpactattachments,
                     prepactcode: res.data.rentpact.pactcode,
                     dataRoom: res.data.rentpactrooms,
                     dataLine: res.data.rentpactlines,
+                    dataPolicy: res.data.rentpactpromotions,
+                    dataBond: res.data.offsetmargins,
+                    dataAttachment: res.data.rentpactattachments,                    
                     stagesTableData: res.data.rentpactpayplanfullinfos
                 }))
                 hide()
@@ -1064,7 +1067,7 @@ class ContractInsert extends Component {
                 title: '操作',
                 key: 'operation',
                 render: (text, record, index) => <div className="button-group">
-                    <a href="javascript:;" className="s-blue" onClick={this.handleViewDoc.bind(this, text, record, index)}>下载</a>
+                    <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleViewDoc.bind(this, text, record, index)}>下载</a>
                     <a href="javascript:;" className="s-blue" onClick={this.handleDelDoc.bind(this, text, record, index)}>删除</a>
                 </div>
             }

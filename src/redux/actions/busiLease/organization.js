@@ -27,29 +27,29 @@ const fetchOrganization = (data) => {
         dispatch(requestContractOrganization())
         xhr('post', paths.leasePath + '/rentpactfullinfocs/selectOrganizationByPhoneOrPartyName', data, (res) => {
             const hide = message.loading('正在查询...', 0)
-            const newRes = []
+            // const newRes = []
             console.log('获取【客户信息】数据：', res)
             if (res.result === 'success') {
                 hide()
-                res.data.map(item => {
-                    newRes.push({
-                        organization: item.realname,
-                        operationrange: '',
-                        legalperson: '',
-                        idcard: item.certificatenumber,
-                        address: '',
-                        telephone: item.mobilenumber,
-                        bankname: '',
-                        bankaccount: '',
-                        partyid: item.partyid,
-                        partyname: item.partyname
-                    })
-                })
-                dispatch(receiveContractOrganization(newRes))
+                // res.data.map(item => {
+                //     newRes.push({
+                //         organization: item.realname,
+                //         operationrange: '',
+                //         legalperson: '',
+                //         idcard: item.certificatenumber,
+                //         address: '',
+                //         telephone: item.mobilenumber,
+                //         bankname: '',
+                //         bankaccount: '',
+                //         partyid: item.partyid,
+                //         partyname: item.partyname
+                //     })
+                // })
+                dispatch(receiveContractOrganization(res.data))
             } else {
                 hide()
                 dispatch(receiveContractOrganization([]))
-                errHandler(res.result + '，' + res.msg)
+                errHandler(res.msg)
             }
         })
     }
@@ -76,11 +76,11 @@ export const ACTION_HANDLERS = {
         ...organization,
     tableLoading: true
     }),
-    [RECEIVE_CONTRACT_ORGANIZATION]: (organization, {payload: res}) => ({
+[RECEIVE_CONTRACT_ORGANIZATION]: (organization, {payload: res}) => ({
             ...organization,
-        tableLoading: false,
-        tableData: res
-    }),
+    tableLoading: false,
+    tableData: res
+}),
     [RESET_CONTRACT_ORGANIZATION]: (organization) => ({
         ...organization,
         tableData: []

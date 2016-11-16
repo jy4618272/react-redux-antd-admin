@@ -112,6 +112,15 @@ class LeaseAdd extends Component {
         } else if (this.addType === 'classLine') {
             actionLeaseAdd.fetchClassLineAdd(newObj)
         } else if (this.addType === 'policy') {
+            const val = this.refs.otherForm.getFieldsValue()
+            if (val.promotiontype === "折扣" && val.promotionnum > 10) {
+                notification.error({
+                    message: '优惠幅度填写有误',
+                    description: '【折扣】类型优惠幅度为[1-10】'
+                })
+                return false;   
+            }
+
             actionLeaseAdd.fetchPolicyAdd(newObj)
         } else if (this.addType === 'accountManager') {
             actionLeaseAdd.fetchManagerAdd(newObj)
@@ -205,6 +214,13 @@ class LeaseAdd extends Component {
         })
     }
 
+    /* 表单更改
+    handleInputBlur = (key) => {
+        if (key === 'promotionnum') {
+            
+        }
+    }*/
+
     componentDidMount() {
         this.props.actionLease.fetchArea()
     }
@@ -285,6 +301,7 @@ class LeaseAdd extends Component {
                         formStyle="padding m-advance-fill"
                         schema={this.addSchema[this.addType]}
                         showSave={true}
+                        ref='otherForm'
                         sessionShouldGet={this.addType}
                         parentHandleSave={this.parentHandleSave} />
                 </section>
@@ -292,4 +309,6 @@ class LeaseAdd extends Component {
         }
     }
 }
+
+
 export default LeaseAdd
