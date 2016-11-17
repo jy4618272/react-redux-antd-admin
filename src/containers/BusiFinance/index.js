@@ -270,7 +270,7 @@ class Finance extends Component {
 
     // 资金列表
     handleFinanceList = () => {
-        hashHistory.push('busi/busi_finance/finance_list?type="资金文件"')
+        hashHistory.push('busi/busi_finance/finance_list?type=资金文件')
     }
 
     // 导出本页

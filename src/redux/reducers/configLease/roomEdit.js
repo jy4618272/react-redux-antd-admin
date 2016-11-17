@@ -52,7 +52,7 @@ const initialState = {
         },
         {
             key: 'roomarea',
-            title: '面积',
+            title: '面积/平方米',
             dataType: 'float',
             placeholder: '请输入面积',
             feedBackShow: true,
@@ -67,7 +67,7 @@ const initialState = {
         },
         {
             key: 'money',
-            title: '金额',
+            title: '金额/元',
             dataType: 'float',
             placeholder: '请输入金额',
             feedBackShow: true,

@@ -11,8 +11,9 @@ import { default as policyEditActionCreators } from './policyEdit'
 import { default as accountManagerActionCreators } from './accountManager'
 import { default as accountManagerEditActionCreators } from './accountManagerEdit'
 
-import { default as contractTplActionCreators } from './contractTpl'
-import { default as contractTplEditActionCreators } from './contractTplEdit'
+import { default as contractTplActionCreators } from './contractTpl/list'
+import { default as contractTplEditActionCreators } from './contractTpl/edit'
+import { default as contractTplDictionaryActionCreators } from './contractTpl/dictionary'
 
 import { default as leaseAddActionCreators } from './leaseAdd'
 
@@ -29,5 +30,6 @@ export default {
   ...accountManagerEditActionCreators,
   ...contractTplActionCreators,
   ...contractTplEditActionCreators,
+  ...contractTplDictionaryActionCreators,
   ...leaseAddActionCreators
 }

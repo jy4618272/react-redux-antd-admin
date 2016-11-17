@@ -82,9 +82,9 @@ const statusApprovalBond = (res) => ({
     payload: res
 })
 
-const approvalNotContract = (data) => {
+const approvalBond = (data) => {
     return dispatch => {
-        xhr('POST', paths.leasePath + '/rentpactcs/submitRentPact', data, (res) => {
+        xhr('POST', paths.leasePath + '/', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -114,7 +114,7 @@ const voidChangeBond = (res) => ({
 
 const voidBond = (data) => {
     return dispatch => {
-        xhr('POST', paths.leasePath + '/', data, (res) => {
+        xhr('POST', paths.leasePath + '/margincs/updateMarginToVoid', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             const newRes = Object.assign({}, res, {
                 sub: data
@@ -145,14 +145,17 @@ const fetchCommitFinanceBond = (data) => {
     return dispatch => {
         xhr('post', paths.leasePath + '/margincs/insertFinanceCollection', data, (res) => {
             const hide = message.loading('正在查询...', 0)
-            console.log('保证金数据：', res)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('保证金提交财务数据：', newRes)
             if (res.result === 'success') {
                 hide()
                 notification.success({
                     message: '提交财务成功',
                     description: '保证金提交财务成功'
                 });
-                dispatch(commitFinanceBond(res))
+                dispatch(commitFinanceBond(newRes))
             } else {
                 hide()
                 dispatch(commitFinanceBond({}))
@@ -199,6 +202,7 @@ export default {
     fetchBondTable,
     fetchFilterBondTable,
     voidBond,
+    approvalBond,
     fetchCommitFinanceBond,
     fetchSaveBond
 }
@@ -206,16 +210,16 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_BOND_TABLE]: (bond) => ({
         ...bond,
-    tableLoading: true
+        tableLoading: true
     }),
-[RECEIVE_BOND_TABLE]: (bond, {payload: res}) => ({
-        ...bond,
-    tableLoading: false,
-    tableData: res.data,
-    total: res.count,
-    pageSize: 10,
-    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
-}),
+    [RECEIVE_BOND_TABLE]: (bond, {payload: res}) => ({
+            ...bond,
+        tableLoading: false,
+        tableData: res.data,
+        total: res.count,
+        pageSize: 10,
+        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+    }),
     [RECEIVE_FILTER_BOND_TABLE]:(bond, {payload: res}) => ({
         ...bond,
         tableLoading: false,
@@ -224,27 +228,42 @@ export const ACTION_HANDLERS = {
         pageSize: 10,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
     }),
-        [RECEIVE_BOND_VOID]: (bond, {payload: res}) => ({
-        ...bond,
-            tableData: bond.tableData.map(item =>
-                item.marginid !== res.marginid
-            )
-        }),
-            [COMMIT_FINANCE_BOND]: (bond, {payload: res}) => ({
+    [RECEIVE_BOND_VOID]: (bond, {payload: res}) => {
+        const obj = bond.tableData
+        obj.map(item => {
+            if (item.marginid == res.sub.marginid) {
+                item.flowtype = '作废'
+            }
+        })
+
+        return Object.assign({}, bond, {
+            tableData: obj
+        })
+    },
+    [COMMIT_FINANCE_BOND]: (bond, {payload: res}) => {
+        const obj = bond.tableData
+        obj.map(item => {
+            if (item.marginid === res.sub.marginid) {
+                item.fistatus = '待确认'
+            }
+        })
+
+        return Object.assign({}, bond, {
+            tableData: obj
+        })
+    },
+    [COMMIT_APPROVAL_BOND]:(bond, {payload: res}) => {
+        const obj = bond.tableData
+        obj.map(item => {
+            if (item.marginid == res.sub.marginid) {
+                item.flowstatus = '审批中'
+            }
+        })
+        return Object.assign({}, bond, {
+            tableData: obj
+        })
+    },
+    [SAVE_BOND_TABLE]: (bond, {payload: res}) => ({
         ...bond
-            }),
-                [COMMIT_APPROVAL_BOND]:(bond, {payload: res}) => {
-                    const obj = bond.tableData
-                    obj.map(item => {
-                        if (item.marginid == res.sub.marginid) {
-                            item.flowstatus = '审批中'
-                        }
-                    })
-                    return Object.assign({}, bond, {
-                        tableData: obj
-                    })
-                },
-                    [SAVE_BOND_TABLE]: (bond, {payload: res}) => ({
-        ...bond
-                    })
+    })
 }

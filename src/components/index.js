@@ -6,6 +6,7 @@ import Loading from './Loading'
 import SlideBar from './SlideBar'
 import ListText from './List/ListText'
 import WorkFlow from './WorkFlow'
+import ApprovalOpinions from './ApprovalOpinions'
 
 import FormLayout from './DBTable/FormLayout'
 import InnerForm from './DBTable/InnerForm'
@@ -25,6 +26,7 @@ export {
     SlideBar,
     ListText,
     WorkFlow,
+    ApprovalOpinions,
     FormLayout,
     InnerForm,
     InnerTableControl,

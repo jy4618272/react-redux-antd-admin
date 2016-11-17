@@ -3,8 +3,6 @@ import contractDataReducer from './contractData'
 import contractFromReducer from './contractInsert/contractFrom'
 import contractTabsReducer from './contractInsert/contractTabs'
 import contractRenewReducer from './contractRenew'
-import contractApprovalReducer from './contractApproval'
-import contractApprovalShowReducer from './contractApproval/show'
 
 import changeHistoryReducer from './contractChange/changeHistory'
 
@@ -23,8 +21,6 @@ export default combineReducers({
     organization: organizationReducer,
     contractTabs: contractTabsReducer,
     contractRenew: contractRenewReducer,
-    contractApproval: contractApprovalReducer,
-    contractApprovalShow: contractApprovalShowReducer,
 
     changeHistory: changeHistoryReducer,
     

@@ -39,6 +39,7 @@
     "lesshint": "2.0.2",
     "open-browser-webpack-plugin": "0.0.2",
     "postcss-loader": "^0.13.0",
+    "react-cookie": "^0.4.7",
     "react-router-redux": "^4.0.6",
     "rimraf": "^2.5.4",
     "strip-loader": "0.1.2",

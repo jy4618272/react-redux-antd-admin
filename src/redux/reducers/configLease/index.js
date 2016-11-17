@@ -14,8 +14,9 @@ import policyEditReducer from './policyEdit'
 import accountManagerReducer from './accountManager'
 import accountManagerEditReducer from './accountManagerEdit'
 
-import contractTplReducer from './contractTpl'
-import contractTplEditReducer from './contractTplEdit'
+import contractTplReducer from './contractTpl/list'
+import contractTplEditReducer from './contractTpl/edit'
+import contractTplDictionaryReducer from './contractTpl/dictionary'
 
 import auditPersonReducer from './auditPerson'
 
@@ -32,5 +33,6 @@ export default combineReducers({
     accountManagerEdit: accountManagerEditReducer,
     contractTplData: contractTplReducer,
     contractTplEdit: contractTplEditReducer,
+    contractTplDictionary: contractTplDictionaryReducer,
     auditPersonData: auditPersonReducer
 })

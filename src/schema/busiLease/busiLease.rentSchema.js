@@ -50,7 +50,7 @@ module.exports = {
         {
             key: 'money',
             dataIndex: 'money',
-            title: '金额'
+            title: '金额/元'
         },
         {
             key: 'sureman',
@@ -90,7 +90,7 @@ module.exports = {
             ]
         },
         {
-            title: '金额',
+            title: '金额/元',
             key: 'money',
             dataType: 'float',
             placeholder: "请填写金额",

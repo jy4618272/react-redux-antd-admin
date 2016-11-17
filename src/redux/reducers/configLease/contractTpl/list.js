@@ -1,5 +1,5 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/configLease/contractTpl'
+import { ACTION_HANDLERS } from 'ACTION/configLease/contractTpl/list'
 
 const initialState = {
     tableLoading: false,

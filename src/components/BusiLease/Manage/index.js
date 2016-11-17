@@ -186,16 +186,23 @@ class LeaseManage extends Component {
     // 提交审核
     handleApproval = (key) => {
         const data = this.state.selectedRows
+        const {action} = this.props
         if (data.length == 1) {
             if (key === 'contract') {
                 this.handleCancel('contractTable')
-                this.props.action.approvalContract({
-                    rentpactid: data[0].rentpactid
-                })
+                if (data[0].flowtype === '新增/续租') {
+                    action.approvalContract({
+                        rentpactid: data[0].rentpactid
+                    })
+                } else if (data[0].flowtype === '变更') {
+                    action.approvalChangeContract({
+                        rentpactid: data[0].rentpactid
+                    })
+                }
             } else if (key === 'bond') {
                 this.handleCancel('bondTable')
-                this.props.action.approvalBond({
-                    rentpactid: data[0].offsetrentpactid
+                action.approvalBond({
+                    marginid: data[0].marginid
                 })
             }
         }
@@ -255,7 +262,7 @@ class LeaseManage extends Component {
                 this.handleCancel('bondTable')
 
                 action.voidBond({
-                    offsetrentpactid: data[0].offsetrentpactid,
+                    marginid: data[0].marginid,
                     status: "作废"
                 })
             } else if (key === 'notContract') {
@@ -371,7 +378,7 @@ class LeaseManage extends Component {
                 modalTitle: '临时摊位打印交款单',
                 footer: <div>
                     <Button type="default" onClick={this.handleModalCancel}>取消</Button>
-                    <Button type="primary" disabled={record.status !== '未确认'} onClick={this.handleCommitFinance.bind(this, 'notContract')}>{status}</Button>
+                    <Button type="primary" disabled={record.status !== '未提交'} onClick={this.handleCommitFinance.bind(this, 'notContract')}>{status}</Button>
                     <Button type="primary" onClick={this.handlePrint}>打印</Button>
                 </div>
             })
@@ -393,7 +400,8 @@ class LeaseManage extends Component {
                 businessnumber: data.businessnumber,
                 organization: data.organization,
                 marginmoney: data.marginmoney,
-                partyid: data.partyid
+                partyid: data.partyid,
+                marginid: data.marginid
             })
         } else if (key === 'notContract') {
             action.fetchCommitFinanceNotContract({
@@ -458,7 +466,7 @@ class LeaseManage extends Component {
         let isContractVoid = false       // 作废
 
         // 按钮操作
-        if (oneSelected && (selectedRows[0].endtype !== '作废')) {
+        if (oneSelected && (selectedRows[0].flowtype !== '作废')) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增/续租') {
                 if (selected.flowstatus === '草稿') {
@@ -610,7 +618,7 @@ class LeaseManage extends Component {
         let isBondVoid = false                // 作废
 
         // 按钮操作
-        if (oneSelected) {
+        if (oneSelected && (selectedRows[0].status !== '作废')) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增') {
                 if (selected.flowstatus === '草稿') {
@@ -666,7 +674,7 @@ class LeaseManage extends Component {
             <Row>
                 <Col sm={16}>
                     <Button onClick={this.handleAdd.bind(this, 'bond')}>新增</Button>
-                    <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, 'bond')}>提交审核</Button>
+                    {/*<Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, 'bond')}>提交审核</Button>*/}
                     <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, 'bond')}>提交财务</Button>
                     <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, 'bond')}>作废</Button>
                 </Col>
@@ -690,7 +698,7 @@ class LeaseManage extends Component {
         let isNotContractVoid = false                // 作废
 
         // 按钮操作
-        if (oneSelected && (selectedRows[0].endtype !== '作废')) {
+        if (oneSelected && (selectedRows[0].status !== '作废')) {
             const selected = selectedRows[0]
             isNotContractVoid = true
         }

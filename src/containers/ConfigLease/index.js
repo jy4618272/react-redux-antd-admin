@@ -389,6 +389,10 @@ class Lease extends Component {
         }
     }
 
+    // 字段查询
+    handleDictionary = () => {
+        hashHistory.push('config/config_lease/dictionary')
+    }
 
     /**
      * 刚进入页面时触发一次查询
@@ -456,6 +460,7 @@ class Lease extends Component {
             <Button disabled={!oneSelected} onClick={this.handleEditClick}>修改</Button>
             <Button disabled={!isOpen} onClick={this.handleOpenClick}>开启</Button>
             <Button disabled={!isClose} onClick={this.handleCloseClick}>关闭</Button>
+            {this.status === 'contractTpl' ? <Button className="g-fr" onClick={this.handleDictionary}>字典查询</Button> : ''}
         </div>
 
         if (this.status === 'room') {

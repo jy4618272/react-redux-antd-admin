@@ -90,10 +90,6 @@ class ContractInsert extends Component {
         console.log('合同新增props:', props)
 
         this.initFetchSchema(props)
-        props.action.fetchWorkFlow({
-            type: '新增',
-            modelname: '合同'
-        })
     }
 
     /**
@@ -181,7 +177,7 @@ class ContractInsert extends Component {
 
         if (modalName === 'changeHistory') {
             this.select({
-                rentpactid: 43445,
+                rentpactid: this.state.rentpactid,
             }, bondData.pageSize, page, fetchContractHistory)
         } else {
             if (tabsStatus === 'room') {
@@ -214,6 +210,12 @@ class ContractInsert extends Component {
                     })
                     this.setState({
                         pactprintmodelid: 3
+                    })
+
+                    // 合同流程
+                    action.fetchWorkFlow({
+                        type: '变更',
+                        modelname: value
                     })
 
                     // 获取合同号
@@ -695,7 +697,7 @@ class ContractInsert extends Component {
             footer: ''
         })
         this.select({
-            rentpactid: 43445,
+            rentpactid: this.state.rentpactid,
         }, 10, 0, this.props.action.fetchContractHistory)
     }
 
@@ -976,8 +978,9 @@ class ContractInsert extends Component {
     }
 
     componentDidMount() {
-        this.props.action.fetchContractFrom()
-        this.props.action.fetchManager()
+        const {action} = this.props
+        action.fetchContractFrom()
+        action.fetchManager()
 
         const id = parseInt(this.props.params.id)
         xhr('post', paths.leasePath + '/rentpactfullinfocs/selectRentPactFullInfoById', {
@@ -997,7 +1000,13 @@ class ContractInsert extends Component {
                         newObj[key] = oldObj[key]
                     }
                 }
-                
+
+                // 合同流程
+                action.fetchWorkFlow({
+                    type: '变更',
+                    modelname: newObj.modelname
+                })
+
                 this.props.form.setFieldsValue(newObj)
                 this.setState(Object.assign({}, newObj, {
                     rentpactid: res.data.rentpact.rentpactid,
@@ -1007,7 +1016,7 @@ class ContractInsert extends Component {
                     dataLine: res.data.rentpactlines,
                     dataPolicy: res.data.rentpactpromotions,
                     dataBond: res.data.offsetmargins,
-                    dataAttachment: res.data.rentpactattachments,                    
+                    dataAttachment: res.data.rentpactattachments,
                     stagesTableData: res.data.rentpactpayplanfullinfos
                 }))
                 hide()

@@ -5,6 +5,7 @@ import layout from 'REDUCER/layout'
 import userInfo from 'REDUCER/userInfo'
 import menuList from 'REDUCER/menuList'
 import home from 'REDUCER/home'
+import approval from 'REDUCER/approval'
 import busiFinance from 'REDUCER/busiFinance'
 import busiLease from 'REDUCER/busiLease'
 import configLease from 'REDUCER/configLease'
@@ -20,6 +21,7 @@ const syncReducers = {
 	userInfo: userInfo,
 	menuList: menuList,
 	home: home,
+	approval: approval,
 	busiFinance: busiFinance,
 	busiLease: busiLease,
 	configLease: configLease,

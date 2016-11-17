@@ -49,28 +49,6 @@ const fetchApprovalTable = (data) => {
 }
 
 
-// 请求确认收款
-const receiveReceive = (res) => ({
-    type: RECEIVE_RECEIVE,
-    payload: res
-})
-
-const fetchReceive = (data) => {
-    return dispatch => {
-        xhr('post', paths.financePath + '/financecollectioncs/confirmPay', data, function (res) {
-            const hide = message.loading('正在查询...', 0)
-            console.log('确认收款', res)
-            if (res.result === 'success') {
-                dispatch(receiveReceive(res))
-            } else {
-                dispatch(receiveReceive({}))
-                errHandler(res.msg)
-            }
-            hide()
-        })
-    }
-}
-
 /* default 导出所有 Actions Creator */
 export default {
     fetchApprovalTable
