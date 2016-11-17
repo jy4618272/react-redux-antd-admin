@@ -56,7 +56,7 @@ const fetchMenuList = () => {
 				dispatch(receiveMenuList(list))
 			} else {
 				hide()
-				window.location.href = 'http://myportaltest.tf56.com/myportal/logincs/login'
+				// window.location.href = 'http://myportaltest.tf56.com/myportal/logincs/login'
 				errHandler(res.msg)
 			}
 		})

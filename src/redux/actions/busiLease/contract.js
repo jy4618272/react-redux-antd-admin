@@ -53,6 +53,7 @@ const statusApprovalContract = (res) => ({
     payload: res
 })
 
+// 新增提交审核
 const approvalContract = (data) => {
     return dispatch => {
         xhr('POST', paths.leasePath + '/rentpactcs/submitRentPact', data, (res) => {
@@ -60,12 +61,12 @@ const approvalContract = (data) => {
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('合同提交审核数据：', newRes)
+            console.log('合同新增提交审核数据：', newRes)
             if (res.result === 'success') {
                 hide()
                 notification.success({
-                    message: '合同提交审核',
-                    description: '合同提交审核成功'
+                    message: '合同新增提交审核',
+                    description: '合同新增提交审核成功'
                 })
                 dispatch(statusApprovalContract(newRes))
             } else {
@@ -76,6 +77,32 @@ const approvalContract = (data) => {
         })
     }
 }
+
+// 变更提交审核
+const approvalChangeContract = (data) => {
+    return dispatch => {
+        xhr('POST', paths.leasePath + '/rentpactcs/modifyRentPact', data, (res) => {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('合同变更提交审核数据：', newRes)
+            if (res.result === 'success') {
+                hide()
+                notification.success({
+                    message: '合同变更提交审核',
+                    description: '合同变更提交审核成功'
+                })
+                dispatch(statusApprovalContract(newRes))
+            } else {
+                hide()
+                dispatch(statusApprovalContract({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
+
 
 // 作废
 const statusContract = (res) => ({
@@ -111,6 +138,7 @@ const voidContract = (data) => {
 export default {
     fetchContractTable,
     approvalContract,
+    approvalChangeContract,
     voidContract
 }
 
@@ -131,7 +159,7 @@ export const ACTION_HANDLERS = {
         const obj = contract.tableData
         obj.map(item => {
             if (item.rentpactid == res.sub.rentpactid) {
-                item.endtype = '作废'
+                item.flowtype = '作废'
             }
         })
 

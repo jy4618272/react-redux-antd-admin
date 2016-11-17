@@ -15,12 +15,22 @@ const initialState = {
             key: 'roomlist'
         },
         {
+            title: '流程类型',
+            dataIndex: 'flowtype',
+            key: 'flowtype'
+        },
+        {
             title: '流程状态',
             dataIndex: 'flowstatus',
             key: 'flowstatus'
         },
         {
-            title: '金额',
+            title: '财务业务状态',
+            dataIndex: 'fistatus',
+            key: 'fistatus'
+        },
+        {
+            title: '金额/元',
             dataIndex: 'marginmoney',
             key: 'marginmoney'
         },

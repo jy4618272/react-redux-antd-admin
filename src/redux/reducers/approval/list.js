@@ -1,5 +1,5 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/busiLease/contractApproval'
+import { ACTION_HANDLERS } from 'ACTION/approval/list'
 
 const initialState = {
     tableLoading: true,
@@ -20,9 +20,14 @@ const initialState = {
             key: 'formurl'
         },
         {
-            title: '发起人/执行人',
+            title: '发起人',
             dataIndex: 'inputman',
             key: 'inputman'
+        },
+        {
+            title: '执行人',
+            dataIndex: 'receiveusername',
+            key: 'receiveusername'
         },
         {
             title: '流程状态',

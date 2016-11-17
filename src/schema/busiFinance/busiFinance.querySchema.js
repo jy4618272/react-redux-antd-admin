@@ -20,6 +20,7 @@ module.exports = [
 		options: [
 			{ key: '', value: '不选' },
 			{ key: '租赁合同', value: '租赁合同' },
+			{ key: '履约保证金', value: '履约保证金' },
 			{ key: '临时摊位', value: '临时摊位' },
 			{ key: '水电', value: '水电' },
 			{ key: '停车', value: '停车' },

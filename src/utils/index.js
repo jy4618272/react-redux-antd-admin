@@ -4,6 +4,27 @@ const goBack = (page = 0) => {
     history.goBack(page)
 }
 
+const getUrlPara = (key, path) => {
+    var paras = path ? path : window.location.href;
+    if (paras) {
+        var items = paras.split('?')[1].split('&'),
+            len = items.length,
+            i = 0,
+            obj = {};
+        for (; i < len; i++) {
+            var item = items[i].split('='),
+                name = item[0],
+                value = item[1] ? item[1] : '';
+            obj[name] = value;
+        }
+        if (!key) {
+            return obj;
+        } else {
+            return obj[key];
+        }
+    }
+}
+
 const filterQueryObj = (oldObj, dateType = 'YYYY-MM-DD HH:mm:ss') => {
     // 将提交的值中undefined的去掉
     const newObj = {}
@@ -40,6 +61,7 @@ const filterQueryObjMoment = (oldObj) => {
 
 export {
     goBack,
+    getUrlPara,
     filterQueryObj,
     filterQueryObjMoment
 }

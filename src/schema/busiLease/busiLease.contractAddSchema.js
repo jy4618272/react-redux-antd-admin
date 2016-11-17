@@ -83,12 +83,12 @@ module.exports = {
                 key: 'room'
             },
             {
-                title: '面积',
+                title: '面积/平方米',
                 dataIndex: 'roomarea',
                 key: 'roomarea'
             },
             {
-                title: '金额',
+                title: '金额/元',
                 dataIndex: 'money',
                 key: 'money'
             }

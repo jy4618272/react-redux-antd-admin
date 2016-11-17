@@ -30,6 +30,7 @@ import {
     Loading,
     FormLayout,
     InnerTable,
+    WorkFlow,
     InnerPagination,
     ModalTable,
     ModalForm,
@@ -194,6 +195,12 @@ class ContractInsert extends Component {
                     })
                     this.setState({
                         pactprintmodelid: 3
+                    })
+
+                    // 合同流程
+                    action.fetchWorkFlow({
+                        type: '新增',
+                        modelname: value
                     })
 
                     // 获取合同号
@@ -1047,8 +1054,8 @@ class ContractInsert extends Component {
                                 },
                                 onCancel() { }
                             })
-                        }else{
-                        errHandler(res.msg)
+                        } else {
+                            errHandler(res.msg)
                         }
                     }
                     this.setState({
@@ -1071,8 +1078,9 @@ class ContractInsert extends Component {
 
     // 渲染前调用一次
     componentDidMount() {
-        this.props.action.fetchContractFrom()
-        this.props.action.fetchManager()
+        const {action} = this.props
+        action.fetchContractFrom()
+        action.fetchManager()
 
         const id = parseInt(this.props.params.id)
         xhr('post', paths.leasePath + '/rentpactfullinfocs/selectReletRentPactFullInfoById', {
@@ -1092,9 +1100,16 @@ class ContractInsert extends Component {
                         newObj[key] = oldObj[key]
                     }
                 }
+
+                // 合同流程
+                action.fetchWorkFlow({
+                    type: '新增',
+                    modelname: newObj.modelname
+                })
+
                 this.props.form.setFieldsValue(newObj)
                 this.setState(Object.assign({}, newObj, {
-                    prepactcode: res.data.rentpact.pactcode,
+                    prepactcode: res.data.rentpact.prepactcode,
                     dataRoom: res.data.rentpactrooms,
                     dataLine: res.data.rentpactlines
                 }))
@@ -1225,6 +1240,10 @@ class ContractInsert extends Component {
                 schema={this.stagesSchema.tableShowSchema} />
         }
 
+        const workFlowProps = {
+            flow: busiLease.contractWorkFlow
+        }
+
         return (
             <section className="padding m-contract-add g-mt20">
                 <Modal
@@ -1242,6 +1261,11 @@ class ContractInsert extends Component {
                         form={this.props.form}
                         fromLayoutStyle="g-border-bottom"
                         parentHandleSelect={this.parentHandleSelect} />
+
+                    {/* 合同流程 */}
+                    <section className="g-border-bottom">
+                        <WorkFlow {...workFlowProps} />
+                    </section>
 
                     {/* 客户名称 */}
                     <div className="g-border-bottom">

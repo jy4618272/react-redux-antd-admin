@@ -21,12 +21,12 @@ module.exports = {
         },
         {
             key: 'roomarea',
-            title: '面积',
+            title: '面积/平方米',
             dataType: 'varchar'
         },
         {
             key: 'money',
-            title: '金额',
+            title: '金额/元',
             dataType: 'varchar'
         },
         {

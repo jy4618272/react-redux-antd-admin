@@ -15,7 +15,7 @@ const initialState = {
             key: 'inputman'
         },
         {
-            title: '金额',
+            title: '金额/元',
             dataIndex: 'balancesuccessamount',
             key: 'balancesuccessamount'
         },

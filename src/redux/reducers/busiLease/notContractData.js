@@ -16,7 +16,7 @@ const initialState = {
             key: 'organization'
         },
         {
-            title: '金额',
+            title: '金额/元',
             dataIndex: 'money',
             key: 'money  '
         },

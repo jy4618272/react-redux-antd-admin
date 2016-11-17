@@ -31,7 +31,7 @@ module.exports = [
     },
     {
         key: 'money',
-        title: '金额',
+        title: '金额/元',
         dataType: 'float',
         placeholder: "请输入金额",
         feedBackShow: true,

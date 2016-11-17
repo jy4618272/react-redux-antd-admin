@@ -6,7 +6,7 @@ module.exports = {
             dataIndex: 'roomlist'
         },
         {
-            title: '金额',
+            title: '金额/元',
             key: 'marginmoney',
             dataIndex: 'marginmoney'
         },

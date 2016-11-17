@@ -31,7 +31,7 @@ import ConfigRights from 'CONTAINER/ConfigRights'
 import ConfigLease from 'CONTAINER/ConfigLease'
 import ConfigLeaseAdd from 'CONTAINER/ConfigLease/LeaseAdd'
 import ConfigLeaseEdit from 'CONTAINER/ConfigLease/LeaseEdit'
-
+import ConfigLeaseDictionary from 'CONTAINER/ConfigLease/Dictionary'
 import ConfigLeaseDetail from 'CONTAINER/ConfigLease/LeaseDetail'
 
 import Err from 'CONTAINER/Err'
@@ -79,6 +79,7 @@ const routes = (
 				<Route path="config_lease" tableName="configLease" component={ConfigLease} />
 				<Route path="config_lease/add" tableName="configLease" component={ConfigLeaseAdd} />
 				<Route path="config_lease/edit/:id" tableName="configLease" component={ConfigLeaseEdit} />
+				<Route path="config_lease/dictionary" component={ConfigLeaseDictionary} />				
 				<Route path="config_lease/:id" tableName="configLease" component={ConfigLeaseDetail} />
 			</Route>
 		</Route>

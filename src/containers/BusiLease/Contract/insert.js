@@ -89,10 +89,6 @@ class ContractInsert extends Component {
         this.initFetchSchema(props)
         props.action.fetchContractFrom()
         props.action.fetchManager()
-        props.action.fetchWorkFlow({
-            type: '新增',
-            modelname: '合同'
-        })
     }
 
     /**
@@ -203,6 +199,12 @@ class ContractInsert extends Component {
                     })
                     this.setState({
                         pactprintmodelid: 3
+                    })
+
+                    // 合同流程
+                    action.fetchWorkFlow({
+                        type: '新增',
+                        modelname: value
                     })
 
                     // 获取合同号
@@ -1143,7 +1145,8 @@ class ContractInsert extends Component {
         }
 
         const workFlowProps = {
-            flow: busiLease.contractWorkFlow
+            flow: busiLease.contractWorkFlow,
+            notShowLoading: true
         }
 
         if (!this.inited) {

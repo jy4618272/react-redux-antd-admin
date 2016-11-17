@@ -122,6 +122,7 @@ const fetchSaveNotContract = (data) => {
                     description: '临时摊位新增成功'
                 });
                 dispatch(saveNotContract(newRes))
+                history.back()
             } else {
                 hide()
                 dispatch(saveNotContract({}))
@@ -142,41 +143,41 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_NOTCONTRACT_TABLE]: (notContract) => ({
         ...notContract,
-        tableLoading: true
+    tableLoading: true
     }),
-    [RECEIVE_NOTCONTRACT_TABLE]: (notContract, {payload: res}) => ({
+[RECEIVE_NOTCONTRACT_TABLE]: (notContract, {payload: res}) => ({
             ...notContract,
-        tableLoading: false,
-        tableData: res.data,
-        total: res.count,
-        pageSize: 10,
-        skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
-    }),
+    tableLoading: false,
+    tableData: res.data,
+    total: res.count,
+    pageSize: 10,
+    skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / 10 + 1)
+}),
     [SAVE_NOTCONTRACT_TABLE]:(notContract, {payload: res}) => ({
         ...notContract
     }),
-    [RECEIVE_NOTCONTRACT_VOID]:(notContract, {payload: res}) => {
-        const obj = notContract.tableData
-        obj.map(item => {
-            if (item.boothpaymentid == res.sub.boothpaymentid) {
-                item.status = '作废'
-            }
-        })
+        [RECEIVE_NOTCONTRACT_VOID]:(notContract, {payload: res}) => {
+            const obj = notContract.tableData
+            obj.map(item => {
+                if (item.boothpaymentid == res.sub.boothpaymentid) {
+                    item.status = '作废'
+                }
+            })
 
-        return Object.assign({}, notContract, {
-            tableData: obj
-        })
-    },
-    [COMMIT_NOTCONTRACT_FINANCE]:(notContract, {payload: res}) => {
-        const obj = notContract.tableData
-        obj.map(item => {
-            if (item.boothpaymentid === res) {
-                item.status = '已提交'
-            }
-        })
-        return {
+            return Object.assign({}, notContract, {
+                tableData: obj
+            })
+        },
+            [COMMIT_NOTCONTRACT_FINANCE]:(notContract, {payload: res}) => {
+                const obj = notContract.tableData
+                obj.map(item => {
+                    if (item.boothpaymentid === res) {
+                        item.status = '已提交'
+                    }
+                })
+                return {
             ...notContract,
-            tableData: obj
-        }
-    }
+                    tableData: obj
+                }
+            }
 }

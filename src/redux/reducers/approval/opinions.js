@@ -1,5 +1,5 @@
 import createReducer from 'UTIL/createReducer'
-import { ACTION_HANDLERS } from 'ACTION/busiLease/contractApproval/show'
+import { ACTION_HANDLERS } from 'ACTION/approval/opinions'
 
 const initialState = {
     loading: true,

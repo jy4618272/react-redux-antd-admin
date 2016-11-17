@@ -8,9 +8,6 @@ import { default as changeHistoryActionCreators } from './contractChange/changeH
 
 import { default as contractRenewActionCreators } from './contractRenew'
 
-import { default as contractApprovalActionCreators } from './contractApproval'
-import { default as contractApprovalShowActionCreators } from './contractApproval/show'
-
 import { default as contractPayActionCreators } from './contractPay'
 import { default as payMentActionCreators } from './payMent'
 import { default as contractworkFlowActionCreators } from './contract/workFlow'
@@ -27,11 +24,7 @@ export default {
   ...contractInfoActionCreators,
   ...contractTabsActionCreators,
   ...changeHistoryActionCreators,
-  
   ...contractRenewActionCreators,
-  ...contractApprovalActionCreators,
-  ...contractApprovalShowActionCreators,
-  
   ...contractPayActionCreators,
   ...payMentActionCreators,
 

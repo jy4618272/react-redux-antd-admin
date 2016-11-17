@@ -5,6 +5,7 @@ import { notification } from 'antd'
 
 // 后端 API 地址，最好以 http(s):// 打头
 let rootPaths
+/*
 if (__DEV__) {
 	rootPaths = {
 		rootPath: 'http://dev.myportaltest.tf56.com:9090',
@@ -14,8 +15,23 @@ if (__DEV__) {
 if (__PROD__) {
 	rootPaths = {
 		rootPath: 'http://myportal.tf56.com',
-		imgPath: 'http://10.7.15.56'		
+		imgPath: 'http://10.7.15.56'
 		// imgPath: 'http://image.tf56.com'
+	}
+}*/
+
+const URL = window.location.href
+if (URL.indexOf('zhwladmintest.') > -1) {
+	console.log('后端测试环境')
+	rootPaths = {
+		configPath: 'http://myportaltest.tf56.com',
+		imgPath: 'http://10.7.15.56'
+	}
+} else {
+	console.log('后端正式环境')
+	rootPaths = {
+		configPath: 'http://myportal.tf56.com',
+		imgPath: 'http://image.tf56.com'
 	}
 }
 

@@ -108,7 +108,7 @@ module.exports = {
             options: [
                 { key: '', value: '全部' },
                 { key: '作废', value: '作废' },
-                { key: '未确认', value: '未确认' },
+                { key: '未提交', value: '未提交' },
                 { key: '已提交', value: '已提交' },
                 { key: '已到账', value: '已到账' },
             ],
