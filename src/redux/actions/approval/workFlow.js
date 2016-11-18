@@ -27,20 +27,18 @@ const receiveApprovalWorkFlow = (res) => ({
 const fetchApprovalWorkFlow = (data) => {
     return dispatch => {
         dispatch(requestApprovalWorkFlow())
-        setTimeout(() => {
-            xhr('post', paths.workFlowPath + '/flownodecs/selectWorkFlowInformation', data, (res) => {
-                const hide = message.loading('正在查询...', 0)
-                console.log('审批流程数据：', res)
-                if (res.result === 'success') {
-                    hide()
-                    dispatch(receiveApprovalWorkFlow(res.data))
-                } else {
-                    hide()
-                    dispatch(receiveApprovalWorkFlow({}))
-                    errHandler(res.msg)
-                }
-            })
-        }, 4000)
+        xhr('post', paths.workFlowPath + '/flownodecs/selectWorkFlowInformation', data, (res) => {
+            const hide = message.loading('正在查询...', 0)
+            console.log('审批流程数据：', res)
+            if (res.result === 'success') {
+                hide()
+                dispatch(receiveApprovalWorkFlow(res.data))
+            } else {
+                hide()
+                dispatch(receiveApprovalWorkFlow({}))
+                errHandler(res.msg)
+            }
+        })
     }
 }
 
@@ -52,12 +50,12 @@ export default {
 export const ACTION_HANDLERS = {
     [REQUEST_APPROVAL_WORK_FLOW]: (approvalworkFlow, {payload: res}) => ({
         ...approvalworkFlow,
-        loading: true,
+    loading: true,
         data: []
     }),
-    [RECEIVE_APPROVAL_WORK_FLOW]: (approvalworkFlow, {payload: res}) => ({
+[RECEIVE_APPROVAL_WORK_FLOW]: (approvalworkFlow, {payload: res}) => ({
         ...approvalworkFlow,
-        loading: false,
-        data: res
-    })
+    loading: false,
+    data: res
+})
 }

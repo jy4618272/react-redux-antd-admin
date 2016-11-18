@@ -495,7 +495,7 @@ class ContractInsert extends Component {
                 </section>
             )
         } else {
-            return <Err errorMsg="产品开发中" />
+            return <Err errorMsg="敬请期待！" />
         }
     }
 }

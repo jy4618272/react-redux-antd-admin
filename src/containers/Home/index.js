@@ -52,9 +52,7 @@ class Busi extends Component {
                                     <div className="title">{item.name}</div>
                                 </Col>
                                 <Col span={18}>
-                                    <div className="val">
-                                        <Badge count={item.number} overflowCount={99} />
-                                    </div>
+                                    <Badge count={item.number} overflowCount={99} />
                                 </Col>
                             </Row>
                         </Col>

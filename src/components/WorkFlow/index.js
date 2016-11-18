@@ -53,7 +53,6 @@ class WorkFlow extends Component {
             )
         })
 
-
         if (flow.loading) {
             if (notShowLoading) {
                 return <div className="g-tac g-pb20 s-red">请先选择合同模板，才能显示合同流程</div>
