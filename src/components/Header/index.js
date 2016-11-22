@@ -9,6 +9,7 @@ import actionUserInfo from 'ACTION/userInfo'
 import {
 	rootPaths
 } from 'SERVICE/config'
+import cookie from 'react-cookie'
 
 import hideMenu from './img/hide_menu.png'
 import './index.less'
@@ -27,6 +28,7 @@ export default class Header extends Component {
 	}
 
 	logout = () => {
+		cookie.remove('session_key')
 		window.location.href = rootPaths.configPath + '/myportal/logincs/logout'
 	}
 

@@ -26,7 +26,7 @@ const fetchMenuList = () => {
 		dispatch(requestMenuList())
 		xhr('post', paths.financePath + '/maincs/getSysFuncInfo', {}, function (res) {
 			const hide = message.loading('正在获取菜单...', 0)
-			console.log('导航', res)
+			console.log('左侧菜单返回数据：', res)
 			if (res.result === 'success') {
 				hide()
 				const list = []
