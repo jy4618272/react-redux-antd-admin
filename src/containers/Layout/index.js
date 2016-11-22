@@ -49,10 +49,10 @@ class App extends Component {
 		 * url或cookie没有跳到登录
 		 * url有cookie没有设置cookie
 		 */
-        if (!isCookieSessionKey) {
-            if (isUrlSessionKey) {
-                cookie.save('session_key', getUrlPara('session_key').split('#')[0], { path: '/', maxAge: 57600 })
-            } else if (!isUrlSessionKey) {
+        if (isUrlSessionKey) {
+            cookie.save('session_key', getUrlPara('session_key').split('#')[0], { path: '/', maxAge: 57600 })
+        } else{
+            if(!isCookieSessionKey){
                 // 没有登录跳转到对应环境的登录页面
                 window.location.href = rootPaths.configPath + '/myportal/logincs/login'
             }
