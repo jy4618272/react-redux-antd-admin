@@ -1,6 +1,7 @@
 import { message } from 'antd'
 import xhr from 'SERVICE'
-import { errHandler, paths } from 'SERVICE/config'
+import { rootPaths, errHandler, paths } from 'SERVICE/config'
+import cookie from 'react-cookie'
 
 // ================================
 // Action Type
@@ -56,7 +57,10 @@ const fetchMenuList = () => {
 				dispatch(receiveMenuList(list))
 			} else {
 				hide()
-				// window.location.href = 'http://myportaltest.tf56.com/myportal/logincs/login'
+				if(res.code == '1'){
+					cookie.remove('session_key')
+					window.location.href = rootPaths.configPath + '/myportal/logincs/login'
+				}
 				errHandler(res.msg)
 			}
 		})
