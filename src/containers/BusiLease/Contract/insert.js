@@ -249,6 +249,17 @@ class ContractInsert extends Component {
         }
     }
 
+    // 日期选择
+    parentHandleDateChange = (key) => {
+        if(key === 'enddate' || key === 'startdate'){
+            const {
+                dateRoom, dataLine, dataPolicy, dataBond
+            } = this.state
+            const {form} = this.props
+            this.handleCalc(dateRoom, dataLine, dataPolicy, dataBond, form.getFieldValue('marginmoney'), form.getFieldValue('startdate'), form.getFieldValue('enddate'))            
+        }
+    }
+
     // 搜索用户
     handleSearchOrganization = () => {
         const val = this.props.form.getFieldsValue()
@@ -257,59 +268,109 @@ class ContractInsert extends Component {
         })
     }
 
-    // 算法
-    handleCalc = (room, line, bond) => {
-        let tmp = {}
-
-        let roommoney = 0
-        let linemoney = 0
-        let marginmoneyoffset = 0
-
-        let standardmoney = 0
-        let totaloffsetmoney = 0
-        let money = 0
-
-        // 合同房间
-        if (room.length) {
-            room.map(item => {
-                roommoney += parseFloat(item.money)
-            })
-        } else {
-            roommoney = 0
+    /**
+     * 算法
+     * 合同标准金额 = 班线费用 + 房间租金
+     * 合同优惠 = 合同标准金额 * item
+     * 冲抵总额 = 履约保证金冲抵 + 优惠金额
+     * 合同金额 = 合同标准金额 - 冲抵总额
+     * @memberOf ContractInsert
+     */
+    handleMonth = (startDate, endDate) => {
+        const startArr = startDate.format('YYYY/MM/DD').split('/')
+        const endArr = endDate.format('YYYY/MM/DD').split('/')
+        let disMonths = (parseInt(endArr[0]) - parseInt(startArr[0])) * 12 + (parseInt(endArr[1]) - parseInt(startArr[1]))
+        if (parseInt(endArr[2]) - parseInt(startArr[2]) > 0) {
+            disMonths += 1
         }
 
-        // 合同班线
-        if (line.length) {
-            line.map(item => {
+        if (disMonths <= 0) {
+            notification.error({
+                message: '起始时间有误',
+                description: '请正确选择起始时间'
+            })
+            return false;
+        }
+        return disMonths
+    }
+
+    handleMoney = (money, years, num = 2) => {
+        return parseFloat((money * years / 12).toFixed(num))
+    }
+
+    handleCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney = 0, startDate, endDate) => {
+        const years = this.handleMonth(startDate, endDate)
+        marginmoney = parseFloat(marginmoney.toFixed(2))
+        console.log('月份：', years)
+        let roommoney = 0               // 房间租金
+        let linemoney = 0               // 班线费用
+        let standardmoney = 0           // 合同标准金额
+
+        let promotionmoneyoffset = 0    // 合同优惠        
+        let marginmoneyoffset = 0       // 履约保证金冲抵
+        let totaloffsetmoney = 0        // 冲抵总额
+
+        let money = 0                   // 合同金额
+
+        // 房间租金
+        if (roomArr && roomArr.length) {
+            roomArr.map(item => {
+                roommoney += parseFloat(item.money)
+            })
+        }
+        roommoney = this.handleMoney(roommoney, years)
+
+        // 班线费用
+        if (lineArr && lineArr.length) {
+            lineArr.map(item => {
                 linemoney += parseFloat(item.linefee)
             })
-        } else {
-            linemoney = 0
+        }
+        linemoney = this.handleMoney(linemoney, years)
+
+        // 合同标准金额
+        standardmoney = roommoney + linemoney
+
+        // 合同优惠
+        if (policyArr && policyArr.length) {
+            let offset = standardmoney
+            policyArr.map(item => {
+                if(item.promotiontype === '减免'){
+                    offset = offset - item.promotionnum
+                }else if(item.promotiontype === '折扣'){
+                    alert(offset)
+                    offset = parseFloat((offset * item.promotionnum/10).toFixed(2))
+                    alert(offset)
+                }
+            })        
+            money = offset
+            promotionmoneyoffset = standardmoney - offset
         }
 
         // 履约保证金冲抵
-        if (bond.length) {
-            bond.map(item => {
+        if (bondArr && bondArr.length) {
+            bondArr.map(item => {
                 marginmoneyoffset += parseFloat(item.marginmoney)
             })
-        } else {
-            marginmoneyoffset = 0
         }
 
-        standardmoney = roommoney + linemoney
-        totaloffsetmoney = marginmoneyoffset
-        money = standardmoney - totaloffsetmoney
+        // 冲抵总额
+        totaloffsetmoney = marginmoneyoffset + promotionmoneyoffset
 
-        tmp = {
+        // 合同金额
+        alert(marginmoney)
+        money = standardmoney - totaloffsetmoney + marginmoney + marginmoney
+
+        // 设置值
+        this.props.form.setFieldsValue({
             roommoney,
             linemoney,
-            marginmoneyoffset,
             standardmoney,
+            marginmoneyoffset,
+            promotionmoneyoffset,
             totaloffsetmoney,
             money
-        }
-        // tmp['money'] = sum + parseFloat(getFieldValue('linemoney')) - parseFloat(getFieldValue('totaloffsetmoney'))
-        this.props.form.setFieldsValue(tmp)
+        })
     }
 
     // 新增房间
@@ -684,57 +745,41 @@ class ContractInsert extends Component {
             const ids = []
             const tmp = {}
 
+            this.setState({ dataRoom: obj })
             obj.map(item => {
                 ids.push(item.room)
             })
             tmp['roomlist'] = ids.join(',')
-            this.setState({
-                dataRoom: obj
-            })
-            this.props.form.setFieldsValue(tmp)
-            this.handleCalc(obj, this.state.dataLine, this.state.dataBond)
-            this.handleModalCancel()
+
+            form.setFieldsValue(tmp)
+            this.handleCalc(obj, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
         } else if (modalName === 'classLine' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataLine, selectDatas, 'transportlineid')
             const ids = []
             const tmp = {}
 
+            this.setState({ dataLine: obj })
             obj.map(item => {
                 ids.push(item.linename)
             })
             tmp['linelist'] = ids.join(',')
-
-            this.setState({
-                dataLine: obj
-            })
             this.props.form.setFieldsValue(tmp)
-            this.handleCalc(this.state.dataRoom, obj, this.state.dataBond)
-            this.handleModalCancel()
+            this.handleCalc(dataRoom, obj, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
         } else if (modalName === 'policy' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataPolicy, selectDatas, 'rentpromotionid')
             const tmp = {}
             const moneyList = []
-
-            obj.map(item => {
-                moneyList.push(parseFloat(item.promotionnum))
-            })
-            const sum = moneyList.reduce(this.handleSum)
-            tmp['promotionmoneyoffset'] = sum
-            tmp['totaloffsetmoney'] = sum + parseFloat(getFieldValue('marginmoneyoffset'))
-            tmp['money'] = parseFloat(getFieldValue('standardmoney')) - (sum + parseFloat(getFieldValue('marginmoneyoffset')))
             this.setState({
                 dataPolicy: obj
             })
-            this.props.form.setFieldsValue(tmp)
-            this.handleModalCancel()
+            this.handleCalc(dataRoom, dataLine, obj, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
         } else if (modalName === 'contractBond' && selectDatas.length !== 0) {
             const obj = this.uniq(this.state.dataBond, selectDatas, 'marginid')
             const tmp = {}
             this.setState({
                 dataBond: obj
             })
-            this.handleCalc(this.state.dataRoom, this.state.dataLine, obj)
-            this.handleModalCancel()
+            this.handleCalc(dataRoom, dataLine, dataPolicy, obj, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
         } else if (modalName === 'selectOrganization') {
             if (this.state.selectDatas.length) {
                 this.setState({
@@ -838,6 +883,7 @@ class ContractInsert extends Component {
                 this.handleModalCancel()
             })
         }
+        this.handleModalCancel()
     }
 
     // 弹框关闭
@@ -1263,7 +1309,8 @@ class ContractInsert extends Component {
                     <FormLayout
                         schema={busiLease.contractTabs}
                         form={this.props.form}
-                        fromLayoutStyle="g-border-bottom" />
+                        fromLayoutStyle="g-border-bottom"
+                        parentHandleDateChange = {this.parentHandleDateChange} />
 
                     {/* 分期明细 */}
                     <div className="padding-lr g-mb20">

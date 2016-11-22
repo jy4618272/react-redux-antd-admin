@@ -51,13 +51,12 @@ class App extends Component {
 		 */
         if (!isCookieSessionKey) {
             if (isUrlSessionKey) {
-                cookie.save('session_key', getUrlPara('session_key').split('#')[0])
+                cookie.save('session_key', getUrlPara('session_key').split('#')[0], { path: '/', maxAge: 57600 })
             } else if (!isUrlSessionKey) {
-				// 没有登录跳转到对应环境的登录页面
+                // 没有登录跳转到对应环境的登录页面
                 window.location.href = rootPaths.configPath + '/myportal/logincs/login'
             }
         }
-
         console.log('框架', props)
     }
 

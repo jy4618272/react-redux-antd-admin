@@ -365,6 +365,11 @@ class FormLayout extends Component {
         this.props.parentHandleInputBlur && this.props.parentHandleInputBlur(key)
     }
 
+    // 日期选择
+    handleDateChange = (key) => {
+        this.props.parentHandleDateChange && this.props.parentHandleDateChange(key)
+    }
+
     /**
      * 将schema中的一列转换为普通输入框
      *
@@ -387,7 +392,7 @@ class FormLayout extends Component {
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
                 return this.colWrapper((
-                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} disabled={field.disabled} />
+                    <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} disabled={field.disabled} onChange={this.handleDateChange.bind(this, field.key)} />
                 ), field)
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
