@@ -15,6 +15,11 @@ const initialState = {
             key: 'promotionname'
         },
         {
+            title: '优惠主体',
+            dataIndex: 'promotionbody',
+            key: 'promotionbody'
+        },
+        {
             title: '优惠类型',
             dataIndex: 'promotiontype',
             key: 'promotiontype'

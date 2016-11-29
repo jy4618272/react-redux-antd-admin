@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { hashHistory } from 'react-router'
-import {
-    notification
-} from 'antd'
+import { notification } from 'antd'
 import {
     Err,
     InnerTable,
@@ -12,17 +10,16 @@ import {
 } from 'COMPONENT'
 import { paths } from 'SERVICE/config'
 
+// 方法集
 import action from 'ACTION/approval'
-
 const mapDispatchToProps = (dispatch) => ({
     action: bindActionCreators(action, dispatch)
 })
-
 @connect(
     ({ approval }) => ({ approval }),
     mapDispatchToProps
 )
-class list extends Component {
+class ApprovalList extends Component {
     constructor(props) {
         super(props)
         console.log('审批列表props', props)
@@ -40,7 +37,7 @@ class list extends Component {
         const {action} = this.props
         const tmpObj = Object.assign({}, queryObj)
 
-        tmpObj.nodeStatus = 'open'
+        tmpObj.nodestatus = 'open'
         tmpObj.pageSize = pageSize
         tmpObj.skipCount = skipCount
 
@@ -52,7 +49,7 @@ class list extends Component {
      * 按当前的查询条件重新查询一次
      */
     refresh = (queryObj = {
-        nodeStatus: 'open'
+        nodestatus: 'open'
     }) => {
         const {list} = this.props.approval
         this.select(queryObj, list.pageSize, 0)
@@ -81,13 +78,12 @@ class list extends Component {
         }
 
         const type = record.formurl.replace(/(\w)-(\w\d+)/, '$1')
-
         sessionStorage.setItem('approvalData', JSON.stringify(record))
         hashHistory.push(`approval/${record.businessno}?type=${type}`)
     }
 
     /**
-     * /workflowAdmin
+     * workflowAdmin
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
@@ -115,5 +111,5 @@ class list extends Component {
     }
 }
 
-export default list
+export default ApprovalList
 

@@ -57,7 +57,6 @@ class App extends Component {
                 window.location.href = rootPaths.configPath + '/myportal/logincs/login'
             }
         }
-
         console.log('框架', props)
     }
 
@@ -83,9 +82,8 @@ class App extends Component {
 
                 <article className="m-container" id="container">
                     <Header layout={layout} slideBarToggle={actionLayout.slideBarToggle} />
-                    {/*
-						<Breadcrumb {...this.props} />
-					相当于 Vue Demo 中的根 router-view */}
+                    {/* 相当于 Vue Demo 中的根 router-view */}
+					<Breadcrumb {...this.props} />
 
                     {this.props.children}
                     <Footer />

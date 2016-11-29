@@ -7,47 +7,26 @@ const initialState = {
         {
             title: '变更日期',
             dataIndex: 'createdate',
-            key: 'createdate'
+            key: 'createdate',
+            width: '150'
         },
-        // {
-        //     title: '变更类型',
-        //     dataIndex: 'area',
-        //     key: 'area'
-        // },
         {
             title: '变更前',
             dataIndex: 'oldvalue',
-            key: 'oldvalue'
+            key: 'oldvalue',
+            width: '200'            
         },
         {
             title: '变更后',
             dataIndex: 'newvalue',
-            key: 'newvalue'
+            key: 'newvalue',
+            width: '200'                
         },
-        // {
-        //     title: '状态',
-        //     dataIndex: 'area',
-        //     key: 'area'
-        // },
-        // {
-        //     title: '提交人',
-        //     dataIndex: 'area',
-        //     key: 'area'
-        // },
-        // {
-        //     title: '审核人',
-        //     dataIndex: 'area',
-        //     key: 'area'
-        // },
-        // {
-        //     title: '审核日期',
-        //     dataIndex: 'area',
-        //     key: 'area'
-        // },
         {
             title: '标签名',
             dataIndex: 'labelname',
-            key: 'labelname'
+            key: 'labelname',
+            width: '150'
         },
         {
             title: '关键字段',

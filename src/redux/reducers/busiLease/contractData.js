@@ -30,11 +30,6 @@ const initialState = {
             key:'flowtype'
         },
         {
-            title:'租赁类型',            
-            dataIndex:'renttype',            
-            key:'renttype'
-        },
-        {
             title:'流程状态',            
             dataIndex:'flowstatus',            
             key:'flowstatus'

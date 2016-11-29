@@ -6,12 +6,10 @@ const Item = Breadcrumb.Item
 
 import './index.less'
 
-@connect(
-    ({ menuList }) => ({ menuList })
-)
 class Bread extends Component {
     constructor(props) {
         super(props)
+        console.log('面包屑props', props)
     }
 
     static inited = false
@@ -20,7 +18,8 @@ class Bread extends Component {
 
     init = () => {
         const { menuList } = this.props
-        menuList.map((level1) => {
+
+        menuList.data.map((level1) => {
             Bread.nameMap.set(level1.key, level1.name)
             Bread.iconMap.set(level1.key, level1.name)
 
@@ -34,7 +33,7 @@ class Bread extends Component {
                     }
                 })
             }
-        })
+        })     
     }
 
     componentDidMount() {
@@ -50,15 +49,16 @@ class Bread extends Component {
         const itemArray = []
 
         // 面包屑导航的最开始都是一个home图标, 并且这个图标时可以点击的
-        itemArray.push(<Item key="systemHome" href="#"><Link to="/"><Icon type="home"/></Link></Item>)
-
+        itemArray.push(<Item key="systemHome" href="#"><Link to="/"><Icon type="home"/>首页</Link></Item>)
+    
         for (const route of this.props.routes) {
             const name = Bread.nameMap.get(route.path)
-            // console.log('path', name)
+            // console.log('面包屑path', route.path, name) // busi_lease 租赁业务
+        
             if (name) {
                 const icon = Bread.iconMap.get(route.path)
                 if (icon) {
-                    itemArray.push(<Item key={name}><Icon type={icon}/> {name}</Item>)
+                    itemArray.push(<Item key={name}><Icon type={icon}/>{name}</Item>)
                 } else {
                     itemArray.push(<Item key={name}>{name}</Item>)
                 }
@@ -67,7 +67,8 @@ class Bread extends Component {
 
         return (
             <section className="padding m-breadcrumb clearfix">
-                <span className="g-fl">当前位置：</span><Breadcrumb className="g-fl">{itemArray}</Breadcrumb>
+                <span className="g-fl">当前位置：</span>
+                <Breadcrumb className="g-fl">{itemArray}</Breadcrumb>
             </section>
         )
     }

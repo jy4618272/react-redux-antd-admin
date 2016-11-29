@@ -210,6 +210,10 @@ class ContractRent extends Component {
                     console.log('数据：', res)
                     if (res.result === 'success') {
                         hide()
+                        notification.success({
+                            message: '合同退租成功',
+                            description: '正在前往合同列表页'
+                        })
                         hashHistory.push('busi/busi_lease')
                     } else {
                         hide()

@@ -6,7 +6,7 @@ class Error extends Component {
     render () {
         const {errorMsg} = this.props
         return (
-            <div className="m-not-found">
+            <div className="m-error">
                 <div className="u-error"><Icon type="frown"/></div>
                 <h1>{errorMsg || '真是个糟糕的事'}</h1>
             </div>

@@ -58,11 +58,13 @@ class InnerTable extends Component {
     // 点击查看详情
     handleRowClick = (record, index) => {
         const {parentHandleRowClick} = this.props
-        parentHandleRowClick && parentHandleRowClick(record, index)
+        // console.log('###', this.refs['table'].findDOMNode('tr'))
+        parentHandleRowClick && parentHandleRowClick(record)
     }
 
     handleDoubleClick = (record, index) => {
         const {parentHandleDoubleClick} = this.props
+
         parentHandleDoubleClick && parentHandleDoubleClick(record, index)
     }
 
@@ -124,6 +126,7 @@ class InnerTable extends Component {
             dataSource={dataSource}
             bordered={bordered}
             pagination={pagination}
+            ref="table"
             onRowClick={this.handleRowClick}
             onRowDoubleClick={this.handleDoubleClick}
             size={size}
@@ -137,7 +140,8 @@ class InnerTable extends Component {
                 dataSource={dataSource}
                 bordered={bordered}
                 pagination={pagination}
-                onRowClick={this.parentHandleRowClick}
+                ref="table"            
+                onRowClick={this.handleRowClick}
                 onRowDoubleClick={this.handleDoubleClick}
                 size={size}
                 title={title}

@@ -246,7 +246,7 @@ class ContractPay extends Component {
             footer: <div>
                 <Button type="default" onClick={this.handleModalCancel}>取消</Button>                
                 <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}>{status}</Button>
-                <Button type="primary">打印</Button>                
+                <Button type="primary" onClick={() => { window.print()}}>打印</Button>                
             </div>
         })
     }

@@ -1,0 +1,21 @@
+// 控制打印的样式
+// 如果body高度超过一屏，打印内容会出现问题，所以设置一下#root
+// 通常需要打印的是 Modal ，Modal的头／关闭按钮／脚 并不需要
+// 容器的box-shadow也不需要
+
+@media print {
+    #root {
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .ant-modal-content {
+        box-shadow: 0 0 0 white !important;
+
+        .ant-modal-close,
+        .ant-modal-header,
+        .ant-modal-footer {
+            display: none;
+        }
+    } 
+}

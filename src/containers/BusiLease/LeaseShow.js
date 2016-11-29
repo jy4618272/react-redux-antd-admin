@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
     Form,
+    Modal,
     Tabs,
     message,
     Button,
@@ -17,12 +18,21 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 import {
     Err,
     Loading,
+    WorkFlow,
     InnerTable,
     FormLayout
 } from 'COMPONENT'
 
+
+// action
+import action from 'ACTION/approval'
+const mapDispatchToProps = (dispatch) => ({
+    action: bindActionCreators(action, dispatch)
+})
+
 @connect(
-    ({}) => ({})
+    ({ approval }) => ({ approval }),
+    mapDispatchToProps
 )
 class FinanceShow extends Component {
     constructor(props) {
@@ -118,6 +128,35 @@ class FinanceShow extends Component {
         window.location.href = rootPaths.imgPath + paths.imgPath + '/' + dataAttachment[index].url
     }
 
+    // 打印合同
+    printContract() {
+        /**
+         * 获取合同数据
+         *  获取id
+         */
+        const { id } = this.props.params
+
+        xhr('post', paths.leasePath + '/pactprintmodelcs/getPrintTextByRentPactId', {
+            rentpactid: id
+        }, (res) => {
+            console.log(res)
+            const hide = message.loading('正在查询...', 0)
+            if (res.result == 'success') {
+                hide()
+                // res.data = res.data + res.data + res.data + res.data + res.data + res.data + res.data + res.data
+                this.setState({
+                    isVisible: true,
+                    contractContent: res.data
+                })
+            } else {
+                hide()
+                errHandler(res.msg)
+            }
+        })
+
+        // 弹窗展示合同，提供打印／取消按钮
+    }
+
     componentDidMount() {
         const {
             action,
@@ -147,6 +186,13 @@ class FinanceShow extends Component {
                         dataAttachment: res.data.rentpactattachments
                     })
                     const oldObj = res.data.rentpact
+
+                    // 流程
+                    action.fetchApprovalWorkFlow({
+                        rentpactid: id,
+                        pactkind: res.data.rentpact.pactkind // 合同
+                    })
+
                     const newObj = {}
                     for (const key in oldObj) {
                         if (key.indexOf('date') > -1) {
@@ -167,7 +213,7 @@ class FinanceShow extends Component {
     }
 
     render() {
-        const { location } = this.props
+        const { location, approval } = this.props
         const { loading, res } = this.state
         const type = location.query.type
         if (!this.inited) {
@@ -203,6 +249,11 @@ class FinanceShow extends Component {
                             schema={this.contractShowSchema['contractFrom']}
                             form={this.props.form}
                             fromLayoutStyle="g-border-bottom" />
+
+                        { /* 流程
+                        <section className="g-border-bottom">
+                            <WorkFlow flow={approval.workFlow} />
+                        </section> */}
 
                         {/* 客户名称 */}
                         <div className="g-border-bottom">
@@ -298,6 +349,23 @@ class FinanceShow extends Component {
                                 bordered={true}
                                 parentHandleClick={this.parentHandleClick}
                                 pagination={false} />
+                        </div>
+
+                        {/* 打印合同 */}
+                        <div className="g-tac g-mt20">
+                            <Button onClick={this.printContract.bind(this)}>打印合同</Button>
+
+                            <Modal
+                                title="合同打印"
+                                width="900"
+                                className="g-enter-line"
+                                visible={this.state.isVisible}
+                                footer={<div>
+                                    <Button type="default" onClick={() => { this.setState({ isVisible: false }) } }>取消</Button>
+                                    <Button type="primary" onClick={() => { window.print() } }>打印</Button>
+                                </div>}>
+                                {this.state.contractContent}
+                            </Modal>
                         </div>
                     </Form>
                 </section>
