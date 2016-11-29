@@ -29,6 +29,15 @@ module.exports = [
         title: '审核内容',
         dataType: 'textarea',
         placeholder: '请填写审核内容',
-        showType: 'full'
+        showType: 'full',
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { max: 255, type:'string', message:'审核内容最多为255个字符'}
+                ],
+                trigger: ['onBlur', 'onChange']
+            }
+        ]
     }
 ]

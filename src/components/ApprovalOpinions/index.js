@@ -22,7 +22,7 @@ class ApprovalOpinions extends Component {
         }
 
         let opinionsContent
-        if (opinions.data.count > 0) {
+        if (parseInt(opinions.data.count) > 0) {
             opinionsContent = opinions.data.data.map((item, index) => {
                 if (item.people && item.people.length) {
                     const cont = item.people.map(des => {

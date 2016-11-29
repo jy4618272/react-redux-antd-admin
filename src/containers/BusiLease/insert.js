@@ -111,6 +111,7 @@ class Insert extends Component {
 
     // 搜索用户
     handleSearchOrganization = () => {
+        console.log('测试可用数据：qq123456222swe')
         const val = this.props.form.getFieldsValue()
         this.props.action.fetchOrganization({
             keywords: val.organizationnum
@@ -221,7 +222,6 @@ class Insert extends Component {
                     buttonSchema={organization.queryButtons}
                     parentHandleClick={this.handleSearchOrganization}
                     parentHandleSelect={this.parentHandleSelect} />
-                测试可用数据：qq123456222swe
                 <InnerTable
                     columns={organization.tableColumns}
                     dataSource={organization.tableData}

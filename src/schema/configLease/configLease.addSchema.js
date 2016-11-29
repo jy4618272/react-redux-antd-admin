@@ -8,7 +8,7 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType: 'full',
+            showType:'two',
             placeholder: '请输入所属基地',
             disabled: true
         },
@@ -173,7 +173,7 @@ module.exports = {
             key: 'memo',
             title: '备注',
             dataType: 'varchar',
-            showType: 'two',
+            showType: 'full',
             placeholder: '备注',
             feedBackShow: true,
             validate: [{
@@ -189,7 +189,6 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType: 'full',
             placeholder: '请输入所属基地',
             disabled: true
         },
@@ -268,7 +267,7 @@ module.exports = {
         {
             key: 'pactkind',
             title: '合同类型',
-            showType: 'select',
+            showType: 'select',          
             options: [
                 { key: '合同', value: '合同' },
                 { key: '协议', value: '协议' }

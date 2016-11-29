@@ -42,31 +42,21 @@ class Busi extends Component {
             return <Loading />
         }
 
-        const dd = home.data.rentpact.map(item => {
+        const todos = home.data.rentpact.map(item => {
             if (item.name === '待办') {
                 return (
-                    <Link to="/approval">
-                        <Col span={6}>
-                            <Row>
-                                <Col span={6}>
-                                    <div className="title">{item.name}</div>
-                                </Col>
-                                <Col span={18}>
-                                    <Badge count={item.number} overflowCount={99} />
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Link>
+                    <Badge count={item.number} overflowCount={99}>
+                        <Link to="/approval" className="u-todo">
+                            {item.name}
+                        </Link>
+                    </Badge>
                 )
             }
         })
 
-
         return (
-            <section className="padding-lr m-busi">
-                <Row className="list-news-tips">
-                    {dd}
-                </Row>
+            <section className="padding-lr list-todos">
+                {todos}
             </section>
         )
     }

@@ -3,7 +3,10 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link, hashHistory } from 'react-router'
 
+import moment from 'moment'
+
 import {
+    Icon,
     Row,
     Col,
     Button,
@@ -102,6 +105,30 @@ class LeaseManage extends Component {
         }
     }
 
+    // 高级查询
+    contractSearch = (key) => {
+        const {
+            contractData
+        } = this.props.busiLease
+
+        const {
+            fetchContractTable
+        } = this.props.action
+        let enddatefrom
+        let enddateto
+        if(key === 'due'){
+            enddatefrom = moment().format('YYYY-MM-DD')
+            enddateto = moment().add('60', 'days').format('YYYY-MM-DD')
+        } else if(key === 'shouldSign'){
+            enddatefrom =  moment().format('YYYY-MM') + '-01'
+            enddateto = moment(moment().add(1, 'month').format('YYYY-MM') + '-01', 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD')
+        }
+        this.select({
+            enddatefrom,
+            enddateto
+        }, contractData.pageSize, 0, fetchContractTable)
+    }
+
     /**
      * 切换分页时触发查询
      *
@@ -189,8 +216,10 @@ class LeaseManage extends Component {
         const {action} = this.props
         if (data.length == 1) {
             if (key === 'contract') {
+
                 this.handleCancel('contractTable')
-                if (data[0].flowtype === '新增/续租') {
+                if (data[0].flowtype === '新增' || data[0].flowtype === '续租') {
+                // if (data[0].flowtype === '新增/续租') {
                     action.approvalContract({
                         rentpactid: data[0].rentpactid
                     })
@@ -376,7 +405,8 @@ class LeaseManage extends Component {
 
     // 打印
     handlePrint = () => {
-        this.handleModalCancel()
+        window.print()
+        // this.handleModalCancel()
     }
 
     // 弹框关闭
@@ -488,7 +518,8 @@ class LeaseManage extends Component {
         // 按钮操作
         if (oneSelected && (selectedRows[0].flowtype !== '作废')) {
             const selected = selectedRows[0]
-            if (selected.flowtype === '新增/续租') {
+            if (selected.flowtype === '新增' || selected.flowtype === '续租') {
+            // if (selected.flowtype === '新增/续租') {
                 if (selected.flowstatus === '草稿') {
                     if (selected.fistatus === '未提交') {
                         // 作废、编辑、提交审核
@@ -700,7 +731,7 @@ class LeaseManage extends Component {
                     <Button onClick={this.handleAdd.bind(this, 'bond')}>新增</Button>
                     <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, 'bond')}>提交审核</Button>
                     <Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, 'bond')}>提交退款审批</Button>                    
-                    <Button onClick={this.handleEdit.bind(this, 'bond')}>编辑</Button>
+                    {/*<Button onClick={this.handleEdit.bind(this, 'bond')}>编辑</Button>*/}
                     <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, 'bond')}>提交财务</Button>
                     <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, 'bond')}>作废</Button>
                 </Col>
@@ -724,8 +755,7 @@ class LeaseManage extends Component {
         let isNotContractVoid = false                // 作废
 
         // 按钮操作
-        if (oneSelected && (selectedRows[0].status !== '作废')) {
-            const selected = selectedRows[0]
+        if (oneSelected && (selectedRows[0].status == '未提交')) {
             isNotContractVoid = true
         }
 
@@ -841,7 +871,12 @@ class LeaseManage extends Component {
                             formStyle="g-mb20 m-advance-filter"
                             schema={querySchema['contract']}
                             parentHandleSubmit={this.handleFormSubmit}
-                            showSearch={true} />
+                            showSearch={true}>
+                            <div className="button-group g-mb10">
+                                <Button onClick={this.contractSearch.bind(this, 'due')}><Icon type="clock-circle-o" />将到期合同</Button>
+                                <Button onClick={this.contractSearch.bind(this, 'shouldSign')}><Icon type="edit" />应签合同</Button>
+                            </div>
+                        </InnerForm>
                         {tableContractControl}
                         <InnerTable
                             loading={contractData.tableLoading}

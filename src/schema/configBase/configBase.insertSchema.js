@@ -105,6 +105,7 @@ module.exports = [
         key: 'remark',
         title: '备注',
         dataType: 'varchar',
+        showType: 'full',
         placeholder: '请输入备注'
     }
 ]

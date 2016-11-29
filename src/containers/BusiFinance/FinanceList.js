@@ -96,7 +96,7 @@ class FinanceList extends Component {
      * @param 
      */
     handleFormSubmit = (newObj) => {
-        const {busiFinance} = this.props        
+        const {busiFinance} = this.props
         const tmpObj = Object.assign({}, newObj)
         console.log(tmpObj)
         this.select(tmpObj, busiFinance.list.pageSize, 0)
@@ -152,10 +152,6 @@ class FinanceList extends Component {
             </section>
         )
     }
-}
-
-FinanceList.propTypes = {
-
 }
 
 export default FinanceList

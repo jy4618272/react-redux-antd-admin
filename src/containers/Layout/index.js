@@ -82,9 +82,8 @@ class App extends Component {
 
                 <article className="m-container" id="container">
                     <Header layout={layout} slideBarToggle={actionLayout.slideBarToggle} />
-                    {/*
-						<Breadcrumb {...this.props} />
-					相当于 Vue Demo 中的根 router-view */}
+                    {/* 相当于 Vue Demo 中的根 router-view */}
+					<Breadcrumb {...this.props} />
 
                     {this.props.children}
                     <Footer />

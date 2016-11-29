@@ -16,7 +16,7 @@ import {
     Icon,
     notification
 } from 'antd'
-
+const {RangePicker} = DatePicker
 import './dbTable.less'
 
 const FormItem = Form.Item
@@ -37,15 +37,15 @@ class FormLayout extends Component {
      * @returns {XML}
      */
     colWrapper = (formItem, field) => {
-        const {getFieldDecorator, isFieldValidating, getFieldError} = this.props.form
+        const {getFieldDecorator} = this.props.form
         return (
-            <Col key={field.key} sm={8} className="form-col-wrapper">
+            <Col key={field.key} xs={24} sm={12} md={12} lg={6}>
                 <FormItem
                     key={field.key}
                     ref={field.key}
                     label={field.title}
-                    labelCol={{ span: 6 }}
-                    wrapperCol={{ span: 18 }}
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
                     hasFeedback={field.feedBackShow}>
                     {getFieldDecorator(field.key, {
                         validate: field.validate || []
@@ -68,7 +68,7 @@ class FormLayout extends Component {
     betweenColWrapper = (beginFormItem, endFormItem, field) => {
         const {getFieldDecorator} = this.props.form
         return (
-            <Col key={`start${field.key}`} sm={8}>
+            <Col key={`start${field.key}`} xs={24} sm={12} md={12} lg={6}>
                 <Row>
                     <Col span={16}>
                         <FormItem
@@ -112,7 +112,7 @@ class FormLayout extends Component {
     twoColWrapper = (formItem, field) => {
         const {getFieldDecorator} = this.props.form
         return (
-            <Col key={field.key} sm={16}>
+            <Col key={field.key} sm={12}>
                 <FormItem
                     key={field.key}
                     label={field.title}
@@ -302,35 +302,36 @@ class FormLayout extends Component {
             case 'datetime':
                 // console.debug('transform field %o to datetime BETWEEN component', field)
                 cols.push(
-                    <Col key={field.key} sm={5}>
+                    <Col key={field.key} sm={12} md={12} lg={6}>
                         <FormItem
                             key={field.key}
                             label={field.title}
-                            labelCol={{ span: 10 }}
-                            wrapperCol={{ span: 14 }}
+                            labelCol={{ span: 8 }}
+                            wrapperCol={{ span: 16 }}
                             hasFeedback={field.feedBackShow}
                             help={field.help}>
                             {getFieldDecorator(field.key, {
                                 validate: field.validate || []
                             })(
                                 <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '开始日期'} disabled={field.disabled} />
-                                )}
+                            )}
                         </FormItem>
                     </Col>
                 )
                 cols.push(
-                    <Col key={field.keyEnd} sm={3}>
+                    <Col key={field.keyEnd} sm={12} md={12} lg={6}>
                         <FormItem
                             key={field.keyEnd}
-                            labelCol={{ span: 0 }}
-                            wrapperCol={{ span: 24 }}
+                            label="至"
+                            labelCol={{ span: 8 }}
+                            wrapperCol={{ span: 16 }}
                             hasFeedback={field.feedBackShow}
                             help={field.help}>
                             {getFieldDecorator(field.keyEnd, {
                                 validate: field.validate || []
                             })(
                                 <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderEnd || '结束日期'} disabled={field.disabled} />
-                                )}
+                            )}
                         </FormItem>
                     </Col>)
                 break
@@ -366,10 +367,14 @@ class FormLayout extends Component {
     }
 
     // 日期选择
-    handleDateChange = (key) => {
-        this.props.parentHandleDateChange && this.props.parentHandleDateChange(key)
+    handleDateChange = (key, value) => {
+        this.props.parentHandleDateChange && this.props.parentHandleDateChange(key, value)
     }
 
+    // 表单失去焦点
+    handleBlur = (key) => {
+        this.props.parentHandleBlur && this.props.parentHandleBlur(key)
+    }
     /**
      * 将schema中的一列转换为普通输入框
      *
@@ -387,7 +392,7 @@ class FormLayout extends Component {
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" onBlur={this.handleInputBlur.bind(this, field.key)} disabled={field.disabled} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" onBlur={this.handleInputBlur.bind(this, field.key)} disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
@@ -479,11 +484,11 @@ class FormLayout extends Component {
         // 普通的字段每个占用8格, between类型的字段每个占用16格
         let spaceLeft = 24
         schema.forEach((field) => {
-            // 当前列需要占用几个格子? 普通的都是8, 只有datetime between是16
-            let spaceNeed = 8
-            // if (field.showType === 'between' || field.dataType === 'datetime') {
-            //     spaceNeed = 12
-            // }
+            // 当前列需要占用几个格子? 普通的都是6, 只有datetime between是12
+            let spaceNeed = 6
+            if (field.showType === 'two' || field.showType === 'between') {
+                spaceNeed = 12
+            }
 
             if (field.showType === 'full') {
                 spaceNeed = 24
@@ -491,7 +496,7 @@ class FormLayout extends Component {
 
             // 如果当前行空间不足, 就换行
             if (spaceLeft < spaceNeed) {
-                rows.push(<Row key={rows.length} gutter={16}>{cols}</Row>)
+                rows.push(<Row key={rows.length} gutter={10} className="form-col-wrapper">{cols}</Row>)
                 cols = []  // 不知array有没有clear之类的方法
                 spaceLeft = 24  // 剩余空间重置
             }
@@ -532,9 +537,9 @@ class FormLayout extends Component {
         // 别忘了最后一行
         if (this.props.showSearch) {
             cols.push(
-                <Col sm={8} className="button-group form-button-group">
+                <Col xs={24} sm={12} md={12} lg={6} className="button-group form-button-group">
                     <Button type="primary" onClick={this.handleSubmit}><Icon type="search" />查询</Button>
-                    <Button onClick={this.handleReset}><Icon type="cross" />清除条件</Button>
+                    <Button type="default" onClick={this.handleReset}><Icon type="cross" />清除</Button>
                 </Col>
             )
         }
@@ -545,18 +550,18 @@ class FormLayout extends Component {
                 return <Button type={item.type} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
             })
             cols.push(
-                <Col sm={8} className="button-group form-button-group">
+                <Col xs={24} sm={12} md={12} lg={6} className="button-group form-button-group">
                     {buttonGroup}
                 </Col>
             )
         }
 
-        rows.push(<Row key={rows.length} gutter={16}>{cols}</Row>)
+        rows.push(<Row key={rows.length} gutter={8} className="form-col-wrapper">{cols}</Row>)
 
         // 别忘了最后一行
         let formOpe
         if (this.props.showSave) {
-            formOpe = <div sm={24} className="g-tac button-group g-mt50">
+            formOpe = <div xs={24} sm={24} md={24} lg={24}  className="g-tac button-group g-mt50">
                 <Button type="primary" size="large" onClick={this.handleSave}>保存</Button>
                 <Button type="ghost" size="large" onClick={this.handleClose}>关闭</Button>
             </div>

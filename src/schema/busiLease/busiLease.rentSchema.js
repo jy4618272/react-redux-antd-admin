@@ -28,17 +28,7 @@ module.exports = {
                 { key: '主动解约', value: '主动解约' },
                 { key: '期满解约', value: '期满解约' },
                 { key: '其他', value: '其他' }
-            ],
-            // placeholder: "请选择退租原因",
-            // feedBackShow: true,
-            // validate: [
-            //     {
-            //         rules: [
-            //             { required: true, type: 'string', message: '请选择退租原因' },
-            //         ],
-            //         trigger: ['onChange']
-            //     }
-            // ]
+            ]
         }
     ],
     tableColumns: [

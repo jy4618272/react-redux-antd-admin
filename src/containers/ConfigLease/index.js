@@ -261,6 +261,11 @@ class Lease extends Component {
         })
     }
 
+    // 单击
+    parentHandleRowClick = () => { 
+        
+    }
+
     // 取消勾选
     handleCancel = (key) => {
         this.setState({
@@ -494,6 +499,7 @@ class Lease extends Component {
                                     bordered={true}
                                     pagination={false}
                                     ref='roomTable'
+                                    parentHandleRowClick={this.parentHandleRowClick}
                                     parentHandleSelectChange={this.parentHandleSelectChange} />
                                 <InnerPagination
                                     total={roomData.total}

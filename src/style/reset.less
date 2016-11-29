@@ -1,6 +1,15 @@
 @import './variable.less';
 
 /**************************** 组件样式 ****************************/
+body{
+  text-align: left;
+}
+a{
+  color:@text-color;
+  &:hover{
+    color:@base-color;
+  }
+}
 .popover-theme-primary{
   .ant-popover-inner{
     background-color: rgba(0, 0, 0, 0.8);

@@ -7,7 +7,8 @@ module.exports = {
             options: [
                 { key: '', value: '全部' },
                 { key: '作废', value: '作废' },
-                { key: '新增/续租', value: '新增/续租' },
+                { key: '新增', value: '新增' },
+                { key: '续租', value: '续租' },
                 { key: '退租', value: '退租' },
                 { key: '变更', value: '变更' }
 

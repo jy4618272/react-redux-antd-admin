@@ -38,9 +38,12 @@ import {
     InnerTable,
     InnerPagination,
     ModalTable,
-    ModalForm,
-    ConstractStagesEditModal
+    ModalForm
 } from 'COMPONENT'
+import {
+    handleUniq,
+    handleContractCalc
+} from 'UTIL/contractCalc'
 
 import './contract.less'
 
@@ -81,7 +84,8 @@ class ContractInsert extends Component {
             tableIndex: 0,
             stagesTableData: [],
             stagesShowTableData: [],
-            isSaveDisabeld: false
+            isSaveDisabeld: false,
+            isCalcChange: true
         }
 
         console.log('合同新增props:', props)
@@ -250,126 +254,35 @@ class ContractInsert extends Component {
     }
 
     // 日期选择
-    parentHandleDateChange = (key) => {
-        if(key === 'enddate' || key === 'startdate'){
+    parentHandleDateChange = (key, value) => {
+        // alert(value)
+        if (key === 'enddate' || key === 'startdate') {
             const {
-                dateRoom, dataLine, dataPolicy, dataBond
+                dataRoom, dataLine, dataPolicy, dataBond, isCalcChange
             } = this.state
-            const {form} = this.props
-            this.handleCalc(dateRoom, dataLine, dataPolicy, dataBond, form.getFieldValue('marginmoney'), form.getFieldValue('startdate'), form.getFieldValue('enddate'))            
+            const {setFieldsValue, getFieldValue} = this.props.form
+
+            let tmp
+            // 表单设值
+            if(key === 'startdate'){
+                tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), value, getFieldValue('enddate'))
+            }
+            if(key === 'enddate'){
+                tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), value)
+            }
+            this.props.form.setFieldsValue(tmp)
+
+            // 重置明细
+            isCalcChange && this.handleResetStages()
         }
     }
 
     // 搜索用户
     handleSearchOrganization = () => {
+        console.log('测试可用数据：qq123456222swe')
         const val = this.props.form.getFieldsValue()
         this.props.action.fetchOrganization({
             keywords: val.organizationnum
-        })
-    }
-
-    /**
-     * 算法
-     * 合同标准金额 = 班线费用 + 房间租金
-     * 合同优惠 = 合同标准金额 * item
-     * 冲抵总额 = 履约保证金冲抵 + 优惠金额
-     * 合同金额 = 合同标准金额 - 冲抵总额
-     * @memberOf ContractInsert
-     */
-    handleMonth = (startDate, endDate) => {
-        const startArr = startDate.format('YYYY/MM/DD').split('/')
-        const endArr = endDate.format('YYYY/MM/DD').split('/')
-        let disMonths = (parseInt(endArr[0]) - parseInt(startArr[0])) * 12 + (parseInt(endArr[1]) - parseInt(startArr[1]))
-        if (parseInt(endArr[2]) - parseInt(startArr[2]) > 0) {
-            disMonths += 1
-        }
-
-        if (disMonths <= 0) {
-            notification.error({
-                message: '起始时间有误',
-                description: '请正确选择起始时间'
-            })
-            return false;
-        }
-        return disMonths
-    }
-
-    handleMoney = (money, years, num = 2) => {
-        return parseFloat((money * years / 12).toFixed(num))
-    }
-
-    handleCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney = 0, startDate, endDate) => {
-        const years = this.handleMonth(startDate, endDate)
-        marginmoney = parseFloat(marginmoney.toFixed(2))
-        console.log('月份：', years)
-        let roommoney = 0               // 房间租金
-        let linemoney = 0               // 班线费用
-        let standardmoney = 0           // 合同标准金额
-
-        let promotionmoneyoffset = 0    // 合同优惠        
-        let marginmoneyoffset = 0       // 履约保证金冲抵
-        let totaloffsetmoney = 0        // 冲抵总额
-
-        let money = 0                   // 合同金额
-
-        // 房间租金
-        if (roomArr && roomArr.length) {
-            roomArr.map(item => {
-                roommoney += parseFloat(item.money)
-            })
-        }
-        roommoney = this.handleMoney(roommoney, years)
-
-        // 班线费用
-        if (lineArr && lineArr.length) {
-            lineArr.map(item => {
-                linemoney += parseFloat(item.linefee)
-            })
-        }
-        linemoney = this.handleMoney(linemoney, years)
-
-        // 合同标准金额
-        standardmoney = roommoney + linemoney
-
-        // 合同优惠
-        if (policyArr && policyArr.length) {
-            let offset = standardmoney
-            policyArr.map(item => {
-                if(item.promotiontype === '减免'){
-                    offset = offset - item.promotionnum
-                }else if(item.promotiontype === '折扣'){
-                    alert(offset)
-                    offset = parseFloat((offset * item.promotionnum/10).toFixed(2))
-                    alert(offset)
-                }
-            })        
-            money = offset
-            promotionmoneyoffset = standardmoney - offset
-        }
-
-        // 履约保证金冲抵
-        if (bondArr && bondArr.length) {
-            bondArr.map(item => {
-                marginmoneyoffset += parseFloat(item.marginmoney)
-            })
-        }
-
-        // 冲抵总额
-        totaloffsetmoney = marginmoneyoffset + promotionmoneyoffset
-
-        // 合同金额
-        alert(marginmoney)
-        money = standardmoney - totaloffsetmoney + marginmoney + marginmoney
-
-        // 设置值
-        this.props.form.setFieldsValue({
-            roommoney,
-            linemoney,
-            standardmoney,
-            marginmoneyoffset,
-            promotionmoneyoffset,
-            totaloffsetmoney,
-            money
         })
     }
 
@@ -449,12 +362,47 @@ class ContractInsert extends Component {
         })
     }
 
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectDatas: rows
+        })
+    }
+
+    // 表单失去焦点
+    parentHandleBlur = (key) => {
+        if(key === 'marginmoney'){
+            const {dataRoom, dataLine, dataPolicy, dataBond, isCalcChange} = this.state
+            const {getFieldValue, setFieldsValue} = this.props.form
+            
+            if(getFieldValue('marginmoney')){
+                // 表单设值
+                const tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+                setFieldsValue(tmp)
+
+                // 重置明细
+                isCalcChange && this.handleResetStages()
+            }else{
+                // 表单设值
+                const tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, 0, getFieldValue('startdate'), getFieldValue('enddate'))
+                setFieldsValue(tmp)
+
+                // 重置明细
+                isCalcChange && this.handleResetStages()
+            }
+        }
+    }
+
+    // 表单点击
     parentHandleClick = (key) => {
         if (key === 'makeDefault') {
             const {form} = this.props
             const oldObj = form.getFieldsValue()
             const newObj = filterQueryObj(oldObj, 'YYYY-MM-DD')
             console.log('保存表单字段', newObj)
+            this.setState({
+                isCalcChange: true
+            })
 
             this.props.form.validateFieldsAndScroll((errors, values) => {
                 if (errors) {
@@ -501,58 +449,37 @@ class ContractInsert extends Component {
         })
     }
 
-    // 去重
-    uniq = (arr, arr1, id) => {
-        let ids = []
-        if (arr.length == 0) {
-            arr = arr1
-        } else {
-            arr.map(item => {
-                ids.push(item[id])
-            })
-            arr1.map(item => {
-                if (ids.indexOf(item[id]) == -1) {
-                    arr.push(item)
-                }
-            })
-        }
-        return arr
-    }
-
-    //  求和
-    handleSum(preValue, curValue) {
-        return preValue + curValue;
-    }
-
     handleDelRoom = (record) => {
         const {getFieldValue} = this.props.form
-        const obj = this.state.dataRoom
+        const {dataRoom, dataLine, dataPolicy, dataBond, isCalcChange} = this.state
+        const obj = dataRoom
         const ids = []
-        const tmp = {}
-        let sum = 0
+        let tmp = {}
         obj.map((item, index) => {
             if (item.rentroomid == record.rentroomid) {
                 obj.splice(index, 1)
             }
         })
-        obj.map(item => {
+        obj.map((item) => {
             ids.push(item.room)
         })
-        tmp['roomlist'] = ids.join(',')
 
-        this.setState({
-            dataRoom: obj
-        })
-        this.handleCalc(obj, this.state.dataLine, this.state.dataBond)
+        this.setState({ dataRoom: obj })
+        // 表单设值
+        tmp['roomlist'] = ids.join(',')
+        tmp = Object.assign({}, tmp, handleContractCalc(obj, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate')))
         this.props.form.setFieldsValue(tmp)
+
+        // 重置明细
+        isCalcChange && this.handleResetStages()
     }
 
     handleDelLine = (record) => {
         const {getFieldValue} = this.props.form
-        const obj = this.state.dataLine
+        const {dataRoom, dataLine, dataPolicy, dataBond, isCalcChange} = this.state
+        const obj = dataLine
         const ids = []
-        const tmp = {}
-        let sum = 0
+        let tmp = {}
         obj.map((item, index) => {
             if (item.transportlineid == record.transportlineid) {
                 obj.splice(index, 1)
@@ -561,47 +488,42 @@ class ContractInsert extends Component {
         obj.map(item => {
             ids.push(item.linename)
         })
-
+        this.setState({ dataLine: obj })
+        // 表单设值
         tmp['linelist'] = ids.join(',')
-
-        this.setState({
-            dataLine: obj
-        })
-        this.handleCalc(this.state.dataRoom, obj, this.state.dataBond)
+        tmp = Object.assign({}, tmp, handleContractCalc(dataRoom, obj, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate')))
         this.props.form.setFieldsValue(tmp)
+
+        // 重置明细
+        isCalcChange && this.handleResetStages()
     }
 
     handleDelPolicy = (record) => {
         const {getFieldValue} = this.props.form
-        const obj = this.state.dataPolicy
-        const tmp = {}
-        const moneyList = []
-        let sum = 0
+        const {dataRoom, dataLine, dataPolicy, dataBond, isCalcChange} = this.state
+        const obj = dataPolicy
+
         obj.map((item, index) => {
             if (item.rentpromotionid == record.rentpromotionid) {
                 obj.splice(index, 1)
             }
         })
-        obj.map(item => {
-            moneyList.push(parseFloat(item.promotionnum))
-        })
-        if (moneyList.length) {
-            sum = moneyList.reduce(this.handleSum)
-        }
-        tmp['promotionmoneyoffset'] = sum
-        tmp['totaloffsetmoney'] = sum + parseFloat(getFieldValue('marginmoneyoffset'))
-        tmp['money'] = parseFloat(getFieldValue('standardmoney')) - (sum + parseFloat(getFieldValue('marginmoneyoffset')))
 
         this.setState({
             dataPolicy: obj
         })
+        // 表单设值
+        const tmp = handleContractCalc(dataRoom, dataLine, obj, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
         this.props.form.setFieldsValue(tmp)
+
+        // 重置明细
+        isCalcChange && this.handleResetStages()
     }
 
     handleDelBond = (record) => {
         const {getFieldValue} = this.props.form
-        const obj = this.state.dataBond
-        const tmp = {}
+        const {dataRoom, dataLine, dataPolicy, dataBond, isCalcChange} = this.state
+        const obj = dataBond
 
         obj.map((item, index) => {
             if (item.marginid == record.marginid) {
@@ -612,7 +534,12 @@ class ContractInsert extends Component {
         this.setState({
             dataBond: obj
         })
-        this.handleCalc(this.state.dataRoom, this.state.dataLine, obj)
+        // 表单设值
+        const tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, obj, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+        this.props.form.setFieldsValue(tmp)
+
+        // 重置明细
+        isCalcChange && this.handleResetStages()
     }
 
     // 合同附件
@@ -712,15 +639,48 @@ class ContractInsert extends Component {
                 obj.splice(index, 1)
             }
         })
+        this.handleStageCalc(obj)
         this.setState({
             stagesShowTableData: obj
         })
     }
 
-    // 筛选
-    parentHandleSelectChange = (keys, rows) => {
+    /**
+     * 生成默认明细后，再次操作选项卡影响合同金额时执行该函数
+    */
+    handleResetStages = () => {
         this.setState({
-            selectDatas: rows
+            isCalcChange: false,
+            isStagesShow: false,
+            stagesTableData: []      // 情况明细数据
+        })
+        this.props.form.resetFields(['totalstages'])   // 情况分期期数
+    }
+
+    // 明细更改合同金额算法     
+    handleStageCalc = (obj) => {
+        let stageMoneys = 0
+        let totalMoneys = 0
+        const {
+            stagesShowNum,
+            stagesTableData
+        } = this.state
+        const ind = stagesShowNum - 1
+
+        obj.map(item => {
+            stageMoneys += parseFloat(item.money)
+        })
+        stagesTableData[ind].money = stageMoneys
+        stagesTableData.map(item => {
+            totalMoneys += parseFloat(item.money)
+        })
+
+        this.props.form.setFieldsValue({
+            money: totalMoneys
+        })
+        this.setState({
+            stagesTableData: stagesTableData,
+            money: totalMoneys
         })
     }
 
@@ -735,63 +695,79 @@ class ContractInsert extends Component {
             stagesNum,
             modalName,
             tableIndex,
-            modalOpenBtn
+            modalOpenBtn,
+            isCalcChange
         } = this.state
 
         const {action, form} = this.props
-        const {getFieldValue} = form
+        const {getFieldValue, setFieldsValue, resetFields} = form
         if (modalName === 'room' && selectDatas.length !== 0) {
-            const obj = this.uniq(this.state.dataRoom, selectDatas, 'rentroomid')
+            const obj = handleUniq(this.state.dataRoom, selectDatas, 'rentroomid')
             const ids = []
-            const tmp = {}
+            let tmp = {}
 
             this.setState({ dataRoom: obj })
             obj.map(item => {
                 ids.push(item.room)
             })
-            tmp['roomlist'] = ids.join(',')
 
-            form.setFieldsValue(tmp)
-            this.handleCalc(obj, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+            // 设置表单
+            tmp['roomlist'] = ids.join(',')
+            tmp = Object.assign({}, tmp, handleContractCalc(obj, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate')))
+            setFieldsValue(tmp)
+
+            // 重置明细
+            isCalcChange && this.handleResetStages()
         } else if (modalName === 'classLine' && selectDatas.length !== 0) {
-            const obj = this.uniq(this.state.dataLine, selectDatas, 'transportlineid')
+            const obj = handleUniq(this.state.dataLine, selectDatas, 'transportlineid')
             const ids = []
-            const tmp = {}
+            let tmp = {}
 
             this.setState({ dataLine: obj })
             obj.map(item => {
                 ids.push(item.linename)
             })
+            // 设置表单
             tmp['linelist'] = ids.join(',')
-            this.props.form.setFieldsValue(tmp)
-            this.handleCalc(dataRoom, obj, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+            tmp = Object.assign({}, tmp, handleContractCalc(dataRoom, obj, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate')))
+            setFieldsValue(tmp)
+
+            // 重置明细
+            isCalcChange && this.handleResetStages()
         } else if (modalName === 'policy' && selectDatas.length !== 0) {
-            const obj = this.uniq(this.state.dataPolicy, selectDatas, 'rentpromotionid')
-            const tmp = {}
-            const moneyList = []
+            const obj = handleUniq(this.state.dataPolicy, selectDatas, 'rentpromotionid')
             this.setState({
                 dataPolicy: obj
             })
-            this.handleCalc(dataRoom, dataLine, obj, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+            // 设置表单
+            const tmp = handleContractCalc(dataRoom, dataLine, obj, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+            setFieldsValue(tmp)
+
+            // 重置明细
+            isCalcChange && this.handleResetStages()
         } else if (modalName === 'contractBond' && selectDatas.length !== 0) {
-            const obj = this.uniq(this.state.dataBond, selectDatas, 'marginid')
-            const tmp = {}
+            const obj = handleUniq(this.state.dataBond, selectDatas, 'marginid')
             this.setState({
                 dataBond: obj
             })
-            this.handleCalc(dataRoom, dataLine, dataPolicy, obj, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+            // 设置表单
+            const tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, obj, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
+            setFieldsValue(tmp)
+
+            // 重置明细
+            isCalcChange && this.handleResetStages()
         } else if (modalName === 'selectOrganization') {
             if (this.state.selectDatas.length) {
                 this.setState({
                     partyid: this.state.selectDatas[0].partyid,
                     partyname: this.state.selectDatas[0].partyname
                 })
-                this.props.form.setFieldsValue(this.state.selectDatas[0])
+                setFieldsValue(this.state.selectDatas[0])
             }
 
-            form.resetFields(['organizationnum'])
+            resetFields(['organizationnum'])
             this.props.action.resetOrganization()
-            this.handleModalCancel()
+            // this.handleModalCancel()
         } else if (modalName === 'stagesModal') {
             const oldObj = this.refs.stagesModal.getFieldsValue()
             const newObj = filterQueryObj(oldObj)
@@ -815,7 +791,7 @@ class ContractInsert extends Component {
                 stagesTableData: obj
             })
             this.refs.stagesModal.resetFields()
-            this.handleModalCancel()
+            // this.handleModalCancel()
         } else if (modalName === 'stagesShowModal') {
             this.refs.stagesShowModal.validateFieldsAndScroll((errors, values) => {
                 if (errors) {
@@ -876,11 +852,14 @@ class ContractInsert extends Component {
                     })
                 }
 
+                // 合同算法：明细改变
+                this.handleStageCalc(obj)
                 this.setState({
                     stagesShowTableData: obj
                 })
+
                 this.refs.stagesShowModal.resetFields()
-                this.handleModalCancel()
+                // this.handleModalCancel()
             })
         }
         this.handleModalCancel()
@@ -933,7 +912,7 @@ class ContractInsert extends Component {
             } else {
                 const {form} = this.props
                 const oldObj = form.getFieldsValue()
-                let newObj = filterQueryObj(oldObj)
+                let newObj = filterQueryObj(oldObj, 'YYYY-MM-DD')
                 const {
                     pactprintmodelid,
                     partyid,
@@ -952,7 +931,7 @@ class ContractInsert extends Component {
                 // 传给后端字段
                 let rentValue = Object.assign({}, newObj, {
                     renttype: '新租',
-                    flowtype: '新增/续租',
+                    flowtype: '新增',
                     pactprintmodelid: pactprintmodelid,
                     partyid: partyid,
                     partyname: partyname
@@ -1048,6 +1027,8 @@ class ContractInsert extends Component {
                 }
             })
         }
+        // alert(moment().locale('en').utcOffset(8))
+        
         this.props.form.setFieldsValue({
             roommoney: 0, // 房间租金
             linemoney: 0, // 班线费用
@@ -1055,10 +1036,12 @@ class ContractInsert extends Component {
             promotionmoneyoffset: 0,   // 优惠金额
             marginmoneyoffset: 0,// 履约保证金冲抵,
             totaloffsetmoney: 0, // 冲抵总额 = 履约保证金冲抵 + 优惠金额
+            marginmoney:0, // 履约保证金
             money: 0, // 合同金额  
-            signdate: moment().locale('en').utcOffset(0),
-            startdate: moment().locale('en').utcOffset(0),
-            enddate: moment().add(1, 'year').subtract(1, 'days')
+            signdate: moment().locale('en').utcOffset(8),
+            startdate: moment().locale('en').utcOffset(8),
+            enddate: moment().add(1, 'year').subtract(1, 'days'),
+            isCalcChange: false
         })
     }
 
@@ -1169,9 +1152,8 @@ class ContractInsert extends Component {
                     schema={organization.querySchema}
                     form={this.props.form}
                     buttonSchema={organization.queryButtons}
-                    parentHandleClick={this.handleSearchOrganization}
+                    parentHandleClick = {this.handleSearchOrganization}
                     parentHandleSelect={this.parentHandleSelect} />
-                测试可用数据：qq123456222swe
                 <InnerTable
                     columns={organization.tableColumns}
                     dataSource={organization.tableData}
@@ -1241,7 +1223,6 @@ class ContractInsert extends Component {
                                     columns={tableColumnsRoom}
                                     dataSource={this.state.dataRoom}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
                             </div>
                         </TabPane>
@@ -1255,7 +1236,6 @@ class ContractInsert extends Component {
                                     dataSource={this.state.dataLine}
                                     schema={this.addSchema['line']['topButtons']}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
                             </div>
                         </TabPane>
@@ -1268,7 +1248,6 @@ class ContractInsert extends Component {
                                     columns={tableColumnsPolicy}
                                     dataSource={this.state.dataPolicy}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
                             </div>
                         </TabPane>
@@ -1281,7 +1260,6 @@ class ContractInsert extends Component {
                                     columns={tableColumnsBond}
                                     dataSource={this.state.dataBond}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
                                     parentHandleSelectChange={this.parentHandleSelectChange}
                                     pagination={false} />
                             </div>
@@ -1290,16 +1268,13 @@ class ContractInsert extends Component {
                             <div className="padding-lr g-mb20">
                                 <div className="g-mb10">
                                     <Upload {...uploadProps}>
-                                        <Button type="ghost">
-                                            <Icon type="upload" />文件上传
-                                    </Button>
+                                        <Button type="ghost"><Icon type="upload" />文件上传</Button>
                                     </Upload>
                                 </div>
                                 <InnerTable
                                     columns={tableColumnsAttachment}
                                     dataSource={this.state.dataAttachment}
                                     bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
                                     pagination={false} />
                             </div>
                         </TabPane>
@@ -1310,7 +1285,8 @@ class ContractInsert extends Component {
                         schema={busiLease.contractTabs}
                         form={this.props.form}
                         fromLayoutStyle="g-border-bottom"
-                        parentHandleDateChange = {this.parentHandleDateChange} />
+                        parentHandleBlur = {this.parentHandleBlur}
+                        parentHandleDateChange={this.parentHandleDateChange} />
 
                     {/* 分期明细 */}
                     <div className="padding-lr g-mb20">
@@ -1325,23 +1301,21 @@ class ContractInsert extends Component {
                             <Button onClick={this.handleMakeDefault}>生成默认明细</Button>
                         </div>
                         */}
-                        {
-                            this.state.isStagesShow ?
-                                <div className="m-stages-show">
-                                    <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
-                                    <div className="button-group g-mb10">
-                                        <Button onClick={this.handleStagesInsert}>新增明细</Button>
-                                        <Button onClick={this.handleStagesClose}>关闭明细</Button>
-                                    </div>
-                                    <InnerTable
-                                        columns={tableStagesShowColumns}
-                                        dataSource={this.state.stagesShowTableData}
-                                        bordered={true}
-                                        size="middle"
-                                        tableStyle="m-table"
-                                        pagination={false} />
-                                </div> :
-                                ''
+                        { this.state.isStagesShow ?
+                            <div className="m-stages-show">
+                                <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
+                                <div className="button-group g-mb10">
+                                    <Button onClick={this.handleStagesInsert}>新增明细</Button>
+                                    <Button onClick={this.handleStagesClose}>关闭明细</Button>
+                                </div>
+                                <InnerTable
+                                    columns={tableStagesShowColumns}
+                                    dataSource={this.state.stagesShowTableData}
+                                    bordered={true}
+                                    size="middle"
+                                    tableStyle="m-table"
+                                    pagination={false} />
+                            </div> : ''
                         }
 
                         <InnerTable

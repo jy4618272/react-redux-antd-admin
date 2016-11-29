@@ -36,11 +36,9 @@ const fetchApprovalTable = (data) => {
             console.log('我的代办', newRes)
             if (res.result === 'success') {
                 hide()
-
                 dispatch(receiveApprovalTable(newRes))
             } else {
                 hide()
-
                 dispatch(receiveApprovalTable({}))
                 errHandler(res.msg)
             }

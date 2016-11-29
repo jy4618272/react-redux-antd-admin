@@ -21,6 +21,7 @@ class InnerForm extends Component {
                         form={this.props.form}
                         showSearch={this.props.showSearch}
                         showSave={this.props.showSave}
+                        buttonSchema={this.props.buttonSchema}
                         parentHandleInputBlur={this.props.parentHandleInputBlur}
                         parentHandleSelect={this.props.parentHandleSelect}
                         parentHandleSubmit={this.props.parentHandleSubmit}

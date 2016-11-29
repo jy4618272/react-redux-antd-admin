@@ -54,6 +54,7 @@ const initialState = [
         key: 'enddate',
         title: '合同结束时间',
         dataType: 'datetime',
+        initialValue: null,
         format: 'YYYY-MM-DD',
         placeholder: "请选择合同结束时间",
         feedBackShow: true,
