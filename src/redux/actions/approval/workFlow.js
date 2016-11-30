@@ -42,9 +42,29 @@ const fetchApprovalWorkFlow = (data) => {
     }
 }
 
+const fetchApprovalWorkFlowService = (data) => {
+    return dispatch => {
+        dispatch(requestApprovalWorkFlow())
+        xhr('post', paths.workFlowPath + '/flownodecs/selectWorkFlowInformationInService', data, (res) => {
+            const hide = message.loading('正在查询...', 0)
+            
+            console.log('详情数据：', res)
+            if (res.result === 'success') {
+                hide()
+                dispatch(receiveApprovalWorkFlow(res.data))
+            } else {
+                hide()
+                dispatch(receiveApprovalWorkFlow({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
+
 /* default 导出所有 Actions Creator */
 export default {
-    fetchApprovalWorkFlow
+    fetchApprovalWorkFlow,
+    fetchApprovalWorkFlowService
 }
 
 export const ACTION_HANDLERS = {
@@ -54,7 +74,7 @@ export const ACTION_HANDLERS = {
         data: []
     }),
 [RECEIVE_APPROVAL_WORK_FLOW]: (approvalworkFlow, {payload: res}) => ({
-        ...approvalworkFlow,
+    ...approvalworkFlow,
     loading: false,
     data: res
 })

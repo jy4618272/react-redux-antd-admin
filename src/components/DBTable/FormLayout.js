@@ -547,7 +547,7 @@ class FormLayout extends Component {
         // 别忘了最后一行
         if (Array.isArray(this.props.buttonSchema) && this.props.buttonSchema.length) {
             const buttonGroup = this.props.buttonSchema.map(item => {
-                return <Button type={item.type} onClick={this.handleClick.bind(this, item.key)}>{item.title}</Button>
+                return <Button type={item.type} onClick={this.handleClick.bind(this, item.key)}>{item.icon ? <Icon type={item.icon} /> : ''}{item.title}</Button>
             })
             cols.push(
                 <Col xs={24} sm={12} md={12} lg={6} className="button-group form-button-group">

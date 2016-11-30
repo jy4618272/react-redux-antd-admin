@@ -188,9 +188,9 @@ class FinanceShow extends Component {
                     const oldObj = res.data.rentpact
 
                     // 流程
-                    action.fetchApprovalWorkFlow({
-                        rentpactid: id,
-                        pactkind: res.data.rentpact.pactkind // 合同
+                    action.fetchApprovalWorkFlowService({
+                        id: id,
+                        servicetype: type ==='rentpact' ? '合同' : '履约保证金'
                     })
 
                     const newObj = {}
@@ -250,10 +250,10 @@ class FinanceShow extends Component {
                             form={this.props.form}
                             fromLayoutStyle="g-border-bottom" />
 
-                        { /* 流程
+                        { /* 流程 */}
                         <section className="g-border-bottom">
                             <WorkFlow flow={approval.workFlow} />
-                        </section> */}
+                        </section> 
 
                         {/* 客户名称 */}
                         <div className="g-border-bottom">

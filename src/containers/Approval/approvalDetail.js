@@ -540,7 +540,7 @@ class ApprovalDetail extends Component {
                                     <div className="m-stages-show">
                                         <h2>{`第${this.state.stagesNum}期明细`}</h2>
                                         <div className="button-group g-mb10">
-                                            <Button onClick={this.handleStagesClose}>关闭明细</Button>
+                                            <Button onClick={this.handleStagesClose}><Icon type="close" />关闭明细</Button>
                                         </div>
                                         <InnerTable
                                             columns={this.contractShowSchema['stages']['showColumns']}

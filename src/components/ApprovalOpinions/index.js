@@ -30,16 +30,29 @@ class ApprovalOpinions extends Component {
                             <li>
                                 <h3>({des.username})</h3>
                                 <Row>
-                                    <Col sm={12}>
-                                        审核状态：{des.nodestatus === '同意' ? <span className="s-green">{des.nodestatus}</span> : <span className="s-red">{des.nodestatus}</span>}
+                                    <Col xs={24} sm={12} className="m-title-cont horizontal">
+                                        <label className="m-title">
+                                            审核状态：
+                                        </label>
+                                        <div className="m-cont">
+                                            {des.nodestatus === '同意' ? <span className="s-green">{des.nodestatus}</span> : <span className="s-red">{des.nodestatus}</span>}
+                                        </div>
                                     </Col>
-                                    <Col sm={12}>
-                                        审核时间： <span className="s-gray">{des.finishdate}</span>
+                                    <Col xs={24} sm={12} className="m-title-cont horizontal">
+                                        <label className="m-title">
+                                            审核时间：
+                                        </label>
+                                        <div className="m-cont">
+                                            <span className="s-gray">{des.finishdate}</span>
+                                        </div>
                                     </Col>
-                                </Row>
-                                <Row>
-                                    <Col sm={24}>
-                                        审核意见：{des.nodecontent}
+                                    <Col xs={24} sm={24} className="m-title-cont horizontal">
+                                        <label className="m-title">
+                                            审核意见：
+                                        </label>
+                                        <div className="m-cont">
+                                            {des.nodecontent}
+                                        </div>
                                     </Col>
                                 </Row>
                             </li>
@@ -48,10 +61,10 @@ class ApprovalOpinions extends Component {
 
                     return (
                         <Row gutter={15} className="list-approval-opinions">
-                            <Col sm={3} className="hd g-tar">
+                            <Col xs={6} sm={4} md={3} lg={2} className="hd g-tar">
                                 {index + 1}&nbsp;级审核：
                             </Col>
-                            <Col sm={21} className="bd">
+                            <Col xs={18} sm={20} md={21} lg={22} className="bd">
                                 <ul className="list">
                                     {cont}
                                 </ul>

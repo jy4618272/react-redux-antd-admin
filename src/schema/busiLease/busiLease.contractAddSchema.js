@@ -246,6 +246,7 @@ module.exports = {
             {
                 key: 'makeDefault',
                 type: 'default',
+                icon:'bars',
                 title: '生成默认明细'
             }
         ]

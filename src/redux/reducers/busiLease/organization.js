@@ -8,15 +8,17 @@ const initialState = {
     querySchema: [
         {
             key: 'organizationnum',
-            title: '客户名称',
-            showType: 'varchar',
-            placeholder: "请输入客户名称"
+            title: '关键字',
+            dataType: 'varchar',
+            showType:'two',
+            placeholder: "请输入会员名|注册手机号|身份证号"
         },
     ],
     queryButtons: [
         {
             key: 'searchOrganization',
             type: 'primary',
+            icon: 'search',
             title: '搜索'
         }
     ],

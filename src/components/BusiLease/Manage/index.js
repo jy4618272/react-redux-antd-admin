@@ -216,10 +216,8 @@ class LeaseManage extends Component {
         const {action} = this.props
         if (data.length == 1) {
             if (key === 'contract') {
-
                 this.handleCancel('contractTable')
                 if (data[0].flowtype === '新增' || data[0].flowtype === '续租') {
-                // if (data[0].flowtype === '新增/续租') {
                     action.approvalContract({
                         rentpactid: data[0].rentpactid
                     })
@@ -419,7 +417,8 @@ class LeaseManage extends Component {
     // 双击查看详情
     parentHandleDoubleClick = (record, index) => {
         if (record.rentpactid) {
-            hashHistory.push(`busi/busi_lease/${record.rentpactid}?type=rentpact`)
+            // hashHistory.push(`busi/busi_lease/${record.rentpactid}?type=rentpact`)
+            window.open(`#/busi/busi_lease/${record.rentpactid}?type=rentpact`)
         } else {
             // alert(3)
         }
@@ -730,8 +729,8 @@ class LeaseManage extends Component {
                 <Col sm={16}>
                     <Button onClick={this.handleAdd.bind(this, 'bond')}>新增</Button>
                     <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, 'bond')}>提交审核</Button>
-                    <Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, 'bond')}>提交退款审批</Button>                    
-                    {/*<Button onClick={this.handleEdit.bind(this, 'bond')}>编辑</Button>*/}
+                    {/*<Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, 'bond')}>提交退款审批</Button>                  
+                    <Button onClick={this.handleEdit.bind(this, 'bond')}>编辑</Button>*/}
                     <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, 'bond')}>提交财务</Button>
                     <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, 'bond')}>作废</Button>
                 </Col>

@@ -142,7 +142,24 @@
         }
     }
 }
-
+.m-title-cont{
+  &.horizontal{
+    position:relative;
+    padding-left: 60px;
+    .m-title{
+      position: absolute;
+      top:0;
+      left:0;
+      width:60px;
+      line-height: 30px;
+    }
+    .m-cont{
+      min-height: 30px;
+      line-height: 30px;
+      word-break: break-all;
+    }
+  }
+}
 .list-text{
   .ant-col-sm-8{  
     line-height: 30px;
