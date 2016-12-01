@@ -245,6 +245,7 @@ class LeaseEdit extends Component {
     }
 
     render() {
+        console.log('this.editType', this.editType)
         const {
             areaData,
             roomEdit,
@@ -316,7 +317,7 @@ class LeaseEdit extends Component {
                         sessionShouldGet={this.tableName}
                         parentHandleSave={this.parentHandleSave}>
 
-                        <div className="padding-lr g-mt20">
+                        <div className="g-mt20">
                             <div className="button-group g-mb10">
                                 <Button onClick={this.handleAddGoods}>新增物品</Button>
                             </div>
@@ -327,17 +328,17 @@ class LeaseEdit extends Component {
                                 pagination={false}
                                 bordered={true} />
                         </div>
-
                     </InnerForm>
                 </section>
             )
+        } else if (this.editType == 'contractTpl') {
+            return ( <ContractTemplateAdd operateType="edit" /> )
         } else {
             if (this.editType === 'policy') {
                 this.editSchema['policy'][5].options = areaData.data
             }
-
             return (
-                <section className="padding m-config-edit">
+                <section className="m-config-edit">
                     <InnerForm
                         schema={this.editSchema[this.editType]}
                         showSave={true}

@@ -66,7 +66,7 @@ class Bread extends Component {
         }
 
         return (
-            <section className="padding m-breadcrumb clearfix">
+            <section className="m-breadcrumb clearfix">
                 <span className="g-fl">当前位置：</span>
                 <Breadcrumb className="g-fl">{itemArray}</Breadcrumb>
             </section>

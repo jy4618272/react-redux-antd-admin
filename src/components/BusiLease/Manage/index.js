@@ -17,6 +17,8 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
+import 'STYLE/list.less'
+
 import {
     Loading,
     InnerForm,
@@ -116,11 +118,11 @@ class LeaseManage extends Component {
         } = this.props.action
         let enddatefrom
         let enddateto
-        if(key === 'due'){
+        if (key === 'due') {
             enddatefrom = moment().format('YYYY-MM-DD')
             enddateto = moment().add('60', 'days').format('YYYY-MM-DD')
-        } else if(key === 'shouldSign'){
-            enddatefrom =  moment().format('YYYY-MM') + '-01'
+        } else if (key === 'shouldSign') {
+            enddatefrom = moment().format('YYYY-MM') + '-01'
             enddateto = moment(moment().add(1, 'month').format('YYYY-MM') + '-01', 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD')
         }
         this.select({
@@ -401,11 +403,6 @@ class LeaseManage extends Component {
         }
     }
 
-    // 打印
-    handlePrint = () => {
-        window.print()
-        // this.handleModalCancel()
-    }
 
     // 弹框关闭
     handleModalCancel = () => {
@@ -427,6 +424,7 @@ class LeaseManage extends Component {
 
     // 临时摊位打印交款单
     handlePrintPayMent = (key, record) => {
+        const linkStyle = {marginLeft: '8px'}
         if (key === 'bond') {
             this.props.action.fetchBondPayMent({
                 marginid: parseInt(record.marginid)
@@ -437,7 +435,9 @@ class LeaseManage extends Component {
                 modalTitle: '保证金打印交款单',
                 footer: <div>
                     <Button type="default" onClick={this.handleModalCancel}>取消</Button>
-                    <Button type="primary" onClick={this.handlePrint}>打印</Button>
+                    <Link style={linkStyle} to={`print/printPreview/${record.marginid}`} target="_blank">
+                        <Button type="primary" onClick={this.saveToLocalStorage}>打印</Button>
+                    </Link>
                 </div>
             })
         } else if (key === 'notContract') {
@@ -446,7 +446,7 @@ class LeaseManage extends Component {
             })
             let status
             if (record.status === '已提交') {
-                status = '财务已提交'
+                status = '财务已提交' 
             } else if (record.status === '已到账') {
                 status = '财务已到账'
             } else {
@@ -460,12 +460,24 @@ class LeaseManage extends Component {
                 footer: <div>
                     <Button type="default" onClick={this.handleModalCancel}>取消</Button>
                     <Button type="primary" disabled={record.status !== '未提交'} onClick={this.handleCommitFinance.bind(this, 'notContract')}>{status}</Button>
-                    <Button type="primary" onClick={this.handlePrint}>打印</Button>
+                    <Link style={linkStyle} to={`print/printPreview/${record.boothpaymentid}`} target="_blank">
+                        <Button type="primary" onClick={this.saveToLocalStorage}>打印</Button>
+                    </Link>
                 </div>
             })
         }
     }
 
+    /**
+         * 需要打印的内容都放在 .printContent 中，同一时间只会存在一个，搜索printContent，查看所有可能需要打印的内容
+         * 获取到需要打印的html片段，写入localStorage,key值为printContent
+         */
+    saveToLocalStorage() {
+        // 获取需要打印的html片段
+        const html = document.getElementsByClassName('printContent')[0].innerHTML
+        // 写入localStorage
+        localStorage.setItem('printContent', html)
+    }
 
     /**
      * 刚进入页面时触发一次查询
@@ -518,7 +530,7 @@ class LeaseManage extends Component {
         if (oneSelected && (selectedRows[0].flowtype !== '作废')) {
             const selected = selectedRows[0]
             if (selected.flowtype === '新增' || selected.flowtype === '续租') {
-            // if (selected.flowtype === '新增/续租') {
+                // if (selected.flowtype === '新增/续租') {
                 if (selected.flowstatus === '草稿') {
                     if (selected.fistatus === '未提交') {
                         // 作废、编辑、提交审核
@@ -729,7 +741,7 @@ class LeaseManage extends Component {
                 <Col sm={16}>
                     <Button onClick={this.handleAdd.bind(this, 'bond')}>新增</Button>
                     <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, 'bond')}>提交审核</Button>
-                    {/*<Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, 'bond')}>提交退款审批</Button>                  
+                    {/*<Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, 'bond')}>1提交退款审批</Button>                  
                     <Button onClick={this.handleEdit.bind(this, 'bond')}>编辑</Button>*/}
                     <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, 'bond')}>提交财务</Button>
                     <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, 'bond')}>作废</Button>
@@ -781,7 +793,7 @@ class LeaseManage extends Component {
             if (loading) {
                 modalContent = <Loading />
             }
-            modalContent = <div className="modal-with-title contract-pay-print">
+            modalContent = <div className="modal-with-title contract-pay-print printContent">
                 <h3 className="clearfix">保证金交款单<span className="u-mark">{data.businessnumber}</span></h3>
                 <table className="m-table-print">
                     <tr>
@@ -798,12 +810,12 @@ class LeaseManage extends Component {
                     </tr>
                     <tr>
                         <td colSpan="2">
-                            <Row>
-                                <Col sm={6}>主管：</Col>
-                                <Col sm={6}>内勤：</Col>
-                                <Col sm={6}>销售经理：</Col>
-                                <Col sm={6}>收款人：</Col>
-                            </Row>
+                            <ul className="clearfix list-horizontal-txt m-row-4">
+                                <li>主管：</li>
+                                <li>内勤：</li>
+                                <li>销售经理：</li>
+                                <li>收款人：</li>
+                            </ul>
                         </td>
                     </tr>
                 </table>
@@ -818,7 +830,7 @@ class LeaseManage extends Component {
                 modalContent = <Loading />
             }
 
-            modalContent = <div className="modal-with-title contract-pay-print">
+            modalContent = <div className="modal-with-title contract-pay-print printContent">
                 <h3 className="clearfix">临时摊位交款单<span className="u-mark">{data.businessnumber}</span></h3>
                 <table className="m-table-print">
                     <tr>
@@ -839,12 +851,12 @@ class LeaseManage extends Component {
                     </tr>
                     <tr>
                         <td colSpan="2">
-                            <Row>
-                                <Col sm={6}>主管：</Col>
-                                <Col sm={6}>内勤：</Col>
-                                <Col sm={6}>销售经理：</Col>
-                                <Col sm={6}>收款人：</Col>
-                            </Row>
+                            <ul className="clearfix list-horizontal-txt m-row-4">
+                                <li>主管：</li>
+                                <li>内勤：</li>
+                                <li>销售经理：</li>
+                                <li>收款人：</li>
+                            </ul>
                         </td>
                     </tr>
                 </table>
@@ -852,7 +864,7 @@ class LeaseManage extends Component {
         }
 
         return (
-            <section className="padding">
+            <section>
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
@@ -867,7 +879,7 @@ class LeaseManage extends Component {
                     <TabPane tab="合同" key="contract">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={querySchema['contract']}
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true}>
@@ -896,7 +908,7 @@ class LeaseManage extends Component {
                     <TabPane tab="履约保证金" key="bond">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={querySchema['bond']}
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true} />
@@ -919,7 +931,7 @@ class LeaseManage extends Component {
                     <TabPane tab="临时摊位交款" key="notContract">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={querySchema['notContract']}
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true} />

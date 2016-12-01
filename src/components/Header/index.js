@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import { Icon, message } from 'antd'
+import { Icon, message, Menu } from 'antd'
 import actionUserInfo from 'ACTION/userInfo'
 
 // import xhr from 'SERVICE/xhr'
@@ -32,6 +32,10 @@ export default class Header extends Component {
 		window.location.href = rootPaths.configPath + '/myportal/logincs/logout'
 	}
 
+	handleClick = () => {
+
+	}
+
 	componentDidMount() {
 		const {actionUserInfo} = this.props
 		actionUserInfo.fetchUser()
@@ -46,7 +50,10 @@ export default class Header extends Component {
 					<img src={hideMenu} alt="菜单显示/隐藏" className={menuStyle} />
 				</span>
 				<div className="g-fr">
-					<ul className="m-header-menu clearfix">
+					<ul className="m-header-menu g-fl clearfix">
+						<li>
+							<Link to="/"><Icon type="inbox" />管理中心</Link>
+						</li>
 						<li>
 							<Icon type="user" />{userInfo.userName}
 						</li>

@@ -24,7 +24,7 @@ class ConfigAsset extends Component {
      * */
     render() {
         return (
-            <div style={{ margin: '10px 20px', minHeight: '450px' }}>
+            <div>
                 <Tabs
                     type="card"
                     defaultActiveKey="1"

@@ -22,7 +22,10 @@ import {
     rootPaths
 } from 'SERVICE/config'
 import 'STYLE/index.less'
-import logo from './img/logo.png'
+import './index.less';
+
+import logoImg from './img/logo-img.png'
+import logoTxt from './img/logo-txt.png'
 
 let DevTools
 if (__DEV__ && __COMPONENT_DEVTOOLS__) {
@@ -42,6 +45,9 @@ const mapDispatchToProps = (dispatch) => ({
 class App extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            slideBar: true
+        }
         const isUrlSessionKey = window.location.href.indexOf('session_key') > -1
         const isCookieSessionKey = cookie.load('session_key')
 		/**
@@ -75,17 +81,18 @@ class App extends Component {
             <section className={layoutStyle}>
                 <aside className="m-aside" location={this.props.location}>
                     <div className="m-logo g-tac">
-                        <Link to="/"><img src={logo} alt="传化物流园区通" /></Link>
+                        <Link to="/"><img src={logoImg} className="logo-img" alt="传化物流园区通" /><img src={logoTxt} className="logo-txt" alt="传化物流园区通" /></Link>
                     </div>
                     <SlideNav menuList={menuList.data} mode="inline" />
                 </aside>
 
                 <article className="m-container" id="container">
                     <Header layout={layout} slideBarToggle={actionLayout.slideBarToggle} />
-                    {/* 相当于 Vue Demo 中的根 router-view */}
-					<Breadcrumb {...this.props} />
-
-                    {this.props.children}
+                    <section className="g-padding-lr">
+                        {/* 相当于 Vue Demo 中的根 router-view */}
+                        <Breadcrumb {...this.props} />
+                        {this.props.children}
+                    </section>
                     <Footer />
                 </article>
 

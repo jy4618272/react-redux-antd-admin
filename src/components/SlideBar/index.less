@@ -1,10 +1,37 @@
-.m-aside{
-    background-image: -webkit-linear-gradient(left, #fff 90%, #ddd 100%);  
-    background-image: -moz-linear-gradient(left, #fff 90%, #ddd 100%); 
-    background-image: -o-linear-gradient(left, #fff 90%, #ddd 100%); 
-    background-image: -ms-linear-gradient(left, #fff 90%, #ddd 100%);  
-    background-image: linear-gradient(left, #fff 90%, #ddd 100%); 
-    .ant-menu-inline, .ant-menu-vertical{
+@import '../../style/variable.less';
+
+// 左侧导航固定宽度
+.m-aside {
+    .ant-menu-item-group{
+        border-bottom: 1px solid #999;   
+        margin-bottom:5px;
+        &:last-child{
+            border-bottom: 0 none;
+        }
+        .ant-menu-item{
+            a{
+                font-size: @font-size-md;
+                vertical-align: middle;
+                .icon{
+                    margin-right: 10px;
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+    .button-clear{
+        top:2px;
+        border:0 none;
+        padding:0;
+        background-color: transparent;
+        color:#999;
+    }
+    .ant-menu-item-group-title{
+        color:@base-color;
+        font-size: @font-size-lg;
+        line-height: 26px;
+    }
+    .ant-menu-inline{
         border-right: 0 none;
     }
     .ant-menu{
@@ -17,6 +44,28 @@
         background-color:#f50;
         a{
             color:#fff;
+            .icon{
+                font-size: 22px;
+            }
+            .button-clear{
+                color:#fff;
+            }
         }
+    }
+}
+
+.popover-dark{
+    .ant-popover-inner{
+        background-color:#333 !important;
+        border-radius:0;
+    }
+    .ant-popover-arrow{
+        border-right-color:#333 !important;               
+        &:after{
+            border-right-color:#333 !important;            
+        }
+    }
+    .ant-popover-inner-content{
+        color:#fff;
     }
 }

@@ -21,6 +21,11 @@ const receiveMenuList = (res) => ({
 	payload: res
 })
 
+const menuName = (obj, txt) => {
+	if(obj === txt){
+		return 
+	}
+}
 const fetchMenuList = () => {
 	return dispatch => {
 		dispatch(requestMenuList())
@@ -33,19 +38,46 @@ const fetchMenuList = () => {
 				res.data.map(item1 => {
 					const obj = {}
 					const listSec = []
-					if (item1.funcname.indexOf('业务中心') > -1) {
+					if (item1.funcname === '业务中心') {
 						obj.key = 'busi'
-						obj.icon = 'home'
-					} else if (item1.funcname.indexOf('配置中心') > -1) {
-						obj.key = 'config'
-						obj.icon = 'home'
+					} else if (item1.funcname === '园区通配置中心' ) {
+						item1.funcname = '配置中心';
+						obj.key = 'config';
 					}
 					obj.name = item1.funcname
-					if (item1.sysUrlList) {
+					if (item1.sysUrlList && item1.sysUrlList.length) {
 						item1.sysUrlList.map(item2 => {
+							let icon = ''
+							switch(item2.urllink){
+								case 'busi_lease': 			// 租赁业务
+									icon = 'icon-lease'; 
+									break;
+								case 'busi_finance':  		// 财务业务
+									icon = 'icon-finance-money';
+									break;
+								case 'busi_asset':  		// 资产业务
+									icon = 'icon-assets';
+									break;
+								
+								case 'config_base':  		// 基地配置
+									icon = 'icon-base-config';
+									break;
+								case 'config_lease':  		// 租赁配置
+									icon = 'icon-lease-config';
+									break;
+								case 'config_asset':  		// 资产配置
+									icon = 'icon-assets-config';
+									break;
+
+								default:
+									icon = 'icon-lease'
+									break;
+							}
+
 							listSec.push({
 								key: item2.urllink,
-								name: item2.urlname
+								name: item2.urlname,
+								icon: icon
 							})
 						})
 					}

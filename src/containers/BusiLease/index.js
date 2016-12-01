@@ -54,7 +54,7 @@ class BusiLease extends Component {
 
     render() {
         return (
-            <section className="padding m-lease-busi">
+            <section className="m-lease-busi">
                 <Tabs defaultActiveKey="leaseManage" animated="false" type="card" onTabClick={this.handlerTabs}>
                     <TabPane tab="房态图" key="leaseRoomState">
                         <RoomState />

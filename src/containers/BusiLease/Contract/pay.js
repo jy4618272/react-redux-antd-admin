@@ -26,6 +26,8 @@ import {
     InnerPagination
 } from 'COMPONENT'
 
+import 'STYLE/list.less'
+
 import {
     goBack
 } from 'UTIL'
@@ -244,11 +246,23 @@ class ContractPay extends Component {
             modalTitle: '合同交款打印交款单',
             modalName: 'print',
             footer: <div>
-                <Button type="default" onClick={this.handleModalCancel}>取消</Button>                
+                <Button type="default" onClick={this.handleModalCancel}>取消</Button>
                 <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}>{status}</Button>
-                <Button type="primary" onClick={() => { window.print()}}>打印</Button>                
+                <Link style={ {marginLeft: '8px'} } to={`print/printPreview/${record.rentpactpayplanid}`} target="_blank">
+                    <Button type="primary" onClick={this.saveToLocalStorage}>打印</Button>
+                </Link>
             </div>
         })
+    }
+    /**
+     * 需要打印的内容都放在 .printContent 中，同一时间只会存在一个，搜索printContent，查看所有可能需要打印的内容
+     * 获取到需要打印的html片段，写入localStorage,key值为printContent
+     */
+    saveToLocalStorage() {
+        // 获取需要打印的html片段
+        const html = document.getElementsByClassName('printContent')[0].innerHTML
+        // 写入localStorage
+        localStorage.setItem('printContent', html)
     }
 
     handleCommitFinance = () => {
@@ -274,7 +288,7 @@ class ContractPay extends Component {
             confirmedData,
             notConfirmedData
         } = this.props.busiLease.contractPay
-
+        // 已支付
         const notConfirmedTableColumns = notConfirmedData.tableColumns.concat([
             {
                 title: '操作',
@@ -285,7 +299,7 @@ class ContractPay extends Component {
                 </div>
             }
         ])
-
+        // 待支付
         const confirmedTableColumns = confirmedData.tableColumns.concat([
             {
                 title: '操作',
@@ -309,7 +323,7 @@ class ContractPay extends Component {
             if (loading) {
                 modalContent = <Loading />
             }
-            modalContent = <div className="modal-with-title contract-pay-show">
+            modalContent = <div className="modal-with-title contract-pay-show printContent">
                 <h3>收款计划</h3>
                 <Row type="flex" gutter={20} className="g-mb10 list-text">
                     <Col sm={8}>
@@ -364,8 +378,8 @@ class ContractPay extends Component {
                         <td className="clearfix"><span className="g-fr">￥：{item.money}</span></td>
                     </tr>
                 )
-                
-                modalContent = <div className="modal-with-title contract-pay-print">
+
+                modalContent = <div className="modal-with-title contract-pay-print printContent">
                     <h3 className="clearfix">客户交款单<span className="u-mark">{data.rentpactcode}</span></h3>
                     <table className="m-table-print">
                         <tr>
@@ -399,12 +413,12 @@ class ContractPay extends Component {
                         </tr>
                         <tr>
                             <td colSpan="2">
-                                <Row>
-                                    <Col sm={6}>主管：</Col>
-                                    <Col sm={6}>内勤：</Col>
-                                    <Col sm={6}>销售经理：</Col>
-                                    <Col sm={6}>收款人：</Col>
-                                </Row>
+                                <ul className="clearfix list-horizontal-txt m-row-4">
+                                    <li>主管：</li>
+                                    <li>内勤：</li>
+                                    <li>销售经理：</li>
+                                    <li>收款人：</li>
+                                </ul>
                             </td>
                         </tr>
                     </table>
@@ -412,10 +426,10 @@ class ContractPay extends Component {
             }
         }
 
-        const goBack = <Button onClick={()=>{ history.back() }}><Icon type="rollback" />返回</Button>
+        const goBack = <Button onClick={() => { history.back() } }><Icon type="rollback" />返回</Button>
 
         return (
-            <section className="padding">
+            <section>
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}

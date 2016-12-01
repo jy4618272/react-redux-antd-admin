@@ -65,6 +65,7 @@ class ContractInsert extends Component {
             prepactcode: 0,
             pactprintmodelid: 0,
             partyid: 0,
+            moneyget:0,
             partyname: '',
             modalOpenBtn: 'add',
             modalName: 'room',
@@ -261,10 +262,10 @@ class ContractInsert extends Component {
 
             let tmp
             // 表单设值
-            if(key === 'startdate'){
+            if (key === 'startdate') {
                 tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), value, getFieldValue('enddate'))
             }
-            if(key === 'enddate'){
+            if (key === 'enddate') {
                 tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), value)
             }
             this.props.form.setFieldsValue(tmp)
@@ -417,19 +418,19 @@ class ContractInsert extends Component {
 
     // 表单失去焦点
     parentHandleBlur = (key) => {
-        if(key === 'marginmoney'){
+        if (key === 'marginmoney') {
             const {dataRoom, dataLine, dataPolicy, dataBond, isCalcChange} = this.state
             const {getFieldValue, setFieldsValue} = this.props.form
-            
+
             // alert(getFieldValue('marginmoney'))
-            if(getFieldValue('marginmoney')){
+            if (getFieldValue('marginmoney')) {
                 // 表单设值
                 const tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
                 setFieldsValue(tmp)
 
                 // 重置明细
                 isCalcChange && this.handleResetStages()
-            }else{
+            } else {
                 // 表单设值
                 const tmp = handleContractCalc(dataRoom, dataLine, dataPolicy, dataBond, 0, getFieldValue('startdate'), getFieldValue('enddate'))
                 setFieldsValue(tmp)
@@ -631,11 +632,11 @@ class ContractInsert extends Component {
                 obj.splice(index, 1)
             }
         })
-        
+
         this.setState({
             dataPolicy: obj
         })
-         // 表单设值
+        // 表单设值
         const tmp = handleContractCalc(dataRoom, dataLine, obj, dataBond, getFieldValue('marginmoney'), getFieldValue('startdate'), getFieldValue('enddate'))
         this.props.form.setFieldsValue(tmp)
 
@@ -797,7 +798,7 @@ class ContractInsert extends Component {
         this.setState({
             isStagesShow: false
         })
-    }   
+    }
 
     /**
      * 生成默认明细后，再次操作选项卡影响合同金额时执行该函数
@@ -1024,6 +1025,7 @@ class ContractInsert extends Component {
 
                 const {
                     prepactcode,
+                    moneyget,
                     pactprintmodelid,
                     partyid,
                     partyname,
@@ -1042,6 +1044,7 @@ class ContractInsert extends Component {
                 let rentValue = Object.assign({}, newObj, {
                     renttype: '续租',
                     flowtype: '续租',
+                    moneyget: moneyget,
                     prepactcode: prepactcode,
                     pactprintmodelid: pactprintmodelid,
                     partyid: partyid,
@@ -1160,6 +1163,7 @@ class ContractInsert extends Component {
 
                 this.props.form.setFieldsValue(newObj)
                 this.setState(Object.assign({}, newObj, {
+                    moneyget: res.data.rentpact.moneyget,
                     prepactcode: res.data.rentpact.prepactcode,
                     dataRoom: res.data.rentpactrooms,
                     dataLine: res.data.rentpactlines,
@@ -1297,7 +1301,7 @@ class ContractInsert extends Component {
         }
 
         return (
-            <section className="padding m-contract-add g-mt20">
+            <section className="m-contract-renew">
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
@@ -1328,9 +1332,9 @@ class ContractInsert extends Component {
                     </div>
 
                     {/* 合同号 */}
-                    <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                    <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                         <TabPane tab="合同房间" key="room">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 {/*
                                     <div className="button-group g-mb10">
                                         <Button onClick={this.handleAddRoom}>新增房间</Button>
@@ -1345,7 +1349,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同班线" key="classLine">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 {/*
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddLine}>新增班线</Button>
@@ -1359,7 +1363,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同优惠冲抵" key="policy">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
                                 </div>
@@ -1372,7 +1376,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="履约保证金冲抵" key="contractBond">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
                                 </div>
@@ -1385,7 +1389,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同附件" key="contractAttachment">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="g-mb10">
                                     <Upload {...uploadProps}>
                                         <Button type="ghost">
@@ -1406,12 +1410,12 @@ class ContractInsert extends Component {
                     <FormLayout
                         schema={busiLease.contractTabs}
                         form={this.props.form}
-                        parentHandleBlur = {this.parentHandleBlur}
+                        parentHandleBlur={this.parentHandleBlur}
                         parentHandleDateChange={this.parentHandleDateChange}
                         fromLayoutStyle="g-border-bottom" />
 
                     {/* 分期明细 */}
-                    <div className="padding-lr g-mb20">
+                    <div className="g-padding-lr g-mb20">
                         <FormLayout
                             schema={this.addSchema['stages']['form']}
                             form={this.props.form}
@@ -1446,7 +1450,7 @@ class ContractInsert extends Component {
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />
                     </div>
-                    <div className="g-tac button-group">
+                    <div className="g-tal button-group">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitRenew}>续租提交</Button>*/}
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>

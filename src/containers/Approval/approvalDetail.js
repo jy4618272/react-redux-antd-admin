@@ -9,6 +9,7 @@ import moment from 'moment'
 import {
     Form,
     Tabs,
+    Icon,
     Button,
     message,
     notification
@@ -446,7 +447,7 @@ class ApprovalDetail extends Component {
 
             if (type === 'rentpactBG') {
                 const { busiLease } = this.props
-                contractChangeTable = <div className="padding-lr g-mb20">
+                contractChangeTable = <div className="g-padding-lr g-mb20">
                     <InnerTable
                         columns={busiLease.changeHistory['tableColumns']}
                         dataSource={busiLease.changeHistory.tableData}
@@ -461,7 +462,7 @@ class ApprovalDetail extends Component {
             }
 
             return (
-                <section className="padding g-mt20">
+                <section>
                     <Title style="g-tac g-mb10" title={approvalData.flowname} />
                     <Form horizontal>
                         {/* 获取合同模板 */}
@@ -481,9 +482,9 @@ class ApprovalDetail extends Component {
                         </div>
 
                         {/* 合同号 */}
-                        <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                        <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                             <TabPane tab="合同房间" key="room" >
-                                <div className="padding-lr g-mb20" >
+                                <div className="g-padding-lr g-mb20" >
                                     <InnerTable columns={this.contractShowSchema['room']['columns']}
                                         dataSource={res.rentpactrooms}
                                         bordered={true}
@@ -491,7 +492,7 @@ class ApprovalDetail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同班线" key="classLine">
-                                <div className="padding-lr g-mb20" >
+                                <div className="g-padding-lr g-mb20" >
                                     <InnerTable columns={this.contractShowSchema['line']['columns']}
                                         dataSource={res.rentpactlines}
                                         bordered={true}
@@ -499,7 +500,7 @@ class ApprovalDetail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同优惠冲抵" key="policy">
-                                <div className="padding-lr g-mb20" >
+                                <div className="g-padding-lr g-mb20" >
                                     <InnerTable columns={this.contractShowSchema['policy']['columns']}
                                         dataSource={res.rentpactpromotions}
                                         bordered={true}
@@ -508,7 +509,7 @@ class ApprovalDetail extends Component {
                             </TabPane>
                             <TabPane tab="履约保证金冲抵"
                                 key="contractBond" >
-                                <div className="padding-lr g-mb20" >
+                                <div className="g-padding-lr g-mb20" >
                                     <InnerTable columns={this.contractShowSchema['contractBond']['columns']}
                                         dataSource={res.offsetmargins}
                                         bordered={true}
@@ -516,7 +517,7 @@ class ApprovalDetail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同附件" key="contractAttachment" >
-                                <div className="padding-lr g-mb20" >
+                                <div className="g-padding-lr g-mb20" >
                                     <InnerTable columns={tableAttachmentColumns}
                                         dataSource={res.rentpactattachments}
                                         bordered={true}
@@ -531,7 +532,7 @@ class ApprovalDetail extends Component {
                             fromLayoutStyle="g-border-bottom" />
 
                         { /* 分期明细 */}
-                        <section className="padding-lr g-border-bottom" >
+                        <section className="g-padding-lr g-border-bottom" >
                             <div className="g-pb20" >
                                 <FormLayout schema={this.contractShowSchema['stages']['form']}
                                     form={form}
@@ -570,7 +571,7 @@ class ApprovalDetail extends Component {
                         <FormLayout schema={this.approvalShowSchema}
                             form={form} />
 
-                        <div className="g-tac button-group" >
+                        <div className="g-tal button-group g-mt20">
                             <Button type="primary"
                                 disabled={this.state.isSaveDisabeld}
                                 onClick={this.handleSave}>保存</Button>
@@ -587,7 +588,7 @@ class ApprovalDetail extends Component {
             }
 
             return (
-                <section className="padding g-mt20" >
+                <section>
                     <Title style="g-tac g-mb10"
                         title={approvalData.flowname} />
                     <Form horizontal>
@@ -614,7 +615,7 @@ class ApprovalDetail extends Component {
 
                         {/* 审批意见操作 */}
                         <FormLayout schema={this.approvalShowSchema} form={form} />
-                        <div className="g-tac button-group">
+                        <div className="g-tal button-group g-mt20">
                             <Button type="primary"
                                 disabled={this.state.isSaveDisabeld}
                                 onClick={this.handleSave}>保存</Button>
@@ -631,7 +632,7 @@ class ApprovalDetail extends Component {
             }
 
             return (
-                <section className="padding g-mt20" >
+                <section>
                     <Title style="g-tac g-mb10"
                         title={approvalData.flowname} />
                     <Form horizontal>
@@ -650,7 +651,7 @@ class ApprovalDetail extends Component {
 
                         {/* 审批意见操作 */}
                         <FormLayout schema={this.approvalShowSchema} form={form} />
-                        <div className="g-tac button-group">
+                        <div className="g-tal button-group g-mt20">
                             <Button type="primary"
                                 disabled={this.state.isSaveDisabeld}
                                 onClick={this.handleSave}>保存</Button>

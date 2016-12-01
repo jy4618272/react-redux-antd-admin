@@ -143,7 +143,7 @@ class Detail extends Component {
             const arr = []
             arr.push(res)
             return (
-                <section className="padding">
+                <section>
                     <InnerTable
                         loading={loading}
                         columns={this.showSchema['bond']}
@@ -158,7 +158,7 @@ class Detail extends Component {
             arr.push(res)
 
             return (
-                <section className="padding">
+                <section>
                     <InnerTable
                         loading={loading}
                         columns={this.showSchema['notContract']}
@@ -191,7 +191,7 @@ class Detail extends Component {
             ])
 
             return (
-                <section className="padding g-mt20">
+                <section>
                     <Form horizontal>
                         {/* 获取合同模板 */}
                         <FormLayout
@@ -207,9 +207,9 @@ class Detail extends Component {
                         </div>
 
                         {/* 合同号 */}
-                        <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                        <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                             <TabPane tab="合同房间" key="room">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.financeShowSchema['room']['columns']}
                                         dataSource={res.rentpactrooms}
@@ -218,7 +218,7 @@ class Detail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同班线" key="classLine">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.financeShowSchema['line']['columns']}
                                         dataSource={res.rentpactlines}
@@ -227,7 +227,7 @@ class Detail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同优惠冲抵" key="policy">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.financeShowSchema['policy']['columns']}
                                         dataSource={res.rentpactpromotions}
@@ -236,7 +236,7 @@ class Detail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="履约保证金冲抵" key="contractBond">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.financeShowSchema['contractBond']['columns']}
                                         dataSource={res.offsetmargins}
@@ -245,7 +245,7 @@ class Detail extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同附件" key="contractAttachment">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={tableAttachmentColumns}
                                         dataSource={res.rentpactattachments}
@@ -263,7 +263,7 @@ class Detail extends Component {
                             fromLayoutStyle="g-border-bottom" />
 
                         {/* 分期明细 */}
-                        <div className="padding-lr g-mb20">
+                        <div className="g-padding-lr g-mb20">
                             <FormLayout
                                 schema={this.financeShowSchema['stages']['form']}
                                 form={this.props.form}

@@ -69,8 +69,6 @@ class NewAsset extends Component {
      * 
      */
     render() {
-
-
         return (
             <div>
                 {/** 步骤条 */}

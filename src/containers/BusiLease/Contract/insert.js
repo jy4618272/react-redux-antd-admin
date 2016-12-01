@@ -1182,7 +1182,7 @@ class ContractInsert extends Component {
         }
 
         return (
-            <section className="padding m-contract-add g-mt20">
+            <section className="m-contract-add">
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
@@ -1213,9 +1213,9 @@ class ContractInsert extends Component {
                     </div>
 
                     {/* 合同号 */}
-                    <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                    <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                         <TabPane tab="合同房间" key="room">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddRoom}><Icon type="plus" />新增房间</Button>
                                 </div>
@@ -1227,7 +1227,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同班线" key="classLine">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddLine}><Icon type="plus" />新增班线</Button>
                                 </div>
@@ -1240,7 +1240,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同优惠冲抵" key="policy">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
                                 </div>
@@ -1252,7 +1252,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="履约保证金冲抵" key="contractBond">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
                                 </div>
@@ -1265,7 +1265,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同附件" key="contractAttachment">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="g-mb10">
                                     <Upload {...uploadProps}>
                                         <Button type="ghost"><Icon type="upload" />文件上传</Button>
@@ -1289,7 +1289,7 @@ class ContractInsert extends Component {
                         parentHandleDateChange={this.parentHandleDateChange} />
 
                     {/* 分期明细 */}
-                    <div className="padding-lr g-mb20">
+                    <div className="g-padding-lr g-mb20">
                         <FormLayout
                             schema={this.addSchema['stages']['form']}
                             form={this.props.form}
@@ -1324,7 +1324,7 @@ class ContractInsert extends Component {
                             bordered={true}
                             pagination={false} />
                     </div>
-                    <div className="g-tac button-group">
+                    <div className="g-tal button-group">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>
                     </div>

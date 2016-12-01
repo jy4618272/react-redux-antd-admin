@@ -358,12 +358,12 @@ class Finance extends Component {
         }
 
         return (
-            <section className="padding">
+            <section>
                 <Tabs defaultActiveKey={this.tabsDefault} animated="false" type="card" onTabClick={this.handlerTabs}>
                     <TabPane tab="未确认" key="notConfirmed">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -389,7 +389,7 @@ class Finance extends Component {
                     <TabPane tab="已到账" key="confirmed">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />

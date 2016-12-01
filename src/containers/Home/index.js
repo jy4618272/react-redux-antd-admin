@@ -55,7 +55,7 @@ class Busi extends Component {
         })
 
         return (
-            <section className="padding-lr list-todos">
+            <section className="list-todos">
                 {todos}
             </section>
         )

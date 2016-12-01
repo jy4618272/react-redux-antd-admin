@@ -479,7 +479,7 @@ class Lease extends Component {
         }
 
         return (
-            <section className="padding">
+            <section className="m-config">
                 <Tabs defaultActiveKey={this.status} animated="false" type="card" onChange={this.handlerTabs}>
                     <TabPane tab="房间设置" key="room">
                         <InnerForm

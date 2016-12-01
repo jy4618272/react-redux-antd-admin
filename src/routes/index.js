@@ -35,6 +35,9 @@ import AssetDetail from 'CONTAINER/BusiAsset/assetDetail'
 // 资产配置
 import ConfigAsset from 'CONTAINER/ConfigAsset/configAsset'
 
+// 打印
+import PrintPage from 'CONTAINER/Print/index'
+
 import ConfigBase from 'CONTAINER/ConfigBase/insert'
 import ConfigRights from 'CONTAINER/ConfigRights'
 import ConfigLease from 'CONTAINER/ConfigLease'
@@ -87,6 +90,7 @@ const routes = (
 				<Route path="busi_asset/operate/:assetType/:id/:isModify/:operateType" component={AssetOperate} />
 				<Route path="busi_asset/check_asset/:id" component={CheckAsset} />
 				<Route path="busi_asset/asset_detail/:id" component={AssetDetail} />
+
 			</Route>
 
 			<Route path="config">
@@ -99,6 +103,11 @@ const routes = (
 				<Route path="config_lease/:id" tableName="configLease" component={ConfigLeaseDetail} />
 				<Route path="config_asset" component={ConfigAsset} />
 			</Route>
+		</Route>
+
+		{/* 打印页面 */}
+		<Route path="print">
+			<Route path="printPreview/:id" component={PrintPage}/>	
 		</Route>
 
 		<Route path="*" component={NotFound} />

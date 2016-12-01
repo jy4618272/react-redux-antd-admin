@@ -1,5 +1,6 @@
 import Header from './Header'
 import Title from './Header/Title'
+import Cards from './Cards'
 import Footer from './Footer'
 import Err from './Error'
 import Loading from './Loading'
@@ -20,6 +21,7 @@ import ModalForm from './ModalContent/ModalForm'
 export {
     Header,
     Title,
+    Cards,
     Footer,
     Err,
     Loading,

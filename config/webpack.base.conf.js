@@ -47,7 +47,7 @@ module.exports = {
 			HOC: path.join(src, 'utils/HoC'),
 			MIXIN: path.join(src, 'utils/mixins'),
 			SCHEMA: path.join(src, 'schema'),
-			STYLE: path.join(src, 'style'),
+			STYLE: path.join(src, 'style')
 		}
 	},
 	module: {
@@ -71,6 +71,10 @@ module.exports = {
 				test: /\.less$/,
 				loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!less-loader'),
 			},
+			{
+                test: /\.(ttf|eot|svg|woff?)(\?[a-z0-9=&.]+)?$/,
+                loader: 'file-loader?limit=10000&name=fonts/[name].[ext]?v=[hash:8]'
+            },
 			{
 				test: /\.(png|jpg|svg)$/,
 				loader: 'url?limit=25000',  // 图片小于一定值的话转成base64

@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import {
     Form,
     Modal,
@@ -128,34 +129,6 @@ class FinanceShow extends Component {
         window.location.href = rootPaths.imgPath + paths.imgPath + '/' + dataAttachment[index].url
     }
 
-    // 打印合同
-    printContract() {
-        /**
-         * 获取合同数据
-         *  获取id
-         */
-        const { id } = this.props.params
-
-        xhr('post', paths.leasePath + '/pactprintmodelcs/getPrintTextByRentPactId', {
-            rentpactid: id
-        }, (res) => {
-            console.log(res)
-            const hide = message.loading('正在查询...', 0)
-            if (res.result == 'success') {
-                hide()
-                // res.data = res.data + res.data + res.data + res.data + res.data + res.data + res.data + res.data
-                this.setState({
-                    isVisible: true,
-                    contractContent: res.data
-                })
-            } else {
-                hide()
-                errHandler(res.msg)
-            }
-        })
-
-        // 弹窗展示合同，提供打印／取消按钮
-    }
 
     componentDidMount() {
         const {
@@ -210,6 +183,35 @@ class FinanceShow extends Component {
                 errHandler(res.msg)
             }
         })
+
+        // DOM挂载完成后，获取合同数据，然后写入localStorage
+        this.getPrintContractData()
+    }
+    /**
+     * 获取合同数据
+     *  合同模版是通过富文本编辑器编辑的，所见即所得，通过ajax获取之后直接放到localStorage中
+     *  DOM挂载完成后，获取合同数据，然后写入localStorage，所以需要在componentDidMount中调用此方法
+     *  */ 
+    getPrintContractData() {
+        /**
+         * 获取合同数据
+         *  获取id
+         */
+        const { id } = this.props.params
+        
+        xhr('post', paths.leasePath + '/pactprintmodelcs/getPrintTextByRentPactId', {
+            rentpactid: id
+        }, (res) => {
+            const hide = message.loading('正在查询...', 0)
+            if (res.result == 'success') {
+                hide()
+                // 存到localStorage
+                localStorage.setItem('printContent', res.data)
+            } else {
+                hide()
+                errHandler(res.msg)
+            }
+        })
     }
 
     render() {
@@ -242,7 +244,7 @@ class FinanceShow extends Component {
             ])
 
             return (
-                <section className="padding g-mt20">
+                <section>
                     <Form horizontal>
                         {/* 获取合同模板 */}
                         <FormLayout
@@ -263,9 +265,9 @@ class FinanceShow extends Component {
                         </div>
 
                         {/* 合同号 */}
-                        <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                        <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                             <TabPane tab="合同房间" key="room">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.contractShowSchema['room']['columns']}
                                         dataSource={res.rentpactrooms}
@@ -274,7 +276,7 @@ class FinanceShow extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同班线" key="classLine">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.contractShowSchema['line']['columns']}
                                         dataSource={res.rentpactlines}
@@ -283,7 +285,7 @@ class FinanceShow extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同优惠冲抵" key="policy">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.contractShowSchema['policy']['columns']}
                                         dataSource={res.rentpactpromotions}
@@ -292,7 +294,7 @@ class FinanceShow extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="履约保证金冲抵" key="contractBond">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={this.contractShowSchema['contractBond']['columns']}
                                         dataSource={res.offsetmargins}
@@ -301,7 +303,7 @@ class FinanceShow extends Component {
                                 </div>
                             </TabPane>
                             <TabPane tab="合同附件" key="contractAttachment">
-                                <div className="padding-lr g-mb20">
+                                <div className="g-padding-lr g-mb20">
                                     <InnerTable
                                         columns={tableAttachmentColumns}
                                         dataSource={res.rentpactattachments}
@@ -319,7 +321,7 @@ class FinanceShow extends Component {
                             fromLayoutStyle="g-border-bottom" />
 
                         {/* 分期明细 */}
-                        <div className="padding-lr g-mb20">
+                        <div className="g-padding-lr g-mb20">
                             <FormLayout
                                 schema={this.contractShowSchema['stages']['form']}
                                 form={this.props.form}
@@ -353,19 +355,9 @@ class FinanceShow extends Component {
 
                         {/* 打印合同 */}
                         <div className="g-tac g-mt20">
-                            <Button onClick={this.printContract.bind(this)}>打印合同</Button>
-
-                            <Modal
-                                title="合同打印"
-                                width="900"
-                                className="g-enter-line"
-                                visible={this.state.isVisible}
-                                footer={<div>
-                                    <Button type="default" onClick={() => { this.setState({ isVisible: false }) } }>取消</Button>
-                                    <Button type="primary" onClick={() => { window.print() } }>打印</Button>
-                                </div>}>
-                                {this.state.contractContent}
-                            </Modal>
+                            <Link to={ `print/printPreview/${this.props.params.id}` } target="_blank">
+                                <Button>打印合同</Button>
+                            </Link>
                         </div>
                     </Form>
                 </section>

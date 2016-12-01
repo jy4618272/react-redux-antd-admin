@@ -278,7 +278,7 @@ class ContractRent extends Component {
         ])
 
         return (
-            <section className="padding m-contract-add g-mt20">
+            <section className="m-contract-rent">
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
@@ -300,7 +300,7 @@ class ContractRent extends Component {
                         isRowSelection={false}
                         bordered={true}
                         pagination={false} />
-                    <div className="button-group g-tac g-mt20">
+                    <div className="button-group g-tal g-mt20">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSave}>保存</Button>
                         <Button onClick={this.handleCancel}>取消</Button>
                     </div>

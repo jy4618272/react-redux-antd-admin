@@ -561,9 +561,9 @@ class FormLayout extends Component {
         // 别忘了最后一行
         let formOpe
         if (this.props.showSave) {
-            formOpe = <div xs={24} sm={24} md={24} lg={24}  className="g-tac button-group g-mt50">
-                <Button type="primary" size="large" onClick={this.handleSave}>保存</Button>
-                <Button type="ghost" size="large" onClick={this.handleClose}>关闭</Button>
+            formOpe = <div xs={24} sm={24} md={24} lg={24}  className="g-tal button-group g-mt20">
+                <Button type="primary" onClick={this.handleSave}>保存</Button>
+                <Button type="ghost" onClick={this.handleClose}>关闭</Button>
             </div>
         }
 

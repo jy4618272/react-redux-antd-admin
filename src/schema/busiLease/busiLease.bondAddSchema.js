@@ -1,11 +1,11 @@
 module.exports = [
-    {
-        key: 'site',
-        title: '所属公路港',
-        dataType: 'varchar',
-        placeholder: "请输入所属公路港",
-        disabled: true
-    },
+    // {
+    //     key: 'site',
+    //     title: '所属公路港',
+    //     dataType: 'varchar',
+    //     placeholder: "请输入所属公路港",
+    //     disabled: true
+    // },
     {
         key: 'businessnumber',
         title: '交款单号',

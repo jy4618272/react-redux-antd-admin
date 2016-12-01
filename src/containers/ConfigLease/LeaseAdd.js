@@ -10,7 +10,9 @@ import {
     InputNumber,
     Input,
     DatePicker,
-    notification
+    notification,
+    Row,
+    Col
 } from 'antd'
 
 const FormItem = Form.Item
@@ -25,6 +27,8 @@ import {
 import actionLeaseAdd from 'ACTION/configLease/leaseAdd'
 import actionLease from 'ACTION/configLease'
 import { filterQueryObj } from 'UTIL'
+
+import ContractTemplateAdd from './contractTemplateEdit'
 
 const mapDispatchToProps = (dispatch) => ({
     actionLease: bindActionCreators(actionLease, dispatch),
@@ -118,7 +122,7 @@ class LeaseAdd extends Component {
                     message: '优惠幅度填写有误',
                     description: '【折扣】类型优惠幅度为[1-10】'
                 })
-                return false;   
+                return false;
             }
 
             actionLeaseAdd.fetchPolicyAdd(newObj)
@@ -268,12 +272,11 @@ class LeaseAdd extends Component {
                         {modalContent}
                     </Modal>
                     <InnerForm
-                        formStyle="padding"
                         schema={roomAddSchema['roomForm']}
                         showSave={true}
                         parentHandleSelect={this.parentHandleSelect}
                         parentHandleSave={this.parentHandleSave}>
-                        <div className="padding-lr g-mt20">
+                        <div className="g-padding-lr g-mt20">
                             <div className="button-group g-mb10">
                                 <Button onClick={this.handleAddGoods}>新增物品</Button>
                             </div>
@@ -287,6 +290,8 @@ class LeaseAdd extends Component {
                     </InnerForm>
                 </section>
             )
+        } else if (this.addType == 'contractTpl') {
+            return ( <ContractTemplateAdd operateType="add" /> )
         } else {
             if (areaData.loading) {
                 return <Loading />
@@ -298,7 +303,7 @@ class LeaseAdd extends Component {
             return (
                 <section className="m-config m-config-room">
                     <InnerForm
-                        formStyle="padding m-advance-fill"
+                        formStyle="m-advance-fill"
                         schema={this.addSchema[this.addType]}
                         showSave={true}
                         ref='otherForm'

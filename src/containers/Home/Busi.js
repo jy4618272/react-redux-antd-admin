@@ -19,7 +19,7 @@ class Busi extends Component {
 
     render() {
         return (
-            <section className="padding-lr m-busi">
+            <section className="m-busi">
                 <Row className="list-news-tips">
                     <Col span={3}>
                         <div className="title">我的代办</div>

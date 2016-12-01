@@ -19,7 +19,7 @@ class WorkFlow extends Component {
         } = this.props
 
         let workFlow
-        if(flow.data && flow.data.length){
+        if (flow.data && flow.data.length) {
             workFlow = flow.data.map(item => {
                 let status
                 if (item.processnodestatus === '同意') {
@@ -54,13 +54,13 @@ class WorkFlow extends Component {
                     </Col>
                 )
             })
-        }else {
+        } else {
             workFlow = <Col sm={24} className="g-tac s-red">合同流程暂无内容</Col>
         }
 
         if (flow.loading) {
             if (notShowLoading) {
-                return <Col sm={24} className="g-tac g-pb20 s-red">请先选择合同模板，才能显示合同流程</Col>
+                return <div className="g-tac g-pb10 s-red">请先选择合同模板，才能显示合同流程</div>
             }
             return <Loading />
         }
@@ -74,9 +74,5 @@ class WorkFlow extends Component {
         );
     }
 }
-
-WorkFlow.propTypes = {
-
-};
 
 export default WorkFlow;

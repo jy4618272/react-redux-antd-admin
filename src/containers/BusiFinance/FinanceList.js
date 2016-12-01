@@ -126,7 +126,7 @@ class FinanceList extends Component {
         }
 
         return (
-            <section className="padding">
+            <section>
                 <InnerForm
                     ref="form"
                     formStyle="g-mb20 m-advance-filter"

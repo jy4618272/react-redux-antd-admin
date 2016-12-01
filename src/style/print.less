@@ -4,12 +4,15 @@
 // 容器的box-shadow也不需要
 
 @media print {
-    #root {
+    .print-hidden{
+        display: none;
+    }
+    /*#root {
         height: 100%;
         overflow: hidden;
-    }
+    }*/
     
-    .ant-modal-content {
+    /*.ant-modal-content {
         box-shadow: 0 0 0 white !important;
 
         .ant-modal-close,
@@ -17,5 +20,5 @@
         .ant-modal-footer {
             display: none;
         }
-    } 
+    } */
 }

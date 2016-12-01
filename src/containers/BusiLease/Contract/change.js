@@ -62,6 +62,7 @@ class ContractInsert extends Component {
         this.state = {
             tabsStatus: 'room',
             rentpactid: 0,
+            moneyget:0,
             renttype: '',
             pactprintmodelid: 0,
             partyid: 0,
@@ -995,6 +996,7 @@ class ContractInsert extends Component {
                 const {
                     rentpactid,
                     renttype,
+                    moneyget,
                     pactprintmodelid,
                     partyid,
                     partyname,
@@ -1010,6 +1012,7 @@ class ContractInsert extends Component {
 
                 // 传给后端字段
                 const rentValue = Object.assign({}, newObj, {
+                    moneyget: moneyget,
                     rentpactid: rentpactid,
                     renttype: renttype,
                     flowtype: type,
@@ -1088,6 +1091,7 @@ class ContractInsert extends Component {
 
                 this.props.form.setFieldsValue(newObj)
                 this.setState(Object.assign({}, newObj, {
+                    moneyget: res.data.rentpact.moneyget,
                     rentpactid: res.data.rentpact.rentpactid,
                     renttype: res.data.rentpact.renttype,
                     prepactcode: res.data.rentpact.pactcode,
@@ -1251,7 +1255,7 @@ class ContractInsert extends Component {
         }
 
         return (
-            <section className="padding m-contract-add g-mt20">
+            <section className="m-contract-add">
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
@@ -1282,9 +1286,9 @@ class ContractInsert extends Component {
                     </div>
 
                     {/* 合同号 */}
-                    <Tabs className="g-mt20 g-mb20" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                    <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
                         <TabPane tab="合同房间" key="room">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddRoom}><Icon type="plus" />新增房间</Button>
                                 </div>
@@ -1297,7 +1301,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同班线" key="classLine">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddLine}><Icon type="plus" />新增班线</Button>
                                 </div>
@@ -1311,7 +1315,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同优惠冲抵" key="policy">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
                                 </div>
@@ -1324,7 +1328,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="履约保证金冲抵" key="contractBond">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="button-group g-mb10">
                                     <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
                                 </div>
@@ -1338,7 +1342,7 @@ class ContractInsert extends Component {
                             </div>
                         </TabPane>
                         <TabPane tab="合同附件" key="contractAttachment">
-                            <div className="padding-lr g-mb20">
+                            <div className="g-padding-lr g-mb20">
                                 <div className="g-mb10">
                                     <Upload {...uploadProps}>
                                         <Button type="ghost">
@@ -1365,7 +1369,7 @@ class ContractInsert extends Component {
                         fromLayoutStyle="g-border-bottom" />
 
                     {/* 分期明细 */}
-                    <div className="padding-lr g-mb20">
+                    <div className="g-padding-lr g-mb20">
                         <FormLayout
                             schema={this.addSchema['stages']['form']}
                             form={this.props.form}
@@ -1402,7 +1406,7 @@ class ContractInsert extends Component {
                             bordered={true}
                             pagination={false} />
                     </div>
-                    <div className="g-tac button-group">
+                    <div className="g-tal button-group">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitChange}>变更提交</Button>*/}
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handlePrintView}>打印预览</Button>*/}

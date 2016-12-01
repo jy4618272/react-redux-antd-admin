@@ -153,7 +153,7 @@ class Lease extends Component {
         }
 
         return (
-            <section className="padding">
+            <section>
                 <Tabs defaultActiveKey="department" animated="false" type="card" onChange={this.handlerTabs}>
                     <TabPane tab="部门管理" key="department">
                         <InnerTable

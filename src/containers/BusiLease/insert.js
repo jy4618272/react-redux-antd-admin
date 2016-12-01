@@ -251,7 +251,7 @@ class Insert extends Component {
                 />
         }
         return (
-            <section className="padding">
+            <section>
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}

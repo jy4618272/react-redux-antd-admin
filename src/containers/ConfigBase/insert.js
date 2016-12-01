@@ -90,7 +90,7 @@ class ConfigBase extends Component {
         }
 
         return (
-            <section className="padding m-config m-config-base">
+            <section className="m-config m-config-base">
                 <InnerForm
                     schema={this.addSchema}
                     showSave={true}

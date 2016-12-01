@@ -14,8 +14,6 @@ import {
     Input
 } from 'antd'
 
-import './demo.less'
-
 class AssetTableList extends Component {
     constructor() {
         super()
@@ -35,29 +33,7 @@ class AssetTableList extends Component {
             { title: '责任部门', dataIndex: 'assetdeplist', key: 'assetdeplist' },
             { title: '责任人', dataIndex: 'owner', key: 'owner' },
             { title: '流程状态', dataIndex: 'flowstatus', key: 'flowstatus' },
-            { title: '资产状态', dataIndex: 'assetstatus', key: 'assetstatus' },
-            {
-                title: '操作',
-                key: 'operate',
-                render: (text, record, index) => {
-                    function handleEnter(index, e) {
-
-                        // 回车13   向上38  向下40
-                        (e.keyCode == 13 || e.keyCode == 40)
-                            ? (++index)
-                            : ((e.keyCode == 38) ? (--index) : (''))
-
-                        $('.table-input-container').eq(index).find('input').focus();
-
-                    }
-
-                    return (
-                        <div className="table-input-container">
-                            <Input defaultValue={record.parameternumber} onKeyDown={handleEnter.bind(null, index)} />
-                        </div>
-                    )
-                }
-            }
+            { title: '资产状态', dataIndex: 'assetstatus', key: 'assetstatus' }
         ]
         return columns
     }

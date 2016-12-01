@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import { Menu, Icon } from 'antd'
+import { Menu, Icon, Popover, Button } from 'antd'
 const SubMenu = Menu.SubMenu
 const MenuItemGroup = Menu.ItemGroup
 const MenuItem = Menu.Item
@@ -13,6 +13,7 @@ class SlideNav extends Component {
         super(props)
         // alert(localStorage.slideMenuCurrent)
         this.state = {
+            theme:'dark',
             current: localStorage.slideMenuCurrent || '/'
         }
     }
@@ -27,10 +28,16 @@ class SlideNav extends Component {
 
     transFormMenuItem(level, paths) {
         const parsePath = paths.join('/')
-
         return (
             <MenuItem key={level.key}>
-                { level.child ? level.name : <Link to={`/${parsePath}`}>{level.name}</Link> }
+                { level.child ? level.name : 
+                    <Link to={`/${parsePath}`} className="animated">
+                        <Popover placement="right" title="" content={level.name} overlayClassName="popover-dark" trigger="hover">
+                            <Button className="button-clear"><i className={`icon iconfont ${level.icon}`}></i></Button>
+                        </Popover>
+                        <span>{level.name}</span>
+                    </Link> 
+                }
             </MenuItem>
         )
     }
@@ -42,7 +49,6 @@ class SlideNav extends Component {
 
         const menuStr = menuList.map((level1) => {
             paths.push(level1.key)
-            // console.log(paths)
             
             if (defaultOpenKeys.length === 0) {
                 defaultOpenKeys.push(level1.key)
@@ -81,9 +87,9 @@ class SlideNav extends Component {
 
                 paths.pop()
                 return (
-                    <SubMenu key={level1.key} title={<span><Icon type={level1.icon } />{level1.name}</span>}>
+                    <MenuItemGroup key={level1.key} title={<span><Icon type={level1.icon } />{level1.name}</span>}>
                         {level2menu}
-                    </SubMenu>
+                    </MenuItemGroup>
                 )
             } else {
                 const tmp = this.transFormMenuItem(level1, paths)
@@ -101,6 +107,7 @@ class SlideNav extends Component {
         return (
             <nav>
                 <Menu
+                    theme={this.state.theme}
                     onClick={this.handleClick}
                     defaultOpenKeys={this.defaultOpenKeys}
                     selectedKeys={[this.state.current]}

@@ -1,4 +1,6 @@
 @import './variable.less';
+@import './font/iconfont.less';
+@import './animate.min.css';
 
 .m-table{
   	.ant-table-bordered .ant-table-thead > tr > th, .ant-table-bordered .ant-table-tbody > tr > td{
@@ -71,6 +73,9 @@
 .g-mr10{
   margin-right: 10px;
 }
+.g-pb10{
+  padding-bottom: 10px;
+}
 .g-pb20{
   padding-bottom: 20px;
 }
@@ -78,9 +83,9 @@
 	padding:5px 10px 0;
 }
 .padding{
-	padding:10px 20px 0;
+	padding:10px 20px;
 }
-.padding-lr{
+.g-padding-lr{
   padding: 0 20px;
 }
 .g-tar{
@@ -117,7 +122,7 @@
 
 .g-border-bottom{
   border-bottom:1px solid @border-color;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 }
 
 .rotate-circle{
@@ -198,34 +203,106 @@
 /**************************** 布局 ****************************/
 .m-layout{
 	position: relative;
-	padding-left:220px;
+	padding-left:200px;
 	transition: all 0.5s ease-in;	
+	.m-aside{
+		position:absolute;
+		left:0;
+		top:0;
+		width:200px;
+		margin-bottom: -10000px;
+		padding-bottom: 10000px;
+		overflow: hidden;
+		background-color: #333;  
+		transition: all 0.5s ease-in; 
+	}
 	&.m-layout-full {
-		padding:0;
+		padding-left:60px;
+		.ant-menu-item-group-title{
+			padding: 8px 14px;
+			height: 30px;
+			margin-bottom: 10px;
+    		overflow: hidden;
+		}
 		.m-aside{
-			left:-220px;
+			left:0;
+			width:60px;
+			.logo-txt{
+				display: none;
+			}
+			.ant-menu-item{
+				padding-left: 20px !important;
+				a{
+					span{
+					display: none
+					}
+					&:hover{
+						-webkit-animation-name: tada;
+						animation-name: tada;
+					}
+				}
+			}
 		}
 	}
-}
-
-// 左侧导航固定宽度
-.m-aside {
-	position:absolute;
-	left:0;
-	top:0;
-	width:220px;
-	margin-bottom: -10000px;
-	padding-bottom: 10000px;
-	overflow: hidden;
-	background-color: #fff;
-	transition: all 0.5s ease-in;
-}
-.m-logo{
-  	padding:20px 10px;
 }
 
 // 右侧宽度自适应
 .m-container {
 	box-sizing: border-box;
 	width: 100%;
+}
+
+
+@-webkit-keyframes tada {
+  from {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  10%, 20% {
+    -webkit-transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg);
+    transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg);
+  }
+
+  30%, 50%, 70%, 90% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg);
+    transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg);
+  }
+
+  40%, 60%, 80% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+    transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+  }
+
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes tada {
+  from {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+
+  10%, 20% {
+    -webkit-transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg);
+    transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg);
+  }
+
+  30%, 50%, 70%, 90% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg);
+    transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg);
+  }
+
+  40%, 60%, 80% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+    transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+  }
+
+  to {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
 }

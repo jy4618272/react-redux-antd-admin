@@ -87,13 +87,19 @@ class ApprovalList extends Component {
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
+        // alert('componentDidMount')
+        this.refresh()
+    }
+
+    componentWillUnmount() {
+        // alert('componentWillUnMount')
         this.refresh()
     }
 
     render() {
         const {list} = this.props.approval
         return (
-            <section className="padding">
+            <section>
                 <InnerTable
                     loading={list.tableLoading}
                     columns={list.tableColumns}
