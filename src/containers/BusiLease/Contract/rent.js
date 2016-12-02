@@ -12,6 +12,7 @@ import {
 } from 'antd'
 
 import {
+    Cards,
     FormLayout,
     Loading,
     InnerForm,
@@ -288,18 +289,23 @@ class ContractRent extends Component {
                     {modalContent}
                 </Modal>
                 <Form horizontal>
-                    <FormLayout
-                        schema={this.schema['form']}
-                        form={this.props.form} />
-                    <div className="button-group g-mb10">
-                        <Button onClick={this.handleAdd}>新增</Button>
-                    </div>
-                    <InnerTable
-                        columns={rentTableColumns}
-                        dataSource={rentTableData}
-                        isRowSelection={false}
-                        bordered={true}
-                        pagination={false} />
+                    <Cards title={"客户名称"}>
+                        <FormLayout
+                            schema={this.schema['form']}
+                            form={this.props.form} />
+                    </Cards>
+
+                    <Cards title={"退款明细"}>
+                        <div className="button-group g-mb10">
+                            <Button onClick={this.handleAdd}>新增</Button>
+                        </div>
+                        <InnerTable
+                            columns={rentTableColumns}
+                            dataSource={rentTableData}
+                            isRowSelection={false}
+                            bordered={true}
+                            pagination={false} />
+                    </Cards>
                     <div className="button-group g-tal g-mt20">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSave}>保存</Button>
                         <Button onClick={this.handleCancel}>取消</Button>

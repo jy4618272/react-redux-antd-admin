@@ -64,7 +64,7 @@ class SearchAssetForm extends Component {
         // 表单样式
         let formStyle = {
             padding: '10px',
-            margin: '15px 20px',
+            marginBottom: '10px',
             background: '#fbfbfb',
             border: '1px solid #d9d9d9',
             borderRadius: '6px'

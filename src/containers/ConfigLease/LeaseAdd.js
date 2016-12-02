@@ -290,8 +290,9 @@ class LeaseAdd extends Component {
                     </InnerForm>
                 </section>
             )
-        } else if (this.addType == 'contractTpl') {
-            return ( <ContractTemplateAdd operateType="add" /> )
+        } else if (this.addType == 'contractTpl1') {
+            // 下版本改成contractTpl
+            return (<ContractTemplateAdd id="-1" />)
         } else {
             if (areaData.loading) {
                 return <Loading />

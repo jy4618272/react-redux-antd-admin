@@ -129,7 +129,7 @@ class FinanceList extends Component {
             <section>
                 <InnerForm
                     ref="form"
-                    formStyle="g-mb20 m-advance-filter"
+                    formStyle="m-advance-filter"
                     schema={this.listSchema}
                     showSearch={true}
                     parentHandleSubmit={this.handleFormSubmit} />

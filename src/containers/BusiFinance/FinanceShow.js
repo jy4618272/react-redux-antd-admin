@@ -16,6 +16,7 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
     Err,
+    Cards,
     Loading,
     InnerTable,
     FormLayout
@@ -233,74 +234,74 @@ class FinanceShow extends Component {
                         {/* 获取合同模板 */}
                         <FormLayout
                             schema={this.financeShowSchema['contractFrom']}
-                            form={this.props.form}
-                            fromLayoutStyle="g-border-bottom" />
+                            form={this.props.form} />
 
                         {/* 客户名称 */}
-                        <div className="g-border-bottom">
+                        <Cards title={"客户信息"}>
                             <FormLayout
                                 schema={this.financeShowSchema['organization']}
                                 form={this.props.form} />
-                        </div>
+                        </Cards>
 
-                        {/* 合同号 */}
-                        <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
-                            <TabPane tab="合同房间" key="room">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.financeShowSchema['room']['columns']}
-                                        dataSource={res.rentpactrooms}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="合同班线" key="classLine">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.financeShowSchema['line']['columns']}
-                                        dataSource={res.rentpactlines}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="合同优惠冲抵" key="policy">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.financeShowSchema['policy']['columns']}
-                                        dataSource={res.rentpactpromotions}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="履约保证金冲抵" key="contractBond">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.financeShowSchema['contractBond']['columns']}
-                                        dataSource={res.offsetmargins}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="合同附件" key="contractAttachment">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={tableAttachmentColumns}
-                                        dataSource={res.rentpactattachments}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
+                        <Cards title={"合同信息"}>
+                            {/* 合同号 */}
+                            <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                                <TabPane tab="合同房间" key="room">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.financeShowSchema['room']['columns']}
+                                            dataSource={res.rentpactrooms}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="合同班线" key="classLine">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.financeShowSchema['line']['columns']}
+                                            dataSource={res.rentpactlines}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="合同优惠冲抵" key="policy">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.financeShowSchema['policy']['columns']}
+                                            dataSource={res.rentpactpromotions}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="履约保证金冲抵" key="contractBond">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.financeShowSchema['contractBond']['columns']}
+                                            dataSource={res.offsetmargins}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="合同附件" key="contractAttachment">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={tableAttachmentColumns}
+                                            dataSource={res.rentpactattachments}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
 
-                        </Tabs>
+                            </Tabs>
 
-                        {/* 客户数据录入*/}
-                        <FormLayout
-                            schema={this.financeShowSchema['contractTabs']}
-                            form={this.props.form}
-                            fromLayoutStyle="g-border-bottom" />
+                            {/* 客户数据录入*/}
+                            <FormLayout
+                                schema={this.financeShowSchema['contractTabs']}
+                                form={this.props.form} />
+                        </Cards>
 
                         {/* 分期明细 */}
-                        <div className="g-padding-lr g-mb20">
+                        <Cards title={"分期明细"}>
                             <FormLayout
                                 schema={this.financeShowSchema['stages']['form']}
                                 form={this.props.form}
@@ -330,7 +331,7 @@ class FinanceShow extends Component {
                                 bordered={true}
                                 parentHandleClick={this.parentHandleClick}
                                 pagination={false} />
-                        </div>
+                        </Cards>
                     </Form>
                 </section>
             )
