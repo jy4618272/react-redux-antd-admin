@@ -197,7 +197,7 @@ class ButtonGroup extends Component {
             onClick: self.handleClick.bind(self)
         }
         return (
-            <div style={{ margin: '10px 20px' }}>
+            <div className="g-mb10">
                 <Button {...buttonType} {...xzzc} ref="xzzc">新增资产</Button>
                 <Button {...buttonType} {...db} ref="db">调拨</Button>
                 <Button {...buttonType} {...xz} ref="xz">闲置</Button>

@@ -484,7 +484,7 @@ class Lease extends Component {
                     <TabPane tab="房间设置" key="room">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={roomData['room']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -565,7 +565,7 @@ class Lease extends Component {
                     <TabPane tab="班线管理" key="classLine">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema['classLine']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -588,7 +588,7 @@ class Lease extends Component {
                     <TabPane tab="政策优惠" key="policy">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema['policy']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -611,7 +611,7 @@ class Lease extends Component {
                     <TabPane tab="客户经理列表" key="accountManager">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema['accountManager']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -634,7 +634,7 @@ class Lease extends Component {
                     <TabPane tab="合同模板配置" key="contractTpl">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema['contractTpl']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -657,7 +657,7 @@ class Lease extends Component {
                     {/*<TabPane tab="审核人配置" key="auditPerson">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.querySchema['auditPerson']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />

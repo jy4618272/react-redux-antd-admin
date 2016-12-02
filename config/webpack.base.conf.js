@@ -4,10 +4,10 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var src = path.resolve(__dirname, '../src'); // 源码目录
 var commonPath = {
-	dist: path.resolve(__dirname, '../dist'), // build 后输出目录
-	indexHTML: path.join(src, 'index.html'), // 入口基页
-	staticDir: path.resolve(__dirname, '../static'), // 无需处理的静态资源目录
-	module: path.resolve(__dirname, '../node_modules') // 无需处理的静态资源目录
+	dist: path.resolve(__dirname, '../dist'), 			// build 后输出目录
+	indexHTML: path.join(src, 'index.html'), 			// 入口基页
+	staticDir: path.resolve(__dirname, '../static'), 	// 无需处理的静态资源目录
+	module: path.resolve(__dirname, '../node_modules') 	// 无需处理的静态资源目录
 };
 
 // 将babel-loader的配置独立出来, 因为webpack的限制: http://stackoverflow.com/questions/33117136/how-to-add-a-query-to-a-webpack-loader-with-multiple-loaders
@@ -47,7 +47,8 @@ module.exports = {
 			HOC: path.join(src, 'utils/HoC'),
 			MIXIN: path.join(src, 'utils/mixins'),
 			SCHEMA: path.join(src, 'schema'),
-			STYLE: path.join(src, 'style')
+			STYLE: path.join(src, 'style'),
+			THIRDPARTY: path.join(src, 'third-party')
 		}
 	},
 	module: {
@@ -73,7 +74,7 @@ module.exports = {
 			},
 			{
                 test: /\.(ttf|eot|svg|woff?)(\?[a-z0-9=&.]+)?$/,
-                loader: 'file-loader?limit=10000&name=fonts/[name].[ext]?v=[hash:8]'
+                loader: 'file-loader?limit=10000&name=font/[name].[ext]?v=[hash:8]'
             },
 			{
 				test: /\.(png|jpg|svg)$/,

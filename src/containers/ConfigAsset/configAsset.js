@@ -10,8 +10,8 @@ import {
 
 const TabPane = Tabs.TabPane
 
-import AssetAreaConfig from 'CONTAINER/ConfigAsset/tabComponent/assetAreaConfig'
-import AssetSortConfig from 'CONTAINER/ConfigAsset/tabComponent/assetSortConfig'
+import AssetAreaConfig from './tabComponent/assetAreaConfig'
+import AssetSortConfig from './tabComponent/assetSortConfig'
 
 class ConfigAsset extends Component {
     constructor() {

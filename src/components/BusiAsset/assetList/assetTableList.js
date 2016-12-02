@@ -46,10 +46,7 @@ class AssetTableList extends Component {
         const self = this
         // 表格头
         const columns = this.getTableCol()
-        // 样式
-        const containerStyle = {
-            margin: '0 20px'
-        }
+        
         // 选择表格配置
         const rowSelection = {
             type: 'checkbox',
@@ -59,7 +56,7 @@ class AssetTableList extends Component {
             }
         }
         return (
-            <div style={containerStyle}>
+            <div>
                 <Table
                     rowClassName={(record, index) => 'assetTableListRowClassName'}
                     onRowClick={this.props.selectTableRow}

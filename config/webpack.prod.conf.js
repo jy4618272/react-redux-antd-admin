@@ -11,7 +11,7 @@ rimraf.sync(config.commonPath.dist);
 // naming output files with hashes for better caching.
 // dist/index.html will be auto-generated with correct URLs.
 config.output.filename = '[name].js?v=[chunkhash:8]';
-config.output.publicPath = 'assets';
+// config.output.publicPath = '';
 config.output.chunkFilename = '[id].js?v=[chunkhash:8]';
 
 config.devtool = SOURCE_MAP ? 'source-map' : false;

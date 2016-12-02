@@ -7,6 +7,7 @@ var webpack = require('webpack'),
     SOURCE_MAP = false;
 
 config.output.filename = '[name].js';
+// config.output.publicPath = 'assets';
 config.output.chunkFilename = '[id].js';
 
 // config.devtool = SOURCE_MAP ? 'eval-source-map' : false;
@@ -26,7 +27,7 @@ function generateExtractLoaders(loaders) {
   }).join('!');
 }
 
-// config.output.publicPath = '/';
+config.output.publicPath = '/';
 
 config.plugins = (config.plugins || []).concat([
   new OpenBrowserPlugin({ url: 'http://localhost:3000' }),

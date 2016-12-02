@@ -449,7 +449,7 @@ class ContractPay extends Component {
                     <TabPane tab="财务未确认合同" key="notConfirmed">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.paySchema['notConfirmed']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
@@ -470,7 +470,7 @@ class ContractPay extends Component {
                     <TabPane tab="财务已确认合同" key="confirmed">
                         <InnerForm
                             ref="form"
-                            formStyle="g-mb20 m-advance-filter"
+                            formStyle="m-advance-filter"
                             schema={this.paySchema['confirmed']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />

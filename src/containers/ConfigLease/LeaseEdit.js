@@ -21,6 +21,8 @@ import {
     InnerTable
 } from 'COMPONENT'
 
+import ContractTemplateEdit from './contractTemplateEdit'
+
 const mapDispatchToProps = (dispatch) => ({
     actionLease: bindActionCreators(actionLease, dispatch)
 })
@@ -237,7 +239,7 @@ class LeaseEdit extends Component {
             actionLease.fetchManagerEdit({
                 salerid: id
             })
-        } else if (this.editType === 'contractTpl') {
+        } else if (this.editType === 'contractTpl') {  // 下版本注释
             actionLease.fetchContractEdit({
                 pactprintmodelid: id
             })
@@ -273,15 +275,14 @@ class LeaseEdit extends Component {
             this.dataSource = policyEdit
         } else if (this.editType === 'accountManager') {
             this.dataSource = accountManagerEdit
-        } else if (this.editType === 'contractTpl') {
+        } else if (this.editType === 'contractTpl') { // 下版本注释
             this.dataSource = contractTplEdit
         }
 
-        if (this.dataSource.loading) {
-            return <Loading />
-        }
-
         if (this.editType === 'room') {
+            if (this.dataSource.loading) {
+                return <Loading />
+            }
             this.dataSource['room'][0].options = areaData.data
             const roomSchema = this.dataSource['tableColumns'].concat([
                 {
@@ -331,9 +332,14 @@ class LeaseEdit extends Component {
                     </InnerForm>
                 </section>
             )
-        } else if (this.editType == 'contractTpl') {
-            return ( <ContractTemplateAdd operateType="edit" /> )
+        } else if (this.editType == 'contractTpl1') {
+            // 下版本改成contractTpl
+            return (<ContractTemplateEdit id={this.props.params.id} />)
         } else {
+            if (this.dataSource.loading) {
+                return <Loading />
+            }
+
             if (this.editType === 'policy') {
                 this.editSchema['policy'][5].options = areaData.data
             }

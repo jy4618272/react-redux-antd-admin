@@ -3,6 +3,8 @@
  * import UeditorComponent from 'COMPONENT/Ueditor/index'
  * 
  * 
+ * 此文件有问题，暂时不能用
+ * 
  */
 
 import React, { Component } from 'react'
@@ -32,30 +34,38 @@ class UeditorComponent extends Component {
 
     /**
      * DOM挂载完成后，调用编辑器初始化函数
-     *  */ 
-    componentDidMount() {
+     *  */
+    componentDidMount() {       
         this.initUeditor()
     }
 
+    /**
+     * 异步，需要更新编辑区的内容
+     * 
+     */
+    componentWillUpdate() {
+        const { initContent } = this.props
+        this.state.ue.setContent(initContent)
+        // this.setState({})  // 触发render
+    }
     /**
      * 初始化编辑器函数
      * 
      */
     initUeditor() {
         const self = this
+        const { getUeditorContent } = this.props
 
         // 初始化一个编辑器
         var ue = UE.getEditor('myUeditor', this.getUeditorConfig());
         // 把编辑器实例的引用放到state中
-        this.setState({
-            ue: ue
-        })
+        this.state.ue = ue
         // 监测编辑器的内容改变事件，把内容同步到父组件
         ue.addListener('contentChange', function(editor) {
             // 编辑区的内容
             let html = ue.getContent()
             // getUeditorContent 时父组件传入的函数
-            self.props.getUeditorContent(html)
+            getUeditorContent(html)
         });
     }
     /**
@@ -77,14 +87,13 @@ class UeditorComponent extends Component {
      * 
      */
     render() {
-        const { initContent } = this.props
         return (
             <Row>
                 <Col>
                     {/* 编辑器容器 */}
                     <script id="myUeditor" name="myUeditor" type="text/plain">
                         {/* 初始内容 */}
-                        {initContent}
+                        
                     </script>
                 </Col>
             </Row>

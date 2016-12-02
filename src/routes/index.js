@@ -6,17 +6,27 @@ import {
 	hashHistory
 } from 'react-router'
 
-// 路由指向
+/******************** 首页及框架 ********************/
+// 架构
 import Layout from 'CONTAINER/Layout'
+// 首页
 import Home from 'CONTAINER/Home'
+
+/******************** 审批 ********************/
+import Login from 'CONTAINER/Login/login'
+
+/******************** 审批 ********************/
 import Approval from 'CONTAINER/Approval/approval'
 import ApprovalShow from 'CONTAINER/Approval/ApprovalDetail'
 
+
+/******************** 业务 ********************/
 import Busi from 'CONTAINER/Home/Busi'
+// 财务
 import BusiFinance from 'CONTAINER/BusiFinance'
 import BusiFinanceList from 'CONTAINER/BusiFinance/FinanceList'
 import BusiFinanceShow from 'CONTAINER/BusiFinance/FinanceShow'
-
+// 租赁
 import BusiLease from 'CONTAINER/BusiLease'
 import BusiLeaseInsert from 'CONTAINER/BusiLease/insert'
 import BusiLeaseShow from 'CONTAINER/BusiLease/LeaseShow'
@@ -25,28 +35,36 @@ import ContractRenew from 'CONTAINER/BusiLease/Contract/renew'
 import ContractChange from 'CONTAINER/BusiLease/Contract/change'
 import ContractRent from 'CONTAINER/BusiLease/Contract/rent'
 import ContractPay from 'CONTAINER/BusiLease/Contract/pay'
-
-// 资产业务
+// 资产
 import AssetList from 'CONTAINER/BusiAsset/assetList'
 import AssetOperate from 'CONTAINER/BusiAsset/assetOperate'
 import AddAsset from 'CONTAINER/BusiAsset/newAsset'
 import CheckAsset from 'CONTAINER/BusiAsset/checkAsset'
 import AssetDetail from 'CONTAINER/BusiAsset/assetDetail'
-// 资产配置
-import ConfigAsset from 'CONTAINER/ConfigAsset/configAsset'
 
-// 打印
-import PrintPage from 'CONTAINER/Print/index'
 
+/******************** 配置 ********************/
+// 基地
 import ConfigBase from 'CONTAINER/ConfigBase/insert'
+// 权限
 import ConfigRights from 'CONTAINER/ConfigRights'
+// 租赁
 import ConfigLease from 'CONTAINER/ConfigLease'
 import ConfigLeaseAdd from 'CONTAINER/ConfigLease/LeaseAdd'
 import ConfigLeaseEdit from 'CONTAINER/ConfigLease/LeaseEdit'
 import ConfigLeaseDictionary from 'CONTAINER/ConfigLease/Dictionary'
 import ConfigLeaseDetail from 'CONTAINER/ConfigLease/LeaseDetail'
+// 资产
+import ConfigAsset from 'CONTAINER/ConfigAsset/configAsset'
 
+
+/******************** 打印 ********************/
+import PrintPage from 'CONTAINER/Print/index'
+
+
+/******************** 404 ********************/
 import NotFound from 'CONTAINER/NotFound'
+
 
 /* react router 2.x 必须配置 browserHistory */
 const routes = (
@@ -60,9 +78,9 @@ const routes = (
 				<Route path=":id" commonName="common" component={ApprovalShow} />
 			</Route>
 
+			{/* 业务 */}
 			<Route path="busi">
 				<IndexRoute path="busi" component={Busi} />
-
 				{/* 财务-财务详情*/}
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
 				<Route path="busi_finance/finance_list" tableName="busiFinance" component={BusiFinanceList} />
@@ -93,6 +111,7 @@ const routes = (
 
 			</Route>
 
+			{/* 配置 */}
 			<Route path="config">
 				<Route path="config_base" tableName="configBase" component={ConfigBase} />
 				<Route path="config_rights" tableName="configRights" component={ConfigRights} />,
@@ -105,11 +124,17 @@ const routes = (
 			</Route>
 		</Route>
 
+		{/* 登录 */}
+		<Route path="login">
+			<IndexRoute component={Login} />
+		</Route>
+
 		{/* 打印页面 */}
 		<Route path="print">
 			<Route path="printPreview/:id" component={PrintPage}/>	
 		</Route>
 
+		{/* 404 */}
 		<Route path="*" component={NotFound} />
 	</Router>
 );

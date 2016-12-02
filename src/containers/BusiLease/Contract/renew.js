@@ -28,6 +28,7 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
     Loading,
+    Cards,
     FormLayout,
     InnerTable,
     WorkFlow,
@@ -65,7 +66,7 @@ class ContractInsert extends Component {
             prepactcode: 0,
             pactprintmodelid: 0,
             partyid: 0,
-            moneyget:0,
+            moneyget: 0,
             partyname: '',
             modalOpenBtn: 'add',
             modalName: 'room',
@@ -488,125 +489,6 @@ class ContractInsert extends Component {
             })
         }
     }
-
-    /* 表格按钮点击
-    parentHandleClick = (key) => {
-        const {
-            fetchRoomTable,
-            fetchFilterClassLineTable,
-            fetchBusiPolicyTable
-        } = this.props.actionLease
-
-        const {
-            fetchFilterBondTable,
-            fetchStagesInfo
-        } = this.props.action
-
-        const {getFieldValue} = this.props.form
-
-        if (key === 'addRoom' && this.state.tabsStatus === 'room') {
-            this.setState({
-                modalVisible: true,
-                modalWidth: '900',
-                modalTitle: '选择房间',
-                modalName: 'room'
-            })
-            this.select({
-                status: '未出租'
-            }, 10, 0, fetchRoomTable)
-        } else if (key === 'addLine' && this.state.tabsStatus === 'classLine') {
-            this.setState({
-                modalName: 'classLine',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择班线'
-            })
-            this.select({
-                status: '开启'
-            }, 10, 0, fetchFilterClassLineTable)
-        } else if (key === 'addPolicy' && this.state.tabsStatus === 'policy') {
-            this.setState({
-                modalName: 'policy',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择优惠'
-            })
-            this.select({
-                status: '开启'
-            }, 10, 0, fetchBusiPolicyTable)
-        } else if (key === 'addBond' && this.state.tabsStatus === 'contractBond') {
-            if ((this.props.form.getFieldValue('partyid') === 0) && (this.state.partyid === 0)) {
-                notification.error({
-                    message: '请选择客户',
-                    description: '选择客户后才能新增保证金'
-                })
-                return false;
-            }
-
-            this.setState({
-                modalName: 'contractBond',
-                modalWidth: '900',
-                modalVisible: true,
-                modalTitle: '选择保证金'
-            })
-            this.select({
-                partyid: this.state.partyid,
-                status: '开启'
-            }, 10, 0, fetchFilterBondTable)
-        } else if (key === 'makeDefault') {
-            const {form} = this.props
-            const oldObj = form.getFieldsValue()
-            const newObj = filterQueryObj(oldObj, 'YYYY-MM-DD')
-            newObj['totalstages'] = parseInt(newObj['totalstages'].match(/\d+/)[0])
-            console.log('保存表单字段', newObj)
-
-            this.props.form.validateFieldsAndScroll((errors, values) => {
-                if (errors) {
-                    notification.error({
-                        message: '表单填写有误',
-                        description: '请按要求正确填写表单'
-                    })
-                    return false;
-                } else {
-                    // 传给后端字段
-                    const tmp = Object.assign({}, {
-                        rentpact: JSON.stringify((newObj)),
-                        rentpactrooms: JSON.stringify(this.state.dataRoom),
-                        rentpactlines: JSON.stringify(this.state.dataLine),
-                        rentpactpromotions: JSON.stringify(this.state.dataPolicy),
-                        offsetmargins: JSON.stringify(this.state.dataBond)
-                    })
-                    console.log('传给后端数据：', tmp)
-
-                    xhr('post', paths.leasePath + '/rentpactfullinfocs/reloadRentPactPlan', tmp, (res) => {
-                        const hide = message.loading('正在查询...', 0)
-                        console.log('获取【分期】数据：', res)
-                        if (res.result === 'success') {
-                            this.setState({
-                                isStagesShow: false,
-                                stagesTableData: res.data
-                            })
-                        } else {
-                            errHandler(res.msg)
-                        }
-                        hide()
-                    })
-                }
-            })
-        } else if (key === 'stagesShowInsert') {
-            this.setState({
-                modalOpenBtn: key,
-                modalVisible: true,
-                modalWidth: '600',
-                modalTitle: '新增第' + this.state.stagesNum + '期明细',
-                modalName: 'stagesShowModal'
-            })
-        } else if (key === 'stagesShowClose') {
-            this.setState({
-                isStagesShow: false
-            })
-        }
-    }*/
 
     // 获取客户信息
     handleGetOrganization = () => {
@@ -1315,107 +1197,107 @@ class ContractInsert extends Component {
                     <FormLayout
                         schema={busiLease.contractFrom}
                         form={this.props.form}
-                        fromLayoutStyle="g-border-bottom"
                         parentHandleSelect={this.parentHandleSelect} />
 
                     {/* 合同流程 */}
-                    <section className="g-border-bottom">
+                    <Cards title={"审核流程"}>
                         <WorkFlow {...workFlowProps} />
-                    </section>
+                    </Cards>
 
                     {/* 客户名称 */}
-                    <div className="g-border-bottom">
+                    <Cards title={"客户信息"}>
                         <FormLayout
                             parentHandleInput={this.parentHandleInput}
                             schema={this.addSchema['organization']}
                             form={this.props.form} />
-                    </div>
+                    </Cards>
 
-                    {/* 合同号 */}
-                    <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
-                        <TabPane tab="合同房间" key="room">
-                            <div className="g-padding-lr g-mb20">
-                                {/*
+                    <Cards title={"合同信息"}>
+                        {/* 合同号 */}
+                        <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                            <TabPane tab="合同房间" key="room">
+                                <div className="g-padding-lr g-mb20">
+                                    {/*
+                                        <div className="button-group g-mb10">
+                                            <Button onClick={this.handleAddRoom}>新增房间</Button>
+                                        </div>    
+                                    */}
+                                    <InnerTable
+                                        columns={tableColumnsRoom}
+                                        dataSource={this.state.dataRoom}
+                                        bordered={true}
+                                        parentHandleClick={this.parentHandleClick}
+                                        pagination={false} />
+                                </div>
+                            </TabPane>
+                            <TabPane tab="合同班线" key="classLine">
+                                <div className="g-padding-lr g-mb20">
+                                    {/*
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddRoom}>新增房间</Button>
-                                    </div>    
-                                */}
-                                <InnerTable
-                                    columns={tableColumnsRoom}
-                                    dataSource={this.state.dataRoom}
-                                    bordered={true}
-                                    parentHandleClick={this.parentHandleClick}
-                                    pagination={false} />
-                            </div>
-                        </TabPane>
-                        <TabPane tab="合同班线" key="classLine">
-                            <div className="g-padding-lr g-mb20">
-                                {/*
-                                <div className="button-group g-mb10">
-                                    <Button onClick={this.handleAddLine}>新增班线</Button>
+                                        <Button onClick={this.handleAddLine}>新增班线</Button>
+                                    </div>
+                                    */}
+                                    <InnerTable
+                                        columns={tableColumnsLine}
+                                        dataSource={this.state.dataLine}
+                                        bordered={true}
+                                        pagination={false} />
                                 </div>
-                                */}
-                                <InnerTable
-                                    columns={tableColumnsLine}
-                                    dataSource={this.state.dataLine}
-                                    bordered={true}
-                                    pagination={false} />
-                            </div>
-                        </TabPane>
-                        <TabPane tab="合同优惠冲抵" key="policy">
-                            <div className="g-padding-lr g-mb20">
-                                <div className="button-group g-mb10">
-                                    <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
+                            </TabPane>
+                            <TabPane tab="合同优惠冲抵" key="policy">
+                                <div className="g-padding-lr g-mb20">
+                                    <div className="button-group g-mb10">
+                                        <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
+                                    </div>
+                                    <InnerTable
+                                        columns={tableColumnsPolicy}
+                                        dataSource={this.state.dataPolicy}
+                                        schema={this.addSchema['policy']['topButtons']}
+                                        bordered={true}
+                                        pagination={false} />
                                 </div>
-                                <InnerTable
-                                    columns={tableColumnsPolicy}
-                                    dataSource={this.state.dataPolicy}
-                                    schema={this.addSchema['policy']['topButtons']}
-                                    bordered={true}
-                                    pagination={false} />
-                            </div>
-                        </TabPane>
-                        <TabPane tab="履约保证金冲抵" key="contractBond">
-                            <div className="g-padding-lr g-mb20">
-                                <div className="button-group g-mb10">
-                                    <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
+                            </TabPane>
+                            <TabPane tab="履约保证金冲抵" key="contractBond">
+                                <div className="g-padding-lr g-mb20">
+                                    <div className="button-group g-mb10">
+                                        <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
+                                    </div>
+                                    <InnerTable
+                                        columns={tableColumnsBond}
+                                        dataSource={this.state.dataBond}
+                                        schema={this.addSchema['contractBond']['topButtons']}
+                                        bordered={true}
+                                        pagination={false} />
                                 </div>
-                                <InnerTable
-                                    columns={tableColumnsBond}
-                                    dataSource={this.state.dataBond}
-                                    schema={this.addSchema['contractBond']['topButtons']}
-                                    bordered={true}
-                                    pagination={false} />
-                            </div>
-                        </TabPane>
-                        <TabPane tab="合同附件" key="contractAttachment">
-                            <div className="g-padding-lr g-mb20">
-                                <div className="g-mb10">
-                                    <Upload {...uploadProps}>
-                                        <Button type="ghost">
-                                            <Icon type="upload" />文件上传
-                                    </Button>
-                                    </Upload>
+                            </TabPane>
+                            <TabPane tab="合同附件" key="contractAttachment">
+                                <div className="g-padding-lr g-mb20">
+                                    <div className="g-mb10">
+                                        <Upload {...uploadProps}>
+                                            <Button type="ghost">
+                                                <Icon type="upload" />文件上传
+                                        </Button>
+                                        </Upload>
+                                    </div>
+                                    <InnerTable
+                                        columns={tableColumnsAttachment}
+                                        dataSource={this.state.dataAttachment}
+                                        bordered={true}
+                                        pagination={false} />
                                 </div>
-                                <InnerTable
-                                    columns={tableColumnsAttachment}
-                                    dataSource={this.state.dataAttachment}
-                                    bordered={true}
-                                    pagination={false} />
-                            </div>
-                        </TabPane>
-                    </Tabs>
+                            </TabPane>
+                        </Tabs>
 
-                    {/* 客户数据录入*/}
-                    <FormLayout
-                        schema={busiLease.contractTabs}
-                        form={this.props.form}
-                        parentHandleBlur={this.parentHandleBlur}
-                        parentHandleDateChange={this.parentHandleDateChange}
-                        fromLayoutStyle="g-border-bottom" />
+                        {/* 客户数据录入*/}
+                        <FormLayout
+                            schema={busiLease.contractTabs}
+                            form={this.props.form}
+                            parentHandleBlur={this.parentHandleBlur}
+                            parentHandleDateChange={this.parentHandleDateChange} />
+                    </Cards>
 
                     {/* 分期明细 */}
-                    <div className="g-padding-lr g-mb20">
+                    <Cards title={"分期明细"}>
                         <FormLayout
                             schema={this.addSchema['stages']['form']}
                             form={this.props.form}
@@ -1449,7 +1331,8 @@ class ContractInsert extends Component {
                             bordered={true}
                             parentHandleClick={this.parentHandleClick}
                             pagination={false} />
-                    </div>
+                    </Cards>
+
                     <div className="g-tal button-group">
                         <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitRenew}>续租提交</Button>*/}

@@ -3,9 +3,12 @@ import './cards.less';
 
 class Cards extends Component {
     render() {
+        const {
+            title
+        } = this.props
         return (
             <section className="cards-default">
-                <div className="cards-hd">{this.props.title}</div>
+                { title ?<div className="cards-hd">{title}</div> : '' }
                 <div className="cards-bd">
                     {this.props.children}
                 </div>

@@ -19,6 +19,7 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 import {
     Err,
     Loading,
+    Cards,
     WorkFlow,
     InnerTable,
     FormLayout
@@ -163,7 +164,7 @@ class FinanceShow extends Component {
                     // 流程
                     action.fetchApprovalWorkFlowService({
                         id: id,
-                        servicetype: type ==='rentpact' ? '合同' : '履约保证金'
+                        servicetype: type === 'rentpact' ? '合同' : '履约保证金'
                     })
 
                     const newObj = {}
@@ -191,14 +192,14 @@ class FinanceShow extends Component {
      * 获取合同数据
      *  合同模版是通过富文本编辑器编辑的，所见即所得，通过ajax获取之后直接放到localStorage中
      *  DOM挂载完成后，获取合同数据，然后写入localStorage，所以需要在componentDidMount中调用此方法
-     *  */ 
+     *  */
     getPrintContractData() {
         /**
          * 获取合同数据
          *  获取id
          */
         const { id } = this.props.params
-        
+
         xhr('post', paths.leasePath + '/pactprintmodelcs/getPrintTextByRentPactId', {
             rentpactid: id
         }, (res) => {
@@ -253,75 +254,76 @@ class FinanceShow extends Component {
                             fromLayoutStyle="g-border-bottom" />
 
                         { /* 流程 */}
-                        <section className="g-border-bottom">
+                        <Cards title={"审核流程"}>
                             <WorkFlow flow={approval.workFlow} />
-                        </section> 
+                        </Cards>
 
                         {/* 客户名称 */}
-                        <div className="g-border-bottom">
+                        <Cards title={"客户信息"}>
                             <FormLayout
                                 schema={this.contractShowSchema['organization']}
                                 form={this.props.form} />
-                        </div>
+                        </Cards>
 
                         {/* 合同号 */}
-                        <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
-                            <TabPane tab="合同房间" key="room">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.contractShowSchema['room']['columns']}
-                                        dataSource={res.rentpactrooms}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="合同班线" key="classLine">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.contractShowSchema['line']['columns']}
-                                        dataSource={res.rentpactlines}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="合同优惠冲抵" key="policy">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.contractShowSchema['policy']['columns']}
-                                        dataSource={res.rentpactpromotions}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="履约保证金冲抵" key="contractBond">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={this.contractShowSchema['contractBond']['columns']}
-                                        dataSource={res.offsetmargins}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
-                            <TabPane tab="合同附件" key="contractAttachment">
-                                <div className="g-padding-lr g-mb20">
-                                    <InnerTable
-                                        columns={tableAttachmentColumns}
-                                        dataSource={res.rentpactattachments}
-                                        bordered={true}
-                                        pagination={false} />
-                                </div>
-                            </TabPane>
+                        <Cards title={"合同信息"}>
+                            <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
+                                <TabPane tab="合同房间" key="room">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.contractShowSchema['room']['columns']}
+                                            dataSource={res.rentpactrooms}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="合同班线" key="classLine">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.contractShowSchema['line']['columns']}
+                                            dataSource={res.rentpactlines}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="合同优惠冲抵" key="policy">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.contractShowSchema['policy']['columns']}
+                                            dataSource={res.rentpactpromotions}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="履约保证金冲抵" key="contractBond">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={this.contractShowSchema['contractBond']['columns']}
+                                            dataSource={res.offsetmargins}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
+                                <TabPane tab="合同附件" key="contractAttachment">
+                                    <div className="g-padding-lr g-mb20">
+                                        <InnerTable
+                                            columns={tableAttachmentColumns}
+                                            dataSource={res.rentpactattachments}
+                                            bordered={true}
+                                            pagination={false} />
+                                    </div>
+                                </TabPane>
 
-                        </Tabs>
+                            </Tabs>
 
-                        {/* 客户数据录入*/}
-                        <FormLayout
-                            schema={this.contractShowSchema['contractTabs']}
-                            form={this.props.form}
-                            fromLayoutStyle="g-border-bottom" />
+                            {/* 客户数据录入*/}
+                            <FormLayout
+                                schema={this.contractShowSchema['contractTabs']}
+                                form={this.props.form} />
+                        </Cards>
 
                         {/* 分期明细 */}
-                        <div className="g-padding-lr g-mb20">
+                        <Cards title={"分期明细"}>
                             <FormLayout
                                 schema={this.contractShowSchema['stages']['form']}
                                 form={this.props.form}
@@ -351,11 +353,11 @@ class FinanceShow extends Component {
                                 bordered={true}
                                 parentHandleClick={this.parentHandleClick}
                                 pagination={false} />
-                        </div>
+                        </Cards>
 
                         {/* 打印合同 */}
                         <div className="g-tac g-mt20">
-                            <Link to={ `print/printPreview/${this.props.params.id}` } target="_blank">
+                            <Link to={`print/printPreview/${this.props.params.id}`} target="_blank">
                                 <Button>打印合同</Button>
                             </Link>
                         </div>
