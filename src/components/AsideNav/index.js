@@ -5,10 +5,10 @@ import { Menu, Icon, Popover, Button } from 'antd'
 const SubMenu = Menu.SubMenu
 const MenuItemGroup = Menu.ItemGroup
 const MenuItem = Menu.Item
-
+import { Icons } from 'COMPONENT'
 import './index.less'
 
-class SlideNav extends Component {
+class AsideNav extends Component {
     constructor(props) {
         super(props)
         // alert(localStorage.slideMenuCurrent)
@@ -33,7 +33,7 @@ class SlideNav extends Component {
                 { level.child ? level.name : 
                     <Link to={`/${parsePath}`} className="animated">
                         <Popover placement="right" title="" content={level.name} overlayClassName="popover-dark" trigger="hover">
-                            <Button className="button-clear"><i className={`icon iconfont ${level.icon}`}></i></Button>
+                            <Button className="button-clear"><Icons type={level.icon} /></Button>
                         </Popover>
                         <span>{level.name}</span>
                     </Link> 
@@ -119,7 +119,7 @@ class SlideNav extends Component {
     }
 }
 
-export default SlideNav
+export default AsideNav
 
 
 

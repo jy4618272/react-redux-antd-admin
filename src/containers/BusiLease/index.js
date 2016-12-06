@@ -5,11 +5,8 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
-import {
-    RoomState,
-    Manage
-} from 'COMPONENT/BusiLease'
-
+import RoomState from './Tabs/RoomState'
+import Manage from './Tabs/Manage'
 
 class BusiLease extends Component {
     constructor(props) {

@@ -18,6 +18,7 @@ import actionLease from 'ACTION/configLease'
 
 import Error from 'COMPONENT/Error'
 import {
+    Icons,
     InnerForm,
     InnerTable,
     InnerPagination
@@ -453,19 +454,19 @@ class Lease extends Component {
         }
 
         const tableRoomControl = <div className="button-group g-mb10">
-            <Button onClick={this.handleAddClick}>新增</Button>
-            <Button disabled={!isEdit} onClick={this.handleEditClick}>修改</Button>
-            <Button disabled={!isLie} onClick={this.handleLieClick}>闲置</Button>
-            <Button disabled={!isVoid} onClick={this.handleVoidClick}>作废</Button>
+            <Button onClick={this.handleAddClick}><Icons type="add" />新增</Button>
+            <Button disabled={!isEdit} onClick={this.handleEditClick}><Icons type="edit" />修改</Button>
+            <Button disabled={!isLie} onClick={this.handleLieClick}><Icons type="lie" />闲置</Button>
+            <Button disabled={!isVoid} onClick={this.handleVoidClick}><Icons type="void" />作废</Button>
             {/*<Button disabled={!oneSelected} onClick={this.handleHistoryClick}>历史</Button>*/}
         </div>
 
         const tableOtherControl = <div className="button-group g-mb10">
-            <Button onClick={this.handleAddClick}>新增</Button>
-            <Button disabled={!oneSelected} onClick={this.handleEditClick}>修改</Button>
-            <Button disabled={!isOpen} onClick={this.handleOpenClick}>开启</Button>
-            <Button disabled={!isClose} onClick={this.handleCloseClick}>关闭</Button>
-            {this.status === 'contractTpl' ? <Button className="g-fr" onClick={this.handleDictionary}>字典查询</Button> : ''}
+            <Button onClick={this.handleAddClick}><Icons type="add" />新增</Button>
+            <Button disabled={!oneSelected} onClick={this.handleEditClick}><Icons type="edit" />修改</Button>
+            <Button disabled={!isOpen} onClick={this.handleOpenClick}><Icons type="open" />开启</Button>
+            <Button disabled={!isClose} onClick={this.handleCloseClick}><Icons type="close" />关闭</Button>
+            {this.status === 'contractTpl' ? <Button className="g-fr" onClick={this.handleDictionary}><Icons type="dictionary" />字典查询</Button> : ''}
         </div>
 
         if (this.status === 'room') {
@@ -543,7 +544,7 @@ class Lease extends Component {
                             </TabPane>
                             <TabPane tab="作废" key="searchVoid">
                                 <div className="button-group g-mb10">
-                                    <Button onClick={this.handleAddClick}>新增</Button>
+                                    <Button onClick={this.handleAddClick}><Icons type="add" />新增</Button>
                                 </div>
                                 <InnerTable
                                     loading={roomData.tableLoading}

@@ -29,6 +29,7 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 import {
     Loading,
     Cards,
+    Icons,
     FormLayout,
     InnerTable,
     WorkFlow,
@@ -1247,7 +1248,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同优惠冲抵" key="policy">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
+                                        <Button onClick={this.handleAddPolicy}><Icons type="add" />新增合同优惠</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsPolicy}
@@ -1260,7 +1261,7 @@ class ContractInsert extends Component {
                             <TabPane tab="履约保证金冲抵" key="contractBond">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
+                                        <Button onClick={this.handleAddBond}><Icons type="add" />新增保证金冲抵</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsBond}
@@ -1310,7 +1311,7 @@ class ContractInsert extends Component {
                                 <div className="m-stages-show">
                                     <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleStagesInsert}><Icon type="plus" />新增明细</Button>
+                                        <Button onClick={this.handleStagesInsert}><Icons type="add" />新增明细</Button>
                                         <Button onClick={this.handleStagesClose}><Icon type="close" />关闭明细</Button>
                                     </div>
                                     <InnerTable

@@ -18,6 +18,7 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
     Err,
+    Icons,
     Loading,
     Cards,
     WorkFlow,
@@ -356,9 +357,9 @@ class FinanceShow extends Component {
                         </Cards>
 
                         {/* 打印合同 */}
-                        <div className="g-tac g-mt20">
+                        <div className="g-tac button-group g-mt20">
                             <Link to={`print/printPreview/${this.props.params.id}`} target="_blank">
-                                <Button>打印合同</Button>
+                                <Button><Icons type="print-a" />打印合同</Button>
                             </Link>
                         </div>
                     </Form>

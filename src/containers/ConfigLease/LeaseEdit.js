@@ -15,7 +15,8 @@ import actionLease from 'ACTION/configLease'
 
 import {
     Loading,
-    Error,
+    Icons,
+    Err,
     ModalForm,
     InnerForm,
     InnerTable
@@ -263,7 +264,7 @@ class LeaseEdit extends Component {
 
         if (!this.inited) {
             return (
-                <Error errorMsg={this.errorMsg} />
+                <Err errorMsg={this.errorMsg} />
             )
         }
 
@@ -320,7 +321,7 @@ class LeaseEdit extends Component {
 
                         <div className="g-mt20">
                             <div className="button-group g-mb10">
-                                <Button onClick={this.handleAddGoods}>新增物品</Button>
+                                <Button onClick={this.handleAddGoods}><Icons type="add" />新增物品</Button>
                             </div>
                             <InnerTable
                                 columns={roomSchema}

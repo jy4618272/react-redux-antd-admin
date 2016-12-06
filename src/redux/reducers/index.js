@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import store from 'STORE'
+import login from 'REDUCER/login'
 import layout from 'REDUCER/layout'
 import userInfo from 'REDUCER/userInfo'
 import menuList from 'REDUCER/menuList'
@@ -17,6 +18,7 @@ import configRights from 'REDUCER/configRights'
 // ================================
 const syncReducers = {
 	router: routerReducer,
+	login: login,
 	layout: layout,
 	userInfo: userInfo,
 	menuList: menuList,

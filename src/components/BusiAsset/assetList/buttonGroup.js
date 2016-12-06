@@ -20,6 +20,7 @@ import {
     Popconfirm,
     message
 } from 'antd'
+import { Icons } from 'COMPONENT'
 
 class ButtonGroup extends Component {
     constructor() {
@@ -198,10 +199,10 @@ class ButtonGroup extends Component {
         }
         return (
             <div className="g-mb10">
-                <Button {...buttonType} {...xzzc} ref="xzzc">新增资产</Button>
+                <Button {...buttonType} {...xzzc} ref="xzzc"><Icons type="add" />新增资产</Button>
                 <Button {...buttonType} {...db} ref="db">调拨</Button>
-                <Button {...buttonType} {...xz} ref="xz">闲置</Button>
-                <Button {...buttonType} {...bf} ref="bf">报废</Button>
+                <Button {...buttonType} {...xz} ref="xz"><Icons type="lie" />闲置</Button>
+                <Button {...buttonType} {...bf} ref="bf"><Icons type="void" />报废</Button>
                 <Button {...buttonType} {...cz} ref="cz">处置</Button>
 
                 <Popconfirm
@@ -211,10 +212,10 @@ class ButtonGroup extends Component {
                     <Button {...buttonType} {...zz} ref="zz">终止</Button>
                 </Popconfirm>
 
-                <Button {...buttonType} {...xg} ref="xg">修改</Button>  &nbsp;&nbsp;&nbsp;&nbsp;
+                <Button {...buttonType} {...xg} ref="xg"><Icons type="edit" />修改</Button>  &nbsp;&nbsp;&nbsp;&nbsp;
 
-                <Button {...buttonType} {...zrp} ref="zrp">打印责任牌</Button>
-                <Button {...buttonType} {...czd} ref="czd">打印处置单</Button>
+                <Button {...buttonType} {...zrp} ref="zrp"><Icons type="print-a" />打印责任牌</Button>
+                <Button {...buttonType} {...czd} ref="czd"><Icons type="print-a" />打印处置单</Button>
 
                 <div style={{ float: 'right' }}>
                     <Button {...buttonType} {...dcby} ref="dcby">导出本页</Button>

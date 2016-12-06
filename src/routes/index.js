@@ -42,7 +42,6 @@ import AddAsset from 'CONTAINER/BusiAsset/newAsset'
 import CheckAsset from 'CONTAINER/BusiAsset/checkAsset'
 import AssetDetail from 'CONTAINER/BusiAsset/assetDetail'
 
-
 /******************** 配置 ********************/
 // 基地
 import ConfigBase from 'CONTAINER/ConfigBase/insert'

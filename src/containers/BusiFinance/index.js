@@ -15,6 +15,7 @@ import {
 const TabPane = Tabs.TabPane
 
 import {
+    Icons,
     Err,
     InnerForm,
     InnerTable,
@@ -301,6 +302,10 @@ class Finance extends Component {
         }
     }
 
+    parentHandleClick = () => {
+        
+    }
+    
     // 双击查看详情
     parentHandleDoubleClick = (record, index) => {
         if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
@@ -333,9 +338,9 @@ class Finance extends Component {
 
         const tableNotControl = <Row className="button-group g-mb10">
             <Col sm={16}>
-                <Button disabled={!isReceive} onClick={this.handleReceive}>确认收款</Button>
-                <Button disabled={!isRefund} onClick={this.handleRefund}>确认退款</Button>
-                <Button onClick={this.handleReturn}>退回</Button>
+                <Button disabled={!isReceive} onClick={this.handleReceive}><Icons type="receipt" />确认收款</Button>
+                <Button disabled={!isRefund} onClick={this.handleRefund}><Icons type="refund" />确认退款</Button>
+                <Button onClick={this.handleReturn}><Icons type="return" />退回</Button>
             </Col>
             <Col sm={8} className="g-tar">
                 <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
@@ -377,6 +382,7 @@ class Finance extends Component {
                             pagination={false}
                             ref='notConfirmedTable'
                             parentHandleSelectChange={this.parentHandleSelectChange}
+                            parentHandleClick = {this.parentHandleClick}
                             parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination
                             total={busiFinance.home.total}

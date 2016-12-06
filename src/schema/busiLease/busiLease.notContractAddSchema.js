@@ -1,12 +1,5 @@
 module.exports = [
     {
-        key: 'site',
-        title: '所属公路港',
-        dataType: 'varchar',
-        placeholder: "请输入所属公路港",
-        disabled: true
-    },
-    {
         key: 'businessnumber',
         title: '交款单号',
         dataType: 'varchar',
@@ -30,21 +23,6 @@ module.exports = [
         readonly: true
     },
     {
-        key: 'money',
-        title: '金额/元',
-        dataType: 'float',
-        placeholder: "请输入金额",
-        feedBackShow: true,
-        validate: [
-            {
-                rules: [
-                    { required: true, type: 'number', message: '金额必须是数字' },
-                ],
-                trigger: ['onChange']
-            }
-        ]
-    },
-    {
         key: 'validdate',
         keyEnd: 'invaliddate',
         title: '生效日期',
@@ -57,6 +35,21 @@ module.exports = [
             {
                 rules: [
                     { required: true, type: 'object', message: '请选择日期' },
+                ],
+                trigger: ['onChange']
+            }
+        ]
+    },
+    {
+        key: 'money',
+        title: '金额/元',
+        dataType: 'float',
+        placeholder: "请输入金额",
+        feedBackShow: true,
+        validate: [
+            {
+                rules: [
+                    { required: true, type: 'number', message: '金额必须是数字' },
                 ],
                 trigger: ['onChange']
             }

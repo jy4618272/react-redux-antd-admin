@@ -55,12 +55,19 @@ class InnerTable extends Component {
         parentHandleSelectChange && parentHandleSelectChange(selectedRowKeys, selectedRows)
     }
 
-    // 点击查看详情
+    // rowClassName = (record, index) => {
+    //     alert(index);
+    // }
+
+    // 单击选中        
     handleRowClick = (record, index) => {
         const {parentHandleRowClick} = this.props
+
+        // this.rowClassName(record, index);
         parentHandleRowClick && parentHandleRowClick(record, index)
     }
 
+    // 双击查看详情    
     handleDoubleClick = (record, index) => {
         const {parentHandleDoubleClick} = this.props
         parentHandleDoubleClick && parentHandleDoubleClick(record, index)
@@ -132,13 +139,14 @@ class InnerTable extends Component {
             footer={footer} />
         if (isRowSelection) {
             tableContent = <Table
+                rowClassName={this.rowClassName}
                 rowSelection={rowSelection}
                 loading={loading}
                 columns={columns}
                 dataSource={dataSource}
                 bordered={bordered}
                 pagination={pagination}
-                ref="table"           
+                ref="table"
                 onRowClick={this.handleRowClick}
                 onRowDoubleClick={this.handleDoubleClick}
                 size={size}

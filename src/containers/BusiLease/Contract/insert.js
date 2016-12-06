@@ -34,6 +34,7 @@ import {
     Err,
     Loading,
     Cards,
+    Icons,
     WorkFlow,
     FormLayout,
     InnerTable,
@@ -1218,7 +1219,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同房间" key="room">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddRoom}><Icon type="plus" />新增房间</Button>
+                                        <Button onClick={this.handleAddRoom}><Icons type="add" />新增房间</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsRoom}
@@ -1230,7 +1231,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同班线" key="classLine">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddLine}><Icon type="plus" />新增班线</Button>
+                                        <Button onClick={this.handleAddLine}><Icons type="add" />新增班线</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsLine}
@@ -1243,7 +1244,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同优惠冲抵" key="policy">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
+                                        <Button onClick={this.handleAddPolicy}><Icons type="add" />新增合同优惠</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsPolicy}
@@ -1255,7 +1256,7 @@ class ContractInsert extends Component {
                             <TabPane tab="履约保证金冲抵" key="contractBond">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
+                                        <Button onClick={this.handleAddBond}><Icons type="add" />新增保证金冲抵</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsBond}
@@ -1302,7 +1303,7 @@ class ContractInsert extends Component {
                             <div className="m-stages-show">
                                 <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
                                 <div className="button-group g-mb10">
-                                    <Button onClick={this.handleStagesInsert}><Icon type="plus" />新增明细</Button>
+                                    <Button onClick={this.handleStagesInsert}><Icons type="add" />新增明细</Button>
                                     <Button onClick={this.handleStagesClose}><Icon type="close" />关闭明细</Button>
                                 </div>
                                 <InnerTable

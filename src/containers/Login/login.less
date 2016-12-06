@@ -1,0 +1,78 @@
+@import '../../style/variable.less';
+@import '../../style/layout.less';
+
+.m-login{
+    position: relative;
+    height: 100%;
+    .g-header, .g-footer{
+        background-color:#fff;
+        width:100%;
+    }  
+    .g-header{      
+        padding:10px 0;
+        .g-wrap{
+            height: 44px;
+        }
+    }
+    .m-login-cont{
+        background: url('./img/bg.png') no-repeat;    
+        position: relative;
+        height: calc(~"100vh - 114px"); 
+    }
+}
+
+.m-login-form-wp {
+    position: absolute;
+    top:20%;
+    left:50%;
+    width:720px;
+    margin-left:-360px;
+    background-color: #fff;
+    .bar{
+        background:url('./img/bar.png') repeat-x;
+        height: 3px;
+    }
+    article{
+        float: left;
+        width:56%;
+        padding: 15px 40px;
+        font-size: @font-size-lg;
+        h2{
+            font-size: 20px;
+            font-weight: normal;
+            line-height: 60px;
+            margin-bottom: 10px;
+        }
+        .ant-form-item{
+            margin-bottom: 15px;
+        }
+        .ant-input-lg{
+            // padding:12px 7px;
+            height: 40px;
+        }
+        .ant-btn-lg{
+            padding-top:8px;
+            padding-bottom:8px;
+        }
+    }
+    aside{
+        float: left;
+        width: 44%;
+        height: 360px;
+        background-color:rgba(0, 0, 0, 0.75);
+        color:#fff;
+        ul{
+            padding: 80px 0 0 80px;            
+        }
+        li{
+            line-height: 30px;
+            font-size: 18px;
+            margin-bottom: 50px;
+            i{
+                font-size: 30px;
+                margin-right: 40px;
+                vertical-align: middle;
+            }
+        }
+    }
+}

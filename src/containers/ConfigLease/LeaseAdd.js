@@ -18,6 +18,7 @@ import {
 const FormItem = Form.Item
 
 import {
+    Icons,
     Loading,
     ModalForm,
     InnerForm,
@@ -140,7 +141,7 @@ class LeaseAdd extends Component {
         const {actionLeaseAdd} = this.props
         if (key === 'area') {
             actionLeaseAdd.fetchBuildList({
-                "site": sessionStorage.getItem('getFacility'),
+                "site": sessionStorage.getItem('site'),
                 "area": value
             })
         }
@@ -278,7 +279,7 @@ class LeaseAdd extends Component {
                         parentHandleSave={this.parentHandleSave}>
                         <div className="g-padding-lr g-mt20">
                             <div className="button-group g-mb10">
-                                <Button onClick={this.handleAddGoods}>新增物品</Button>
+                                <Button onClick={this.handleAddGoods}><Icons type="add" />新增物品</Button>
                             </div>
                             <InnerTable
                                 columns={roomSchema}

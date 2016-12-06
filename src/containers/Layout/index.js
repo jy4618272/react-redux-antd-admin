@@ -2,26 +2,16 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import cookie from 'react-cookie'
+
 import { BackTop } from 'antd'
-import Header from 'COMPONENT/Header'
-import SlideNav from 'COMPONENT/SlideBar'
-import Breadcrumb from 'COMPONENT/Breadcrumb'
-import Footer from 'COMPONENT/Footer'
+import {AsideNav, Breadcrumb, Footer, Header, Loading} from 'COMPONENT'
+
 import actionLayout from 'ACTION/layout'
 import actionMenu from 'ACTION/menuList'
 
-import cookie from 'react-cookie'
-import {
-    Loading
-} from 'COMPONENT'
-
-import {
-    getUrlPara
-} from 'UTIL'
-import {
-    rootPaths
-} from 'SERVICE/config'
-import 'STYLE/index.less'
+import { getUrlPara } from 'UTIL'
+import { rootPaths } from 'SERVICE/config'
 import './index.less';
 
 import logoImg from './img/logo-img.png'
@@ -48,13 +38,13 @@ class App extends Component {
         this.state = {
             slideBar: true
         }
-        const isUrlSessionKey = window.location.href.indexOf('session_key') > -1
-        const isCookieSessionKey = cookie.load('session_key')
 		/**
 		 * getUrlPara
 		 * url或cookie没有跳到登录
 		 * url有cookie没有设置cookie
-		 */
+		 
+        const isUrlSessionKey = window.location.href.indexOf('session_key') > -1
+        const isCookieSessionKey = cookie.load('session_key')
         if (isUrlSessionKey) {
             cookie.save('session_key', getUrlPara('session_key').split('#')[0], { path: '/', maxAge: 57600 })
         } else{
@@ -63,6 +53,8 @@ class App extends Component {
                 window.location.href = rootPaths.configPath + '/myportal/logincs/login'
             }
         }
+        */
+        
         console.log('框架', props)
     }
 
@@ -83,7 +75,7 @@ class App extends Component {
                     <div className="m-logo g-tac">
                         <Link to="/"><img src={logoImg} className="logo-img" alt="传化物流园区通" /><img src={logoTxt} className="logo-txt" alt="传化物流园区通" /></Link>
                     </div>
-                    <SlideNav menuList={menuList.data} mode="inline" />
+                    <AsideNav menuList={menuList.data} mode="inline" />
                 </aside>
 
                 <article className="m-container" id="container">

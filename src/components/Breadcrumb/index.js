@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import {Breadcrumb, Icon} from 'antd'
+import { Breadcrumb, Icon } from 'antd'
 const Item = Breadcrumb.Item
-
+import { Icons } from 'COMPONENT'
 import './index.less'
 
 class Bread extends Component {
@@ -67,7 +67,7 @@ class Bread extends Component {
 
         return (
             <section className="m-breadcrumb clearfix">
-                <span className="g-fl">当前位置：</span>
+                <span className="g-fl"><Icons type="map-b" />当前位置：</span>
                 <Breadcrumb className="g-fl">{itemArray}</Breadcrumb>
             </section>
         )

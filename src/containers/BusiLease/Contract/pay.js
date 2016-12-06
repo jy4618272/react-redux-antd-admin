@@ -19,6 +19,7 @@ import {
 const TabPane = Tabs.TabPane
 
 import {
+    Icons,
     Loading,
     ListText,
     InnerForm,
@@ -245,11 +246,11 @@ class ContractPay extends Component {
             modalVisible: true,
             modalTitle: '合同交款打印交款单',
             modalName: 'print',
-            footer: <div>
+            footer: <div className="button-group">
                 <Button type="default" onClick={this.handleModalCancel}>取消</Button>
-                <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}>{status}</Button>
+                <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}><Icons type="finance-b" />{status}</Button>
                 <Link style={ {marginLeft: '8px'} } to={`print/printPreview/${record.rentpactpayplanid}`} target="_blank">
-                    <Button type="primary" onClick={this.saveToLocalStorage}>打印</Button>
+                    <Button type="primary" onClick={this.saveToLocalStorage}><Icons type="print-a" />打印</Button>
                 </Link>
             </div>
         })

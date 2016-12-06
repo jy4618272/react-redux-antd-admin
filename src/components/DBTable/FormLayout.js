@@ -464,7 +464,7 @@ class FormLayout extends Component {
     componentDidMount() {
         if (this.props.sessionShouldGet) {
             this.props.form.setFieldsValue({
-                site: sessionStorage.getItem('getFacility')
+                site: sessionStorage.getItem('site')
             })
         }
 

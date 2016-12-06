@@ -1,21 +1,19 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
+import { Link, hashHistory } from 'react-router'
 import { Icon, message, Menu } from 'antd'
-import actionUserInfo from 'ACTION/userInfo'
-
-// import xhr from 'SERVICE/xhr'
-import {
-	rootPaths
-} from 'SERVICE/config'
 import cookie from 'react-cookie'
+import { rootPaths } from 'SERVICE/config'
 
 import hideMenu from './img/hide_menu.png'
 import './index.less'
 
+import actionUserInfo from 'ACTION/userInfo'
+import actionLogin from 'ACTION/login'
 const mapDispatchToProps = (dispatch) => ({
-	actionUserInfo: bindActionCreators(actionUserInfo, dispatch)
+	actionUserInfo: bindActionCreators(actionUserInfo, dispatch),
+	actionLogin: bindActionCreators(actionLogin, dispatch)
 })
 
 @connect(
@@ -25,15 +23,15 @@ const mapDispatchToProps = (dispatch) => ({
 export default class Header extends Component {
 	constructor(props) {
 		super(props)
-	}
+	}	
 
+	// 退出登录
 	logout = () => {
-		cookie.remove('session_key')
-		window.location.href = rootPaths.configPath + '/myportal/logincs/logout'
-	}
-
-	handleClick = () => {
-
+		// cookie.remove('session_key')
+		// window.location.href = rootPaths.configPath + '/myportal/logincs/logout'
+		this.props.actionLogin.fetchLogout({
+			token: cookie.load('session_key')
+		})
 	}
 
 	componentDidMount() {
@@ -57,6 +55,7 @@ export default class Header extends Component {
 						<li>
 							<Icon type="user" />{userInfo.userName}
 						</li>
+
 						<li onClick={this.logout}><Icon type="poweroff" />退出</li>
 					</ul>
 				</div>

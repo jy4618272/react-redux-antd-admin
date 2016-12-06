@@ -1,7 +1,9 @@
 import { message } from 'antd'
+import { hashHistory } from 'react-router'
+import cookie from 'react-cookie'
+
 import xhr from 'SERVICE'
 import { rootPaths, errHandler, paths } from 'SERVICE/config'
-import cookie from 'react-cookie'
 
 // ================================
 // Action Type
@@ -50,27 +52,27 @@ const fetchMenuList = () => {
 							let icon = ''
 							switch(item2.urllink){
 								case 'busi_lease': 			// 租赁业务
-									icon = 'icon-lease'; 
+									icon = 'lease'; 
 									break;
 								case 'busi_finance':  		// 财务业务
-									icon = 'icon-finance-money';
+									icon = 'finance-money';
 									break;
 								case 'busi_asset':  		// 资产业务
-									icon = 'icon-assets';
+									icon = 'assets';
 									break;
 								
 								case 'config_base':  		// 基地配置
-									icon = 'icon-base-config';
+									icon = 'base-config';
 									break;
 								case 'config_lease':  		// 租赁配置
-									icon = 'icon-lease-config';
+									icon = 'lease-config';
 									break;
 								case 'config_asset':  		// 资产配置
-									icon = 'icon-assets-config';
+									icon = 'assets-config';
 									break;
 
 								default:
-									icon = 'icon-lease'
+									icon = 'lease'
 									break;
 							}
 
@@ -90,8 +92,9 @@ const fetchMenuList = () => {
 			} else {
 				hide()
 				if(res.code == '1'){
-					cookie.remove('session_key')
-					window.location.href = rootPaths.configPath + '/myportal/logincs/login'
+					hashHistory.push('login')
+					// cookie.remove('session_key')
+					// window.location.href = rootPaths.configPath + '/myportal/logincs/login'
 				}
 				errHandler(res.msg)
 			}
