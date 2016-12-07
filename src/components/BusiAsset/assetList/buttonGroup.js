@@ -198,25 +198,21 @@ class ButtonGroup extends Component {
             onClick: self.handleClick.bind(self)
         }
         return (
-            <div className="g-mb10">
+            <div className="button-group g-mb10">
                 <Button {...buttonType} {...xzzc} ref="xzzc"><Icons type="add" />新增资产</Button>
                 <Button {...buttonType} {...db} ref="db">调拨</Button>
                 <Button {...buttonType} {...xz} ref="xz"><Icons type="lie" />闲置</Button>
                 <Button {...buttonType} {...bf} ref="bf"><Icons type="void" />报废</Button>
                 <Button {...buttonType} {...cz} ref="cz">处置</Button>
-
                 <Popconfirm
                     title={'是否确认终止资产：' + this.props.selectedRow.assetname + ' ?'}
                     okText="确认" cancelText="取消"
                     onConfirm={this.breakAsset.bind(this)}>
                     <Button {...buttonType} {...zz} ref="zz">终止</Button>
                 </Popconfirm>
-
                 <Button {...buttonType} {...xg} ref="xg"><Icons type="edit" />修改</Button>  &nbsp;&nbsp;&nbsp;&nbsp;
-
                 <Button {...buttonType} {...zrp} ref="zrp"><Icons type="print-a" />打印责任牌</Button>
                 <Button {...buttonType} {...czd} ref="czd"><Icons type="print-a" />打印处置单</Button>
-
                 <div style={{ float: 'right' }}>
                     <Button {...buttonType} {...dcby} ref="dcby">导出本页</Button>
                     <Button {...buttonType} {...pldc} ref="pldc">批量导出</Button>

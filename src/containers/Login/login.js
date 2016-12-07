@@ -43,13 +43,14 @@ class Login extends Component {
                     }
                 }
             }
-
+            const tmpObj = JSON.stringify(this.props)
             console.log('登录提交值：', newObj)
-            this.props.actionLogin.fetchLogin(newObj)
+            this.props.actionLogin.fetchLogin(newObj, tmpObj)
         });
     }
 
     render() {
+        console.log('####', this.props)
         const { getFieldDecorator } = this.props.form
         return (
             <section className="m-login">

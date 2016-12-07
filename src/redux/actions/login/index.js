@@ -32,7 +32,7 @@ const receiveLogout = (res) => ({
 
 
 // 登录
-const fetchLogin = (data) => {
+const fetchLogin = (data, props) => {
     return dispatch => {
         dispatch(requestLogin())
         xhr('post', paths.leasePath + 'logincs/login_md5', data, (res) => {
@@ -46,7 +46,12 @@ const fetchLogin = (data) => {
                     description: '正在进入园区通管理中心页'
                 })
                 dispatch(receiveLogin(res))
-                hashHistory.push('/')
+                props = JSON.parse(props)
+                if (props.location && props.location.state) {
+                    hashHistory.push(props.location.state.nextPathname)
+                } else {
+                    hashHistory.push('/')
+                }
             } else {
                 hide()
                 errHandler(res.msg)
@@ -65,7 +70,7 @@ const fetchLogout = (data) => {
                 hide()
                 cookie.remove('session_key')
                 sessionStorage.removeItem('site')
-		        notification.success({
+                notification.success({
                     message: '退出成功',
                     description: '正在前往园区通登录界面'
                 })

@@ -5,6 +5,7 @@ import {
 	IndexRoute,
 	hashHistory
 } from 'react-router'
+import cookie from 'react-cookie'
 
 /******************** 首页及框架 ********************/
 // 架构
@@ -64,11 +65,19 @@ import PrintPage from 'CONTAINER/Print/index'
 /******************** 404 ********************/
 import NotFound from 'CONTAINER/NotFound'
 
-
+const requireAuth = (nextState, replace) => {
+	console.log('nextState', nextState)
+	if (!cookie.load('session_key')) {
+		replace({
+			pathname: 'login',
+			state: { nextPathname: nextState.location.pathname.slice(1) }
+		})
+	}
+}
 /* react router 2.x 必须配置 browserHistory */
 const routes = (
 	<Router history={hashHistory}>
-		<Route path="/" component={Layout}>
+		<Route path="/" component={Layout} onEnter={requireAuth}>
 			<IndexRoute component={Home} />
 
 			{/* 审批 */}
@@ -107,7 +116,6 @@ const routes = (
 				<Route path="busi_asset/operate/:assetType/:id/:isModify/:operateType" component={AssetOperate} />
 				<Route path="busi_asset/check_asset/:id" component={CheckAsset} />
 				<Route path="busi_asset/asset_detail/:id" component={AssetDetail} />
-
 			</Route>
 
 			{/* 配置 */}

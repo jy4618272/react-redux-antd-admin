@@ -24,16 +24,16 @@ import {
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
 
-import {
-    Err
-} from 'COMPONENT'
+import { Err } from 'COMPONENT'
 
 class InnerTable extends Component {
     constructor(props) {
         super(props)
         this.state = {
             selectedRowKeys: [],  // 当前有哪些行被选中, 这里只保存key
-            selectedRows: []  // 当前有哪些行被选中, 保存完整数据
+            selectedRows: [],  // 当前有哪些行被选中, 保存完整数据
+            clickedRowKeys: [],  // 当前有哪些行被选中, 这里只保存key
+            clickedRows: []  // 当前有哪些行被选中, 保存完整数据
         }
     }
 
@@ -54,17 +54,66 @@ class InnerTable extends Component {
         })
         parentHandleSelectChange && parentHandleSelectChange(selectedRowKeys, selectedRows)
     }
-
-    // rowClassName = (record, index) => {
-    //     alert(index);
-    // }
+    // 取消勾选
+    hanldeCancelSelect = () => {
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: []
+        })
+    }
 
     // 单击选中        
     handleRowClick = (record, index) => {
-        const {parentHandleRowClick} = this.props
+        const clickedRowKeys = [index]
+        const clickedRows = [record]
+        const {rowClassName, parentHandleRowClick} = this.props
+        if(rowClassName){
+            let allTr = document.querySelectorAll('.' + rowClassName)       
+            allTr = Array.prototype.slice.call(allTr)
+            // console.log('allTr:', allTr)
+            allTr.map((item, ind) => {
+                if(item.style.backgroundColor){
+                    console.log(rowClassName + ' prev tr is：', ind + 1)
+                    item.style.backgroundColor = ''
+                }
+                if(index === ind){
+                    console.log(rowClassName + ' next tr is：', ind + 1)                
+                    item.style.backgroundColor = '#fff2eb'
 
-        // this.rowClassName(record, index);
-        parentHandleRowClick && parentHandleRowClick(record, index)
+                    console.log('clickedRowKeys', clickedRowKeys)
+                    console.log('clickedRows', clickedRows)
+
+                    this.setState({
+                        clickedRowKeys,                        
+                        clickedRows,
+                    })
+                }
+            });   
+        } else {
+            console.log('属性需要设置【rowClassName】')
+        }
+
+        parentHandleRowClick && parentHandleRowClick(clickedRowKeys, clickedRows)
+    }
+
+    // 取消勾选
+    hanldeCancelClick = () => {
+        this.setState({
+            clickedRowKeys: [],
+            clickedRows: []
+        })
+
+        if(this.props.rowClassName){
+            let allTr = document.querySelectorAll('.' + this.props.rowClassName)       
+            allTr = Array.prototype.slice.call(allTr)
+            if(allTr && allTr.length){
+                allTr.map((item, ind) => {
+                    if(item.style.backgroundColor){
+                        item.style.backgroundColor = ''
+                    }
+                })
+            }
+        }
     }
 
     // 双击查看详情    
@@ -73,13 +122,6 @@ class InnerTable extends Component {
         parentHandleDoubleClick && parentHandleDoubleClick(record, index)
     }
 
-    // 点击按钮
-    hanldeCancelSelect = () => {
-        this.setState({
-            selectedRowKeys: [],
-            selectedRows: []
-        })
-    }
 
     /**
      * InnerTable组件的重render有两种可能:
@@ -94,8 +136,19 @@ class InnerTable extends Component {
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.loading === true) {
             this.setState({
+                clickedRowKeys: [],
+                clickedRows: [],
                 selectedRowKeys: [],
                 selectedRows: []
+            })
+            
+            let allTr = document.querySelectorAll('.' + this.props.rowClassName)       
+            allTr = Array.prototype.slice.call(allTr)
+
+            allTr.map((item, ind) => {
+                if(item.style.backgroundColor){
+                    item.style.backgroundColor = ''
+                }
             })
         }
     }
@@ -113,6 +166,7 @@ class InnerTable extends Component {
             title,
             footer,
             isRowSelection,
+            rowClassName
         } = this.props
 
         const theTableStyle = tableStyle ? tableStyle : 'm-table m-table-primary'
@@ -131,22 +185,22 @@ class InnerTable extends Component {
             dataSource={dataSource}
             bordered={bordered}
             pagination={pagination}
-            ref="table"
+            rowClassName={() => rowClassName ? rowClassName : 'table-tr'}            
             onRowClick={this.handleRowClick}
             onRowDoubleClick={this.handleDoubleClick}
             size={size}
             title={title}
             footer={footer} />
+
         if (isRowSelection) {
             tableContent = <Table
-                rowClassName={this.rowClassName}
                 rowSelection={rowSelection}
                 loading={loading}
                 columns={columns}
                 dataSource={dataSource}
                 bordered={bordered}
                 pagination={pagination}
-                ref="table"
+                rowClassName={() => rowClassName ? rowClassName : 'table-tr'}                
                 onRowClick={this.handleRowClick}
                 onRowDoubleClick={this.handleDoubleClick}
                 size={size}
