@@ -13,6 +13,7 @@ import {
     notification
 } from 'antd'
 const TabPane = Tabs.TabPane
+const ButtonGroup = Button.Group
 
 import {
     Icons,
@@ -57,7 +58,7 @@ class Finance extends Component {
     handlerTabs = (activeKey) => {
         this.tabs = activeKey
         sessionStorage.setItem('busiFinanceTabs', activeKey)
-        
+
         if (activeKey == 'notConfirmed') {
             this.status = "未确认"
         } else if (activeKey == 'confirmed') {
@@ -267,9 +268,9 @@ class Finance extends Component {
     }
 
     parentHandleClick = () => {
-        
+
     }
-    
+
     // 双击查看详情
     parentHandleDoubleClick = (record, index) => {
         if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
@@ -300,23 +301,31 @@ class Finance extends Component {
             isRefund = clickedRows[0].paytype == '退款' ? true : false
         }
 
-        const tableNotControl = <Row className="button-group g-mb10">
+        const tableNotControl = <Row className="g-mb10">
             <Col sm={16}>
-                <Button disabled={!isReceive} onClick={this.handleReceive}><Icons type="receipt" />确认收款</Button>
-                <Button disabled={!isRefund} onClick={this.handleRefund}><Icons type="refund" />确认退款</Button>
-                <Button onClick={this.handleReturn}><Icons type="return" />退回</Button>
+                <ButtonGroup className="button-group">
+                    <Button disabled={!isReceive} onClick={this.handleReceive}><Icons type="receipt" />确认收款</Button>
+                    <Button disabled={!isRefund} onClick={this.handleRefund}><Icons type="refund" />确认退款</Button>
+                    <Button onClick={this.handleReturn}><Icons type="return" />退回</Button>
+                </ButtonGroup>
             </Col>
             <Col sm={8} className="g-tar">
-                <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                <ButtonGroup className="button-group">
+                    <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                </ButtonGroup>
             </Col>
         </Row>
 
         const tableControl = <Row className="button-group g-mb10">
             <Col sm={16}>
-                <Button onClick={this.handleFinanceList}>资金文件列表</Button>
+                <ButtonGroup className="button-group">
+                    <Button onClick={this.handleFinanceList}>资金文件列表</Button>
+                </ButtonGroup>
             </Col>
             <Col sm={8} className="g-tar">
-                <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                <ButtonGroup className="button-group">
+                    <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                </ButtonGroup>
             </Col>
         </Row>
 
@@ -327,7 +336,7 @@ class Finance extends Component {
         }
 
         return (
-            <section>
+            <section className="m-busi m-busi-finance">
                 <Tabs defaultActiveKey={this.tabs} animated="false" type="card" onTabClick={this.handlerTabs}>
                     <TabPane tab="未确认" key="notConfirmed">
                         <InnerForm
@@ -345,9 +354,9 @@ class Finance extends Component {
                             bordered={true}
                             pagination={false}
                             ref="notConfirmed"
-                            rowClassName="notConfirmed"                            
+                            rowClassName="notConfirmed"
                             parentHandleRowClick={this.parentHandleRowClick}
-                            parentHandleClick = {this.parentHandleClick}
+                            parentHandleClick={this.parentHandleClick}
                             parentHandleDoubleClick={this.parentHandleDoubleClick} />
                         <InnerPagination
                             total={busiFinance.home.total}

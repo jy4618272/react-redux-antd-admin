@@ -1335,7 +1335,7 @@ class ContractInsert extends Component {
                     </Cards>
 
                     <div className="g-tal button-group">
-                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
+                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll} className="g-mr10">保存</Button>
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitRenew}>续租提交</Button>*/}
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>
                     </div>

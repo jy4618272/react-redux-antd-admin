@@ -60,7 +60,10 @@ const fetchMenuList = () => {
 								case 'busi_asset':  		// 资产业务
 									icon = 'assets';
 									break;
-								
+								case 'busi_we':  		// 水电业务
+									icon = 'hydropower';
+									break;
+
 								case 'config_base':  		// 基地配置
 									icon = 'base-config';
 									break;
@@ -70,7 +73,10 @@ const fetchMenuList = () => {
 								case 'config_asset':  		// 资产配置
 									icon = 'assets-config';
 									break;
-
+								case 'config_we':  		// 水电配置
+									icon = 'hydropower';
+									break;
+										
 								default:
 									icon = 'lease'
 									break;

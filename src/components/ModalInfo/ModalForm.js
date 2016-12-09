@@ -22,6 +22,8 @@ const Option = Select.Option
 const RadioGroup = Radio.Group
 const CheckboxGroup = Checkbox.Group
 
+import 'STYLE/form.less';
+
 class ModalForm extends Component {
     handleSelect = (key, value) => {
         console.log(key, value)
@@ -180,7 +182,7 @@ class ModalForm extends Component {
             // formItems.push(rows);
         })
         return (
-            <Form horizontal>
+            <Form horizontal className="m-form-full">
                 {rows}
             </Form>
         )

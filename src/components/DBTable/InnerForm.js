@@ -15,7 +15,7 @@ class InnerForm extends Component {
         
         return (
             <section className={formStyle}>
-                <Form horizontal>
+                <Form horizontal className="m-form-full">
                     <FormLayout
                         schema={this.props.schema}
                         form={this.props.form}

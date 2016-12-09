@@ -38,8 +38,10 @@ class FormLayout extends Component {
      */
     colWrapper = (formItem, field) => {
         const {getFieldDecorator} = this.props.form
+        const lg = field.modalType ? 12 : 6
+        const xs = field.modalType ? 12 : 24
         return (
-            <Col key={field.key} xs={24} sm={12} md={12} lg={6}>
+            <Col key={field.key} xs={xs} sm={12} md={12} lg={lg}>
                 <FormItem
                     key={field.key}
                     ref={field.key}
@@ -67,8 +69,10 @@ class FormLayout extends Component {
      */
     betweenColWrapper = (beginFormItem, endFormItem, field) => {
         const {getFieldDecorator} = this.props.form
+        const lg = field.modalType ? 12 : 6
+        const xs = field.modalType ? 12 : 24
         return (
-            <Col key={`start${field.key}`} xs={24} sm={12} md={12} lg={6}>
+            <Col key={`start${field.key}`} xs={xs} sm={12} md={12} lg={lg}>
                 <Row>
                     <Col span={16}>
                         <FormItem
@@ -537,8 +541,8 @@ class FormLayout extends Component {
         // 别忘了最后一行
         if (this.props.showSearch) {
             cols.push(
-                <Col xs={24} sm={12} md={12} lg={6} className="button-group form-button-group">
-                    <Button type="primary" onClick={this.handleSubmit}><Icon type="search" />查询</Button>
+                <Col xs={24} sm={12} md={12} lg={6} className="button-group">
+                    <Button type="primary" onClick={this.handleSubmit} className="g-mr10"><Icon type="search" />查询</Button>
                     <Button type="default" onClick={this.handleReset}><Icon type="cross" />清除</Button>
                 </Col>
             )
@@ -562,7 +566,7 @@ class FormLayout extends Component {
         let formOpe
         if (this.props.showSave) {
             formOpe = <div xs={24} sm={24} md={24} lg={24}  className="g-tal button-group g-mt20">
-                <Button type="primary" onClick={this.handleSave}>保存</Button>
+                <Button type="primary" onClick={this.handleSave} className="g-mr10">保存</Button>
                 <Button type="ghost" onClick={this.handleClose}>关闭</Button>
             </div>
         }

@@ -20,6 +20,7 @@ import {
     message,
     notification
 } from 'antd'
+import moment from 'moment'
 
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
@@ -34,6 +35,9 @@ class InnerTable extends Component {
             selectedRows: [],  // 当前有哪些行被选中, 保存完整数据
             clickedRowKeys: [],  // 当前有哪些行被选中, 这里只保存key
             clickedRows: []  // 当前有哪些行被选中, 保存完整数据
+        }
+        if (this.props.rowClassName === 'contract') {
+            this.sixtyAfterDate = moment().add('60', 'days').format('YYYY-MM-DD')
         }
     }
 
@@ -54,6 +58,26 @@ class InnerTable extends Component {
         })
         parentHandleSelectChange && parentHandleSelectChange(selectedRowKeys, selectedRows)
     }
+
+    // 表格行 
+    handleRowClassName = (record, index) => {
+        const { rowClassName } = this.props
+        if (rowClassName === 'contract') {
+            const endDate = moment(record.enddate).format('YYYY-MM-DD')
+            const disDate = Date.parse(this.sixtyAfterDate) - Date.parse(endDate)
+            if (record.flowtype !== '作废' && record.flowstatus === '草稿') {
+                return rowClassName + ' ' + 's-bg-yellow-light'
+            } else if (record.flowtype !== '作废' && record.flowstatus === '审批退回') {
+                return rowClassName + ' ' + 's-bg-red-light'
+            } else if (record.flowtype !== '作废' && disDate > 0) {
+                return rowClassName + ' ' + 's-red'
+            } else {
+                return rowClassName
+            }
+        }
+
+        return rowClassName ? rowClassName : 'table-tr'
+    }
     // 取消勾选
     hanldeCancelSelect = () => {
         this.setState({
@@ -67,28 +91,28 @@ class InnerTable extends Component {
         const clickedRowKeys = [index]
         const clickedRows = [record]
         const {rowClassName, parentHandleRowClick} = this.props
-        if(rowClassName){
-            let allTr = document.querySelectorAll('.' + rowClassName)       
+        if (rowClassName) {
+            let allTr = document.querySelectorAll('.' + rowClassName)
             allTr = Array.prototype.slice.call(allTr)
             // console.log('allTr:', allTr)
             allTr.map((item, ind) => {
-                if(item.style.backgroundColor){
+                if (item.style.backgroundColor) {
                     console.log(rowClassName + ' prev tr is：', ind + 1)
                     item.style.backgroundColor = ''
                 }
-                if(index === ind){
-                    console.log(rowClassName + ' next tr is：', ind + 1)                
+                if (index === ind) {
+                    console.log(rowClassName + ' next tr is：', ind + 1)
                     item.style.backgroundColor = '#fff2eb'
 
                     console.log('clickedRowKeys', clickedRowKeys)
                     console.log('clickedRows', clickedRows)
 
                     this.setState({
-                        clickedRowKeys,                        
+                        clickedRowKeys,
                         clickedRows,
                     })
                 }
-            });   
+            });
         } else {
             console.log('属性需要设置【rowClassName】')
         }
@@ -103,12 +127,12 @@ class InnerTable extends Component {
             clickedRows: []
         })
 
-        if(this.props.rowClassName){
-            let allTr = document.querySelectorAll('.' + this.props.rowClassName)       
+        if (this.props.rowClassName) {
+            let allTr = document.querySelectorAll('.' + this.props.rowClassName)
             allTr = Array.prototype.slice.call(allTr)
-            if(allTr && allTr.length){
+            if (allTr && allTr.length) {
                 allTr.map((item, ind) => {
-                    if(item.style.backgroundColor){
+                    if (item.style.backgroundColor) {
                         item.style.backgroundColor = ''
                     }
                 })
@@ -141,12 +165,12 @@ class InnerTable extends Component {
                 selectedRowKeys: [],
                 selectedRows: []
             })
-            
-            let allTr = document.querySelectorAll('.' + this.props.rowClassName)       
+
+            let allTr = document.querySelectorAll('.' + this.props.rowClassName)
             allTr = Array.prototype.slice.call(allTr)
 
             allTr.map((item, ind) => {
-                if(item.style.backgroundColor){
+                if (item.style.backgroundColor) {
                     item.style.backgroundColor = ''
                 }
             })
@@ -165,8 +189,7 @@ class InnerTable extends Component {
             tableStyle,
             title,
             footer,
-            isRowSelection,
-            rowClassName
+            isRowSelection
         } = this.props
 
         const theTableStyle = tableStyle ? tableStyle : 'm-table m-table-primary'
@@ -185,7 +208,7 @@ class InnerTable extends Component {
             dataSource={dataSource}
             bordered={bordered}
             pagination={pagination}
-            rowClassName={() => rowClassName ? rowClassName : 'table-tr'}            
+            rowClassName={this.handleRowClassName}
             onRowClick={this.handleRowClick}
             onRowDoubleClick={this.handleDoubleClick}
             size={size}
@@ -200,7 +223,7 @@ class InnerTable extends Component {
                 dataSource={dataSource}
                 bordered={bordered}
                 pagination={pagination}
-                rowClassName={() => rowClassName ? rowClassName : 'table-tr'}                
+                rowClassName={this.handleRowClassName}
                 onRowClick={this.handleRowClick}
                 onRowDoubleClick={this.handleDoubleClick}
                 size={size}

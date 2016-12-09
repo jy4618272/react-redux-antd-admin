@@ -23,7 +23,7 @@ const receiveUser = (res) => ({
 
 const fetchUser = () => {
     return dispatch => {
-        xhr('post', paths.financePath + 'maincs/getUserInfo', {}, function (res) {
+        xhr('post', paths.financePath + '/maincs/getUserInfo', {}, function (res) {
             const hide = message.loading('正在获取用户信息...', 0)
             if (res.result === 'success') {
                 hide()

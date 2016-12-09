@@ -14,7 +14,7 @@ import {
     Modal
 } from 'antd'
 const TabPane = Tabs.TabPane
-
+const ButtonGroup = Button.Group
 import {
     Loading,
     Icons,
@@ -149,7 +149,7 @@ class LeaseManage extends Component {
             fetchNotContractTable
         } = this.props.action
         this.handleCancel(this.status)
-        
+
         page = (page <= 1) ? 0 : (page - 1) * 10
         if (this.status === 'contract') {
             this.select(this.queryObj, contractData.pageSize, page, fetchContractTable)
@@ -167,7 +167,7 @@ class LeaseManage extends Component {
      */
     handlerTabs = (activeKey) => {
         this.status = activeKey
-        sessionStorage.setItem('leaseManageTabs', activeKey)        
+        sessionStorage.setItem('leaseManageTabs', activeKey)
         this.refs.form.resetFields()
         const {
             fetchContractTable,
@@ -289,7 +289,7 @@ class LeaseManage extends Component {
         const { action } = this.props
 
         if (data.length == 1) {
-            this.handleCancel(this.status)                        
+            this.handleCancel(this.status)
             if (key === 'contract') {
                 action.voidContract({
                     rentpactid: data[0].rentpactid,
@@ -318,9 +318,9 @@ class LeaseManage extends Component {
     handleCommitFinance = (key) => {
         const { busiLease, action } = this.props
         const data = this.state.clickedRows
-        
-        if(data.length === 1){
-            this.handleCancel(this.status)            
+
+        if (data.length === 1) {
+            this.handleCancel(this.status)
             if (key === 'bond') {
                 action.fetchCommitFinanceBond({
                     businessnumber: data[0].businessnumber,
@@ -416,7 +416,7 @@ class LeaseManage extends Component {
 
     // 临时摊位打印交款单
     handlePrintPayMent = (key, record) => {
-        const linkStyle = {marginLeft: '8px'}
+        const linkStyle = { marginLeft: '8px' }
         if (key === 'bond') {
             this.props.action.fetchBondPayMent({
                 marginid: parseInt(record.marginid)
@@ -438,7 +438,7 @@ class LeaseManage extends Component {
             })
             let status
             if (record.status === '已提交') {
-                status = '财务已提交' 
+                status = '财务已提交'
             } else if (record.status === '已到账') {
                 status = '财务已到账'
             } else {
@@ -472,6 +472,12 @@ class LeaseManage extends Component {
     }
 
     /**
+     * 合同表格数据【流程状态】颜色配置
+     * 草稿    - 浅黄
+     * 审批退回 - 淡红色
+     */
+
+    /**
      * 刚进入页面时触发一次查询
      */
     componentDidMount() {
@@ -481,6 +487,7 @@ class LeaseManage extends Component {
             fetchNotContractTable
         } = this.props.action
 
+        // 选显卡初始化设置
         if (this.status === 'contract') {
             this.refresh(fetchContractTable)
         } else if (this.status === 'bond') {
@@ -646,20 +653,24 @@ class LeaseManage extends Component {
             }
         }
 
-        const tableContractControl = <div className="button-group g-mb10">
+        const tableContractControl = <div className="g-mb10">
             <Row>
                 <Col sm={16}>
-                    <Button onClick={this.handleAdd.bind(this, this.status)}><Icons type="add" />新增</Button>
-                    <Button disabled={!isContractApproval} onClick={this.handleApproval.bind(this, this.status)}>提交审核</Button>
-                    <Button disabled={!isContractRenew} onClick={this.handleRenewContract}><Icons type="renew" />续租</Button>
-                    <Button disabled={!isContractChange} onClick={this.handleChangeContract}><Icons type="change" />变更</Button>
-                    <Button disabled={!isContractEdit} onClick={this.handleEdit.bind(this, this.status)}><Icons type="edit" />编辑</Button>
-                    <Button disabled={!isContractRent} onClick={this.handleRentContract}><Icons type="rent" />退租</Button>
-                    <Button disabled={!isContractVoid} onClick={this.handleVoid.bind(this, this.status)}><Icons type="void" />作废</Button>
-                    <Button onClick={this.handlePayContract}>合同交款</Button>
+                    <ButtonGroup className="button-group">
+                        <Button onClick={this.handleAdd.bind(this, this.status)}><Icons type="add" />新增</Button>
+                        <Button disabled={!isContractApproval} onClick={this.handleApproval.bind(this, this.status)}>提交审核</Button>
+                        <Button disabled={!isContractRenew} onClick={this.handleRenewContract}><Icons type="renew" />续租</Button>
+                        <Button disabled={!isContractChange} onClick={this.handleChangeContract}><Icons type="change" />变更</Button>
+                        <Button disabled={!isContractEdit} onClick={this.handleEdit.bind(this, this.status)}><Icons type="edit" />编辑</Button>
+                        <Button disabled={!isContractRent} onClick={this.handleRentContract}><Icons type="rent" />退租</Button>
+                        <Button disabled={!isContractVoid} onClick={this.handleVoid.bind(this, this.status)}><Icons type="void" />作废</Button>
+                        <Button onClick={this.handlePayContract}>合同交款</Button>
+                    </ButtonGroup>
                 </Col>
                 <Col sm={8} className="g-tar">
-                    <Button type="primary" onClick={this.handleExportPage.bind(this, this.status)}>导出本页</Button>
+                    <ButtonGroup className="button-group">
+                        <Button type="primary" onClick={this.handleExportPage.bind(this, this.status)}>导出本页</Button>
+                    </ButtonGroup>
                 </Col>
             </Row>
         </div>
@@ -727,18 +738,22 @@ class LeaseManage extends Component {
             }
         }
 
-        const tableBondControl = <div className="button-group g-mb10">
+        const tableBondControl = <div className="g-mb10">
             <Row>
                 <Col sm={16}>
-                    <Button onClick={this.handleAdd.bind(this, this.status)}><Icons type="add" />新增</Button>
-                    <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, this.status)}>提交审核</Button>
-                    {/*<Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, this.status)}>1提交退款审批</Button>                  
-                    <Button onClick={this.handleEdit.bind(this, this.status)}>编辑</Button>*/}
-                    <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, this.status)}><Icons type="finance-b" />提交财务</Button>
-                    <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, this.status)}><Icons type="void" />作废</Button>
+                    <ButtonGroup className="button-group">
+                        <Button onClick={this.handleAdd.bind(this, this.status)}><Icons type="add" />新增</Button>
+                        <Button disabled={!isBondApproval} onClick={this.handleApproval.bind(this, this.status)}>提交审核</Button>
+                        {/*<Button disabled={!isBondApproval} onClick={this.handleRefundApproval.bind(this, this.status)}>1提交退款审批</Button>*/}                
+                        {/*<Button onClick={this.handleEdit.bind(this, this.status)}>编辑</Button>*/}
+                        <Button disabled={!isBondCommitFinance} onClick={this.handleCommitFinance.bind(this, this.status)}><Icons type="finance-b" />提交财务</Button>
+                        <Button disabled={!isBondVoid} onClick={this.handleVoid.bind(this, this.status)}><Icons type="void" />作废</Button>
+                    </ButtonGroup>
                 </Col>
                 <Col sm={8} className="g-tar">
-                    <Button type="primary" onClick={this.handleExportPage.bind(this, this.status)}>导出本页</Button>
+                    <ButtonGroup className="button-group">
+                        <Button type="primary" onClick={this.handleExportPage.bind(this, this.status)}>导出本页</Button>
+                    </ButtonGroup>
                 </Col>
             </Row>
         </div>
@@ -761,10 +776,10 @@ class LeaseManage extends Component {
             isNotContractVoid = true
         }
 
-        const tableNotContractControl = <div className="button-group g-mb10">
+        const tableNotContractControl = <ButtonGroup className="button-group g-mb10">
             <Button onClick={this.handleAdd.bind(this, this.status)}><Icons type="add" />新增临时摊位协议</Button>
             <Button disabled={!isNotContractVoid} onClick={this.handleVoid.bind(this, this.status)}><Icons type="void" />作废</Button>
-        </div>
+        </ButtonGroup>
 
         const tableColumnsNotContract = notContractData.tableColumns.concat([
             {
@@ -854,8 +869,9 @@ class LeaseManage extends Component {
             </div>
         }
 
+
         return (
-            <section>
+            <section className="g-mt-10">
                 <Modal
                     visible={this.state.modalVisible}
                     title={this.state.modalTitle}
@@ -875,7 +891,7 @@ class LeaseManage extends Component {
                             parentHandleSubmit={this.handleFormSubmit}
                             showSearch={true}>
                             <div className="button-group g-mb10">
-                                <Button onClick={this.contractSearch.bind(this, 'due')}><Icon type="clock-circle-o" />将到期合同</Button>
+                                <Button onClick={this.contractSearch.bind(this, 'due')} className="g-mr10"><Icon type="clock-circle-o" />将到期合同</Button>
                                 <Button onClick={this.contractSearch.bind(this, 'shouldSign')}><Icon type="edit" />应签合同</Button>
                             </div>
                         </InnerForm>
@@ -885,7 +901,7 @@ class LeaseManage extends Component {
                             columns={contractData.tableColumns}
                             dataSource={contractData.tableData}
                             ref="contract"
-                            rowClassName="contract"                         
+                            rowClassName='contract'
                             parentHandleRowClick={this.parentHandleRowClick}
                             parentHandleDoubleClick={this.parentHandleDoubleClick}
                             isRowSelection={true}
@@ -934,7 +950,7 @@ class LeaseManage extends Component {
                             columns={tableColumnsNotContract}
                             dataSource={notContractData.tableData}
                             ref="notContract"
-                            rowClassName="notContract"                          
+                            rowClassName="notContract"
                             parentHandleRowClick={this.parentHandleRowClick}
                             isRowSelection={true}
                             bordered={true}

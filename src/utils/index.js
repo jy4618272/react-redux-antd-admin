@@ -42,7 +42,6 @@ const filterQueryObj = (oldObj, dateType = 'YYYY-MM-DD HH:mm:ss') => {
     return newObj
 }
 
-
 const filterQueryObjMoment = (oldObj) => {
     // 将提交的值中undefined的去掉
     const newObj = {}

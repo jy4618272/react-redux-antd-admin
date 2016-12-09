@@ -14,7 +14,7 @@ const mapDispatchToProps = (dispatch) => ({
     actionLogin: bindActionCreators(actionLogin, dispatch)
 })
 @connect(
-    ({ }) => ({}),
+    ({ login }) => ({ login }),
     mapDispatchToProps
 )
 class Login extends Component {
@@ -50,13 +50,10 @@ class Login extends Component {
     }
 
     render() {
-        console.log('####', this.props)
         const { getFieldDecorator } = this.props.form
+        const { login } = this.props
         return (
             <section className="m-login">
-                <Modal>
-                    
-                </Modal>
                 <header className="g-header">
                     <div className="g-wrap">
                         <img src={logo} alt="" />
@@ -79,11 +76,11 @@ class Login extends Component {
                                     {getFieldDecorator('username', {
                                         rules: [
                                             {
-                                                required: true, message: '请输入用户名'
+                                                required: true, message: '请输入用户名/工号'
                                             }
                                         ]
                                     })(
-                                        <Input size="large" className="g-fs-md g-full" placeholder="请输入用户名" />
+                                        <Input size="large" className="g-fs-md g-full" placeholder="请输入用户名/工号" />
                                         )}
                                 </FormItem>
                                 <FormItem>
@@ -104,8 +101,8 @@ class Login extends Component {
                                     })(
                                         <Checkbox className="g-fs-md">记住密码</Checkbox>
                                         )}
-                                    <Button type="primary" size="large" className="g-full g-fs-md g-mt20" htmlType="submit">
-                                        登录
+                                    <Button type="primary" size="large" disabled={login.loading} id="buttonLogin" className="g-full g-fs-md g-mt20" htmlType="submit">
+                                        { login.loadingText }
                                     </Button>
                                 </FormItem>
                             </Form>

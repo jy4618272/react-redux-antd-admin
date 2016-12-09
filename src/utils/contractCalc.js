@@ -57,7 +57,6 @@ const handleContractCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney=0,
     let roommoney = 0               // 房间租金
     let linemoney = 0               // 班线费用
     let standardmoney = 0           // 合同标准金额
-
     let promotionmoneyoffset = 0    // 合同优惠        
     let marginmoneyoffset = 0       // 履约保证金冲抵
     let totaloffsetmoney = 0        // 冲抵总额

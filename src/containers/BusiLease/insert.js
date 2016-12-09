@@ -278,7 +278,7 @@ class Insert extends Component {
                     </Cards>
 
                     <div className="g-tal button-group">
-                        <Button type="primary" onClick={this.handleSave}>保存</Button>
+                        <Button type="primary" onClick={this.handleSave} className="g-mr10">保存</Button>
                         <Button type="default" onClick={this.handleCancel}>取消</Button>
                     </div>
                 </Form>

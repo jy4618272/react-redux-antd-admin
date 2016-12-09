@@ -105,7 +105,7 @@ module.exports = {
             dataType: 'float',
             step: 0.1,
             placeholder: '请输入优惠幅度',
-            // feedBackShow: true,
+            feedBackShow: true,
             validate: [
                 {
                     rules: [

@@ -35,12 +35,18 @@ const receiveLogout = (res) => ({
 const fetchLogin = (data, props) => {
     return dispatch => {
         dispatch(requestLogin())
-        xhr('post', paths.leasePath + 'logincs/login_md5', data, (res) => {
+        xhr('post', paths.leasePath + '/logincs/login_md5', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             if (res.result === 'success') {
                 hide()
-                sessionStorage.setItem('site', res.data.facility)
+                if (cookie.load('session_key')) {
+                    cookie.remove('session_key')
+                }
                 cookie.save('session_key', res.code, { path: '/', maxAge: 57600 })
+                if (sessionStorage.getItem('site')) {
+                    sessionStorage.removeItem('site')
+                }
+                sessionStorage.setItem('site', res.data.facility)
                 notification.success({
                     message: '登录成功',
                     description: '正在进入园区通管理中心页'
@@ -54,6 +60,7 @@ const fetchLogin = (data, props) => {
                 }
             } else {
                 hide()
+                dispatch(receiveLogin({}))                
                 errHandler(res.msg)
             }
         })
@@ -64,7 +71,7 @@ const fetchLogin = (data, props) => {
 const fetchLogout = (data) => {
     return dispatch => {
         dispatch(requestLogout())
-        xhr('post', paths.leasePath + 'logincs/loginOut', data, (res) => {
+        xhr('post', paths.leasePath + '/logincs/loginOut', data, (res) => {
             const hide = message.loading('正在查询...', 0)
             if (res.result === 'success') {
                 hide()
@@ -90,6 +97,18 @@ export default {
 }
 
 export const ACTION_HANDLERS = {
-    [RECEIVE_LOGIN]: (login, {payload: res}) => res,
-    [RECEIVE_LOGOUT]: (logout, {payload: res}) => ({})
+    [REQUEST_LOGIN]: ( login, { payload: res }) => ({
+        loading: true,
+        loadingText: '努力登录中...'
+    }),
+    [RECEIVE_LOGIN]: ( login, { payload: res }) => ({
+        loading: false,
+        loadingText: '登录',
+        data: res
+    }),
+    [RECEIVE_LOGOUT]: (logout, {payload: res}) => ({
+        loading: false,
+        loadingText: '登录',
+        data: res
+    })
 }   

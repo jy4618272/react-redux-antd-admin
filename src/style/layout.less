@@ -47,6 +47,9 @@
 .g-full{
   width:100%;
 }
+.g-mt-10{
+  margin-top: -10px;
+}
 .g-mt15{
   margin-top: 15px;
 }
@@ -110,8 +113,8 @@
 .g-fs-md{
   font-size:@font-size-md;
 }
-.s-gray-ligth{
-  color:@gray-ligth;
+.s-gray-light{
+  color:@gray-light;
 }
 .s-blue{
   color:#2db7f5;
@@ -129,9 +132,15 @@
   color:@yellow;
 }
 .s-gray{
-  color:@gray-ligth;
+  color:@gray-light;
 }
-
+// 背景色
+.s-bg-yellow-light{
+  background-color:@yellow-light;
+}
+.s-bg-red-light{
+  background-color:@red-light;
+}
 
 .g-border-bottom{
   border-bottom:1px solid @border-color;
@@ -152,14 +161,7 @@
   overflow: hidden;
   display: block;
 }
-.button-group{
-    button{
-        margin-right:10px;
-        &:last-child{
-            margin-right: 0;
-        }
-    }
-}
+
 .m-title-cont{
   &.horizontal{
     position:relative;

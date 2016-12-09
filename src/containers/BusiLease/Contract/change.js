@@ -1405,10 +1405,10 @@ class ContractInsert extends Component {
                             pagination={false} />
                     </Cards>
                     <div className="g-tal button-group">
-                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
+                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll} className="g-mr10">保存</Button>
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitChange}>变更提交</Button>*/}
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handlePrintView}>打印预览</Button>*/}
-                        {type === '变更' ? <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleChangeHistory}>变更历史</Button> : ''}
+                        {type === '变更' ? <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleChangeHistory} className="g-mr10">变更历史</Button> : ''}
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>
                     </div>
                 </Form>

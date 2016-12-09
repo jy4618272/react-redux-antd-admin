@@ -9,11 +9,14 @@ import { Link, hashHistory } from 'react-router'
 import {
     Button,
     Tabs,
+    Row,
+    Col,
     message,
     notification
 } from 'antd'
 const TabPane = Tabs.TabPane
-import { 
+const ButtonGroup = Button.Group
+import {
     Err,
     Icons,
     InnerForm,
@@ -128,7 +131,7 @@ class Lease extends Component {
 
         console.debug('handlePageChange, page = %d', page);
 
-        this.handleCancel(this.status)        
+        this.handleCancel(this.status)
         page = (page <= 1) ? 0 : (page - 1) * 10
         if (this.status === 'room') {
             this.select(this.queryObj, roomData.pageSize, page, fetchRoomTable)
@@ -153,7 +156,7 @@ class Lease extends Component {
         })
 
         this.status = activeKey
-        sessionStorage.setItem('configLeaseTabs', activeKey)        
+        sessionStorage.setItem('configLeaseTabs', activeKey)
         this.refs.form.resetFields()
         const {
             fetchRoomTable,
@@ -209,7 +212,7 @@ class Lease extends Component {
         this.select(this.queryObj, roomData.pageSize, 0, fetchRoomTable)
     }
 
-    
+
     // 查询
     handleFormSubmit = (newData) => {
         this.queryData = newData
@@ -283,7 +286,7 @@ class Lease extends Component {
      * 数据记录操作
      * 
      * @param 新增
-     */ 
+     */
     handleAddClick = () => {
         hashHistory.push('config/config_lease/add?type=' + this.status)
     }
@@ -314,7 +317,7 @@ class Lease extends Component {
      * 数据记录操作
      * 房间设置
      * @param 闲置
-     */ 
+     */
     handleLieClick = () => {
         const {clickedRows} = this.state
         if (clickedRows.length === 1) {
@@ -352,7 +355,7 @@ class Lease extends Component {
      * @param 历史
     handleHistoryClick = () => { }
     */
-    
+
     /**
      * 数据记录操作
      * 班线管理、政策优惠、客户经理列表、合同模板配置
@@ -361,7 +364,7 @@ class Lease extends Component {
     handleOpenClick = () => {
         const {clickedRows} = this.state
         if (clickedRows.length === 1) {
-            this.handleCancel(this.status)            
+            this.handleCancel(this.status)
             if (this.status === 'contractTpl') {
                 this.props.actionLease.changeStatusContract({
                     status: "开启",
@@ -390,11 +393,11 @@ class Lease extends Component {
      * 数据记录操作
      * 班线管理、政策优惠、客户经理列表、合同模板配置
      * @param 关闭
-     */ 
+     */
     handleCloseClick = () => {
         const { clickedRows } = this.state
         if (clickedRows.length === 1) {
-            this.handleCancel(this.status)                        
+            this.handleCancel(this.status)
             if (this.status === 'classLine') {
                 this.props.actionLease.changeStatusClassLine({
                     status: "关闭",
@@ -415,7 +418,7 @@ class Lease extends Component {
                     status: "关闭",
                     pactprintmodelid: clickedRows[0].pactprintmodelid
                 })
-            } 
+            }
         }
     }
 
@@ -472,11 +475,11 @@ class Lease extends Component {
             contractTplData,
             auditPersonData
         } = this.props.configLease
-        const { 
-            clickedRowKeys, 
-            clickedRows 
+        const {
+            clickedRowKeys,
+            clickedRows
         } = this.state
-        
+
         // 按钮是否可操作
         const oneSelected = clickedRowKeys.length == 1
         let isLie
@@ -488,26 +491,36 @@ class Lease extends Component {
         if (oneSelected && clickedRows[0].status !== '作废') {
             // 当前表格所选记录状态        
             const buttonStatus = clickedRows[0].status
-            isEdit  = buttonStatus !== '已出租' ? true : false
-            isLie   = buttonStatus === '已出租' ? true : false
-            isVoid  = buttonStatus === '未出租' ? true : false
-            isOpen  = buttonStatus === '关闭'   ? true : false
-            isClose = buttonStatus === '开启'   ? true : false
+            isEdit = buttonStatus !== '已出租' ? true : false
+            isLie = buttonStatus === '已出租' ? true : false
+            isVoid = buttonStatus === '未出租' ? true : false
+            isOpen = buttonStatus === '关闭' ? true : false
+            isClose = buttonStatus === '开启' ? true : false
         }
-        const tableRoomControl = <div className="button-group g-mb10">
+        const tableRoomControl = <ButtonGroup className="button-group g-mb10">
             <Button onClick={this.handleAddClick}><Icons type="add" />新增</Button>
             <Button onClick={this.handleEditClick} disabled={!isEdit}><Icons type="edit" />修改</Button>
             <Button onClick={this.handleLieClick} disabled={!isLie}><Icons type="lie" />闲置</Button>
             <Button onClick={this.handleVoidClick} disabled={!isVoid}><Icons type="void" />作废</Button>
             {/*<Button disabled={!oneSelected} onClick={this.handleHistoryClick}>历史</Button>*/}
-        </div>
+        </ButtonGroup>
 
-        const tableOtherControl = <div className="button-group g-mb10">
-            <Button onClick={this.handleAddClick}><Icons type="add" />新增</Button>
-            <Button onClick={this.handleEditClick} disabled={!oneSelected}><Icons type="edit" />修改</Button>
-            <Button onClick={this.handleOpenClick} disabled={!isOpen}><Icons type="open" />开启</Button>
-            <Button onClick={this.handleCloseClick} disabled={!isClose}><Icons type="close" />关闭</Button>
-            {this.status === 'contractTpl' ? <Button className="g-fr" onClick={this.handleDictionary}><Icons type="dictionary" />字典查询</Button> : ''}
+        const tableOtherControl = <div className="g-mb10">
+            <Row>
+                <Col sm={16}>
+                    <ButtonGroup className="button-group">
+                        <Button onClick={this.handleAddClick}><Icons type="add" />新增</Button>
+                        <Button onClick={this.handleEditClick} disabled={!oneSelected}><Icons type="edit" />修改</Button>
+                        <Button onClick={this.handleOpenClick} disabled={!isOpen}><Icons type="open" />开启</Button>
+                        <Button onClick={this.handleCloseClick} disabled={!isClose}><Icons type="close" />关闭</Button>
+                    </ButtonGroup>
+                </Col>
+                <Col sm={8} className="g-tar">
+                    <ButtonGroup className="button-group">
+                        {this.status === 'contractTpl' ? <Button className="g-fr" onClick={this.handleDictionary}><Icons type="dictionary" />字典查询</Button> : ''}
+                    </ButtonGroup>
+                </Col>
+            </Row>
         </div>
 
         if (this.status === 'room') {
@@ -611,7 +624,7 @@ class Lease extends Component {
                         </Tabs>
                     </TabPane>
 
-                    {/* 班线管理 */}                    
+                    {/* 班线管理 */}
                     <TabPane tab="班线管理" key="classLine">
                         <InnerForm
                             ref="form"
@@ -627,7 +640,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             bordered={true}
                             ref="classLine"
-                            rowClassName="classLine"                                                        
+                            rowClassName="classLine"
                             parentHandleRowClick={this.parentHandleRowClick}
                             pagination={false} />
                         <InnerPagination
@@ -637,7 +650,7 @@ class Lease extends Component {
                             parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
 
-                    {/* 政策优惠 */}                                        
+                    {/* 政策优惠 */}
                     <TabPane tab="政策优惠" key="policy">
                         <InnerForm
                             ref="form"
@@ -653,7 +666,7 @@ class Lease extends Component {
                             isRowSelection={true}
                             bordered={true}
                             ref="policy"
-                            rowClassName="policy"                            
+                            rowClassName="policy"
                             parentHandleRowClick={this.parentHandleRowClick}
                             pagination={false} />
                         <InnerPagination
@@ -663,7 +676,7 @@ class Lease extends Component {
                             parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
 
-                    {/* 客户经理列表 */}                                        
+                    {/* 客户经理列表 */}
                     <TabPane tab="客户经理列表" key="accountManager">
                         <InnerForm
                             ref="form"
@@ -689,7 +702,7 @@ class Lease extends Component {
                             parentHandlePageChange={this.handlePageChange} />
                     </TabPane>
 
-                    {/* 合同模板配置 */}                                        
+                    {/* 合同模板配置 */}
                     <TabPane tab="合同模板配置" key="contractTpl">
                         <InnerForm
                             ref="form"

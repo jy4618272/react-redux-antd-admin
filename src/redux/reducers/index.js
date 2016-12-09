@@ -1,34 +1,36 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
-import store from 'STORE'
-import login from 'REDUCER/login'
-import layout from 'REDUCER/layout'
-import userInfo from 'REDUCER/userInfo'
-import menuList from 'REDUCER/menuList'
-import home from 'REDUCER/home'
-import approval from 'REDUCER/approval'
-import busiFinance from 'REDUCER/busiFinance'
-import busiLease from 'REDUCER/busiLease'
-import configLease from 'REDUCER/configLease'
-import configBase from 'REDUCER/configBase/insert'
-import configRights from 'REDUCER/configRights'
+import store from 'STORE'                              // 状态机
+import login from 'REDUCER/login'                      // 登录信息
+import layout from 'REDUCER/layout'                    // 左侧菜单
+import userInfo from 'REDUCER/userInfo'				   // 用户信息
+import menuList from 'REDUCER/menuList'				   // 菜单
+import home from 'REDUCER/home'						   // 首页
+import approval from 'REDUCER/approval'				   // 审批
+import busiFinance from 'REDUCER/busiFinance'		   // 财务业务
+import busiLease from 'REDUCER/busiLease'			   // 租赁业务
+import configLease from 'REDUCER/configLease'		   // 租赁配置
+import configBase from 'REDUCER/configBase/insert'     // 基地配置
+import configRights from 'REDUCER/configRights'        // 权限配置
+import configWe from 'REDUCER/configWe'                // 水电配置
 
 // ================================
 // 同步的 Reducers（即应用初始化所必需的）
 // ================================
 const syncReducers = {
 	router: routerReducer,
-	login: login,
-	layout: layout,
-	userInfo: userInfo,
-	menuList: menuList,
-	home: home,
-	approval: approval,
-	busiFinance: busiFinance,
-	busiLease: busiLease,
-	configLease: configLease,
-	configBase: configBase,
-	configRights: configRights
+	login,
+	layout,
+	userInfo,
+	menuList,
+	home,
+	approval,
+	busiFinance,
+	busiLease,
+	configLease,
+	configBase,
+	configRights,
+	configWe
 }
 
 
