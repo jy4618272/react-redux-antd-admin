@@ -38,8 +38,10 @@ class FormLayout extends Component {
      */
     colWrapper = (formItem, field) => {
         const {getFieldDecorator} = this.props.form
+        const lg = field.modalType ? 12 : 6
+        const xs = field.modalType ? 12 : 24
         return (
-            <Col key={field.key} xs={24} sm={12} md={12} lg={6}>
+            <Col key={field.key} xs={xs} sm={12} md={12} lg={lg}>
                 <FormItem
                     key={field.key}
                     ref={field.key}
@@ -48,10 +50,11 @@ class FormLayout extends Component {
                     wrapperCol={{ span: 16 }}
                     hasFeedback={field.feedBackShow}>
                     {getFieldDecorator(field.key, {
-                        validate: field.validate || []
+                        validate: field.validate || [],
+                        initialValue: field.default
                     })(
                         formItem
-                        )}
+                    )}
                 </FormItem>
             </Col>
         )
@@ -67,8 +70,10 @@ class FormLayout extends Component {
      */
     betweenColWrapper = (beginFormItem, endFormItem, field) => {
         const {getFieldDecorator} = this.props.form
+        const lg = field.modalType ? 12 : 6
+        const xs = field.modalType ? 12 : 24
         return (
-            <Col key={`start${field.key}`} xs={24} sm={12} md={12} lg={6}>
+            <Col key={`start${field.key}`} xs={xs} sm={12} md={12} lg={lg}>
                 <Row>
                     <Col span={16}>
                         <FormItem
@@ -157,12 +162,9 @@ class FormLayout extends Component {
         )
     }
 
-
+    // 下拉选择
     handleSelect = (key, value) => {
-        // console.log(key, value)
-        if (this.props.parentHandleSelect) {
-            this.props.parentHandleSelect(key, value)
-        }
+        this.props.parentHandleSelect && this.props.parentHandleSelect(key, value);
     }
 
     /**
@@ -171,7 +173,7 @@ class FormLayout extends Component {
      * @param field
      */
     transformSelect = (field) => {
-        const options = []
+        const options = [];
         // console.debug('transform field %o to Select component', field)
 
         // console.log(field.options)
@@ -180,7 +182,11 @@ class FormLayout extends Component {
         })
 
         return this.colWrapper((
-            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)} disabled={field.disabled}>
+            <Select 
+                placeholder={field.placeholder || '请选择'} 
+                size="default" 
+                disabled={field.disabled}
+                onSelect={this.handleSelect.bind(this, field.key)}>
                 {options}
             </Select>
         ), field)
@@ -224,6 +230,13 @@ class FormLayout extends Component {
         })
         return this.colWrapper((
             <CheckboxGroup options={options} />
+        ), field)
+    }
+
+    // 开关
+    transformCheckboxChoose = (field) => {
+        return this.fullColWrapper((
+            <Checkbox className="g-fs-md">{field.memo}</Checkbox>
         ), field)
     }
 
@@ -362,9 +375,9 @@ class FormLayout extends Component {
     }
 
     // 表单修改
-    handleInputBlur = (key) => {
-        this.props.parentHandleInputBlur && this.props.parentHandleInputBlur(key)
-    }
+    // handleInputBlur = (key) => {
+    //     this.props.parentHandleInputBlur && this.props.parentHandleInputBlur(key)
+    // }
 
     // 日期选择
     handleDateChange = (key, value) => {
@@ -387,12 +400,12 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 1} size="default" disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" onBlur={this.handleInputBlur.bind(this, field.key)} disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
@@ -402,7 +415,7 @@ class FormLayout extends Component {
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
                 return this.colWrapper((
-                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} />
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
         }
     }
@@ -464,10 +477,9 @@ class FormLayout extends Component {
     componentDidMount() {
         if (this.props.sessionShouldGet) {
             this.props.form.setFieldsValue({
-                site: sessionStorage.getItem('getFacility')
+                site: sessionStorage.getItem('site')
             })
         }
-
         if (this.props.setFields) {
             this.props.form.setFieldsValue(
                 this.props.setFields
@@ -476,7 +488,7 @@ class FormLayout extends Component {
     }
 
     render() {
-        const {schema, fromLayoutStyle} = this.props
+        const {schema, fromLayoutStyle, type} = this.props
         const rows = []
         let cols = []
 
@@ -486,11 +498,11 @@ class FormLayout extends Component {
         schema.forEach((field) => {
             // 当前列需要占用几个格子? 普通的都是6, 只有datetime between是12
             let spaceNeed = 6
-            if (field.showType === 'two' || field.showType === 'between') {
+            if (field.showType === 'two' || field.showType === 'between' || field.modalType) {
                 spaceNeed = 12
             }
 
-            if (field.showType === 'full') {
+            if (field.showType === 'full' || field.showType === 'checkboxChoose') {
                 spaceNeed = 24
             }
 
@@ -511,6 +523,9 @@ class FormLayout extends Component {
                     break
                 case 'checkbox':
                     cols.push(this.transformCheckbox(field))
+                    break
+                case 'checkboxChoose':
+                    cols.push(this.transformCheckboxChoose(field))
                     break
                 case 'multiSelect':
                     cols.push(this.transformMultiSelect(field))
@@ -537,8 +552,8 @@ class FormLayout extends Component {
         // 别忘了最后一行
         if (this.props.showSearch) {
             cols.push(
-                <Col xs={24} sm={12} md={12} lg={6} className="button-group form-button-group">
-                    <Button type="primary" onClick={this.handleSubmit}><Icon type="search" />查询</Button>
+                <Col xs={24} sm={12} md={12} lg={6} className="button-group">
+                    <Button type="primary" onClick={this.handleSubmit} className="g-mr10"><Icon type="search" />查询</Button>
                     <Button type="default" onClick={this.handleReset}><Icon type="cross" />清除</Button>
                 </Col>
             )
@@ -562,7 +577,7 @@ class FormLayout extends Component {
         let formOpe
         if (this.props.showSave) {
             formOpe = <div xs={24} sm={24} md={24} lg={24}  className="g-tal button-group g-mt20">
-                <Button type="primary" onClick={this.handleSave}>保存</Button>
+                <Button type="primary" onClick={this.handleSave} className="g-mr10">保存</Button>
                 <Button type="ghost" onClick={this.handleClose}>关闭</Button>
             </div>
         }

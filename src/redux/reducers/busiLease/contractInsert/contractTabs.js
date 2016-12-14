@@ -84,7 +84,8 @@ const initialState = [
             {
                 rules: [
                     { required: true, type: 'number', message: '请选择合同房间' },
-                ]
+                ],
+                trigger: ['onChange']
             }
         ]
     },

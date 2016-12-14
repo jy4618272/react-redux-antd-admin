@@ -78,8 +78,8 @@ class ApprovalList extends Component {
         }
 
         const type = record.formurl.replace(/(\w)-(\w\d+)/, '$1')
-        sessionStorage.setItem('approvalData', JSON.stringify(record))
-        hashHistory.push(`approval/${record.businessno}?type=${type}`)
+        sessionStorage.setItem('approvalData', JSON.stringify(record));
+        window.open(`#/approval/${record.businessno}?type=${type}`);
     }
 
     /**

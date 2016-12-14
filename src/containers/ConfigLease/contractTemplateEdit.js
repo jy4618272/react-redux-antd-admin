@@ -40,7 +40,9 @@ class ContractTemplateEdit extends Component {
             memo: '',   // 备注
             status: '',   // 状态   开启｜关闭
             pactkind: '', // 合同类型
-            ue: null
+            ue: null,   // 指向编辑器的引用
+            whetherOk: false,  // 标示富文本编辑器是否准备就绪，默认null，准备就绪时为true
+            mySetInterval: null   // 一个计时器
         }
     }
 
@@ -93,9 +95,19 @@ class ContractTemplateEdit extends Component {
                 this.setState({
                     modelname, memo, status, modeltext, pactkind
                 })
-                setTimeout(() => {
-                    this.state.ue.setContent(modeltext)
-                }, 0)
+                /**
+                 * 当获取合同信息成功后
+                 *  启动一个计数器不停的询问(this.state.whetherOk)编辑器是否准备就绪
+                 *      如果准备继续：设置编辑器默认内容，并清除计时器
+                 *      如果没有：那么过100毫秒再问一下
+                 *  */
+                this.state.mySetInterval = setInterval(() => {
+                    if (this.state.whetherOk) {
+                        clearInterval(this.state.mySetInterval)
+                        this.state.ue.setContent(modeltext)
+                    }               
+                }, 100)
+
             } else {
                 message.warning('获取合同数据失败...')
             }
@@ -189,6 +201,13 @@ class ContractTemplateEdit extends Component {
             // getUeditorContent 时父组件传入的函数
             self.getUeditorContent(html)
         });
+        // 当编辑器准备就绪，需要告诉react
+        ue.addListener('ready', (editor) => {
+            console.log('编辑器准备就绪。。。')
+            this.setState({
+                whetherOk: true
+            })
+        })
     }
 
     /**
@@ -203,6 +222,8 @@ class ContractTemplateEdit extends Component {
             enableAutoSave: false, // 关闭自动保存
             saveInterval: 10000000000,  // 每隔一段时间自动保存,  设置一个超大的
             initialFrameHeight: 300, // 初始化高度
+            elementPathEnabled: false,   // 去掉元素路径
+            wordCount: false    // 去掉字数统计
         }
     }
 

@@ -15,7 +15,8 @@ import actionLease from 'ACTION/configLease'
 
 import {
     Loading,
-    Error,
+    Icons,
+    Err,
     ModalForm,
     InnerForm,
     InnerTable
@@ -239,11 +240,12 @@ class LeaseEdit extends Component {
             actionLease.fetchManagerEdit({
                 salerid: id
             })
-        } else if (this.editType === 'contractTpl') {  // 下版本注释
-            actionLease.fetchContractEdit({
-                pactprintmodelid: id
-            })
-        }
+        } 
+        // else if (this.editType === 'contractTpl') {  // 下版本注释
+        //     actionLease.fetchContractEdit({
+        //         pactprintmodelid: id
+        //     })
+        // }
     }
 
     render() {
@@ -263,7 +265,7 @@ class LeaseEdit extends Component {
 
         if (!this.inited) {
             return (
-                <Error errorMsg={this.errorMsg} />
+                <Err errorMsg={this.errorMsg} />
             )
         }
 
@@ -275,9 +277,10 @@ class LeaseEdit extends Component {
             this.dataSource = policyEdit
         } else if (this.editType === 'accountManager') {
             this.dataSource = accountManagerEdit
-        } else if (this.editType === 'contractTpl') { // 下版本注释
-            this.dataSource = contractTplEdit
-        }
+        } 
+        // else if (this.editType === 'contractTpl') {
+        //     this.dataSource = contractTplEdit
+        // }
 
         if (this.editType === 'room') {
             if (this.dataSource.loading) {
@@ -320,7 +323,7 @@ class LeaseEdit extends Component {
 
                         <div className="g-mt20">
                             <div className="button-group g-mb10">
-                                <Button onClick={this.handleAddGoods}>新增物品</Button>
+                                <Button onClick={this.handleAddGoods}><Icons type="add" />新增物品</Button>
                             </div>
                             <InnerTable
                                 columns={roomSchema}
@@ -332,8 +335,8 @@ class LeaseEdit extends Component {
                     </InnerForm>
                 </section>
             )
-        } else if (this.editType == 'contractTpl1') {
-            // 下版本改成contractTpl
+        } else if (this.editType == 'contractTpl') {
+            // 下版本改成contractTpl1
             return (<ContractTemplateEdit id={this.props.params.id} />)
         } else {
             if (this.dataSource.loading) {

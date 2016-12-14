@@ -28,7 +28,7 @@ class ApprovalOpinions extends Component {
                     const cont = item.people.map(des => {
                         return (
                             <li>
-                                <h3>({des.username})</h3>
+                                <h3>{des.username}</h3>
                                 <Row>
                                     <Col xs={24} sm={12} className="m-title-cont horizontal">
                                         <label className="m-title">
@@ -58,13 +58,28 @@ class ApprovalOpinions extends Component {
                             </li>
                         )
                     })
+                    let approvalIndex
+                    switch(index){
+                        case 0:
+                            approvalIndex =  '一';
+                            break;
+                        case 1:
+                            approvalIndex = '二';
+                            break;
+                        case 2:
+                            approvalIndex = '三';
+                            break;
+                        default:
+                            approvalIndex = index + 1;
+                            break;
+                    }
 
                     return (
                         <Row gutter={15} className="list-approval-opinions">
-                            <Col xs={6} sm={4} md={3} lg={2} className="hd g-tar">
-                                {index + 1}&nbsp;级审核：
+                            <Col xs={6} sm={4} md={4} lg={3} className="hd g-tar s-primary">
+                                {approvalIndex}级审核：
                             </Col>
-                            <Col xs={18} sm={20} md={21} lg={22} className="bd">
+                            <Col xs={18} sm={20} md={20} lg={21} className="bd">
                                 <ul className="list">
                                     {cont}
                                 </ul>

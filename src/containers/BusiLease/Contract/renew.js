@@ -29,6 +29,7 @@ import { errHandler, rootPaths, paths } from 'SERVICE/config'
 import {
     Loading,
     Cards,
+    Icons,
     FormLayout,
     InnerTable,
     WorkFlow,
@@ -867,7 +868,15 @@ class ContractInsert extends Component {
     // 弹框关闭
     handleModalCancel = () => {
         const {modalName} = this.state
-        if (modalName === 'stagesShowModal') {
+        const {
+            form,
+            action
+        } = this.props
+        if (modalName === 'selectOrganization') {
+            form.resetFields(['organizationnum'])
+            this.refs.organizationTable.hanldeCancelSelect();
+            action.resetOrganization()
+        } else if (modalName === 'stagesShowModal') {
             this.refs.stagesShowModal.resetFields()
         } else if (modalName === 'stagesModal') {
             this.refs.stagesModal.resetFields()
@@ -1162,7 +1171,7 @@ class ContractInsert extends Component {
                 <InnerTable
                     columns={organization.tableColumns}
                     dataSource={organization.tableData}
-                    schema={[]}
+                    ref="organizationTable"
                     parentHandleSelectChange={this.parentHandleSelectChange}
                     isRowSelection={true}
                     bordered={true}
@@ -1247,7 +1256,7 @@ class ContractInsert extends Component {
                             <TabPane tab="合同优惠冲抵" key="policy">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddPolicy}><Icon type="plus" />新增合同优惠</Button>
+                                        <Button onClick={this.handleAddPolicy}><Icons type="add" />新增合同优惠</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsPolicy}
@@ -1260,7 +1269,7 @@ class ContractInsert extends Component {
                             <TabPane tab="履约保证金冲抵" key="contractBond">
                                 <div className="g-padding-lr g-mb20">
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleAddBond}><Icon type="plus" />新增保证金冲抵</Button>
+                                        <Button onClick={this.handleAddBond}><Icons type="add" />新增保证金冲抵</Button>
                                     </div>
                                     <InnerTable
                                         columns={tableColumnsBond}
@@ -1310,7 +1319,7 @@ class ContractInsert extends Component {
                                 <div className="m-stages-show">
                                     <h2>{`第${this.state.stagesShowNum}期明细`}</h2>
                                     <div className="button-group g-mb10">
-                                        <Button onClick={this.handleStagesInsert}><Icon type="plus" />新增明细</Button>
+                                        <Button onClick={this.handleStagesInsert}><Icons type="add" />新增明细</Button>
                                         <Button onClick={this.handleStagesClose}><Icon type="close" />关闭明细</Button>
                                     </div>
                                     <InnerTable
@@ -1334,7 +1343,7 @@ class ContractInsert extends Component {
                     </Cards>
 
                     <div className="g-tal button-group">
-                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll}>保存</Button>
+                        <Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSaveAll} className="g-mr10">保存</Button>
                         {/*<Button type="primary" disabled={this.state.isSaveDisabeld} onClick={this.handleSubmitRenew}>续租提交</Button>*/}
                         <Button type="default" onClick={this.handleGoBack}>取消</Button>
                     </div>

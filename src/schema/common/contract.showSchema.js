@@ -198,7 +198,7 @@ module.exports = {
         {
             key: 'roommoney',
             title: '房间租金',
-            dataType: 'int',
+            dataType: 'float',
             placeholder: "请选择合同房间",
             disabled: true
         },

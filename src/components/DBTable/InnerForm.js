@@ -15,14 +15,14 @@ class InnerForm extends Component {
         
         return (
             <section className={formStyle}>
-                <Form horizontal>
+                <Form horizontal className="m-form-full">
                     <FormLayout
                         schema={this.props.schema}
                         form={this.props.form}
                         showSearch={this.props.showSearch}
                         showSave={this.props.showSave}
                         buttonSchema={this.props.buttonSchema}
-                        parentHandleInputBlur={this.props.parentHandleInputBlur}
+                        parentHandleBlur={this.props.parentHandleBlur}
                         parentHandleSelect={this.props.parentHandleSelect}
                         parentHandleSubmit={this.props.parentHandleSubmit}
                         parentHandleSave ={this.props.parentHandleSave}

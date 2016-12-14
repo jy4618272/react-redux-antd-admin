@@ -19,6 +19,7 @@ import {
 const TabPane = Tabs.TabPane
 
 import {
+    Icons,
     Loading,
     ListText,
     InnerForm,
@@ -26,11 +27,8 @@ import {
     InnerPagination
 } from 'COMPONENT'
 
-import 'STYLE/list.less'
-
-import {
-    goBack
-} from 'UTIL'
+import 'STYLE/list.less';
+import 'STYLE/modal.less';
 
 import action from 'ACTION/busiLease'
 
@@ -245,11 +243,11 @@ class ContractPay extends Component {
             modalVisible: true,
             modalTitle: '合同交款打印交款单',
             modalName: 'print',
-            footer: <div>
+            footer: <div className="button-group">
                 <Button type="default" onClick={this.handleModalCancel}>取消</Button>
-                <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}>{status}</Button>
+                <Button type="primary" disabled={record.status === '已提交' || record.status === '已到账'} onClick={this.handleCommitFinance}><Icons type="finance-b" />{status}</Button>
                 <Link style={ {marginLeft: '8px'} } to={`print/printPreview/${record.rentpactpayplanid}`} target="_blank">
-                    <Button type="primary" onClick={this.saveToLocalStorage}>打印</Button>
+                    <Button type="primary" onClick={this.saveToLocalStorage}><Icons type="print-a" />打印</Button>
                 </Link>
             </div>
         })
@@ -323,7 +321,7 @@ class ContractPay extends Component {
             if (loading) {
                 modalContent = <Loading />
             }
-            modalContent = <div className="modal-with-title contract-pay-show printContent">
+            modalContent = <div className="m-modal contract-pay-show printContent">
                 <h3>收款计划</h3>
                 <Row type="flex" gutter={20} className="g-mb10 list-text">
                     <Col sm={8}>
@@ -379,7 +377,7 @@ class ContractPay extends Component {
                     </tr>
                 )
 
-                modalContent = <div className="modal-with-title contract-pay-print printContent">
+                modalContent = <div className="m-modal contract-pay-print printContent">
                     <h3 className="clearfix">客户交款单<span className="u-mark">{data.rentpactcode}</span></h3>
                     <table className="m-table-print">
                         <tr>

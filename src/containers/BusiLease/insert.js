@@ -2,17 +2,23 @@ import React, { Component, PropTypes } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
+    Button,
     message,
     notification,
     Form,
     Modal
 } from 'antd'
 import {
+    Cards,
     Err,
     InnerTable,
     Loading,
     FormLayout
 } from 'COMPONENT'
+
+import {
+    filterQueryObj
+} from 'UTIL'
 
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
@@ -33,6 +39,7 @@ class Insert extends Component {
         super(props)
         console.log('新增props', props)
         this.state = {
+            site: '',           // 所属公路港
             modalName: 'organization',
             modalVisible: false,
             modalTitle: '新增',
@@ -138,13 +145,8 @@ class Insert extends Component {
 
     // 弹框关闭
     handleModalCancel = () => {
-        const {
-            modalName
-        } = this.state
-        const {
-            form,
-            action
-        } = this.props
+        const { modalName } = this.state
+        const { form, action } = this.props
         if (modalName === 'organization') {
             form.resetFields(['organizationnum'])
             action.resetOrganization()
@@ -154,46 +156,60 @@ class Insert extends Component {
         })
     }
 
-    // 保存
-    parentHandleSave = (value) => {
-        if (this.type === 'bond') {
-            const {partyInfo} = this.state
-            const newObj = Object.assign({}, value, {
-                partyname: partyInfo.partyname,
-                partyid: partyInfo.partyid
-            })
-            this.props.action.fetchSaveBond(newObj)
-        } else if (this.type === 'notContract') {
-            this.props.action.fetchSaveNotContract(value)
-        }
+    // 表单保存
+    handleSave = (e) => {
+        e.preventDefault()
+        this.props.form.validateFields((errors, values) => {
+            if (errors) {
+                notification.error({
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
+                })
+                return false
+            }
+
+            const { form } = this.props
+            const oldObj = form.getFieldsValue()
+            const newObj = filterQueryObj(oldObj)
+            console.log('保存表单字段', oldObj)
+            if (this.type === 'bond') {
+                // 履约保证金保存             
+                const {partyInfo} = this.state
+                const saveObj = Object.assign({}, newObj, {
+                    partyname: partyInfo.partyname,
+                    partyid: partyInfo.partyid
+                })
+                this.props.action.fetchSaveBond(saveObj)
+            } else if (this.type === 'notContract') {
+                // 临时摊位交款保存
+                this.props.action.fetchSaveNotContract(newObj)
+            }
+        })
+    }
+
+    // 取消返回
+    handleCancel = () => {
+        history.back();
     }
 
     componentDidMount() {
         if (this.type === 'bond') {
+            // 履约保证金
             xhr('post', paths.leasePath + '/margincs/getSiteAndBusinessNumber', {}, (res) => {
                 const hide = message.loading('正在查询...', 0)
                 console.log('获取公路港：', res)
                 if (res.result === 'success') {
+                    hide()
                     this.props.form.setFieldsValue({
-                        site: res.data.site,
                         businessnumber: res.data.businessnumber
                     })
-                    hide()
                 } else {
                     hide()
+                    errHandler(res.msg)
                 }
             })
-        }
-        if (this.type === 'notContract') {
-            xhr('post', paths.leasePath + '/boothpaymentcs/getSitePayment', {}, (res) => {
-                const hide = message.loading('正在查询...', 0)
-                console.log('获取公路港：', res)
-                res && res.msg && this.props.form.setFieldsValue({
-                    site: res.msg
-                })
-                hide()
-            })
-
+        } else if (this.type === 'notContract') {
+            // 临时摊位
             xhr('post', paths.leasePath + '/boothpaymentcs/getSinglePayment', {}, (res) => {
                 const hide = message.loading('正在查询...', 0)
                 console.log('获取交款单号：', res)
@@ -210,11 +226,10 @@ class Insert extends Component {
             return <Err errorMsg={this.errorMsg} />
         }
 
+        // 弹框内容
         let modalContent
         if (this.state.modalName === 'organization') {
-            const {
-                organization
-            } = this.props.busiLease
+            const { organization } = this.props.busiLease
             modalContent = <section className="m-search-modal">
                 <FormLayout
                     schema={organization.querySchema}
@@ -232,24 +247,20 @@ class Insert extends Component {
             </section>
         }
 
+        // 表单填写内容
         let content
         if (this.type === 'bond') {
             content = <FormLayout
-                schema={this.bondSchema}
                 form={this.props.form}
-                parentHandleInput={this.parentHandleInput}
-                showSave={true}
-                parentHandleSave={this.parentHandleSave}
-                />
+                schema={this.bondSchema}
+                parentHandleInput={this.parentHandleInput} />
         } else if (this.type === 'notContract') {
             content = <FormLayout
-                schema={this.notContractSchema}
                 form={this.props.form}
-                parentHandleInput={this.parentHandleInput}
-                showSave={true}
-                parentHandleSave={this.parentHandleSave}
-                />
+                schema={this.notContractSchema}
+                parentHandleInput={this.parentHandleInput} />
         }
+
         return (
             <section>
                 <Modal
@@ -261,7 +272,15 @@ class Insert extends Component {
                     {modalContent}
                 </Modal>
                 <Form horizontal>
-                    {content}
+                    {/* 所属公路港 */}
+                    <Cards title={`所属公路港：${sessionStorage.getItem('site')}`}>
+                        {content}
+                    </Cards>
+
+                    <div className="g-tal button-group">
+                        <Button type="primary" onClick={this.handleSave} className="g-mr10">保存</Button>
+                        <Button type="default" onClick={this.handleCancel}>取消</Button>
+                    </div>
                 </Form>
             </section>
         )

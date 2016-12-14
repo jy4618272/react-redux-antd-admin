@@ -50,14 +50,13 @@ const handleMoney = (money, years, num = 2) => {
     return parseFloat((money * years / 12).toFixed(num))
 }
 
-const handleContractCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney=0, startDate, endDate) => {
+const handleContractCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney = 0, startDate, endDate) => {
     const years = handleMonth(startDate, endDate)
     marginmoney = parseFloat(marginmoney.toFixed(2))
     console.log('月份：', years)
     let roommoney = 0               // 房间租金
     let linemoney = 0               // 班线费用
     let standardmoney = 0           // 合同标准金额
-
     let promotionmoneyoffset = 0    // 合同优惠        
     let marginmoneyoffset = 0       // 履约保证金冲抵
     let totaloffsetmoney = 0        // 冲抵总额
@@ -110,19 +109,19 @@ const handleContractCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney=0,
 
         if (_roommoney < 0 || _linemoney < 0) {
             let description = ''
-            if(_roommoney < 0){
+            if (_roommoney < 0) {
                 description = '请查看合同房间或合同优惠主体房间的选择'
             }
-            if(_linemoney < 0){
+            if (_linemoney < 0) {
                 description = '请查看合同班线或合同优惠主体班线的选择'
             }
             promotionmoneyoffset = 0
             notification.error({
-                message:'优惠金额有误',
+                message: '优惠金额有误',
                 description,
                 duration: null
             })
-        }else{
+        } else {
             promotionmoneyoffset = standardmoney - (_roommoney + _linemoney)
         }
     }
@@ -148,13 +147,13 @@ const handleContractCalc = (roomArr, lineArr, policyArr, bondArr, marginmoney=0,
 
     // 设置值
     return {
-        roommoney,
-        linemoney,
-        standardmoney,
-        marginmoneyoffset,
-        promotionmoneyoffset,
-        totaloffsetmoney,
-        money
+        roommoney: parseFloat(roommoney.toFixed(2)),
+        linemoney: parseFloat(linemoney.toFixed(2)),
+        standardmoney: parseFloat(standardmoney.toFixed(2)),
+        marginmoneyoffset: parseFloat(marginmoneyoffset.toFixed(2)),
+        promotionmoneyoffset: parseFloat(promotionmoneyoffset.toFixed(2)),
+        totaloffsetmoney: parseFloat(totaloffsetmoney.toFixed(2)),
+        money: parseFloat(money.toFixed(2))
     }
 }
 

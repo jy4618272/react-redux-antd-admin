@@ -434,7 +434,7 @@ class ApprovalDetail extends Component {
                 <FormLayout schema={this.approvalShowSchema}
                     form={form} />
             </Cards>
-            <div className="g-tal button-group g-mt20">
+            <div className="g-tal button-group gutter g-mt20">
                 <Button type="primary"
                     disabled={this.state.isSaveDisabeld}
                     onClick={this.handleSave}>保存</Button>
@@ -596,6 +596,14 @@ class ApprovalDetail extends Component {
                 return <Loading />
             }
 
+            let rentSum = 0
+            if (res.rentpactrefundlist.data && res.rentpactrefundlist.data.length) {
+                res.rentpactrefundlist.data.map(item => {
+                    rentSum += parseFloat(item.money)
+                })
+                rentSum = rentSum.toFixed(2);
+            }
+
             return (
                 <section>
                     <Title style="g-tac g-mb10"
@@ -606,17 +614,23 @@ class ApprovalDetail extends Component {
                             <FormLayout
                                 schema={this.contractRentShowSchema['form']}
                                 form={form} />
+                        </Cards>
 
+                        {/* 审批流程 */}
+                        {approvalWorkFlow}
+
+                        {/* 退租明细 */}
+                        <Cards title={"退租明细"}>
                             <InnerTable
                                 columns={this.contractRentShowSchema['tableColumns']}
                                 dataSource={res.rentpactrefundlist.data}
                                 isRowSelection={false}
                                 bordered={true}
-                                pagination={false} />
+                                pagination={false}
+                                footer={() => {
+                                    return <div className="g-tar s-primary">合计：{rentSum}&nbsp;元</div>
+                                } } />
                         </Cards>
-
-                        {/* 审批流程 */}
-                        {approvalWorkFlow}
 
                         {/* 审批意见 */}
                         {approvalContent}
@@ -636,9 +650,9 @@ class ApprovalDetail extends Component {
                     <Form horizontal>
                         {/* 保证金新增审批详情 */}
                         <Cards title={`${approvalData.flowname}信息`}>
-                            <FormLayout schema={this.bondShowSchema}
-                                form={form}
-                                fromLayoutStyle="g-border-bottom" />
+                            <FormLayout
+                                schema={this.bondShowSchema}
+                                form={form} />
                         </Cards>
 
                         {/* 审批流程 */}

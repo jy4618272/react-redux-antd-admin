@@ -1,7 +1,9 @@
 import { message } from 'antd'
+import { hashHistory } from 'react-router'
+import cookie from 'react-cookie'
+
 import xhr from 'SERVICE'
 import { rootPaths, errHandler, paths } from 'SERVICE/config'
-import cookie from 'react-cookie'
 
 // ================================
 // Action Type
@@ -31,7 +33,7 @@ const fetchMenuList = () => {
 		dispatch(requestMenuList())
 		xhr('post', paths.financePath + '/maincs/getSysFuncInfo', {}, function (res) {
 			const hide = message.loading('正在获取菜单...', 0)
-			console.log('左侧菜单返回数据：', res)
+			// console.log('左侧菜单返回数据：', res)
 			if (res.result === 'success') {
 				hide()
 				const list = []
@@ -50,27 +52,33 @@ const fetchMenuList = () => {
 							let icon = ''
 							switch(item2.urllink){
 								case 'busi_lease': 			// 租赁业务
-									icon = 'icon-lease'; 
+									icon = 'lease'; 
 									break;
 								case 'busi_finance':  		// 财务业务
-									icon = 'icon-finance-money';
+									icon = 'finance-money';
 									break;
 								case 'busi_asset':  		// 资产业务
-									icon = 'icon-assets';
+									icon = 'assets';
 									break;
-								
-								case 'config_base':  		// 基地配置
-									icon = 'icon-base-config';
-									break;
-								case 'config_lease':  		// 租赁配置
-									icon = 'icon-lease-config';
-									break;
-								case 'config_asset':  		// 资产配置
-									icon = 'icon-assets-config';
+								case 'busi_we':  		// 水电业务
+									icon = 'hydropower';
 									break;
 
+								case 'config_base':  		// 基地配置
+									icon = 'base-config';
+									break;
+								case 'config_lease':  		// 租赁配置
+									icon = 'lease-config';
+									break;
+								case 'config_asset':  		// 资产配置
+									icon = 'assets-config';
+									break;
+								case 'config_we':  		// 水电配置
+									icon = 'hydropower';
+									break;
+										
 								default:
-									icon = 'icon-lease'
+									icon = 'lease'
 									break;
 							}
 
@@ -84,14 +92,15 @@ const fetchMenuList = () => {
 					obj.child = listSec
 					list.push(obj)
 				})
-				console.log('$$$', list)
+				console.log('左侧一级菜单：', list)
 
 				dispatch(receiveMenuList(list))
 			} else {
 				hide()
 				if(res.code == '1'){
-					cookie.remove('session_key')
-					window.location.href = rootPaths.configPath + '/myportal/logincs/login'
+					hashHistory.push('login')
+					// cookie.remove('session_key')
+					// window.location.href = rootPaths.configPath + '/myportal/logincs/login'
 				}
 				errHandler(res.msg)
 			}

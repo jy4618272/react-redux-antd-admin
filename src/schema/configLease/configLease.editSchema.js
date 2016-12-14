@@ -4,7 +4,6 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType: 'full',
             placeholder: '请输入所属基地',
             disabled: true
         },
@@ -58,7 +57,6 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType: 'full',
             placeholder: '请输入所属基地',
             disabled: true
         },
@@ -155,7 +153,7 @@ module.exports = {
             showType: 'between',
             format: 'YYYY-MM-DD HH:mm:ss',
             feedBackShow: true,
-            help: "必填，请选择活动期限",
+            // help: "必填，请选择活动期限",
             validate: [
                 {
                     rules: [
@@ -169,7 +167,7 @@ module.exports = {
             key: 'memo',
             title: '备注',
             dataType: 'varchar',
-            showType: 'two',
+            showType: 'full',
             placeholder: '备注',
             feedBackShow: true,
             validate: [{
@@ -185,7 +183,6 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType: 'full',
             placeholder: '请输入所属基地',
             disabled: true
         },

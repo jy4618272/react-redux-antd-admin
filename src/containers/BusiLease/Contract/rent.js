@@ -13,6 +13,7 @@ import {
 
 import {
     Cards,
+    Icons,
     FormLayout,
     Loading,
     InnerForm,
@@ -297,7 +298,7 @@ class ContractRent extends Component {
 
                     <Cards title={"退款明细"}>
                         <div className="button-group g-mb10">
-                            <Button onClick={this.handleAdd}>新增</Button>
+                            <Button onClick={this.handleAdd}><Icons type="add" />新增</Button>
                         </div>
                         <InnerTable
                             columns={rentTableColumns}

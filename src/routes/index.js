@@ -5,6 +5,7 @@ import {
 	IndexRoute,
 	hashHistory
 } from 'react-router'
+import cookie from 'react-cookie'
 
 /******************** 首页及框架 ********************/
 // 架构
@@ -41,7 +42,8 @@ import AssetOperate from 'CONTAINER/BusiAsset/assetOperate'
 import AddAsset from 'CONTAINER/BusiAsset/newAsset'
 import CheckAsset from 'CONTAINER/BusiAsset/checkAsset'
 import AssetDetail from 'CONTAINER/BusiAsset/assetDetail'
-
+// 水电
+import BusiWeList from 'CONTAINER/BusiWe'
 
 /******************** 配置 ********************/
 // 基地
@@ -56,7 +58,9 @@ import ConfigLeaseDictionary from 'CONTAINER/ConfigLease/Dictionary'
 import ConfigLeaseDetail from 'CONTAINER/ConfigLease/LeaseDetail'
 // 资产
 import ConfigAsset from 'CONTAINER/ConfigAsset/configAsset'
-
+// 水电
+import ConfigWeList from 'CONTAINER/ConfigWe'
+import ConfigWeMeter from 'CONTAINER/ConfigWe/Meter'
 
 /******************** 打印 ********************/
 import PrintPage from 'CONTAINER/Print/index'
@@ -65,11 +69,19 @@ import PrintPage from 'CONTAINER/Print/index'
 /******************** 404 ********************/
 import NotFound from 'CONTAINER/NotFound'
 
-
+const requireAuth = (nextState, replace) => {
+	console.log('nextState', nextState)
+	if (!cookie.load('session_key')) {
+		replace({
+			pathname: 'login',
+			state: { nextPathname: nextState.location.pathname.slice(1) }
+		})
+	}
+}
 /* react router 2.x 必须配置 browserHistory */
 const routes = (
 	<Router history={hashHistory}>
-		<Route path="/" component={Layout}>
+		<Route path="/" component={Layout} onEnter={requireAuth}>
 			<IndexRoute component={Home} />
 
 			{/* 审批 */}
@@ -81,46 +93,53 @@ const routes = (
 			{/* 业务 */}
 			<Route path="busi">
 				<IndexRoute path="busi" component={Busi} />
-				{/* 财务-财务详情*/}
+				{/* 财务 */}
 				<Route path="busi_finance" tableName="busiFinance" component={BusiFinance} />
 				<Route path="busi_finance/finance_list" tableName="busiFinance" component={BusiFinanceList} />
 				<Route path="busi_finance/:id" tableName="busiFinance" commonName="common" component={BusiFinanceShow} />
-
+				
+				{/* 租赁 */}
 				<Route path="busi_lease" tableName="busiLease" component={BusiLease} />
 				<Route path="busi_lease/add" tableName="busiLease" component={BusiLeaseInsert} />
 				<Route path="busi_lease/:id" tableName="busiLease" commonName="common" component={BusiLeaseShow} />
-				{/* 新增合同 */}
 				<Route path="busi_lease/contract/add" tableName="busiLease" component={ContractAdd} />
-				{/* 续租合同 */}
 				<Route path="busi_lease/contract/renew/:id" tableName="busiLease" component={ContractRenew} />
-
-				{/* 变更合同/编辑合同 */}
 				<Route path="busi_lease/contract/change/:id" tableName="busiLease" component={ContractChange} />
-				{/* 退租合同 */}
 				<Route path="busi_lease/contract/rent/:id" tableName="busiLease" component={ContractRent} />
-
-				{/* 合同交款 */}
 				<Route path="busi_lease/contract/pay" tableName="busiLease" component={ContractPay} />
 
-				{/* 资产业务 */}
+				{/* 资产 */}
 				<Route path="busi_asset" component={AssetList} />
 				<Route path="busi_asset/add/:assetType/:id/:isModify" component={AddAsset} />
 				<Route path="busi_asset/operate/:assetType/:id/:isModify/:operateType" component={AssetOperate} />
 				<Route path="busi_asset/check_asset/:id" component={CheckAsset} />
 				<Route path="busi_asset/asset_detail/:id" component={AssetDetail} />
 
+				{/* 水电 */}
+				<Route path="busi_we" tableName="busiWe" component={ BusiWeList } />
 			</Route>
 
 			{/* 配置 */}
 			<Route path="config">
+				{/* 基地 */}
 				<Route path="config_base" tableName="configBase" component={ConfigBase} />
-				<Route path="config_rights" tableName="configRights" component={ConfigRights} />,
+
+				{/* 权限 */}
+				<Route path="config_rights" tableName="configRights" component={ConfigRights} />
+
+				{/* 租赁 */}
 				<Route path="config_lease" tableName="configLease" component={ConfigLease} />
 				<Route path="config_lease/add" tableName="configLease" component={ConfigLeaseAdd} />
 				<Route path="config_lease/edit/:id" tableName="configLease" component={ConfigLeaseEdit} />
 				<Route path="config_lease/dictionary" component={ConfigLeaseDictionary} />
 				<Route path="config_lease/:id" tableName="configLease" component={ConfigLeaseDetail} />
+
+				{/* 资产 */}
 				<Route path="config_asset" component={ConfigAsset} />
+
+				{/* 水电 */}
+				<Route path="config_we" tableName="configWe" component={ ConfigWeList } />
+				<Route path="config_we_meter" tableName="configWe" component={ ConfigWeMeter } />
 			</Route>
 		</Route>
 
@@ -129,7 +148,7 @@ const routes = (
 			<IndexRoute component={Login} />
 		</Route>
 
-		{/* 打印页面 */}
+		{/* 打印 */}
 		<Route path="print">
 			<Route path="printPreview/:id" component={PrintPage}/>	
 		</Route>

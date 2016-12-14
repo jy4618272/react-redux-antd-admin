@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
+import { message, Button } from 'antd'
+import { Icons } from 'COMPONENT'
 
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
-
-import {
-    message,
-    Button
-} from 'antd'
-
-import './print.less'
+import './print.less';
 
 class PrintPreview extends Component {
     constructor() {
@@ -21,6 +17,7 @@ class PrintPreview extends Component {
     componentWillMount() {
         this.state.preview = localStorage.getItem('printContent')
     }
+
     componentDidMount() {
         let wrapPrintContent = document.getElementById('wrapPrintContent')
         wrapPrintContent.innerHTML = this.state.preview
@@ -34,12 +31,11 @@ class PrintPreview extends Component {
     render() {
         return (
             <div>
-                <div id="wrapPrintContent" className="modal-with-title" style={{padding: '20px 30px'}}></div>
+                <div id="wrapPrintContent" className="m-modal g-padding"></div>
 
                 {/* 打印合同 */}
-                <br />
-                <div className="g-tac g-mt20 print-hidden">
-                    <Button onClick={() => { window.print() } }>打印</Button>
+                <div className="g-padding button-group print-hidden">
+                    <Button onClick={() => { window.print() } }><Icons type="print-a" />打印</Button>
                 </div>
             </div>
         )

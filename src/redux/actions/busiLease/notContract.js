@@ -156,28 +156,28 @@ export const ACTION_HANDLERS = {
     [SAVE_NOTCONTRACT_TABLE]:(notContract, {payload: res}) => ({
         ...notContract
     }),
-        [RECEIVE_NOTCONTRACT_VOID]:(notContract, {payload: res}) => {
-            const obj = notContract.tableData
-            obj.map(item => {
-                if (item.boothpaymentid == res.sub.boothpaymentid) {
-                    item.status = '作废'
-                }
-            })
-
-            return Object.assign({}, notContract, {
-                tableData: obj
-            })
-        },
-            [COMMIT_NOTCONTRACT_FINANCE]:(notContract, {payload: res}) => {
-                const obj = notContract.tableData
-                obj.map(item => {
-                    if (item.boothpaymentid === res) {
-                        item.status = '已提交'
-                    }
-                })
-                return {
-            ...notContract,
-                    tableData: obj
-                }
+    [RECEIVE_NOTCONTRACT_VOID]:(notContract, {payload: res}) => {
+        const obj = notContract.tableData
+        obj.map(item => {
+            if (item.boothpaymentid == res.sub.boothpaymentid) {
+                item.status = '作废'
             }
+        })
+
+        return Object.assign({}, notContract, {
+            tableData: obj
+        })
+    },
+    [COMMIT_NOTCONTRACT_FINANCE]:(notContract, {payload: res}) => {
+        const obj = notContract.tableData
+        obj.map(item => {
+            if (item.boothpaymentid === res) {
+                item.status = '已提交'
+            }
+        })
+        return {
+            ...notContract,
+            tableData: obj
+        }
+    }
 }
