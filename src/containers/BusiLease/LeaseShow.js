@@ -29,12 +29,15 @@ import {
 
 // action
 import action from 'ACTION/approval'
+import actionBusiLease from 'ACTION/busiLease'
+
 const mapDispatchToProps = (dispatch) => ({
-    action: bindActionCreators(action, dispatch)
+    action: bindActionCreators(action, dispatch),
+    actionBusiLease: bindActionCreators(actionBusiLease, dispatch),
 })
 
 @connect(
-    ({ approval }) => ({ approval }),
+    ({ approval, busiLease }) => ({ approval, busiLease }),
     mapDispatchToProps
 )
 class FinanceShow extends Component {
@@ -51,7 +54,7 @@ class FinanceShow extends Component {
             loading: true,
             res: {}
         }
-        console.log('财务详情props', props)
+        console.log('详情props', props)
 
 
         this.initFetchSchema(props)
@@ -135,6 +138,7 @@ class FinanceShow extends Component {
     componentDidMount() {
         const {
             action,
+            actionBusiLease,
             params,
             location
         } = this.props
@@ -163,10 +167,26 @@ class FinanceShow extends Component {
                     const oldObj = res.data.rentpact
 
                     // 流程
-                    action.fetchApprovalWorkFlowService({
-                        id: id,
-                        servicetype: type === 'rentpact' ? '合同' : '履约保证金'
-                    })
+                    this.flowtype = res.data.rentpact.flowstatus
+                    if (this.flowtype === '草稿') {
+                        let flowtypeVal
+                        if (res.data.rentpact.flowtype == '新增' || res.data.rentpact.flowtype == '续租') {
+                            flowtypeVal = '新增'
+                        } else {
+                            flowtypeVal = '变更'
+                        }
+                        // 草稿状态
+                        actionBusiLease.fetchWorkFlow({
+                            type: flowtypeVal,
+                            modelname: res.data.rentpact.modelname
+                        })
+                    } else {
+                        // 非草稿状态
+                        action.fetchApprovalWorkFlowService({
+                            id: id,
+                            servicetype: type === 'rentpact' ? '合同' : '履约保证金'
+                        })
+                    }
 
                     const newObj = {}
                     for (const key in oldObj) {
@@ -217,7 +237,7 @@ class FinanceShow extends Component {
     }
 
     render() {
-        const { location, approval } = this.props
+        const { location, approval, busiLease } = this.props
         const { loading, res } = this.state
         const type = location.query.type
         if (!this.inited) {
@@ -251,13 +271,18 @@ class FinanceShow extends Component {
                         {/* 获取合同模板 */}
                         <FormLayout
                             schema={this.contractShowSchema['contractFrom']}
-                            form={this.props.form}
-                            fromLayoutStyle="g-border-bottom" />
+                            form={this.props.form} />
 
                         { /* 流程 */}
-                        <Cards title={"审核流程"}>
-                            <WorkFlow flow={approval.workFlow} />
-                        </Cards>
+                        { 
+                            this.flowtype === '草稿' ? 
+                            <Cards title={"审核流程"}>
+                                <WorkFlow flow={busiLease.contractWorkFlow} />
+                            </Cards> : 
+                            <Cards title={"审核流程"}>
+                                <WorkFlow flow={approval.workFlow} />
+                            </Cards>
+                        }
 
                         {/* 客户名称 */}
                         <Cards title={"客户信息"}>

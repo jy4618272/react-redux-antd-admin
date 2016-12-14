@@ -4,7 +4,7 @@ import {
 } from 'antd'
 
 class ModalBox extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         console.log('弹框参数props:', props)
     }
@@ -19,18 +19,30 @@ class ModalBox extends Component {
     // cancel
     handleModalCancel = () => {
         const { parentHandleModalCancel } = this.props
-        parentHandleModalCancel && parentHandleModalCancel()    
+        parentHandleModalCancel && parentHandleModalCancel()
     }
-    
+
     render() {
         const {
             visible,
             title,
-            width
+            width,
+            footer
         } = this.props
 
-        return (
-            <Modal
+        let modalContent
+        if (footer) {
+            modalContent = <Modal
+                visible={visible}
+                title={title}
+                width={width}
+                onOk={this.handleModalOk}
+                onCancel={this.handleModalCancel}
+                footer={footer}>
+                {this.props.children}
+            </Modal>
+        } else {
+            modalContent = <Modal
                 visible={visible}
                 title={title}
                 width={width}
@@ -38,7 +50,9 @@ class ModalBox extends Component {
                 onCancel={this.handleModalCancel}>
                 {this.props.children}
             </Modal>
-        )
+        }
+
+        return modalContent
     }
 }
 

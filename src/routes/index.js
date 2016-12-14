@@ -43,7 +43,7 @@ import AddAsset from 'CONTAINER/BusiAsset/newAsset'
 import CheckAsset from 'CONTAINER/BusiAsset/checkAsset'
 import AssetDetail from 'CONTAINER/BusiAsset/assetDetail'
 // 水电
-import BusiWeList from 'CONTAINER/BusiWe/list'
+import BusiWeList from 'CONTAINER/BusiWe'
 
 /******************** 配置 ********************/
 // 基地
@@ -59,7 +59,8 @@ import ConfigLeaseDetail from 'CONTAINER/ConfigLease/LeaseDetail'
 // 资产
 import ConfigAsset from 'CONTAINER/ConfigAsset/configAsset'
 // 水电
-import ConfigWeList from 'CONTAINER/ConfigWe/List'
+import ConfigWeList from 'CONTAINER/ConfigWe'
+import ConfigWeMeter from 'CONTAINER/ConfigWe/Meter'
 
 /******************** 打印 ********************/
 import PrintPage from 'CONTAINER/Print/index'
@@ -115,7 +116,7 @@ const routes = (
 				<Route path="busi_asset/asset_detail/:id" component={AssetDetail} />
 
 				{/* 水电 */}
-				<Route path="busi_we" component={ BusiWeList } />
+				<Route path="busi_we" tableName="busiWe" component={ BusiWeList } />
 			</Route>
 
 			{/* 配置 */}
@@ -138,6 +139,7 @@ const routes = (
 
 				{/* 水电 */}
 				<Route path="config_we" tableName="configWe" component={ ConfigWeList } />
+				<Route path="config_we_meter" tableName="configWe" component={ ConfigWeMeter } />
 			</Route>
 		</Route>
 

@@ -6,24 +6,23 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
-import RateList from './RateList'
-import RoomList from './RoomList'
-import PrintList from './PrintList'
+import ManualMeter from './ManualMeter'
+import IntelligentMeter from './IntelligentMeter'
 
-import actionRateList from 'ACTION/configWe/rateList'
+import actionConfig from 'ACTION/configWe'
 const mapDispatchToProps = (dispatch) => ({
-    actionRateList: bindActionCreators(actionRateList, dispatch)
+    actionConfig: bindActionCreators(actionConfig, dispatch)
 })
 @connect(
     ({ configWe }) => ({ configWe }),
     mapDispatchToProps
 )
-class We extends Component {
+class WeMeter extends Component {
     constructor(props) {
         super(props);
-        console.log('水电配置props:', props);
+        console.log('水电配置抄表props:', props);
         this.state = {
-            tabs: sessionStorage.getItem('busiWeTabs') ? sessionStorage.getItem('busiWeTabs') : 'configWeRate'
+            tabs: sessionStorage.getItem('configWeMeterTabs') ? sessionStorage.getItem('configWeMeterTabs') : 'configManualMeter'
         }
         // 初始化获取schema数据
         this.initFetchSchema(props);
@@ -49,7 +48,7 @@ class We extends Component {
 
     // 选项卡切换
     handleTabClick = (activeKey) => {
-        sessionStorage.setItem('busiWeTabs', activeKey);
+        sessionStorage.setItem('configWeMeterTabs', activeKey);
         this.setState({
             tabs: activeKey
         })
@@ -57,33 +56,32 @@ class We extends Component {
 
     render() {
         const {
+            location,
             configWe,
-            actionRateList
+            actionConfig
         } = this.props;
 
         // 单价倍率配置数据
         const otherData = {
             tableName: this.tableName,
-            actionRateList
-        }
-        const rateListData = Object.assign({}, configWe.rateList, otherData);
-        const roomListData = Object.assign({}, configWe.roomList, otherData);
-        const printListData = Object.assign({}, configWe.printList, otherData);
+            query: location.query,
+            actionConfig            
+        };
+
+        const manualMeterData = Object.assign({}, configWe.manualMeter, otherData);
+        const intelligentMeterData = Object.assign({}, configWe.intelligentMeter, otherData);
 
         return (
-            <section className="m-busi m-busi-we">
+            <section className="m-config m-config-we">
                 <Tabs defaultActiveKey={this.state.tabs} type="card" onTabClick={this.handleTabClick}>
-                    {/* 单价倍率配置 */}
-                    <TabPane tab="单价倍率配置" key="configWeRate">
-                        <RateList {...rateListData} />
+                    {/* 人工抄表 */}
+                    <TabPane tab="人工抄表" key="configManualMeter">
+                        <ManualMeter {...manualMeterData} />
                     </TabPane>
-                    {/* 房间客户配置 */}
-                    <TabPane tab="房间客户配置" key="configWeRoom">
-                        <RoomList {...roomListData} />
-                    </TabPane>
-                    {/* 打印参数配置 */}
-                    <TabPane tab="打印参数配置" key="configWePrint">
-                        <PrintList {...printListData} />                        
+
+                    {/* 智能表 */}
+                    <TabPane tab="智能表" key="configIntelligentMeter">
+                        <IntelligentMeter {...intelligentMeterData} />
                     </TabPane>
                 </Tabs>
             </section>
@@ -91,8 +89,8 @@ class We extends Component {
     }
 }
 
-We.propTypes = {
+WeMeter.propTypes = {
 
 }
 
-export default We
+export default WeMeter

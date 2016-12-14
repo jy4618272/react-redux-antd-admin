@@ -9,6 +9,7 @@ import home from 'REDUCER/home'						   // 首页
 import approval from 'REDUCER/approval'				   // 审批
 import busiFinance from 'REDUCER/busiFinance'		   // 财务业务
 import busiLease from 'REDUCER/busiLease'			   // 租赁业务
+import busiWe from 'REDUCER/busiWe'			           // 水电业务
 import configLease from 'REDUCER/configLease'		   // 租赁配置
 import configBase from 'REDUCER/configBase/insert'     // 基地配置
 import configRights from 'REDUCER/configRights'        // 权限配置
@@ -27,6 +28,7 @@ const syncReducers = {
 	approval,
 	busiFinance,
 	busiLease,
+	busiWe,
 	configLease,
 	configBase,
 	configRights,

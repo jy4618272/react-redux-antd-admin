@@ -33,7 +33,7 @@ const fetchMenuList = () => {
 		dispatch(requestMenuList())
 		xhr('post', paths.financePath + '/maincs/getSysFuncInfo', {}, function (res) {
 			const hide = message.loading('正在获取菜单...', 0)
-			console.log('左侧菜单返回数据：', res)
+			// console.log('左侧菜单返回数据：', res)
 			if (res.result === 'success') {
 				hide()
 				const list = []
@@ -92,7 +92,7 @@ const fetchMenuList = () => {
 					obj.child = listSec
 					list.push(obj)
 				})
-				console.log('$$$', list)
+				console.log('左侧一级菜单：', list)
 
 				dispatch(receiveMenuList(list))
 			} else {

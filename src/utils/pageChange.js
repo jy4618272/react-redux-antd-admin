@@ -7,7 +7,7 @@
  * @returns {Promise}
  */
 const pageChange = (queryObj, pageSize, skipCount, func) => {
-    skipCount = (skipCount <= 1) ? 0 : (skipCount - 1) * 10
+    skipCount = (skipCount <= 1) ? 0 : (skipCount - 1) * pageSize
     const tmpObj = Object.assign({}, queryObj, {
         pageSize,
         skipCount

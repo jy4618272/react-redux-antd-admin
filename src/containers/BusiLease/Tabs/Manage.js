@@ -24,10 +24,11 @@ import {
 } from 'COMPONENT'
 
 import { paths } from 'SERVICE/config'
+
+import 'STYLE/list.less';
+import 'STYLE/modal.less';
+
 import action from 'ACTION/busiLease'
-import 'STYLE/list.less'
-
-
 const mapDispatchToProps = (dispatch) => ({
     action: bindActionCreators(action, dispatch)
 })
@@ -207,7 +208,7 @@ class LeaseManage extends Component {
             clickedRowKeys: [],
             clickedRows: []
         })
-        this.refs[key].hanldeCancelClick()
+        this.refs[key].handleCancelClick()
     }
 
     // 合同新增
@@ -395,7 +396,6 @@ class LeaseManage extends Component {
         }
     }
 
-
     // 弹框关闭
     handleModalCancel = () => {
         this.setState({
@@ -412,7 +412,6 @@ class LeaseManage extends Component {
             // alert(3)
         }
     }
-
 
     // 临时摊位打印交款单
     handlePrintPayMent = (key, record) => {
@@ -799,20 +798,20 @@ class LeaseManage extends Component {
             if (loading) {
                 modalContent = <Loading />
             }
-            modalContent = <div className="modal-with-title contract-pay-print printContent">
+            modalContent = <div className="m-modal contract-pay-print printContent">
                 <h3 className="clearfix">保证金交款单<span className="u-mark">{data.businessnumber}</span></h3>
                 <table className="m-table-print">
                     <tr>
                         <td className="title">交款单位（个人）</td>
-                        <td className="g-tac">{data.organization}</td>
+                        <td>{data.organization}</td>
                     </tr>
                     <tr>
                         <td className="title">金额</td>
-                        <td className="g-tac">{data.marginmoney}</td>
+                        <td>{data.marginmoney}</td>
                     </tr>
                     <tr>
                         <td className="title">备注</td>
-                        <td className="g-tac">{data.memo}</td>
+                        <td>{data.memo}</td>
                     </tr>
                     <tr>
                         <td colSpan="2">
@@ -836,24 +835,24 @@ class LeaseManage extends Component {
                 modalContent = <Loading />
             }
 
-            modalContent = <div className="modal-with-title contract-pay-print printContent">
+            modalContent = <div className="m-modal contract-pay-print printContent">
                 <h3 className="clearfix">临时摊位交款单<span className="u-mark">{data.businessnumber}</span></h3>
                 <table className="m-table-print">
                     <tr>
                         <td className="title">交款人</td>
-                        <td className="g-tac">{data.organization}</td>
+                        <td>{data.organization}</td>
                     </tr>
                     <tr>
                         <td className="title">金额</td>
-                        <td className="g-tac">{data.money}</td>
+                        <td>{data.money}</td>
                     </tr>
                     <tr>
                         <td className="title">有效期限</td>
-                        <td className="g-tac">{data.validdate}至{data.invaliddate}</td>
+                        <td>{data.validdate}至{data.invaliddate}</td>
                     </tr>
                     <tr>
                         <td className="title">备注</td>
-                        <td className="g-tac">{data.memo}</td>
+                        <td>{data.memo}</td>
                     </tr>
                     <tr>
                         <td colSpan="2">
@@ -893,7 +892,7 @@ class LeaseManage extends Component {
                             <div className="button-group g-mb10">
                                 <Button onClick={this.contractSearch.bind(this, 'due')} className="g-mr10"><Icon type="clock-circle-o" />将到期合同</Button>
                                 <Button onClick={this.contractSearch.bind(this, 'shouldSign')}><Icon type="edit" />应签合同</Button>
-                            </div>
+                            </div> 
                         </InnerForm>
                         {tableContractControl}
                         <InnerTable

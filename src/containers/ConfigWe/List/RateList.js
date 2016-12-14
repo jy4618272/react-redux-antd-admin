@@ -26,6 +26,7 @@ class RateList extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            updateStatus: false, 
             queryObj: {},
             clickedRowKeys: [],
             clickedRows: [],
@@ -62,8 +63,8 @@ class RateList extends Component {
 
     // 分页
     handlePageChange = (skipCount) => {
-        const { actionRateList, pageSize } = this.props
-        pageChange(this.state.queryObj, pageSize, skipCount, actionRateList.fetchRateList)
+        const { actionConfig, pageSize } = this.props
+        pageChange(this.state.queryObj, pageSize, skipCount, actionConfig.fetchRateList)
     }
 
     // 弹窗确认
@@ -87,7 +88,8 @@ class RateList extends Component {
                     let newObj = filterQueryObj(oldObj)
                     console.log('单价倍率配置新增数据', newObj)
 
-                    this.props.actionRateList.fetchRateAdd(newObj)
+                    this.props.actionConfig.fetchRateAdd(newObj)
+                    this.parentHandleModalCancel();
                 }
             })
         } else if (modalInfo.type === 'edit') {
@@ -107,13 +109,13 @@ class RateList extends Component {
                         meterchangetypeid
                     })
                     console.log('单价倍率配置修改数据', newObj)
-                    this.props.actionRateList.fetchRateEdit(newObj)
-                    
+                    this.props.actionConfig.fetchRateEdit(newObj)
+
                     this.handleCancel(this.props.rateListTable)
+                    this.parentHandleModalCancel();
                 }
             })
         }
-        this.parentHandleModalCancel();
     }
 
     // 弹框关闭
@@ -121,6 +123,7 @@ class RateList extends Component {
         const { rateAddModal, rateEditModal } = this.props
         const { modalInfo } = this.state
         this.setState({
+            updateStatus: false,            
             modalInfo: Object.assign({}, this.state.modalInfo, {
                 visible: false,
                 title: '正在关闭...',
@@ -149,7 +152,7 @@ class RateList extends Component {
             clickedRowKeys: [],
             clickedRows: []
         })
-        this.refs[key].hanldeCancelClick()
+        this.refs[key].handleCancelClick()
     }
 
     // 新增
@@ -168,6 +171,7 @@ class RateList extends Component {
     handleEdit = (dispatch) => {
         const { clickedRows } = this.state
         this.setState({
+            updateStatus: true,
             modalInfo: {
                 visible: true,
                 type: 'edit',
@@ -176,9 +180,9 @@ class RateList extends Component {
             }
         })
 
-        setTimeout(() => {
-            this.refs[this.props.rateEditModal].setFieldsValue(clickedRows[0])
-        }, 0)
+        // this.timer = setTimeout(() => {
+        //     this.refs[this.props.rateEditModal].setFieldsValue(clickedRows[0])
+        // }, 0)
     }
 
     // 删除
@@ -196,8 +200,14 @@ class RateList extends Component {
     }
 
     componentDidMount() {
-        const { actionRateList } = this.props
-        pageChange({}, 10, 0, actionRateList.fetchRateList)
+        const { actionConfig } = this.props
+        pageChange({}, 30, 0, actionConfig.fetchRateList)
+    }
+
+    componentDidUpdate() {  
+        if(this.state.updateStatus){         
+            this.refs[this.props.rateEditModal].setFieldsValue(this.state.clickedRows[0])    
+        }    
     }
 
     render() {
@@ -246,7 +256,7 @@ class RateList extends Component {
         }
 
         return (
-            <section className="m-busi-cont">
+            <section className="m-config-cont">
                 <ModalBox
                     {...this.state.modalInfo}
                     parentHandleModalOk={this.parentHandleModalOk}

@@ -2,29 +2,34 @@ import React, { Component } from 'react'
 
 import {
     Steps,
-    Tabs
+    Tabs,
+    Spin
 } from 'antd'
 
 const TabPane = Tabs.TabPane
 
 const Step = Steps.Step
 
-import StepsComponent from 'COMPONENT/BusiAsset/component/stepsComponent'
+import {
+    Cards,
+    WorkFlow,
+} from 'COMPONENT'
+
+import xhr from 'SERVICE'
+import { errHandler, rootPaths, paths } from 'SERVICE/config'
+
 import MobileAsset from 'COMPONENT/BusiAsset/newAsset/mobileAsset'
 import EasyGoods from 'COMPONENT/BusiAsset/newAsset/easyGoods'
 import FixedAsset from 'COMPONENT/BusiAsset/newAsset/fixedAsset'
+
+import AssetForm from 'COMPONENT/BusiAsset/newAsset/AssetForm'
 
 class NewAsset extends Component {
     constructor() {
         super()
         this.state = {
-            current: 3,  // 表示当前进度
-            steps: [  // stepsComponent
-                { title: '内勤', description: '张琪亚 ｜ 新增' },
-                { title: '管理员', description: '李媛风 ｜ 审核' },
-                { title: '财务员', description: '母庆业 ｜ 审核' },
-                { title: '完成', description: '' }
-            ]
+            flow: '', // 流程组件
+            assetType: '动产' // 记录cards的资产类型，默认要新增的是动产
         }
     }
     /**
@@ -36,19 +41,20 @@ class NewAsset extends Component {
     getTabGroup() {
         const { assetType, id, isModify } = this.props.params
 
+        // addAssetType 1｜2｜3 分别是：动产｜不动产｜低值易耗品
         const tab1 = (
             <TabPane tab="动产" key="1">
-                <MobileAsset />
+                <AssetForm addAssetType="1"/>
             </TabPane>
         )
         const tab2 = (
             <TabPane tab="不动产" key="2">
-                <FixedAsset />
+                <AssetForm addAssetType="2"/>
             </TabPane>
         )
         const tab3 = (
             <TabPane tab="易耗品" key="3">
-                <EasyGoods />
+                <AssetForm addAssetType="3"/>
             </TabPane>
         )
 
@@ -64,22 +70,56 @@ class NewAsset extends Component {
         }
     }
 
+    /** 
+     * 
+     * 
+     * */
+    componentWillMount() {
+        this.getFlowInfo()
+    }
+
+    /**
+     * 获取流程信息
+     * http://myportaltest.tf56.com:8080/tfPassParkAdmin/rentpactcs/selectWorkFlowByType
+     * 
+     *  参数
+     *      type  String  动产｜不动产｜低值易耗品     默认：动产
+     *      modelname: ''
+     */
+    getFlowInfo() {
+        const arg = {
+            type: '新增', // 等接口好了改为：this.state.assetType
+            modelname: 111   //  等接口好了改为： 此处传 ''，固定的参数
+        }
+        xhr('post', paths.leasePath + '/rentpactcs/selectWorkFlowByType', arg, (res) => {
+            if (res.result == 'success') { // 查询成功
+                this.setState({
+                    flow: <WorkFlow flow={res} />
+                })
+            } else {  // 查询失败
+                errHandler(res.msg)
+            }
+        })
+    }
+
     /**
      * 渲染
-     * 
+     *  
      */
     render() {
         return (
             <div>
-                {/** 步骤条 */}
-                <StepsComponent current={this.state.current} steps={this.state.steps} />
+                {/** 审核流程-步骤条 <WorkFlow flow={approval.workFlow} />*/}
+                <Cards title="审核流程">
+                    {this.state.flow}
+                </Cards>
 
                 {/** tab：动产／不动产／易耗品 */}
-                <div style={{ margin: '30px 20px' }}>
-                    <Tabs type="card">
+                <Cards title="资产信息">      
+                    <Tabs>
                         {this.getTabGroup()}
                     </Tabs>
-                </div>
+                </Cards>
             </div>
         )
     }

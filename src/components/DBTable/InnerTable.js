@@ -24,7 +24,7 @@ import moment from 'moment'
 
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
-
+ 
 import { Err } from 'COMPONENT'
 
 class InnerTable extends Component {
@@ -113,15 +113,12 @@ class InnerTable extends Component {
                     })
                 }
             });
-        } else {
-            console.log('属性需要设置【rowClassName】')
         }
-
         parentHandleRowClick && parentHandleRowClick(clickedRowKeys, clickedRows)
     }
 
     // 取消勾选
-    hanldeCancelClick = () => {
+    handleCancelClick = () => {
         this.setState({
             clickedRowKeys: [],
             clickedRows: []

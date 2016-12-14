@@ -8,7 +8,6 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType:'two',
             placeholder: '请输入所属基地',
             disabled: true
         },
@@ -61,7 +60,6 @@ module.exports = {
             key: 'site',
             title: '所属基地',
             dataType: 'varchar',
-            showType: 'full',
             placeholder: '请输入所属基地',
             disabled: true
         },
@@ -105,12 +103,11 @@ module.exports = {
             dataType: 'float',
             step: 0.1,
             placeholder: '请输入优惠幅度',
-            feedBackShow: true,
+            // feedBackShow: true,
             validate: [
                 {
                     rules: [
                         { required: true, min: 1, type: 'number', message: '请按要求输入优惠幅度' },
-                        // { validator: this.checkConfirm }
                     ],
                     trigger: ['onChange']
                 }
@@ -159,11 +156,10 @@ module.exports = {
             showType: 'between',
             format: 'YYYY-MM-DD HH:mm:ss',
             feedBackShow: true,
-            help: "请选择活动期限",
             validate: [
                 {
                     rules: [
-                        { required: true },
+                        { required: true, type: 'object', message: '请选择活动期限' },
                     ],
                     trigger: ['onBlur', 'onChange']
                 }

@@ -434,7 +434,7 @@ class ApprovalDetail extends Component {
                 <FormLayout schema={this.approvalShowSchema}
                     form={form} />
             </Cards>
-            <div className="g-tal button-group g-mt20">
+            <div className="g-tal button-group gutter g-mt20">
                 <Button type="primary"
                     disabled={this.state.isSaveDisabeld}
                     onClick={this.handleSave}>保存</Button>

@@ -219,13 +219,6 @@ class LeaseAdd extends Component {
         })
     }
 
-    /* 表单更改
-    handleInputBlur = (key) => {
-        if (key === 'promotionnum') {
-            
-        }
-    }*/
-
     componentDidMount() {
         this.props.actionLease.fetchArea()
     }

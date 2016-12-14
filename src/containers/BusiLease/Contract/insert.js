@@ -876,6 +876,7 @@ class ContractInsert extends Component {
         } = this.props
         if (modalName === 'selectOrganization') {
             form.resetFields(['organizationnum'])
+            this.refs.organizationTable.hanldeCancelSelect();
             action.resetOrganization()
         } else if (modalName === 'stagesShowModal') {
             this.refs.stagesShowModal.resetFields()
@@ -883,6 +884,7 @@ class ContractInsert extends Component {
             this.refs.stagesModal.resetFields()
         }
         this.setState({
+            selectDatas: [],
             modalVisible: false
         })
     }
@@ -1159,6 +1161,7 @@ class ContractInsert extends Component {
                 <InnerTable
                     columns={organization.tableColumns}
                     dataSource={organization.tableData}
+                    ref="organizationTable"
                     parentHandleSelectChange={this.parentHandleSelectChange}
                     isRowSelection={true}
                     bordered={true}

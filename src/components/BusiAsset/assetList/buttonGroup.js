@@ -1,11 +1,11 @@
 /**
  * 操作按钮组
- *  1.this.props.selectedRow    控制操作按钮组
- *      1.1  status  被选中行的状态{}，用于控制按钮的disabled
+ *  1.this.props.selectedRow    被选中资产的全部信息，用于控制操作按钮组
+ *      1.1  status  被选中行的资产状态{}，用于控制按钮的disabled
  *      1.2  id  点击按钮跳转时需要
  *      1.3  assetname  资产名称
  *      1.4  assettypename2  资产类型
- *  2.this.props.idArray   控制批量导出
+ *  2.this.props.idArray   控制批量导出 
  *  3.this.props.total     控制导出本页
  *  
  *
@@ -18,7 +18,9 @@ import { hashHistory } from 'react-router'
 import {
     Button,
     Popconfirm,
-    message
+    message,
+    Row,
+    Col
 } from 'antd'
 import { Icons } from 'COMPONENT'
 
@@ -44,7 +46,7 @@ class ButtonGroup extends Component {
      * */
     isDisabled() {
         const {idArray, total} = this.props
-        const {assetstatus, flowstatus} = this.props.selectedRow.status
+        const {assetstatus, flowstatus} = this.props.selectedRow
         let isDisabledButton = {
             db: { disabled: 'disabled' }, // 调拨
             xz: { disabled: 'disabled' }, //  闲置
@@ -110,9 +112,8 @@ class ButtonGroup extends Component {
      * busi/busi_asset/new  /:assetType/:id/:isModify
      * */
     getTargetLink(btnText) {
-        let { id, assettypename2: assetType, status } = this.props.selectedRow
-        // 被选中行的流程状态
-        const { flowstatus } = status
+        let { assetid: id, assettypename2: assetType, flowstatus } = this.props.selectedRow
+
         // 把资产类型处理成数字，动产＝1  不动产＝2  易耗品＝3
         if (assetType == '动产') {
             assetType = 1
@@ -149,11 +150,11 @@ class ButtonGroup extends Component {
             console.log(flowstatus)
             if (this.isInclude(flowstatus, '新增-待提交')) {
                 return `${addUrlModify}`
-            } else if (this.isInclude(flowstatus, '调拨-待提交')){
+            } else if (this.isInclude(flowstatus, '调拨-待提交')) {
                 return `${operateUrlModify}/db`
             } else if (this.isInclude(flowstatus, '闲置-待提交')) {
                 return `${operateUrlModify}/xz`
-            } else if (this.isInclude(flowstatus, '报废-待提交')){
+            } else if (this.isInclude(flowstatus, '报废-待提交')) {
                 return `${operateUrlModify}/bf`
             } else if (this.isInclude(flowstatus, '处置-待提交')) {
                 return `${operateUrlModify}/cz`
@@ -198,27 +199,29 @@ class ButtonGroup extends Component {
             onClick: self.handleClick.bind(self)
         }
         return (
-            <div className="button-group g-mb10">
-                <Button {...buttonType} {...xzzc} ref="xzzc"><Icons type="add" />新增资产</Button>
-                <Button {...buttonType} {...db} ref="db">调拨</Button>
-                <Button {...buttonType} {...xz} ref="xz"><Icons type="lie" />闲置</Button>
-                <Button {...buttonType} {...bf} ref="bf"><Icons type="void" />报废</Button>
-                <Button {...buttonType} {...cz} ref="cz">处置</Button>
-                <Popconfirm
-                    title={'是否确认终止资产：' + this.props.selectedRow.assetname + ' ?'}
-                    okText="确认" cancelText="取消"
-                    onConfirm={this.breakAsset.bind(this)}>
-                    <Button {...buttonType} {...zz} ref="zz">终止</Button>
-                </Popconfirm>
-                <Button {...buttonType} {...xg} ref="xg"><Icons type="edit" />修改</Button>  &nbsp;&nbsp;&nbsp;&nbsp;
-                <Button {...buttonType} {...zrp} ref="zrp"><Icons type="print-a" />打印责任牌</Button>
-                <Button {...buttonType} {...czd} ref="czd"><Icons type="print-a" />打印处置单</Button>
-                <div style={{ float: 'right' }}>
+            <Row className="button-group g-mb10 clearfix">
+                <Col span={19}>
+                    <Button {...buttonType} {...xzzc} ref="xzzc"><Icons type="add" />新增资产</Button>
+                    <Button {...buttonType} {...db} ref="db">调拨</Button>
+                    <Button {...buttonType} {...xz} ref="xz"><Icons type="lie" />闲置</Button>
+                    <Button {...buttonType} {...bf} ref="bf"><Icons type="void" />报废</Button>
+                    <Button {...buttonType} {...cz} ref="cz">处置</Button>
+                    <Popconfirm
+                        title={'是否确认终止资产：' + this.props.selectedRow.assetname + ' ?'}
+                        okText="确认" cancelText="取消"
+                        onConfirm={this.breakAsset.bind(this)}>
+                        <Button {...buttonType} {...zz} ref="zz">终止</Button>
+                    </Popconfirm>
+                    <Button {...buttonType} {...xg} ref="xg"><Icons type="edit" />修改</Button>  &nbsp;&nbsp;&nbsp;&nbsp;
+                    <Button {...buttonType} {...zrp} ref="zrp"><Icons type="print-a" />打印责任牌</Button>
+                    <Button {...buttonType} {...czd} ref="czd"><Icons type="print-a" />打印处置单</Button>
+                </Col>
+                <Col span={5} style={{ textAlign: 'right' }}>
                     <Button {...buttonType} {...dcby} ref="dcby">导出本页</Button>
                     <Button {...buttonType} {...pldc} ref="pldc">批量导出</Button>
-                    <Button {...buttonType} ref="dcby">测试审核</Button>
-                </div>
-            </div>
+                    {/* <Button {...buttonType} ref="dcby">测试审核</Button> */}
+                </Col>
+            </Row>
         )
     }
 }

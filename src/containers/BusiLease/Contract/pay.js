@@ -27,11 +27,8 @@ import {
     InnerPagination
 } from 'COMPONENT'
 
-import 'STYLE/list.less'
-
-import {
-    goBack
-} from 'UTIL'
+import 'STYLE/list.less';
+import 'STYLE/modal.less';
 
 import action from 'ACTION/busiLease'
 
@@ -324,7 +321,7 @@ class ContractPay extends Component {
             if (loading) {
                 modalContent = <Loading />
             }
-            modalContent = <div className="modal-with-title contract-pay-show printContent">
+            modalContent = <div className="m-modal contract-pay-show printContent">
                 <h3>收款计划</h3>
                 <Row type="flex" gutter={20} className="g-mb10 list-text">
                     <Col sm={8}>
@@ -380,7 +377,7 @@ class ContractPay extends Component {
                     </tr>
                 )
 
-                modalContent = <div className="modal-with-title contract-pay-print printContent">
+                modalContent = <div className="m-modal contract-pay-print printContent">
                     <h3 className="clearfix">客户交款单<span className="u-mark">{data.rentpactcode}</span></h3>
                     <table className="m-table-print">
                         <tr>

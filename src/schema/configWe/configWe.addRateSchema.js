@@ -9,8 +9,8 @@ module.exports = [
         modalType: true,
         showType: 'select',
         options: [
-            { key: '水表', value: '水表' },
-            { key: '电表', value: '电表' }
+            { key: '水', value: '水' },
+            { key: '电', value: '电' }
         ],
         placeholder: '请选择类别',
         feedBackShow: true,

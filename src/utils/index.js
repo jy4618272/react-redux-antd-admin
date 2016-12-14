@@ -1,7 +1,7 @@
 import moment from 'moment'
 
-const goBack = (page = 0) => {
-    history.goBack(page)
+const goBack = (page = -1) => {
+    history.go(page)
 }
 
 const getUrlPara = (key, path) => {
@@ -58,7 +58,13 @@ const filterQueryObjMoment = (oldObj) => {
     return newObj
 }
 
+const checkMobile = (val) => {
+    const reg = /^(1[3|4|5|7|8][0-9]\d{8})$/
+    return reg.test(val);
+}
+
 export {
+    checkMobile,
     goBack,
     getUrlPara,
     filterQueryObj,

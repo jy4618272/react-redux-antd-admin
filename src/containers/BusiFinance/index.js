@@ -184,7 +184,7 @@ class Finance extends Component {
             clickedRowKeys: [],
             clickedRows: []
         })
-        this.refs[key].hanldeCancelClick()
+        this.refs[key].handleCancelClick()
     }
 
     // 确认收款
@@ -274,9 +274,8 @@ class Finance extends Component {
     // 双击查看详情
     parentHandleDoubleClick = (record, index) => {
         if (record.type === '租赁合同' || record.type === '临时摊位' || record.type === '履约保证金') {
-            hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}&paytype=${record.paytype}`)
-        } else {
-            // alert(3)
+            // hashHistory.push(`busi/busi_finance/${record.financebusinessnumber}?type=${record.type}&paytype=${record.paytype}`)
+            window.open(`#/busi/busi_finance/${record.financebusinessnumber}?type=${record.type}&paytype=${record.paytype}`)
         }
     }
 

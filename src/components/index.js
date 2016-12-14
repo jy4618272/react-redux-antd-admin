@@ -2,6 +2,7 @@
 import ApprovalOpinions from './ApprovalOpinions'         // 审核详情
 import Breadcrumb from './Breadcrumb'                     // 面包屑
 import Cards from './Cards'                               // 卡片，区别antd的Card
+import EditableCell from './DBTable/EditableCell'         // 表格单元格编辑
 import Err from './Error'                                 // 错误
 import Footer from './Footer'                             // 底部
 import FormLayout from './DBTable/FormLayout'             // 表单
@@ -24,7 +25,8 @@ export {
     ApprovalOpinions, 
     AsideNav,    
     Breadcrumb, 
-    Cards,    
+    Cards, 
+    EditableCell,   
     Err,  
     Footer,     
     FormLayout,       

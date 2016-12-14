@@ -22,7 +22,7 @@ class InnerForm extends Component {
                         showSearch={this.props.showSearch}
                         showSave={this.props.showSave}
                         buttonSchema={this.props.buttonSchema}
-                        parentHandleInputBlur={this.props.parentHandleInputBlur}
+                        parentHandleBlur={this.props.parentHandleBlur}
                         parentHandleSelect={this.props.parentHandleSelect}
                         parentHandleSubmit={this.props.parentHandleSubmit}
                         parentHandleSave ={this.props.parentHandleSave}

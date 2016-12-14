@@ -4,18 +4,9 @@
 
 module.exports = [
     {
-        key: 'organization',
+        key: 'partyname',
         title: '客户名称',
         dataType: 'varchar',
-        placeholder: '请输入客户名称',
-        feedBackShow: true,
-        validate: [
-            {
-                rules: [
-                    { required: true, type: 'string', message: '请输入客户名称' }
-                ],
-                trigger: ['onChange']
-            }
-        ]
+        placeholder: '请输入客户名称'
     }
 ]

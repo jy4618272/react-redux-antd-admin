@@ -131,7 +131,12 @@ class Lease extends Component {
 
         console.debug('handlePageChange, page = %d', page);
 
-        this.handleCancel(this.status)
+        if (this.status !== 'room') {
+            this.handleCancel(this.status)
+        } else {
+            this.handleCancel(this.roomStatus)
+        }
+
         page = (page <= 1) ? 0 : (page - 1) * 10
         if (this.status === 'room') {
             this.select(this.queryObj, roomData.pageSize, page, fetchRoomTable)
@@ -279,7 +284,7 @@ class Lease extends Component {
             clickedRowKeys: [],
             clickedRows: []
         })
-        this.refs[key].hanldeCancelClick()
+        this.refs[key].handleCancelClick()
     }
 
     /**
@@ -545,7 +550,7 @@ class Lease extends Component {
                             schema={roomData['room']}
                             showSearch={true}
                             parentHandleSubmit={this.handleFormSubmit} />
-                        <Tabs defaultActiveKey={this.roomStatus} animated="false" type="inline" onChange={this.handlerRoomTabs}>
+                        <Tabs defaultActiveKey={this.roomStatus} onChange={this.handlerRoomTabs}>
                             <TabPane tab="全部" key="searchAll">
                                 {tableRoomControl}
                                 <InnerTable

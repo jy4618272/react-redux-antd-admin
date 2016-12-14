@@ -22,16 +22,16 @@ module.exports = [
     },
     {
         key: 'readingdate',
-        title: '水表抄表日期',
+        title: '水抄表日期',
         modalType: true, 
         dataType: 'datetime',
         format: 'YYYY-MM-DD HH:mm:ss',
-        placeholder: '请选择水表抄表日期',
+        placeholder: '请选择水抄表日期',
         feedBackShow: true,
         validate: [
             {
                 rules: [
-                    { required: true, type: 'object', message: '请选择水表抄表日期' }
+                    { required: true, type: 'object', message: '请选择水抄表日期' }
                 ],
                 trigger: ['onChange']
             }
@@ -39,16 +39,16 @@ module.exports = [
     },
     {
         key: 'readingdate1',
-        title: '电表抄表日期',
+        title: '电抄表日期',
         modalType: true,        
         dataType: 'datetime',
         format:'YYYY-MM-DD HH:mm:ss',
-        placeholder: '请选择电表抄表日期',
+        placeholder: '请选择电抄表日期',
         feedBackShow: true,
         validate: [
             {
                 rules: [
-                    { required: true, type: 'object', message: '请选择电表抄表日期' }
+                    { required: true, type: 'object', message: '请选择电抄表日期' }
                 ],
                 trigger: ['onChange']
             }

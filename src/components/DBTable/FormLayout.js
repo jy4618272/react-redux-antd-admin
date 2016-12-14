@@ -50,10 +50,11 @@ class FormLayout extends Component {
                     wrapperCol={{ span: 16 }}
                     hasFeedback={field.feedBackShow}>
                     {getFieldDecorator(field.key, {
-                        validate: field.validate || []
+                        validate: field.validate || [],
+                        initialValue: field.default
                     })(
                         formItem
-                        )}
+                    )}
                 </FormItem>
             </Col>
         )
@@ -161,12 +162,9 @@ class FormLayout extends Component {
         )
     }
 
-
+    // 下拉选择
     handleSelect = (key, value) => {
-        // console.log(key, value)
-        if (this.props.parentHandleSelect) {
-            this.props.parentHandleSelect(key, value)
-        }
+        this.props.parentHandleSelect && this.props.parentHandleSelect(key, value);
     }
 
     /**
@@ -175,7 +173,7 @@ class FormLayout extends Component {
      * @param field
      */
     transformSelect = (field) => {
-        const options = []
+        const options = [];
         // console.debug('transform field %o to Select component', field)
 
         // console.log(field.options)
@@ -184,7 +182,11 @@ class FormLayout extends Component {
         })
 
         return this.colWrapper((
-            <Select placeholder={field.placeholder || '请选择'} size="default" onSelect={this.handleSelect.bind(this, field.key)} disabled={field.disabled}>
+            <Select 
+                placeholder={field.placeholder || '请选择'} 
+                size="default" 
+                disabled={field.disabled}
+                onSelect={this.handleSelect.bind(this, field.key)}>
                 {options}
             </Select>
         ), field)
@@ -228,6 +230,13 @@ class FormLayout extends Component {
         })
         return this.colWrapper((
             <CheckboxGroup options={options} />
+        ), field)
+    }
+
+    // 开关
+    transformCheckboxChoose = (field) => {
+        return this.fullColWrapper((
+            <Checkbox className="g-fs-md">{field.memo}</Checkbox>
         ), field)
     }
 
@@ -366,9 +375,9 @@ class FormLayout extends Component {
     }
 
     // 表单修改
-    handleInputBlur = (key) => {
-        this.props.parentHandleInputBlur && this.props.parentHandleInputBlur(key)
-    }
+    // handleInputBlur = (key) => {
+    //     this.props.parentHandleInputBlur && this.props.parentHandleInputBlur(key)
+    // }
 
     // 日期选择
     handleDateChange = (key, value) => {
@@ -391,12 +400,12 @@ class FormLayout extends Component {
             case 'int':
                 // console.debug('transform field %o to integer input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 1} size="default" disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" onBlur={this.handleInputBlur.bind(this, field.key)} disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
+                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
@@ -406,7 +415,7 @@ class FormLayout extends Component {
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
                 return this.colWrapper((
-                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} />
+                    <Input placeholder={field.placeholder || '请填写'} size="default" disabled={field.disabled} readOnly={field.readonly} onClick={this.handleInputClick.bind(this, field.key)} onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
         }
     }
@@ -471,7 +480,6 @@ class FormLayout extends Component {
                 site: sessionStorage.getItem('site')
             })
         }
-
         if (this.props.setFields) {
             this.props.form.setFieldsValue(
                 this.props.setFields
@@ -480,7 +488,7 @@ class FormLayout extends Component {
     }
 
     render() {
-        const {schema, fromLayoutStyle} = this.props
+        const {schema, fromLayoutStyle, type} = this.props
         const rows = []
         let cols = []
 
@@ -490,11 +498,11 @@ class FormLayout extends Component {
         schema.forEach((field) => {
             // 当前列需要占用几个格子? 普通的都是6, 只有datetime between是12
             let spaceNeed = 6
-            if (field.showType === 'two' || field.showType === 'between') {
+            if (field.showType === 'two' || field.showType === 'between' || field.modalType) {
                 spaceNeed = 12
             }
 
-            if (field.showType === 'full') {
+            if (field.showType === 'full' || field.showType === 'checkboxChoose') {
                 spaceNeed = 24
             }
 
@@ -515,6 +523,9 @@ class FormLayout extends Component {
                     break
                 case 'checkbox':
                     cols.push(this.transformCheckbox(field))
+                    break
+                case 'checkboxChoose':
+                    cols.push(this.transformCheckboxChoose(field))
                     break
                 case 'multiSelect':
                     cols.push(this.transformMultiSelect(field))
