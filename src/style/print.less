@@ -1,24 +1,53 @@
-// 控制打印的样式
-// 如果body高度超过一屏，打印内容会出现问题，所以设置一下#root
-// 通常需要打印的是 Modal ，Modal的头／关闭按钮／脚 并不需要
-// 容器的box-shadow也不需要
-
 @media print {
     .print-hidden{
         display: none;
     }
-    /*#root {
-        height: 100%;
-        overflow: hidden;
-    }*/
-    
-    /*.ant-modal-content {
-        box-shadow: 0 0 0 white !important;
+}
 
-        .ant-modal-close,
-        .ant-modal-header,
-        .ant-modal-footer {
-            display: none;
+/**************************** 打印责任牌 ****************************/
+#printDutySign{ 
+    border: 1px solid #ddd;
+    padding: 0 20px;
+
+    .print-title {
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-collapse: collapse;
+
+        tr {
+            td {
+                border: 1px solid #ddd;
+                padding: 8px 0;
+                padding-left: 5px;
+                width: 50%;
+            }
         }
-    } */
+    }
+
+    .print-footer{
+        text-align: center;
+        padding: 10px 0;
+        position: relative;
+
+        .footer-right {
+            position: absolute;
+            right: 0;
+        }
+    }
+}
+
+/**************************** 打印处置单 ****************************/
+#printHandleForm {
+    border: 1px solid #ddd;
+    padding: 0 20px 20px 20px;
+
+    .print-title {
+        padding: 10px 0;
+        text-align: center;
+    }
 }

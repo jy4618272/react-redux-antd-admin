@@ -1,3 +1,4 @@
+// 水电业务-手工抄表-水电管理
 import {
     message,
     notification
@@ -8,128 +9,81 @@ import { errHandler, paths } from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const REQUEST_RATE_LIST = 'REQUEST_RATE_LIST'
-const RECEIVE_RATE_LIST = 'RECEIVE_RATE_LIST'
-const RECEIVE_RATE_ADD = 'RECEIVE_RATE_ADD'
-const RECEIVE_RATE_EDIT = 'RECEIVE_RATE_EDIT'
+const REQUEST_MANUAL_METER_CONFIRMED = 'REQUEST_MANUAL_METER_CONFIRMED';
+const RECEIVE_MANUAL_METER_CONFIRMED = 'RECEIVE_MANUAL_METER_CONFIRMED';
+const MANUAL_METER_PRINT_PAYMENT = 'MANUAL_METER_PRINT_PAYMENT';
 
 // ================================
 // Action Creator
 // ================================
 // 请求页面数据
-const requestRateList = () => ({
-    type: REQUEST_RATE_LIST
+const requestManualMeterConfirmed = () => ({
+    type: REQUEST_MANUAL_METER_CONFIRMED
 })
 
-const receiveRateList = (res) => ({
-    type: RECEIVE_RATE_LIST,
+const receiveManualMeterConfirmed = (res) => ({
+    type: RECEIVE_MANUAL_METER_CONFIRMED,
     payload: res
 })
-
-let pageInfo
 
 // 列表
-const fetchRateList = (data) => {
+const fetchManualMeterConfirmed = (data) => {
     return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/selectListBySite', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            pageInfo = Object.assign({}, data, {
-                skipCount: 0
-            })
+        dispatch(requestManualMeterConfirmed())
+        xhr('post', paths.leasePath + '/meterpaymentcs/selectByKeyword', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('水电配置之单价倍率配置列表', newRes)
+            console.log('水电业务之人工抄表已提交', newRes)
             if (res.result === 'success') {
                 hide()
-                dispatch(receiveRateList(newRes))
+                dispatch(receiveManualMeterConfirmed(newRes))
             } else {
                 hide()
-                dispatch(receiveRateList({}))
+                dispatch(receiveManualMeterConfirmed({}))
                 errHandler(res.msg)
             }
         })
     }
 }
 
-const receiveRateAdd = (res) => ({
-    type: RECEIVE_RATE_ADD,
+// 打印交款单
+const receivePrintPayment = (res) => ({
+    type: MANUAL_METER_PRINT_PAYMENT,
     payload: res
 })
 
-// 新增
-const fetchRateAdd = (data) => {
+const fetchPrintPayment = (data) => {
     return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/insertMeterChangeType', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            const newRes = Object.assign({}, res, {
-                sub: data
-            })
-            console.log('水电配置之单价倍率配置新增', newRes)
+        xhr('post', paths.leasePath + '/meterpaymentcs/printByPartyid', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
+            console.log('水电业务之打印交款单: ', res)
             if (res.result === 'success') {
                 hide()
-                notification.success({
-                    message: '新增成功',
-                    description: '单价倍率配置新增数据成功'
-                });
-                dispatch(receiveRateAdd(newRes))
-                dispatch(fetchRateList(pageInfo))
+                dispatch(receivePrintPayment(res))
             } else {
                 hide()
-                dispatch(receiveRateAdd({}))
+                dispatch(receivePrintPayment({}))
                 errHandler(res.msg)
             }
         })
     }
 }
-
-const receiveRateEdit = (res) => ({
-    type: RECEIVE_RATE_EDIT,
-    payload: res
-})
-// 修改
-const fetchRateEdit = (data) => {
-    return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/updateMeterChangeType', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            const newRes = Object.assign({}, res, {
-                sub: data
-            })
-            console.log('水电配置之单价倍率配置修改', newRes)
-            if (res.result === 'success') {
-                hide()
-                notification.success({
-                    message: '修改成功',
-                    description: '单价倍率配置修改数据成功'
-                });
-                dispatch(receiveRateEdit(newRes))
-            } else {
-                hide()
-                dispatch(receiveRateEdit({}))
-                errHandler(res.msg)
-            }
-        })
-    }
-}
-
 
 /* default 导出所有 Actions Creator */
 export default {
-    fetchRateList,
-    fetchRateAdd,
-    fetchRateEdit
+    fetchManualMeterConfirmed,
+    fetchPrintPayment
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_RATE_LIST]: (list) => ({
+    [REQUEST_MANUAL_METER_CONFIRMED]: (list) => ({
         ...list,
         tableLoading: true,
         tableData: list.tableData
     }),
-    [RECEIVE_RATE_LIST]: (list, { payload: res }) => ({
+    [RECEIVE_MANUAL_METER_CONFIRMED]: (list, { payload: res }) => ({
         ...list,
         tableLoading: false,
         tableData: res.data,
@@ -137,32 +91,12 @@ export const ACTION_HANDLERS = {
         pageSize: res.sub.pageSize,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / (res.sub.pageSize) + 1)
     }),
-    [RECEIVE_RATE_ADD]: (list, { payload: res }) => {
-        if (res.sub) {
-            list.tableData.unshift(res.sub)
-        }
-        return {
-            ...list,
+    [MANUAL_METER_PRINT_PAYMENT]: (list, { payload: res }) => ({
+        ...list,
+        printPayment: {
             tableLoading: false,
-            tableData: list.tableData
+            tableData:res.data
         }
-    },
-    [RECEIVE_RATE_EDIT]: (list, { payload: res }) => {
-        const obj = list.tableData
-        obj.map(item => {
-            if (item.meterchangetypeid === res.sub.meterchangetypeid) {
-                item.metertype  = res.sub.metertype,
-                item.chargetype = res.sub.chargetype,
-                item.meterprice = res.sub.meterprice,
-                item.meterrate  = res.sub.meterrate
-            }
-        })
-        
-        return {
-            ...list,
-            tableLoading: false,
-            tableData: obj
-        }
-    }
+    })
 }
 

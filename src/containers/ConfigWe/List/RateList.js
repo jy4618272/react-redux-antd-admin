@@ -42,8 +42,7 @@ class RateList extends Component {
     }
 
     static defaultProps = {
-        rateAddModal: 'rateAddModal',
-        rateEditModal: 'rateEditModal',
+        rateModal: 'rateModal',
         rateListTable: 'rateListTable'
     }
 
@@ -69,58 +68,41 @@ class RateList extends Component {
 
     // 弹窗确认
     parentHandleModalOk = () => {
-        const { rateAddModal, rateEditModal } = this.props
-        const _rateAddModal = this.refs[rateAddModal]
-        const _rateEditModal = this.refs[rateEditModal]
-        const { modalInfo } = this.state
-        if (modalInfo.type === 'add') {
-            // 新增
-            _rateAddModal.validateFieldsAndScroll((errors, values) => {
-                if (errors) {
-                    notification.error({
-                        message: '表单填写有误',
-                        description: '请按要求正确填写表单'
-                    })
-                    return false;
+        const { rateModal, actionConfig, rateListTable } = this.props;
+        const _rateModal = this.refs[rateModal];
+        const { modalInfo, clickedRows } = this.state;
+        
+        _rateModal.validateFieldsAndScroll((errors, values) => {
+            if (errors) {
+                notification.error({
+                    message: '表单填写有误',
+                    description: '请按要求正确填写表单'
+                })
+                return false;
+            } else {
+                const oldObj = _rateModal.getFieldsValue()
+                let newObj = filterQueryObj(oldObj)
+                if (modalInfo.type === 'add') {
+                    // 新增
+                    console.log('单价倍率配置新增数据', newObj);                    
+                    actionConfig.fetchRateAdd(newObj);
                 } else {
-                    // 单价倍率配置新增
-                    const oldObj = _rateAddModal.getFieldsValue()
-                    let newObj = filterQueryObj(oldObj)
-                    console.log('单价倍率配置新增数据', newObj)
-
-                    this.props.actionConfig.fetchRateAdd(newObj)
-                    this.parentHandleModalCancel();
-                }
-            })
-        } else if (modalInfo.type === 'edit') {
-            // 修改
-            _rateEditModal.validateFieldsAndScroll((errors, values) => {
-                if (errors) {
-                    notification.error({
-                        message: '表单填写有误',
-                        description: '请按要求正确填写表单'
-                    })
-                    return false;
-                } else {
-                    // 单价倍率配置修改
-                    const oldObj = _rateEditModal.getFieldsValue()
-                    const meterchangetypeid = this.state.clickedRows[0].meterchangetypeid
-                    let newObj = Object.assign({}, filterQueryObj(oldObj), {
-                        meterchangetypeid
-                    })
-                    console.log('单价倍率配置修改数据', newObj)
-                    this.props.actionConfig.fetchRateEdit(newObj)
-
-                    this.handleCancel(this.props.rateListTable)
-                    this.parentHandleModalCancel();
-                }
-            })
-        }
+                    // 修改
+                    newObj = Object.assign({}, newObj, {
+                        meterchangetypeid: clickedRows[0].meterchangetypeid
+                    });
+                    console.log('单价倍率配置修改数据', newObj);
+                    actionConfig.fetchRateEdit(newObj);
+                }   
+                this.handleCancel(rateListTable);
+                this.parentHandleModalCancel();
+            }
+        });
     }
 
     // 弹框关闭
     parentHandleModalCancel = () => {
-        const { rateAddModal, rateEditModal } = this.props
+        const { rateModal } = this.props
         const { modalInfo } = this.state
         this.setState({
             updateStatus: false,            
@@ -131,11 +113,7 @@ class RateList extends Component {
         })
 
         // 关闭时候重置弹窗
-        if (modalInfo.type == 'add') {
-            this.refs[rateAddModal].resetFields();
-        } else if (modalInfo.type == 'edit') {
-            this.refs[rateEditModal].resetFields();
-        }
+        this.refs[rateModal].resetFields();
     }
 
     // 单击选中
@@ -161,15 +139,22 @@ class RateList extends Component {
             modalInfo: {
                 visible: true,
                 type: 'add',
-                title: '新增单价倍率配置',
+                title: '新增',
                 width: '700'
             }
         })
     }
 
+    // 新增表单失去焦点
+    parentHandleBlur = (key) => {
+        this.state.updateStatus && this.setState({
+            updateStatus: false
+        });
+    }
+
     // 修改
     handleEdit = (dispatch) => {
-        const { clickedRows } = this.state
+        const { clickedRows } = this.state;
         this.setState({
             updateStatus: true,
             modalInfo: {
@@ -178,25 +163,26 @@ class RateList extends Component {
                 title: `修改${clickedRows[0].metertype}-${clickedRows[0].meterchangetypeid}`,
                 width: '700'
             }
-        })
-
-        // this.timer = setTimeout(() => {
-        //     this.refs[this.props.rateEditModal].setFieldsValue(clickedRows[0])
-        // }, 0)
+        });
     }
 
     // 删除
     handleDel = () => {
-        const { clickedRows } = this.state
+        const { clickedRows } = this.state;
+        const { rateListTable, actionConfig } = this.props;
+        const that = this;
         confirm({
             title: `删除${clickedRows[0].metertype}-${clickedRows[0].meterchangetypeid}`,
             content: '确认删除？',
             onOk() {
-                alert('接口还没有')
-                this.handleCancel(this.props.rateListTable)
+                actionConfig.fetchRateDelete({
+                    metertype: clickedRows[0].metertype,
+                    meterchangetypeid: clickedRows[0].meterchangetypeid
+                });
+                that.handleCancel(rateListTable);
             },
             onCancel() { }
-        })
+        });
     }
 
     componentDidMount() {
@@ -206,69 +192,53 @@ class RateList extends Component {
 
     componentDidUpdate() {  
         if(this.state.updateStatus){         
-            this.refs[this.props.rateEditModal].setFieldsValue(this.state.clickedRows[0])    
+            this.refs[this.props.rateModal].setFieldsValue(this.state.clickedRows[0])    
         }    
     }
 
     render() {
-        const data = this.props
-        const { modalInfo, clickedRowKeys, clickedRows } = this.state
-        const oneSelected = clickedRowKeys.length === 1
-        // 表格操作按钮
-        const rateListButtons = <ButtonGroup className="button-group g-mb10">
-            <Button onClick={this.handleAdd}><Icons type="add" />新增</Button>
-            <Button disabled={!oneSelected} onClick={this.handleEdit}><Icons type="edit" />修改</Button>
-            <Button disabled={!oneSelected} onClick={this.handleDel}><Icon type="close-circle-o" />删除</Button>
-        </ButtonGroup>
-
-        // 表格及分页
-        let rateListCont
-        rateListCont = <div>
-            <InnerTable
-                loading={data.tableLoading}
-                columns={data.tableColumns}
-                dataSource={data.tableData}
-                bordered={true}
-                pagination={false}
-                ref={this.props.rateListTable}
-                rowClassName={this.props.rateListTable}
-                parentHandleRowClick={this.parentHandleRowClick} />
-            <InnerPagination
-                total={data.total}
-                pageSize={data.pageSize}
-                skipCount={data.skipCount}
-                parentHandlePageChange={this.handlePageChange} />
-        </div>
-
-        // 弹框内容
-        let modalContent = ''
-        if (!this.inited) {
-            modalContent = <Err errorMsg={this.errorMsg} />
-        }
-        if (modalInfo.type === 'add') {
-            modalContent = <InnerForm
-                ref={this.props.rateAddModal}
-                schema={this.addSchema} />
-        } else if (modalInfo.type === 'edit') {
-            modalContent = <InnerForm
-                ref={this.props.rateEditModal}
-                schema={this.addSchema} />
-        }
-
+        const data = this.props;
+        const { modalInfo, clickedRowKeys, clickedRows } = this.state;
+        const oneSelected = clickedRowKeys.length === 1;
+    
         return (
             <section className="m-config-cont">
                 <ModalBox
                     {...this.state.modalInfo}
                     parentHandleModalOk={this.parentHandleModalOk}
                     parentHandleModalCancel={this.parentHandleModalCancel}>
-                    {modalContent}
+                     { !this.inited ? 
+                        <Err errorMsg={this.errorMsg} />
+                        :
+                        <InnerForm
+                            ref={this.props.rateModal}
+                            schema={this.addSchema}
+                            parentHandleBlur={this.parentHandleBlur} />
+                    }
                 </ModalBox>
 
                 {/* 表格操作按钮 */}
-                {rateListButtons}
+                <ButtonGroup className="button-group g-mb10">
+                    <Button onClick={this.handleAdd}><Icons type="add" />新增</Button>
+                    <Button disabled={!oneSelected} onClick={this.handleEdit}><Icons type="edit" />修改</Button>
+                    <Button disabled={!oneSelected} onClick={this.handleDel}><Icon type="close-circle-o" />删除</Button>
+                </ButtonGroup>
 
                 {/* 表格及分页 */}
-                {rateListCont}
+                <InnerTable
+                    loading={data.tableLoading}
+                    columns={data.tableColumns}
+                    dataSource={data.tableData}
+                    bordered={true}
+                    pagination={false}
+                    ref={this.props.rateListTable}
+                    rowClassName={this.props.rateListTable}
+                    parentHandleRowClick={this.parentHandleRowClick} />
+                <InnerPagination
+                    total={data.total}
+                    pageSize={data.pageSize}
+                    skipCount={data.skipCount}
+                    parentHandlePageChange={this.handlePageChange} />
             </section>
         )
     }

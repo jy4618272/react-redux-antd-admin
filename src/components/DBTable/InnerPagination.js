@@ -20,8 +20,7 @@ class InnerPagination extends React.Component {
                         pageSize={pageSize}
                         defaultCurrent={1}
                         current={skipCount}
-                        onChange={parentHandlePageChange}
-                        />
+                        onChange={parentHandlePageChange} />
                 </div>
             )
         } else {

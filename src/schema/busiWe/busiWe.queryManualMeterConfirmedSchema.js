@@ -6,18 +6,9 @@ module.exports = [
     {
         key: 'checkdate',
         title: '核算年月',
-        dataType: 'datetime',
-        format: 'YYYY-MM-DD',
-        placeholder: '请选择核算年月',
-        feedBackShow: true,
-        validate: [
-            {
-                rules: [
-                    { required: true, type: 'object', message: '请选择核算年月' }
-                ],
-                trigger: ['onChange']
-            }
-        ]
+        dataType: 'monthtime',
+        format: 'YYYY-MM',
+        placeholder: '请选择核算年月'
     },
     {
         key: 'organization',
@@ -26,18 +17,17 @@ module.exports = [
         placeholder: '请输入客户名称'
     },
     {
-        key: 'type',
+        key: 'metertype',
         title: '类型',
         showType: 'select',
         placeholder: '请选择类型',
         options: [
-            { key: '全部', value: '全部' },
             { key: '水', value: '水' },
             { key: '电', value: '电' }
         ]
     },
     {
-        key: '3',
+        key: 'status',
         title: '收款状态',
         showType: 'select',
         placeholder: '请选择收款状态',

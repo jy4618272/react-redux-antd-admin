@@ -6,54 +6,59 @@ const initialState = {
     tableColumns: [
         {
             title: '核算年月',
-            dataIndex: '1',
-            key: '1'
+            dataIndex: 'checkdate',
+            key: 'checkdate'
         },
         {
             title: '交款单号',
-            dataIndex: '2',
-            key: '2'
+            dataIndex: 'businessnumber',
+            key: 'businessnumber'
         },
         {
             title: '客户名称',
-            dataIndex: '3',
-            key: '3'
+            dataIndex: 'organization',
+            key: 'organization'
         },
         {
             title: '总金额',
-            dataIndex: '4',
-            key: '4'
+            dataIndex: 'currentmoney',
+            key: 'currentmoney'
         },
         {
             title: '提交人',
-            dataIndex: '5',
-            key: '5'
+            dataIndex: 'commitman',
+            key: 'commitman'
         },
         {
             title: '提交日期',
-            dataIndex: '6',
-            key: '6'
+            dataIndex: 'commitdate',
+            key: 'commitdate'
         },
         {
             title: '收款状态',
-            dataIndex: '7',
-            key: '7'
+            dataIndex: 'status',
+            key: 'status'
         },
         {
             title: '收款人',
-            dataIndex: '8',
-            key: '8'
+            dataIndex: 'sureman',
+            key: 'sureman'
         },
         {
             title: '收款日期',
-            dataIndex: '9',
-            key: '9'
+            dataIndex: 'suredate',
+            key: 'suredate'
         }
     ],
-    tableData:[],
+    tableData: [],
     skipCount: 1,
     pageSize: 10,
-    count: 0
+    count: 0,
+    printPayment: {
+        tableLoading: true,
+        tableData: [],
+        count: 0
+    }
 }
 
 export default createReducer(initialState, ACTION_HANDLERS)

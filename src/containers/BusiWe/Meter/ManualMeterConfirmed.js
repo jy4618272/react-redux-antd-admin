@@ -1,10 +1,12 @@
-// 水电业务-手工抄表-已提交
+// 水电业务-手工抄表-水电管理
 'use strict';
 import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
+import moment from 'moment';
 import { Row, Col, Button, notification } from 'antd'
-const ButtonGroup = Button.Group
+const ButtonGroup = Button.Group;
 import {
+    DetailWe,
     Err,
     Icons,
     InnerPagination,
@@ -12,11 +14,11 @@ import {
     InnerTable,
     Loading,
     ModalBox
-} from 'COMPONENT'
+} from 'COMPONENT';
 
-import { filterQueryObj } from 'UTIL'
-import { pageChange } from 'UTIL/pageChange'
-import 'STYLE/modal.less';
+import { filterQueryObj } from 'UTIL';
+import { pageChange } from 'UTIL/pageChange';
+import { paths } from 'SERVICE/config'
 import 'STYLE/button.less';
 
 class ManualMeterConfirmed extends Component {
@@ -24,8 +26,8 @@ class ManualMeterConfirmed extends Component {
         super(props)
         this.state = {
             queryObj: {},
-            clickedRowKeys: [],
-            clickedRows: [],
+            selectedRowKeys: [],
+            selectedRows: [],
             modalInfo: {
                 visible: false,
                 type: 'type',
@@ -34,11 +36,11 @@ class ManualMeterConfirmed extends Component {
             }
         }
         this.initFetchSchema(props)
-        console.log('水电业务-手工抄表-已提交props：', props)
+        console.log('水电业务-水电管理props：', props)
     }
 
     static defaultProps = {
-        printModal: 'printModal'
+        manualMeterConfirmed: "manualMeterConfirmed"
     }
 
     initFetchSchema(props) {
@@ -56,14 +58,19 @@ class ManualMeterConfirmed extends Component {
     }
 
     // 查询
-    handleFormSubmit = () => {
-        
+    handleFormSubmit = (newObj) => {
+        const { actionBusi } = this.props;
+        newObj.checkdate = newObj.checkdate ? moment(newObj.checkdate).format('YYYY-MM') + '-01' : '';
+        this.setState({
+            queryObj: newObj
+        });
+        pageChange(newObj, 30, 0, actionBusi.fetchManualMeterConfirmed);
     }
 
     // 分页
     handlePageChange = (skipCount) => {
         const { actionBusi, pageSize } = this.props
-        pageChange(this.state.queryObj, pageSize, skipCount, actionBusi.fetchRateList)
+        pageChange(this.state.queryObj, pageSize, skipCount, actionBusi.fetchManualMeterConfirmed)
     }
 
     /**
@@ -77,8 +84,40 @@ class ManualMeterConfirmed extends Component {
         localStorage.setItem('printContent', html)
     }
 
+    // 双击查看详情
+    handleDoubleClick = (record, index) => {
+        window.open(`#/busi/busi_we/${record.partyid}?checkdate=${record.checkdate}`);
+    }
+
+    // 筛选
+    parentHandleSelectChange = (keys, rows) => {
+        this.setState({
+            selectedRowKeys: keys,
+            selectedRows: rows
+        })
+    }
+
+
+    // 取消筛选
+    handleCancel = (key) => {
+        this.setState({
+            clickedRowKeys: [],
+            clickedRows: []
+        });
+        this.refs[key].hanldeCancelSelect();
+    }
+
     // 打印交款单
     handlePrintPayment = () => {
+        let arr = [];
+        this.state.selectedRows.forEach(item => {
+            arr.push({
+                meterpaymentid: item.meterpaymentid
+            })
+        });
+        this.props.actionBusi.fetchPrintPayment({
+            meterpaymentlist: JSON.stringify(arr)
+        });
         this.setState({
             modalInfo: Object.assign({}, this.state.modalInfo, {
                 visible: true,
@@ -96,103 +135,59 @@ class ManualMeterConfirmed extends Component {
 
     // 弹框关闭
     parentHandleModalCancel = () => {
-        const { rateAddModal, rateEditModal } = this.props
-        const { modalInfo } = this.state
-        this.setState({         
-            modalInfo: Object.assign({}, this.state.modalInfo, {
+        const { manualMeterConfirmed } = this.props;
+        const { modalInfo } = this.state;
+        this.setState({
+            selectedRowKeys: [],
+            selectedRows: [],
+            modalInfo: Object.assign({}, modalInfo, {
                 visible: false,
                 title: '正在关闭...',
             })
-        })
+        });
+        this.handleCancel('weManageTable');
     }
 
     // 导出本页
     handleExportPage = () => {
-        alert('导出本页')
+        let arrParam = [];
+        this.props.tableData.map(item => {
+            arrParam.push(item.meterpaymentid)
+        });
+        if (arrParam.length) {
+            notification.success({
+                message: '导出本页',
+                description: `导出${arrParam.length}条数据`,
+            });
+            window.location.href = paths.leasePath + '/meterpaymentcs/selectByRentPactIdListToExcel?meterpaymentids=' + arrParam.join(',')
+        }
     }
 
     componentDidMount() {
-        const { actionBusi } = this.props
-        pageChange({}, 30, 0, actionBusi.fetchRateList)
+        const { actionBusi, } = this.props
+        pageChange({}, 30, 0, actionBusi.fetchManualMeterConfirmed)
     }
 
-    render() {
-        const data = this.props
-        const tableControl = <Row className="g-mb10">
-            <Col sm={16}>
-                <ButtonGroup className="button-group">
-                    <Button onClick={this.handlePrintPayment}><Icons type="receipt" />打印交款单</Button>
-                </ButtonGroup>
-            </Col>
-            <Col sm={8} className="g-tar">
-                <ButtonGroup className="button-group">
-                    <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
-                </ButtonGroup>
-            </Col>
-        </Row>
 
-        let modalContent = modalContent = <div className="m-modal contract-pay-print printContent">
-                <h3 className="clearfix">XX公路港水电费交款单<span className="u-mark">XXXXX</span></h3>
-                <table className="m-table-print">
-                    <tr>
-                        <td className="title">客户名称</td>
-                        <td colSpan="8">XXX</td>
-                    </tr>
-                    <tr>
-                        <td className="title">上次抄表日期</td>
-                        <td className="title">本次抄表日期</td>                      
-                        <td className="title">类别</td>                      
-                        <td className="title">设备号</td>                      
-                        <td className="title">房间号</td>                      
-                        <td className="title">上期示数</td>                      
-                        <td className="title">本期示数</td>                 
-                        <td className="title">用量</td>                 
-                        <td className="title">余额（元）</td>                      
-                    </tr>
-                    <tr>
-                        <td>2015-10-10</td>
-                        <td>2015-10-10</td>                      
-                        <td>水</td>                      
-                        <td>34234234</td>                      
-                        <td>234234</td>                      
-                        <td>234234</td>                      
-                        <td>234</td>                 
-                        <td>23吨</td>                 
-                        <td>424</td>                      
-                    </tr>
-                    <tr>
-                        <td>2015-10-10</td>
-                        <td>2015-10-10</td>                      
-                        <td>水</td>                      
-                        <td>34234234</td>                      
-                        <td>234234</td>                      
-                        <td>234234</td>                      
-                        <td>234</td>                 
-                        <td>23吨</td>                 
-                        <td>424</td>                      
-                    </tr>
-                    <tr>
-                        <td className="title">水电费合计</td>
-                        <td colSpan="8">23元</td>
-                    </tr>
-                    <tr>
-                        <td className="title">备注</td>
-                        <td colSpan="8" className="g-tal">备注</td>
-                    </tr>
-                </table>
-                <ul className="clearfix list-horizontal-txt m-row-4 g-mt20">
-                    <li>&nbsp;</li>
-                    <li>&nbsp;</li>
-                    <li className="g-tar">开单人：汪梦迪</li>
-                    <li className="g-tar">开单日期：2016-07-06</li>
-                </ul>
+    render() {
+        const data = this.props;
+        const multipleSelected = this.state.selectedRowKeys.length >= 1;
+
+        let modalContent
+        if (data.printPayment.tableLoading) {
+            modalContent = <Loading />
+        } else {
+            modalContent = <div className="printContent">
+                <DetailWe {...data.printPayment} />
             </div>
+        }
 
         return (
             <section className="m-config-cont">
                 {/* 弹框 */}
                 <ModalBox
                     {...this.state.modalInfo}
+                    wrapClassName="modal-wrap"
                     parentHandleModalOk={this.parentHandleModalOk}
                     parentHandleModalCancel={this.parentHandleModalCancel}>
                     {modalContent}
@@ -205,8 +200,20 @@ class ManualMeterConfirmed extends Component {
                     schema={this.querySchema}
                     showSearch={true}
                     parentHandleSubmit={this.handleFormSubmit} />
+
                 {/* 表格操作 */}
-                {tableControl}
+                <Row className="g-mb10">
+                    <Col sm={16}>
+                        <ButtonGroup className="button-group">
+                            <Button disabled={!multipleSelected} onClick={this.handlePrintPayment}><Icons type="receipt" />打印交款单</Button>
+                        </ButtonGroup>
+                    </Col>
+                    <Col sm={8} className="g-tar">
+                        <ButtonGroup className="button-group">
+                            <Button type="primary" onClick={this.handleExportPage}>导出本页</Button>
+                        </ButtonGroup>
+                    </Col>
+                </Row>
 
                 {/* 表格及分页 */}
                 <InnerTable
@@ -214,7 +221,11 @@ class ManualMeterConfirmed extends Component {
                     columns={data.tableColumns}
                     dataSource={data.tableData}
                     bordered={true}
-                    pagination={false} />
+                    pagination={false}
+                    isRowSelection={true}
+                    ref="weManageTable"
+                    parentHandleDoubleClick={this.handleDoubleClick}
+                    parentHandleSelectChange={this.parentHandleSelectChange} />
                 <InnerPagination
                     total={data.total}
                     pageSize={data.pageSize}

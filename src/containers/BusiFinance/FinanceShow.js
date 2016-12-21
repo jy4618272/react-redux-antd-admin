@@ -15,6 +15,8 @@ import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 import {
+    DetailWe,
+    DetailContract,
     Err,
     Cards,
     Loading,
@@ -39,9 +41,7 @@ class FinanceShow extends Component {
             loading: true,
             res: {}
         }
-        console.log('财务详情props', props)
-
-
+        console.log('财务详情props', props);
         this.initFetchSchema(props)
     }
 
@@ -91,36 +91,6 @@ class FinanceShow extends Component {
         this.inited = true;
     }
 
-    // 合同数据来源-选项卡
-    handleTabsContractFrom = (activeKey) => {
-        console.log(activeKey)
-        this.setState({
-            tabsStatus: activeKey
-        })
-    }
-
-    // 分期明细
-    handleShowStages = (record) => {
-        this.setState({
-            isStagesShow: true,
-            stagesNum: record.stagesnumber,
-            stagesShowTableData: this.state.stagesTableData[record.stagesnumber - 1].rentpactpaylists
-        })
-    }
-
-    // 关闭明细
-    handleStagesClose = () => {
-        this.setState({
-            isStagesShow: false
-        })
-    }
-
-    // 查看
-    handleViewDoc = (text, record, index) => {
-        const {dataAttachment} = this.state
-        window.location.href = rootPaths.imgPath + paths.imgPath + '/' + dataAttachment[index].url
-    }
-
     componentDidMount() {
         const {
             action,
@@ -147,21 +117,7 @@ class FinanceShow extends Component {
                     res: res.data,
                     stagesTableData: res.data.rentpactpayplanfullinfos,
                     dataAttachment: res.data.rentpactattachments
-                })
-                if (type === '租赁合同') {
-                    const oldObj = res.data.rentpact
-                    const newObj = {}
-                    for (const key in oldObj) {
-                        if (key.indexOf('date') > -1) {
-                            newObj[key] = moment(oldObj[key], 'YYYY-MM-DD HH:mm:ss')
-                        } else if (key.indexOf('totalstages') > -1) {
-                            newObj[key] = oldObj[key] + '期'
-                        } else {
-                            newObj[key] = oldObj[key]
-                        }
-                    }
-                    this.props.form.setFieldsValue(newObj)
-                }
+                });
             } else {
                 hide()
                 errHandler(res.msg + '，正在前往列表页')
@@ -173,7 +129,8 @@ class FinanceShow extends Component {
     render() {
         const { location } = this.props
         const { loading, res } = this.state
-        const type = location.query.type
+        const type = location.query.type;
+
         if (!this.inited) {
             return <Err errorMsg={this.errorMsg} />
         }
@@ -207,134 +164,25 @@ class FinanceShow extends Component {
                 </section>
             )
         } else if (type === '租赁合同') {
+            // 合同详情数据
+            const contractData = Object.assign({}, { 
+                financeShowSchema: this.financeShowSchema,
+                res,
+                stagesTableData: this.state.stagesTableData,
+                dataAttachment: this.state.dataAttachment
+            }); 
+
             if (loading) {
                 return <Loading />
             }
-            const tableStagesColumns = this.financeShowSchema['stages']['columns'].concat([
-                {
-                    title: '操作',
-                    key: 'operation',
-                    render: (text, record, index) => <div className="button-group">
-                        <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleShowStages.bind(this, record, index)}>明细</a>
-                    </div>
-                }
-            ])
-
-            const tableAttachmentColumns = this.financeShowSchema['attachment']['columns'].concat([
-                {
-                    title: '操作',
-                    key: 'operation',
-                    render: (text, record, index) => <a href="javascript:;" className="s-blue" onClick={this.handleViewDoc.bind(this, text, record, index)}>下载</a>
-                }
-            ])
-
-            return (
-                <section>
-                    <Form horizontal>
-                        {/* 获取合同模板 */}
-                        <FormLayout
-                            schema={this.financeShowSchema['contractFrom']}
-                            form={this.props.form} />
-
-                        {/* 客户名称 */}
-                        <Cards title={"客户信息"}>
-                            <FormLayout
-                                schema={this.financeShowSchema['organization']}
-                                form={this.props.form} />
-                        </Cards>
-
-                        <Cards title={"合同信息"}>
-                            {/* 合同号 */}
-                            <Tabs className="g-mt10 g-mb10" defaultActiveKey="room" onChange={this.handleTabsContractFrom}>
-                                <TabPane tab="合同房间" key="room">
-                                    <div className="g-padding-lr g-mb20">
-                                        <InnerTable
-                                            columns={this.financeShowSchema['room']['columns']}
-                                            dataSource={res.rentpactrooms}
-                                            bordered={true}
-                                            pagination={false} />
-                                    </div>
-                                </TabPane>
-                                <TabPane tab="合同班线" key="classLine">
-                                    <div className="g-padding-lr g-mb20">
-                                        <InnerTable
-                                            columns={this.financeShowSchema['line']['columns']}
-                                            dataSource={res.rentpactlines}
-                                            bordered={true}
-                                            pagination={false} />
-                                    </div>
-                                </TabPane>
-                                <TabPane tab="合同优惠冲抵" key="policy">
-                                    <div className="g-padding-lr g-mb20">
-                                        <InnerTable
-                                            columns={this.financeShowSchema['policy']['columns']}
-                                            dataSource={res.rentpactpromotions}
-                                            bordered={true}
-                                            pagination={false} />
-                                    </div>
-                                </TabPane>
-                                <TabPane tab="履约保证金冲抵" key="contractBond">
-                                    <div className="g-padding-lr g-mb20">
-                                        <InnerTable
-                                            columns={this.financeShowSchema['contractBond']['columns']}
-                                            dataSource={res.offsetmargins}
-                                            bordered={true}
-                                            pagination={false} />
-                                    </div>
-                                </TabPane>
-                                <TabPane tab="合同附件" key="contractAttachment">
-                                    <div className="g-padding-lr g-mb20">
-                                        <InnerTable
-                                            columns={tableAttachmentColumns}
-                                            dataSource={res.rentpactattachments}
-                                            bordered={true}
-                                            pagination={false} />
-                                    </div>
-                                </TabPane>
-
-                            </Tabs>
-
-                            {/* 客户数据录入*/}
-                            <FormLayout
-                                schema={this.financeShowSchema['contractTabs']}
-                                form={this.props.form} />
-                        </Cards>
-
-                        {/* 分期明细 */}
-                        <Cards title={"分期明细"}>
-                            <FormLayout
-                                schema={this.financeShowSchema['stages']['form']}
-                                form={this.props.form}
-                                parentHandleSelect={this.parentHandleSelect} />
-
-                            {
-                                this.state.isStagesShow ?
-                                    <div className="m-stages-show">
-                                        <h2>{`第${this.state.stagesNum}期明细`}</h2>
-                                        <div className="button-group g-mb10">
-                                            <Button onClick={this.handleStagesClose}>关闭明细</Button>
-                                        </div>
-                                        <InnerTable
-                                            columns={this.financeShowSchema['stages']['showColumns']}
-                                            dataSource={this.state.stagesShowTableData}
-                                            bordered={true}
-                                            size="middle"
-                                            tableStyle="m-table"
-                                            pagination={false} />
-                                    </div> :
-                                    ''
-                            }
-
-                            <InnerTable
-                                columns={tableStagesColumns}
-                                dataSource={res.rentpactpayplanfullinfos}
-                                bordered={true}
-                                parentHandleClick={this.parentHandleClick}
-                                pagination={false} />
-                        </Cards>
-                    </Form>
-                </section>
-            )
+            return <DetailContract {...contractData} />
+        } else {
+            if (loading) {
+                return <Loading />
+            }
+            const data = {};
+            data.tableData = [res];
+            return <DetailWe {...data} />
         }
     }
 }

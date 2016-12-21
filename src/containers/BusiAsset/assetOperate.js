@@ -1,28 +1,34 @@
 /**
  * 操作资产：调拨，闲置，报废，处置
  * 
+ * 
+ * 
  */
 import React, { Component } from 'react'
 
-import StepsComponent from 'COMPONENT/BusiAsset/component/stepsComponent'
-import AssetInfo from 'COMPONENT/BusiAsset/component/assetInfoParse'
-// OperateType1  OperateType2
-import OperateType1 from 'COMPONENT/BusiAsset/assetOperate/OperateType-1'
-import OperateType2 from 'COMPONENT/BusiAsset/assetOperate/OperateType-2'
+// 展示资产信息3
+import AssetInfo from 'COMPONENT/BusiAsset/component/assetInfoDisplay'
+
+// 不同操作类型用到的组件
+import AssetOperateForm from 'COMPONENT/BusiAsset/assetOperate/assetOperateForm'
+
+// ajax 工具
+import xhr from 'SERVICE'
+import { errHandler, rootPaths, paths } from 'SERVICE/config'
+
+// 
+import {
+    Cards,
+    WorkFlow,
+} from 'COMPONENT'
 
 class AssetOperate extends Component {
     constructor() {
         super()
         this.state = {
-            current: 1,
-            steps: [   // stepsComponent
-                { title: '内勤1', description: '张琪亚 ｜ 新增' },
-                { title: '管理员', description: '李媛风 ｜ 审核' },
-                { title: '财务员', description: '母庆业 ｜ 审核' },
-                { title: '完成', description: '' }
-            ],
+            flow: '', // 流程组件
             operateAsset: '',  // 不同的操作，UI也不同
-            formData: null
+            operateTitle: '' // 操作表单cards的title
         }
     }
     /**
@@ -30,9 +36,37 @@ class AssetOperate extends Component {
      * 
      */
     componentWillMount() {
+        // 流程审核
+        this.getFlowInfo()
+
         // 设置处理表单
         this.handleParams()
     }
+
+    /**
+     * 获取流程信息
+     * http://myportaltest.tf56.com:8080/tfPassParkAdmin/rentpactcs/selectWorkFlowByType
+     * 
+     *  参数
+     *      type  String  动产｜不动产｜低值易耗品     默认：动产
+     *      modelname: ''
+     */
+    getFlowInfo() {
+        const arg = {
+            type: '新增', // 等接口好了改为：this.state.assetType
+            modelname: 111   //  等接口好了改为： 此处传 ''，固定的参数
+        }
+        xhr('post', paths.leasePath + '/rentpactcs/selectWorkFlowByType', arg, (res) => {
+            if (res.result == 'success') { // 查询成功
+                this.setState({
+                    flow: <WorkFlow flow={res} />
+                })
+            } else {  // 查询失败
+                errHandler(res.msg)
+            }
+        })
+    }
+
     /**
      * DOM第一次挂在完成
      * 
@@ -48,19 +82,36 @@ class AssetOperate extends Component {
      * :operateType  db|调拨   xz|闲置  bf|报废  cz|处置
      * 
      * 需要根据参数 operateType 设置 operateAsset
-     *   <OperateType2 operateTitle="资产调拨" formData={formData}/>
+     *   <OperateType2 operateTitle="资产调拨"/>
      */
     handleParams() {
         const { assetType, id, isModify, operateType } = this.props.params
-        let { formData } = this.state
+
+        const arg = {
+            id: id,
+            isModify: isModify
+        }
+
         if (operateType == 'db') {
-            this.state.operateAsset = <OperateType1 operateTitle="资产调拨" formData={formData} />
+            this.setState({
+                operateAsset: <AssetOperateForm {...arg} operateType="db" />,
+                operateTitle: '资产调拨'
+            })
         } else if (operateType == 'xz') {
-            this.state.operateAsset = <OperateType1 operateTitle="资产闲置" formData={formData} />
+            this.setState({
+                operateAsset: <AssetOperateForm {...arg} operateType="xz" />,
+                operateTitle: '资产闲置'
+            })
         } else if (operateType == 'bf') {
-            this.state.operateAsset = <OperateType1 operateTitle="资产报废" formData={formData} />
+            this.setState({
+                operateAsset: <AssetOperateForm {...arg} operateType="bf" />,
+                operateTitle: '资产报废'
+            })
         } else if (operateType == 'cz') {
-            this.state.operateAsset = <OperateType2 operateTitle="资产处置" formData={formData} />
+            this.setState({
+                operateAsset: <AssetOperateForm {...arg} operateType="cz" />,
+                operateTitle: '资产处置'
+            })
         }
     }
 
@@ -68,18 +119,23 @@ class AssetOperate extends Component {
      * 渲染
      * */
     render() {
-        const { operateAsset } = this.state
+        const { operateAsset, operateTitle } = this.state
         console.log(operateAsset)
         return (
             <div>
+                {/** 审核流程-步骤条 <WorkFlow flow={approval.workFlow} />*/}
+                <Cards title="审核流程">
+                    {this.state.flow}
+                </Cards>
+                {/* 展示资产信息 */}
                 <div>
-                    <StepsComponent current={this.state.current} steps={this.state.steps} />
+                    <AssetInfo assetid={this.props.params.id} />
                 </div>
                 <div>
-                    <AssetInfo />
-                </div>
-                <div>
-                    {operateAsset}
+                    {/* 操作表单 */}
+                    <Cards title={operateTitle}>
+                        {operateAsset}
+                    </Cards>
                 </div>
             </div>
         )

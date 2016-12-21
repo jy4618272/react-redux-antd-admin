@@ -16,7 +16,7 @@ import {
     Icon,
     notification
 } from 'antd'
-const {RangePicker} = DatePicker
+const {RangePicker, MonthPicker} = DatePicker
 import './dbTable.less'
 
 const FormItem = Form.Item
@@ -143,13 +143,21 @@ class FormLayout extends Component {
      */
     fullColWrapper = (formItem, field) => {
         const {getFieldDecorator} = this.props.form
+        let layoutWrap = {};
+        if(field.modalType){
+            layoutWrap.labelCol = 4
+            layoutWrap.wrapperCol = 20
+        } else {
+            layoutWrap.labelCol = 2
+            layoutWrap.wrapperCol = 22
+        }
         return (
             <Row key={field.key} sm={24}>
                 <FormItem
                     key={field.key}
                     label={field.title}
-                    labelCol={{ span: 2 }}
-                    wrapperCol={{ span: 22 }}
+                    labelCol = {{ span: layoutWrap.labelCol }}
+                    wrapperCol = {{ span: layoutWrap.wrapperCol }}
                     hasFeedback={field.feedBackShow}>
                     {getFieldDecorator(field.key, {
                         validate: field.validate || [],
@@ -405,12 +413,24 @@ class FormLayout extends Component {
             case 'float':
                 // console.debug('transform field %o to float input component', field)
                 return this.colWrapper((
-                    <InputNumber placeholder={field.placeholder || '请输入'} step={field.step || 0.01} size="default" disabled={field.disabled} onBlur={this.handleBlur.bind(this, field.key)} />
+                    <InputNumber 
+                        placeholder={field.placeholder || '请输入'} 
+                        step={field.step || 0.01} 
+                        size="default" 
+                        min={field.min}
+                        max={field.max}
+                        disabled={field.disabled} 
+                        onBlur={this.handleBlur.bind(this, field.key)} />
                 ), field)
             case 'datetime':
                 // console.debug('transform field %o to datetime input component', field)
                 return this.colWrapper((
                     <DatePicker format={field.format || 'YYYY-MM-DD HH:mm:ss'} showTime={field.showTime || false} placeholder={field.placeholderBegin || '选择日期'} disabled={field.disabled} onChange={this.handleDateChange.bind(this, field.key)} />
+                ), field)
+            case 'monthtime':
+                // console.debug('transform field %o to datetime input component', field)
+                return this.colWrapper((
+                    <MonthPicker format={field.format || 'YYYY-MM'} showTime={field.showTime || false} placeholder={field.placeholder || '选择日期'} disabled={field.disabled} onChange={this.handleDateChange.bind(this, field.key)} />
                 ), field)
             default:  // 默认就是普通的输入框
                 // console.debug('transform field %o to varchar input component', field)
@@ -428,10 +448,10 @@ class FormLayout extends Component {
     handleSubmit = (e) => {
         e.preventDefault()
         const {form, parentHandleSubmit} = this.props
-        const oldObj = form.getFieldsValue()
+        const oldObj = form.getFieldsValue();
         const newObj = filterQueryObj(oldObj)
         // console.log('oldObj', oldObj)
-        // console.log('newObj', newObj)
+        console.log('newObj', newObj);
         // 还是要交给上层组件处理, 因为要触发table组件的状态变化...        
         parentHandleSubmit && parentHandleSubmit(newObj)
     }
@@ -465,7 +485,7 @@ class FormLayout extends Component {
     // 点击按钮
     handleClick = (key) => {
         console.log('你刚点击了按钮key：', key)
-        this.props.parentHandleClick(key)
+        this.props.parentHandleClick && this.props.parentHandleClick(key);
     }
 
     // 处理表单关闭

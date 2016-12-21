@@ -29,13 +29,15 @@ module.exports = [
         modalType: true, 
         dataType: 'float',
         placeholder: '请输入单价',
+        min: 0.01,
+        max: 99999.99,
         feedBackShow: true,
         validate: [
             {
                 rules: [
-                    { required: true, type: 'number', message: '请输入单价' }
+                    { required: true, type: 'number', message: '请输入单价（小于6位数）' }
                 ],
-                trigger: ['onChange']
+                trigger: ['blur', 'onChange']
             }
         ]
     },

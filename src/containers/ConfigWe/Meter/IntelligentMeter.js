@@ -60,7 +60,7 @@ class IntelligentMeter extends Component {
 
     // 弹窗确认
     parentHandleModalOk = () => {
-        const { meterModal, meterIntelligentTable, actionConfig } = this.props;
+        const { meterModal, actionConfig } = this.props;
         const _meterModal = this.refs[meterModal]
         const { modalInfo, clickedRows, saveObj } = this.state
         
@@ -81,6 +81,9 @@ class IntelligentMeter extends Component {
                     });
                     return false;
                 }
+
+                oldObj.receivemessage = oldObj.receivemessage ? 1 : 0;
+
                 if (modalInfo.type === 'add') {
                     // 智能表新增                        
                     const newObj = Object.assign({}, saveObj, oldObj);
@@ -95,7 +98,6 @@ class IntelligentMeter extends Component {
                     }, oldObj);
                     console.log('智能表修改数据', newObj);
                     actionConfig.fetchEditIntelligentMeter(newObj);
-                    this.handleCancel(meterIntelligentTable)
                 }
                 this.parentHandleModalCancel();
             }
@@ -104,7 +106,7 @@ class IntelligentMeter extends Component {
 
     // 弹框关闭
     parentHandleModalCancel = () => {
-        const { meterModal, actionConfig } = this.props
+        const { meterIntelligentTable, meterModal, actionConfig } = this.props
         const { modalInfo } = this.state
         this.setState({
             updateStatus: false,            
@@ -115,6 +117,8 @@ class IntelligentMeter extends Component {
         })
 
         // 关闭时候重置弹窗
+        actionConfig.cancelEditIntelligentMeter();   
+        this.handleCancel(meterIntelligentTable);
         this.refs[meterModal].resetFields();
     }
 
@@ -132,7 +136,6 @@ class IntelligentMeter extends Component {
             clickedRowKeys: [],
             clickedRows: []
         });
-        this.props.modalForm[0].disabled = false;
         this.refs[key].handleCancelClick()
     }
 
@@ -142,7 +145,7 @@ class IntelligentMeter extends Component {
             modalInfo: {
                 visible: true,
                 type: 'add',
-                title: '新增',
+                title: '新增智能表',
                 width: '700'
             }
         })
@@ -150,9 +153,12 @@ class IntelligentMeter extends Component {
 
     // 新增表单失去焦点
     parentHandleBlur = (key) => {
-        this.setState({
-            // updateStatus: false
-        });
+        if(this.state.updateStatus){
+            this.setState({
+                updateStatus: false
+            });
+        }
+
         const {meterModal, actionConfig} = this.props;
         if(key === 'metercode'){
             // 设备号验证唯一性
@@ -162,7 +168,7 @@ class IntelligentMeter extends Component {
                     message:'设备号不可用',
                     description: '请输入正确的设备号'
                 });
-            }else{
+            } else {
                 actionConfig.validateMetercode({metercode})
             }
         } else if(key === 'metername'){
@@ -182,14 +188,13 @@ class IntelligentMeter extends Component {
     // 修改
     handleEdit = (dispatch) => {
         const { clickedRows } = this.state;
-        this.props.modalForm[0].disabled = true;
-
+        this.props.actionConfig.toEditIntelligentMeter();
         this.setState({
             updateStatus: true,
             modalInfo: {
                 visible: true,
                 type: 'edit',
-                title: `修改${clickedRows[0].metertype}表-${clickedRows[0].metername}`,
+                title: `修改智能表${clickedRows[0].metertype}-${clickedRows[0].metername}`,
                 width: '700'
             }
         });
@@ -201,15 +206,15 @@ class IntelligentMeter extends Component {
         const { meterIntelligentTable, actionConfig } = this.props;
         const that = this;
         confirm({
-            title: `删除${clickedRows[0].metertype}表-${clickedRows[0].metername}`,
+            title: `删除智能表【${clickedRows[0].metertype}-${clickedRows[0].metername}】`,
             content: '确认删除？',
             onOk() {
-                actionConfig.fetchDelManualMeter({
+                actionConfig.fetchDelIntelligentMeter({
                     metertype: clickedRows[0].metertype,
                     metername: clickedRows[0].metername,
                     roommeterid: clickedRows[0].roommeterid
                 })
-                that.handleCancel(meterManualTable)
+                that.handleCancel(meterIntelligentTable)
             },
             onCancel() { }
         })
@@ -217,22 +222,29 @@ class IntelligentMeter extends Component {
 
     // 读取
     handleRead = () => {
-        alert('no api')
+        const { clickedRows } = this.state;
+        const { meterIntelligentTable, actionConfig } = this.props;
+        
+        actionConfig.fetchReadIntelligentMeter({
+            metercode: clickedRows[0].metercode
+        })
+        this.handleCancel(meterIntelligentTable);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         pageChange(this.state.queryObj, 30, 0, this.props.actionConfig.fetchIntelligentMeter)
     }
 
     componentDidUpdate() {  
         if(this.state.updateStatus){     
-            alert('componentDidUpdate')    
+            // alert('componentDidUpdate')    
             this.refs[this.props.meterModal].setFieldsValue(this.state.clickedRows[0]);
         }    
     }
 
+
     render() {
-        alert('render')
+        // alert('render')
         const data = this.props
         const { modalInfo, clickedRowKeys, clickedRows } = this.state
         const oneSelected = clickedRowKeys.length === 1

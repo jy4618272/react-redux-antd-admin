@@ -215,6 +215,19 @@ module.exports = {
             }]
         },
         {
+            key: 'tel',
+            title: '电话号码',
+            dataType: 'int',
+            placeholder: '请输入电话号码',
+            feedBackShow: true,
+            validate: [{
+                rules: [
+                    { type: 'number', message: '请输入电话号码' },
+                ],
+                trigger: 'onChange',
+            }]
+        },
+        {
             key: 'memo',
             title: '备注',
             dataType: 'varchar',

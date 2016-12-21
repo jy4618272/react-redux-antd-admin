@@ -23,7 +23,7 @@ class WeMeter extends Component {
         super(props);
         console.log('水电业务props:', props);
         this.state = {
-            tabs: sessionStorage.getItem('busiWeMeterTabs') ? sessionStorage.getItem('busiWeMeterTabs') : 'configManualMeter'
+            tabs: sessionStorage.getItem('busiWeMeterTabs') ? sessionStorage.getItem('busiWeMeterTabs') : 'busiManualMeter'
         }
         // 初始化获取schema数据
         this.initFetchSchema(props);
@@ -67,6 +67,7 @@ class WeMeter extends Component {
             actionBusi
         }
         const manualMeterData = Object.assign({}, {
+            manualMeterInput: busiWe.manualMeterInput,
             notConfirmed: busiWe.manualMeterNotConfirmed,
             confirmed: busiWe.manualMeterConfirmed,
         }, otherData);
@@ -75,13 +76,13 @@ class WeMeter extends Component {
         return (
             <section className="m-config m-config-we">
                 <Tabs defaultActiveKey={this.state.tabs} type="card" onTabClick={this.handleTabClick}>
-                    {/* 人工抄表 */}
-                    <TabPane tab="人工抄表" key="configManualMeter">
+                    {/* 后付费 */}
+                    <TabPane tab="后付费" key="busiManualMeter">
                         <ManualMeter {...manualMeterData} />
                     </TabPane>
 
-                    {/* 智能表 */}
-                    <TabPane tab="智能表" key="configIntelligentMeter">
+                    {/* 预付费 */}
+                    <TabPane tab="预付费" key="busiIntelligentMeter">
                         <IntelligentMeter {...intelligentMeterData} />
                     </TabPane>
                 </Tabs>

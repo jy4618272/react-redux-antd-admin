@@ -21,6 +21,11 @@ const initialState = {
             key: 'jobcard'
         },
         {
+            title:'电话号码',
+            dataIndex:'tel',
+            key:'tel'
+        },
+        {
             title: '创建人',
             dataIndex: 'createman',
             key: 'createman'

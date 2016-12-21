@@ -4,7 +4,7 @@
 
 module.exports = [
     {
-        key: 'partyname',
+        key: 'organization',
         title: '客户名称',
         dataType: 'varchar',
         placeholder: '请输入客户名称'

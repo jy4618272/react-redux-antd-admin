@@ -4,16 +4,35 @@
 
 .m-table{
   	.ant-table-bordered .ant-table-thead > tr > th, .ant-table-bordered .ant-table-tbody > tr > td{
-	  	border-right: 0;
-		text-align:center;
-  	}
-}
-.m-table-primary{
-	.ant-table-thead > tr > th{
-		background-color: @base-color;	
-		color:#fff;
+	  	  border-right: 0;
+		  text-align:center;
+	}
+	.ant-table-title{
+		font-weight: 700;
+		font-size: 12px;
+	}
+	&.m-table-middle{
+		.ant-table-thead > tr > th, .ant-table-thead > tr > td{
+			line-height: 24px;
+		}
+		.ant-table-title, .ant-table-footer{
+			padding:12px 8px;
+		}
+	}
+	&.m-table-primary-light{
+		.ant-table-title{
+			background-color: @primary-light;
+			color:#fff;
+		}
+	}
+	&.m-table-primary{
+		.ant-table-thead > tr > th{
+			background-color: @base-color;	
+			color:#fff;
+		}
 	}
 }
+
 
 .m-layout{
   .ant-input-number{

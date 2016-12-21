@@ -2,11 +2,12 @@
  * 操作按钮组
  *  1.this.props.selectedRow    被选中资产的全部信息，用于控制操作按钮组
  *      1.1  status  被选中行的资产状态{}，用于控制按钮的disabled
- *      1.2  id  点击按钮跳转时需要
+ *      1.2  assetid  点击按钮跳转时需要
  *      1.3  assetname  资产名称
  *      1.4  assettypename2  资产类型
  *  2.this.props.idArray   控制批量导出 
  *  3.this.props.total     控制导出本页
+ *  4.searchAssetList   在终止资产成功后，需要更新列表
  *  
  *
  *   审批中   审批通过  审批退回
@@ -20,13 +21,29 @@ import {
     Popconfirm,
     message,
     Row,
-    Col
+    Col,
+    notification
 } from 'antd'
 import { Icons } from 'COMPONENT'
+
+import { breakAsset } from 'COMPONENT/BusiAsset/service/operate'
+import PrintDutySign from 'COMPONENT/BusiAsset/component/printDutySign'
+import PrintHandle from 'COMPONENT/BusiAsset/component/printHandle'
+
+// 获取处置单信息
+import { fetchHandleFormPrintInfo } from 'COMPONENT/BusiAsset/service/get'
+
+// ajax 工具
+import { errHandler, rootPaths, paths } from 'SERVICE/config'
 
 class ButtonGroup extends Component {
     constructor() {
         super()
+        this.state = {
+            printDutySignVisible: false,
+            printHandle: false,
+            handleFormData: null
+        }
     }
 
     /**
@@ -58,7 +75,7 @@ class ButtonGroup extends Component {
             czd: { disabled: 'disabled' }, // 打印处置单
 
             xzzc: {},  //  新增资产，一直启用
-            dcby: (total > 0) ? {} : { disabled: 'disabled' },   // 如果查询结果为0，则不启用
+            dcby: (total.length > 0) ? {} : { disabled: 'disabled' },   // 如果查询结果为0，则不启用
             pldc: (idArray.length > 0) ? {} : { disabled: 'disabled' }  // 如果没有选中复选框，则不启用
         }
         let allow = null
@@ -79,7 +96,7 @@ class ButtonGroup extends Component {
             allow = { zz: {}, xg: {} }
         }
 
-        return {...isDisabledButton, ...allow }
+        return { ...isDisabledButton, ...allow }
     }
 
     /**
@@ -134,6 +151,15 @@ class ButtonGroup extends Component {
 
         if (this.isInclude(btnText, '调拨')) {
             return `${operateUrlNew}/db`
+        } else if (this.isInclude(btnText, '打印处置单')) {
+            fetchHandleFormPrintInfo({ assetid: id }).then((data) => {
+                this.setState({
+                    printHandle: true,
+                    handleFormData: data
+                })
+            })
+
+            return false
         } else if (this.isInclude(btnText, '闲置')) {
             return `${operateUrlNew}/xz`
         } else if (this.isInclude(btnText, '报废')) {
@@ -164,9 +190,30 @@ class ButtonGroup extends Component {
             return false
         } else if (this.isInclude(btnText, '新增资产')) {
             return `${addUrlNew}`   // 新增资产的是没有id的，用－1标记一下
-        } else if (this.isInclude(btnText, '测试审核')) {
-            // 临时提供一个审核入口
-            return `busi/busi_asset/check_asset/5`
+        } else if (this.isInclude(btnText, '批量导出')) {
+            // http://abc.myportaltest.tf56.com:8080/tfPassParkAdmin/assetcs/selectByAssetIdListToExcel?assetids=id,id...
+            let { idArray } = this.props
+            window.location.href = paths.leasePath + '/assetcs/selectByAssetIdListToExcel?assetids=' + idArray.join(',')
+
+            notification.open({
+                message: '批量导出',
+                description: `导出${idArray.length}条数据`,
+            });
+            return false
+        } else if (this.isInclude(btnText, '导出本页')) {
+            let { total } = this.props
+            window.location.href = paths.leasePath + '/assetcs/selectByAssetIdListToExcel?assetids=' + total.join(',')
+
+            notification.open({
+                message: '导出本页',
+                description: `导出${total.length}条数据`,
+            });
+            return false
+        } else if (this.isInclude(btnText, '打印责任牌')) {
+            this.setState({
+                printDutySignVisible: true
+            })
+            return false
         }
     }
 
@@ -179,10 +226,17 @@ class ButtonGroup extends Component {
     }
     /**
      * 终止资产
-     * 
+     * http://abc.myportaltest.tf56.com:8080/tfPassParkAdmin/assetcs/updateAssetEndByAssetId
+     *  参数：assetid
      */
     breakAsset() {
-        message.success('此操作还没有联调...')
+        const { assetid } = this.props.selectedRow
+        const { searchAssetList } = this.props
+
+        breakAsset({ assetid }).then((data) => {
+            // 终止资产成功后，需要刷新列表
+            searchAssetList()
+        })
     }
     /**
      * 渲染
@@ -219,8 +273,15 @@ class ButtonGroup extends Component {
                 <Col span={5} style={{ textAlign: 'right' }}>
                     <Button {...buttonType} {...dcby} ref="dcby">导出本页</Button>
                     <Button {...buttonType} {...pldc} ref="pldc">批量导出</Button>
-                    {/* <Button {...buttonType} ref="dcby">测试审核</Button> */}
                 </Col>
+                <PrintDutySign
+                    printDutySignVisible={this.state.printDutySignVisible}
+                    onCancel={() => { this.setState({ printDutySignVisible: false }) } }
+                    printData={this.props.selectedRow} />
+                <PrintHandle
+                    printHandle={this.state.printHandle}
+                    onCancel={() => { this.setState({ printHandle: false }) } }
+                    printData={this.state.handleFormData} />
             </Row>
         )
     }

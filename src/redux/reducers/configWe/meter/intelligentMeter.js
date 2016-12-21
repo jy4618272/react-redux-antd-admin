@@ -12,6 +12,7 @@ const initialState = {
                 { key: '水', value: '水' },
                 { key: '电', value: '电' }
             ],
+            disabled:false,
             placeholder: '请选择类型',
             feedBackShow: true,
             validate: [
@@ -114,6 +115,8 @@ const initialState = {
             title: '单价',
             modalType: true,        
             dataType: 'float',
+            min: 0.01,
+            max: 99999.99,
             placeholder: '请输入单价',
             feedBackShow: true,
             validate: [
@@ -126,7 +129,7 @@ const initialState = {
             ]
         },
         {
-            key: '8',
+            key: 'receivemessage',
             title: '',
             memo:'开启余量不足通知，每小时判断是否低于阀值。',
             modalType: true,      
@@ -156,7 +159,7 @@ const initialState = {
             key: 'metercode'
         },
         {
-            title: '余量',
+            title: '初始余量',
             dataIndex: 'surplusnumber',
             key: 'surplusnumber'
         },

@@ -16,7 +16,7 @@ module.exports = [
         placeholder: '请输入房间号'
     },
     {
-        key: 'type',
+        key: 'metertype',
         title: '类型',
         showType: 'select',
         placeholder: '请选择类型',

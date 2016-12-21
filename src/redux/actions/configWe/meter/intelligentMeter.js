@@ -13,7 +13,7 @@ const RECEIVE_INTELLIGENT_METER = 'RECEIVE_INTELLIGENT_METER';
 const ADD_INTELLIGENT_METER = 'ADD_INTELLIGENT_METER';
 const EDIT_INTELLIGENT_METER = 'EDIT_INTELLIGENT_METER';
 const DEL_INTELLIGENT_METER = 'DEL_INTELLIGENT_METER';
-
+const READ_INTELLIGENT_METER = 'READ_INTELLIGENT_METER'
 // ================================
 // Action Creator
 // ================================
@@ -34,9 +34,7 @@ const fetchIntelligentMeter = (data) => {
         dispatch(requestIntelligentMeter())
         xhr('post', paths.leasePath + '/roommetercs/selectListByRoomId', data, function(res) {
             const hide = message.loading('正在查询...', 0);
-            pageInfo = Object.assign({}, data, {
-                skipCount: 0
-            });
+            pageInfo = data;
             const newRes = Object.assign({}, res, {
                 sub: data
             })
@@ -85,6 +83,16 @@ const fetchAddIntelligentMeter = (data) => {
 }
 
 
+// 准备修改
+const TO_EDIT_INTELLIGENT_METER = 'TO_EDIT_INTELLIGENT_METER'
+const requestToEditIntelligentMeter = () => ({
+    type: TO_EDIT_INTELLIGENT_METER
+});
+const toEditIntelligentMeter = () => {
+    return dispatch => {
+        dispatch(requestToEditIntelligentMeter());
+    }
+}
 // 修改
 const editIntelligentMeter = (res) => ({
     type: EDIT_INTELLIGENT_METER,
@@ -115,9 +123,20 @@ const fetchEditIntelligentMeter = (data) => {
     }
 }
 
+// 取消修改
+const CANCELL_EDIT_INTELLIGENT_METER = 'CANCELL_EDIT_INTELLIGENT_METER'
+const requestCancelEditIntelligentMeter = () => ({
+    type: CANCELL_EDIT_INTELLIGENT_METER
+});
+const cancelEditIntelligentMeter = () => {
+    return dispatch => {
+        dispatch(requestCancelEditIntelligentMeter());
+    }
+}
+
 // 删除
 const delIntelligentMeter = (res) => ({
-    type: DEL_Intelligent_METER,
+    type: DEL_INTELLIGENT_METER,
     payload: res
 });
 const fetchDelIntelligentMeter = (data) => {
@@ -133,7 +152,7 @@ const fetchDelIntelligentMeter = (data) => {
                 hide();
                 notification.success({
                     message: '删除成功',
-                    description: `删除数据【${data.metertype}表-${data.metername}】`
+                    description: `智能表【${data.metertype}-${data.metername}】`
                 });
                 dispatch(delIntelligentMeter(newRes));
             } else {
@@ -145,12 +164,43 @@ const fetchDelIntelligentMeter = (data) => {
     }
 }
 
+// 读取
+const readIntelligentMeter = (res) => ({
+    type: READ_INTELLIGENT_METER,
+    payload: res
+});
+const fetchReadIntelligentMeter = (data) => {
+    return dispatch => {
+        dispatch(requestIntelligentMeter());
+        xhr('post', paths.leasePath + '/roommetercs/readSurplusNumber', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
+            console.log('水电配置之智能表读取：', res);
+            if (res.result === 'success') {
+                hide();
+                notification.success({
+                    message: '读取成功',
+                    description: '智能表读取数据成功'
+                });
+                dispatch(fetchIntelligentMeter(pageInfo))
+                dispatch(readIntelligentMeter(res));
+            } else {
+                hide();
+                dispatch(readIntelligentMeter({}));
+                errHandler(res.msg);
+            }
+        })
+    }
+}
+
 /* default 导出所有 Actions Creator */
 export default {
     fetchIntelligentMeter,
     fetchAddIntelligentMeter,
+    toEditIntelligentMeter,
     fetchEditIntelligentMeter,
-    fetchDelIntelligentMeter
+    cancelEditIntelligentMeter,
+    fetchDelIntelligentMeter,
+    fetchReadIntelligentMeter
 }
 
 export const ACTION_HANDLERS = {
@@ -177,18 +227,22 @@ export const ACTION_HANDLERS = {
             tableData: list.tableData
         }
     },
+    [TO_EDIT_INTELLIGENT_METER]: (list) => {
+        list.modalForm[0].disabled = true;
+        return {
+            ...list,
+            modalForm: list.modalForm
+        } 
+    },
     [EDIT_INTELLIGENT_METER]: (list, { payload: res }) => {
         list.tableData.map(item => {
-            if (item.metertype === res.sub.metertype) {
+            if (item.roommeterid === res.sub.roommeterid) {
                 item.metercode = res.sub.metercode,
                 item.metername = res.sub.metername,
                 item.meterprice = res.sub.meterprice,
-                item.readtype = res.sub.readtype,
                 item.supplier = res.sub.supplier,
-                item.surplusnumber = res.sub.surplusnumber,
                 item.firstthreshold = res.sub.firstthreshold,
-                item.secondthreshold = res.sub.secondthreshold,
-                item.roommeterid = res.sub.roommeterid
+                item.secondthreshold = res.sub.secondthreshold
             }
         });
         list.modalForm[0].disabled = false;
@@ -198,12 +252,22 @@ export const ACTION_HANDLERS = {
             tableData: list.tableData 
         });
     },
+    [CANCELL_EDIT_INTELLIGENT_METER]: (list) => {
+        list.modalForm[0].disabled = false;
+        return {
+            ...list,
+            modalForm: list.modalForm
+        } 
+    },
     [DEL_INTELLIGENT_METER]: (list, { payload: res }) => ({
         ...list,
         tableLoading: false,
         tableData: list.tableData.filter(item =>
             item.roommeterid !== res.sub.roommeterid
         ) 
+    }),
+    [READ_INTELLIGENT_METER]: (list) => ({
+        ...list
     })
 }
 

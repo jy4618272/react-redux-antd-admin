@@ -27,9 +27,11 @@ const fetchUser = () => {
             const hide = message.loading('正在获取用户信息...', 0)
             if (res.result === 'success') {
                 hide()
-                if (!sessionStorage.getItem('site')){
-                    sessionStorage.setItem('site', res.data.facilityName)
-                }
+                sessionStorage.removeItem('site');
+                sessionStorage.setItem('site', res.data.facilityName);
+                sessionStorage.removeItem('username');
+                sessionStorage.setItem('username', res.data.userName);
+
                 dispatch(receiveUser(res))
             } else {
                 hide()

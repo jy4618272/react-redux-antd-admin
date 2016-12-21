@@ -12,6 +12,8 @@ const REQUEST_RATE_LIST = 'REQUEST_RATE_LIST'
 const RECEIVE_RATE_LIST = 'RECEIVE_RATE_LIST'
 const RECEIVE_RATE_ADD = 'RECEIVE_RATE_ADD'
 const RECEIVE_RATE_EDIT = 'RECEIVE_RATE_EDIT'
+const RECEIVE_RATE_DELETE = 'RECEIVE_RATE_DELETE'
+
 
 // ================================
 // Action Creator
@@ -114,12 +116,45 @@ const fetchRateEdit = (data) => {
     }
 }
 
+// 删除
+const receiveRateDelete = (res) => ({
+    type: RECEIVE_RATE_DELETE,
+    payload: res
+})
+const fetchRateDelete = (data) => {
+    return dispatch => {
+        dispatch(requestRateList())
+        xhr('post', paths.leasePath + '/meterchangetypecs/updateMeterChangeTypeDelete', {
+            meterchangetypeid: data.meterchangetypeid
+        }, function(res) {
+            const hide = message.loading('正在查询...', 0)
+            const newRes = Object.assign({}, res, {
+                sub: data
+            })
+            console.log('水电配置之单价倍率配置删除', newRes);
+
+            if (res.result === 'success') {
+                hide()
+                notification.success({
+                    message: '删除成功',
+                    description: `${data.metertype}-${data.meterchangetypeid}删除成功`
+                });
+                dispatch(receiveRateDelete(newRes))
+            } else {
+                hide()
+                dispatch(receiveRateDelete({}))
+                errHandler(res.msg)
+            }
+        })
+    }
+}
 
 /* default 导出所有 Actions Creator */
 export default {
     fetchRateList,
     fetchRateAdd,
-    fetchRateEdit
+    fetchRateEdit,
+    fetchRateDelete
 }
 
 export const ACTION_HANDLERS = {
@@ -162,6 +197,13 @@ export const ACTION_HANDLERS = {
             tableLoading: false,
             tableData: obj
         }
-    }
+    },
+    [RECEIVE_RATE_DELETE]: (list, { payload: res }) => ({
+        ...list,
+        tableLoading: false,
+        tableData: list.tableData.filter(item =>
+            item.meterchangetypeid !== res.sub.meterchangetypeid
+        )
+    })
 }
 

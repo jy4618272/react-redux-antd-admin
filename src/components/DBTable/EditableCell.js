@@ -7,25 +7,34 @@ import {
     notification
 } from 'antd'
 import { checkMobile } from 'UTIL'
+import 'STYLE/form.less';
 
 class EditableCell extends Component {
-    state = {
-        value: this.props.value,
-        editable: false
+    constructor(props) {
+        super(props);
+        this.state = {
+            noButton: this.props.noButton ? this.props.noButton : false,
+            value: this.props.value,
+            editable: this.props.editable ? this.props.editable : false
+        };
     }
 
     // 修改
     handleChange = (e) => {
         const value = e.target.value
-        this.setState({ value })
+        this.setState({ value });
+        if(this.props.noButton){
+            this.props.parentHandleSaveCell && this.props.parentHandleSaveCell(value);
+        }
     }
 
     // 按钮保存
     check = () => {
-        const { value } = this.state
+        const { value, noButton } = this.state
         if (this.props.onChange) {
             this.props.onChange(value);
         }
+        
         // 是否可保存
         if (this.props.validate == 'mobile') {
             if (!checkMobile(value)) {
@@ -35,10 +44,14 @@ class EditableCell extends Component {
                 })
                 return
             }
+        }
+
+        // 有保存-编辑按钮就会取消输入框
+        if (!noButton) {
             this.setState({
                 editable: false
-            })
-            this.props.parentHandleSaveCell && this.props.parentHandleSaveCell(value)
+            });
+            this.props.parentHandleSaveCell && this.props.parentHandleSaveCell(value);
         }
     }
 
@@ -50,10 +63,10 @@ class EditableCell extends Component {
     }
 
     render() {
-        const { value, editable } = this.state
-
+        const { value, editable, noButton } = this.state
+        const wrapStyle = noButton ? 'editable-cell' : 'editable-cell editable-cell-buttons'
         return (
-            <div className="editable-cell">
+            <div className={wrapStyle}>
                 {
                     editable ?
                         <div className="editable-cell-input-wrapper">

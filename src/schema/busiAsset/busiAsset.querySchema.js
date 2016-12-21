@@ -63,7 +63,7 @@ const formConfig = [
             { key: '已归档', value: '已归档' },
             { key: '已闲置', value: '已闲置' },
             { key: '已报废', value: '已报废' },
-            { key: '已处理', value: '已处理' },
+            { key: '已处置', value: '已处置' },
             { key: '处理中', value: '处理中' }
         ]
     }

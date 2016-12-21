@@ -1,4 +1,10 @@
 // 弹框样式
+.modal-wrap{
+    .ant-modal-body{
+        max-height: 600px;
+        overflow-y: auto;
+    }
+}
 .m-modal{
     position:relative;
     h3{
@@ -10,6 +16,12 @@
         right:10px;      
         font-weight: normal;
         font-size: 12px;
+    }
+    .item{
+        margin-bottom: 50px;
+        &:last-child{
+            margin-bottom: 0;
+        }
     }
 }
 

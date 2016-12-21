@@ -80,12 +80,13 @@ class RoomList extends Component {
         const { actionConfig, tableData } = this.props
         return (value) => {
             tableData[index][key] = value;
-            actionConfig.editCellValue(tableData)
+            actionConfig.editCellValue(tableData);
         };
     }
 
     // 保存
     handleSaveCell = (record, value) => {
+        // console.log('!!!!!!!!!', record)
         const tmpObj = Object.assign({}, {
             rentroomid: record.rentroomid,
             tel: value

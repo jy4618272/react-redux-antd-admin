@@ -48,7 +48,8 @@ class AssetList extends Component {
             current: 1,
             dataSource: [],
             isLoading: false,
-            firstClickDate: 0
+            firstClickDate: 0,
+            allId: [] //当前页面所以数据的id数组
         }
     }
 
@@ -82,7 +83,12 @@ class AssetList extends Component {
         })
         xhr('post', paths.leasePath + '/assetcs/selectByIndex', arg, (res) => {
             if (res.result == 'success') {
+                // 当前页所有id数组
+                let allId = res.data.map((v) => {
+                    return v.assetid
+                })
                 this.setState({
+                    allId: allId,
                     total: res.count,
                     dataSource: res.data,
                     isLoading: false
@@ -152,7 +158,7 @@ class AssetList extends Component {
      * 表格行的单击事件
      *      需要把当前行的资产信息设置到this.state.selectedRow，给按钮组使用
      * */
-    handleTableRowClick(keys, rows) {    
+    handleTableRowClick(keys, rows) {
         this.setState({
             selectedRow: rows[0]
         })
@@ -196,7 +202,7 @@ class AssetList extends Component {
     }
 
     render() {
-        const { total, current, pageSize, dataSource, isLoading } = this.state
+        const { total, current, pageSize, dataSource, isLoading, allId } = this.state
         return (
             <div>
                 {/** 查询表但 */}
@@ -211,7 +217,8 @@ class AssetList extends Component {
                     <ButtonGroup
                         selectedRow={this.state.selectedRow}
                         idArray={this.state.idArray}
-                        total={this.state.total}
+                        total={this.state.allId}
+                        searchAssetList={this.searchAssetList.bind(this)}
                         />
                     {/** 表格 */}
                     <InnerTable

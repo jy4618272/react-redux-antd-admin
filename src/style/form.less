@@ -9,17 +9,17 @@
 // 表格编辑
 .editable-cell {
 	position: relative;
-	&:hover{
-		.editable-cell-icon {
-			display: inline-block;
-		}
-	}
-}
-
-.editable-cell-input-wrapper,
-.editable-cell-text-wrapper {
-    height: 30px;
-    padding-right: 40px;
+    &.editable-cell-buttons{
+        &:hover{
+            .editable-cell-icon {
+                display: inline-block;
+            }
+        }
+        .editable-cell-input-wrapper, .editable-cell-text-wrapper {
+            height: 30px;
+            padding-right: 40px;
+        }
+    }
 }
 
 // 图标

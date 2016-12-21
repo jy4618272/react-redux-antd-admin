@@ -27,6 +27,7 @@ class ModalBox extends Component {
             visible,
             title,
             width,
+            wrapClassName,
             footer
         } = this.props
 
@@ -36,6 +37,7 @@ class ModalBox extends Component {
                 visible={visible}
                 title={title}
                 width={width}
+                wrapClassName={wrapClassName}
                 onOk={this.handleModalOk}
                 onCancel={this.handleModalCancel}
                 footer={footer}>
@@ -46,6 +48,7 @@ class ModalBox extends Component {
                 visible={visible}
                 title={title}
                 width={width}
+                wrapClassName={wrapClassName}
                 onOk={this.handleModalOk}
                 onCancel={this.handleModalCancel}>
                 {this.props.children}

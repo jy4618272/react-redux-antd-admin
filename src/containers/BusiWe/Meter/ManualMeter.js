@@ -5,6 +5,7 @@ import {
 } from 'antd'
 const TabPane = Tabs.TabPane
 
+import ManualMeterInput from './ManualMeterInput'
 import ManualMeterNotConfrimed from './ManualMeterNotConfirmed'
 import ManualMeterConfrimed from './ManualMeterConfirmed'
 
@@ -27,6 +28,7 @@ class WeMeter extends Component {
 
     render() {
         const {
+            manualMeterInput,
             notConfirmed,
             confirmed,
             actionBusi,
@@ -37,19 +39,23 @@ class WeMeter extends Component {
             actionBusi, 
             tableName
         }
-        const notConfirmedData = Object.assign({}, notConfirmed, otherObj)
-        const confirmedData = Object.assign({}, confirmed, otherObj)
-
+        const inputData = Object.assign({}, manualMeterInput, otherObj);
+        const notConfirmedData = Object.assign({}, notConfirmed, otherObj);
+        const confirmedData = Object.assign({}, confirmed, otherObj);
         return (
             <section className="m-busi m-busi-we g-mt-10">
                 <Tabs defaultActiveKey={this.state.tabs} onTabClick={this.handleTabClick}>
-                    {/* 未提交 */}
-                    <TabPane tab="未提交" key="manualMeterNotConfrimed">
+                    {/* 水电录入 */}
+                    <TabPane tab="水电录入" key="manualMeterInput">
+                        <ManualMeterInput {...inputData} />
+                    </TabPane>    
+                    {/* 提交财务 */}
+                    <TabPane tab="提交财务" key="manualMeterNotConfrimed">
                         <ManualMeterNotConfrimed {...notConfirmedData} />
                     </TabPane>
 
-                    {/* 已提交 */}
-                    <TabPane tab="已提交" key="manualMeterConfrimed">
+                    {/* 水电管理 */}
+                    <TabPane tab="水电管理" key="manualMeterConfrimed">
                         <ManualMeterConfrimed {...confirmedData} />
                     </TabPane>
                 </Tabs>

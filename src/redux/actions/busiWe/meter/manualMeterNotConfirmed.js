@@ -1,114 +1,78 @@
+// 水电业务-后付费（未提交）- 提交财务
 import {
     message,
     notification
 } from 'antd'
 import xhr from 'SERVICE'
+import moment from 'moment';
 import { errHandler, paths } from 'SERVICE/config'
 
 // ================================
 // Action Type
 // ================================
-const REQUEST_RATE_LIST = 'REQUEST_RATE_LIST'
-const RECEIVE_RATE_LIST = 'RECEIVE_RATE_LIST'
-const RECEIVE_RATE_ADD = 'RECEIVE_RATE_ADD'
-const RECEIVE_RATE_EDIT = 'RECEIVE_RATE_EDIT'
+const REQUEST_MANUAL_METER_NOTCONFIRMED = 'REQUEST_MANUAL_METER_NOTCONFIRMED';
+const RECEIVE_MANUAL_METER_NOTCONFIRMED = 'RECEIVE_MANUAL_METER_NOTCONFIRMED';
+const RECEIVE_COMMIT_FINANCE = 'RECEIVE_COMMIT_FINANCE';
 
 // ================================
 // Action Creator
 // ================================
 // 请求页面数据
-const requestRateList = () => ({
-    type: REQUEST_RATE_LIST
+const requestManualMeterNotConfirmed = () => ({
+    type: REQUEST_MANUAL_METER_NOTCONFIRMED
 })
-
-const receiveRateList = (res) => ({
-    type: RECEIVE_RATE_LIST,
-    payload: res
-})
-
-let pageInfo
 
 // 列表
-const fetchRateList = (data) => {
+const receiveManualMeterNotConfirmed = (res) => ({
+    type: RECEIVE_MANUAL_METER_NOTCONFIRMED,
+    payload: res
+});
+const fetchManualMeterNotConfirmed = (data) => {
     return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/selectListBySite', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            pageInfo = Object.assign({}, data, {
-                skipCount: 0
-            })
+        dispatch(requestManualMeterNotConfirmed())
+        xhr('post', paths.leasePath + '/meterbillcs/selectMeterPayment', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('水电配置之单价倍率配置列表', newRes)
+            console.log('水电业务之人工抄表未提交', newRes)
             if (res.result === 'success') {
                 hide()
-                dispatch(receiveRateList(newRes))
+                dispatch(receiveManualMeterNotConfirmed(newRes))
             } else {
                 hide()
-                dispatch(receiveRateList({}))
+                dispatch(receiveManualMeterNotConfirmed({}))
                 errHandler(res.msg)
             }
         })
     }
 }
 
-const receiveRateAdd = (res) => ({
-    type: RECEIVE_RATE_ADD,
+// 提交财务
+const receiveCommitFinance = (res) => ({
+    type: RECEIVE_COMMIT_FINANCE,
     payload: res
-})
-
-// 新增
-const fetchRateAdd = (data) => {
+});
+const fetchCommitFinance = (data) => {
     return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/insertMeterChangeType', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            const newRes = Object.assign({}, res, {
-                sub: data
-            })
-            console.log('水电配置之单价倍率配置新增', newRes)
+        xhr('post', paths.leasePath + '/meterpaymentcs/subbitFinance', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
+            console.log('水电业务之提交财务：', res)
             if (res.result === 'success') {
                 hide()
                 notification.success({
-                    message: '新增成功',
-                    description: '单价倍率配置新增数据成功'
-                });
-                dispatch(receiveRateAdd(newRes))
-                dispatch(fetchRateList(pageInfo))
+                    message:'提交财务成功',
+                    description: `成功提交${res.count}条财务数据`
+                })
+                dispatch(receiveCommitFinance(res));
+                dispatch(fetchManualMeterNotConfirmed({
+                    checkdate: moment().subtract(1, 'months').format('YYYY-MM') + '-01',
+                    pageSize:30,
+                    skipCount:0
+                }));
             } else {
                 hide()
-                dispatch(receiveRateAdd({}))
-                errHandler(res.msg)
-            }
-        })
-    }
-}
-
-const receiveRateEdit = (res) => ({
-    type: RECEIVE_RATE_EDIT,
-    payload: res
-})
-// 修改
-const fetchRateEdit = (data) => {
-    return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/updateMeterChangeType', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            const newRes = Object.assign({}, res, {
-                sub: data
-            })
-            console.log('水电配置之单价倍率配置修改', newRes)
-            if (res.result === 'success') {
-                hide()
-                notification.success({
-                    message: '修改成功',
-                    description: '单价倍率配置修改数据成功'
-                });
-                dispatch(receiveRateEdit(newRes))
-            } else {
-                hide()
-                dispatch(receiveRateEdit({}))
+                dispatch(receiveCommitFinance({}))
                 errHandler(res.msg)
             }
         })
@@ -118,18 +82,17 @@ const fetchRateEdit = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
-    fetchRateList,
-    fetchRateAdd,
-    fetchRateEdit
+    fetchManualMeterNotConfirmed,
+    fetchCommitFinance
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_RATE_LIST]: (list) => ({
+    [REQUEST_MANUAL_METER_NOTCONFIRMED]: (list) => ({
         ...list,
         tableLoading: true,
         tableData: list.tableData
     }),
-    [RECEIVE_RATE_LIST]: (list, { payload: res }) => ({
+    [RECEIVE_MANUAL_METER_NOTCONFIRMED]: (list, { payload: res }) => ({
         ...list,
         tableLoading: false,
         tableData: res.data,
@@ -137,32 +100,8 @@ export const ACTION_HANDLERS = {
         pageSize: res.sub.pageSize,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / (res.sub.pageSize) + 1)
     }),
-    [RECEIVE_RATE_ADD]: (list, { payload: res }) => {
-        if (res.sub) {
-            list.tableData.unshift(res.sub)
-        }
-        return {
-            ...list,
-            tableLoading: false,
-            tableData: list.tableData
-        }
-    },
-    [RECEIVE_RATE_EDIT]: (list, { payload: res }) => {
-        const obj = list.tableData
-        obj.map(item => {
-            if (item.meterchangetypeid === res.sub.meterchangetypeid) {
-                item.metertype  = res.sub.metertype,
-                item.chargetype = res.sub.chargetype,
-                item.meterprice = res.sub.meterprice,
-                item.meterrate  = res.sub.meterrate
-            }
-        })
-        
-        return {
-            ...list,
-            tableLoading: false,
-            tableData: obj
-        }
-    }
+    [RECEIVE_COMMIT_FINANCE]: (list) => ({
+        ...list
+    })
 }
 

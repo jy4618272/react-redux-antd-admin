@@ -7,32 +7,38 @@ const initialState = {
         {
             title: '类别',
             dataIndex: 'metertype',
-            key: 'metertype'
+            key: 'metertype',
+            width:'15%'
         },
         {
             title: '单价',
             dataIndex: 'meterprice',
-            key: 'meterprice'
+            key: 'meterprice',
+            width:'15%'
         },
         {
             title: '表倍率',
             dataIndex: 'meterrate',
-            key: 'meterrate'
+            key: 'meterrate',
+            width:'15%'
         },
         {
             title: '计费类型',
             dataIndex: 'chargetype',
-            key: 'chargetype'
+            key: 'chargetype',
+            width:'15%'
         },
         {
             title: '创始人',
             dataIndex: 'createman',
-            key: 'createman'
+            key: 'createman',
+            width:'20%'
         },
         {
             title: '创建日期',
             dataIndex: 'createdate',
-            key: 'createdate'
+            key: 'createdate',
+            width:'20%'
         }
     ],
     tableData:[],

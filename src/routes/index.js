@@ -40,11 +40,10 @@ import ContractPay from 'CONTAINER/BusiLease/Contract/pay'
 import AssetList from 'CONTAINER/BusiAsset/assetList'
 import AssetOperate from 'CONTAINER/BusiAsset/assetOperate'
 import AddAsset from 'CONTAINER/BusiAsset/newAsset'
-import CheckAsset from 'CONTAINER/BusiAsset/checkAsset'
 import AssetDetail from 'CONTAINER/BusiAsset/assetDetail'
 // 水电
 import BusiWeList from 'CONTAINER/BusiWe'
-
+import BusiWeShow from 'CONTAINER/BusiWe/Meter/Detail'
 /******************** 配置 ********************/
 // 基地
 import ConfigBase from 'CONTAINER/ConfigBase/insert'
@@ -112,11 +111,11 @@ const routes = (
 				<Route path="busi_asset" component={AssetList} />
 				<Route path="busi_asset/add/:assetType/:id/:isModify" component={AddAsset} />
 				<Route path="busi_asset/operate/:assetType/:id/:isModify/:operateType" component={AssetOperate} />
-				<Route path="busi_asset/check_asset/:id" component={CheckAsset} />
 				<Route path="busi_asset/asset_detail/:id" component={AssetDetail} />
 
 				{/* 水电 */}
 				<Route path="busi_we" tableName="busiWe" component={ BusiWeList } />
+				<Route path="busi_we/:id" component={ BusiWeShow } />
 			</Route>
 
 			{/* 配置 */}

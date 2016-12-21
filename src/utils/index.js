@@ -63,8 +63,14 @@ const checkMobile = (val) => {
     return reg.test(val);
 }
 
+const checkInt = (val) => {
+    const reg = /^\d+$/;
+    return reg.test(val);
+}
+
 export {
     checkMobile,
+    checkInt,
     goBack,
     getUrlPara,
     filterQueryObj,

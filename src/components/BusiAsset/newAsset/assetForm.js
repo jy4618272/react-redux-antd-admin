@@ -1,21 +1,19 @@
 /**
- * 新增
- *      1.保存？
- *          提交？
- *      2.提交？
- *          修改？
- *              保存？ 
- *                  提交？
- *              提交？
+ * 这个表单用于编辑(新增、修改)资产信息，新增和修改需要进行的初始化操作是不一样的
+ *  
+ * 需要的参数
+ *     ？？？ operateType   操作类型有 新增和修改   这个影响初始化规则，需要注意，新增资产的assetid=-1,修改时有真实id
+ *      addAssetType  有  1｜2｜3 分别是 动产｜不动产｜低值易耗品   这个影响UI
+ *      assetid       真实id 或 －1， 前者表示修改操作，后者表示新增
  * 
- * 新增资产时，保存提交怎么
+ * 
+ * 删除标记为“临时使用”的代码
  */
 
+// react 套餐
 import React, { Component } from 'react'
 
-import xhr from 'SERVICE'
-import { errHandler, rootPaths, paths } from 'SERVICE/config'
-
+// antd
 import {
     Form,
     Input,
@@ -33,7 +31,13 @@ import {
 const FormItem = Form.Item
 const Option = Select.Option
 
-import { parseArrayToTree } from './parseArrayToTree'
+// moment
+import moment from 'moment'
+
+// 自定义
+import xhr from 'SERVICE'
+import { errHandler, rootPaths, paths } from 'SERVICE/config'
+import { parseArrayToTree } from 'COMPONENT/BusiAsset/component/parseArrayToTree'
 
 import {
     InnerForm,
@@ -55,8 +59,104 @@ class AssetForm extends Component {
             isLoading: false,  // 搜索责任制时，loding
             selectedOwner: {},  // 用来保存被选中的责任人
             total: 0,
-            assetid: -1      // 新增的保存和提交都为-1，后续操作都有真实id
+            assetid: null      // 新增的保存和提交都为-1，后续操作都有真实id
         }
+    }
+
+    /**
+     * 在这里初始化表单，分为新增和修改两种情况
+     *  
+     */
+    componentWillMount() {
+        const { setFieldsValue, setFields } = this.props.form
+        const { assetid } = this.props
+
+        // 资产类型
+        this.fetchAssetTypeData()
+        // 区域类型
+        this.fetchAssetAreaData()
+
+        /**
+         * assetid == -1  新增
+         * 
+         */
+        if (assetid == -1) {
+            // 初始化asseetid，这个是表单隐性参数
+            this.state.assetid = -1
+
+            setFieldsValue({
+                landunit: '平方米',
+                coveredunit: '平方米'
+            })
+
+            // 台账编号、录入时间
+            this.fetchInfo()
+        }
+
+        /**
+         * assetid != -1  修改
+         * 
+         */
+        if (assetid != -1) {
+            // 初始化asseetid，这个是表单隐性参数
+            this.state.assetid = assetid
+            // 获取资产信息
+            let assetInfoPromise = this.fetchAssetInfoById()
+
+            assetInfoPromise.then((assetInfo) => {
+                console.log('assetInfo:', assetInfo)
+                const {
+                    assetname, originalprice,
+                    assetspec, isinformation,
+                    parameternumber, owner,
+                    assetdeplist, guaranteeperiod,
+                    inputdate, supplier,
+                    memo,
+                    assettypelist, assetarealist,  // 资产类型、区域，需要处理 
+                    enabledate,  //启用时间
+                    coveredarea, coveredunit, landarea, landunit
+                } = assetInfo
+
+                setFieldsValue({
+                    assetname,
+                    originalprice: originalprice + '',
+                    assetspec, isinformation,
+                    parameternumber, owner,
+                    assetdeplist,
+                    guaranteeperiod: guaranteeperiod ? (guaranteeperiod + '') : '',
+                    inputdate, supplier,
+                    memo,
+                    coveredarea, coveredunit, landarea, landunit,
+                    assettypelist: assettypelist.split('/'),
+                    assetarealist: assetarealist.split('/'),
+                    enabledate: moment(enabledate)
+                })
+            })
+
+
+        }
+
+
+    }
+
+    /**
+     * 根据id获取资产信息
+     *  http://myportaltest.tf56.com:8080/tfPassParkAdmin/assetcs/selectAssetById
+     */
+    fetchAssetInfoById() {
+        const { assetid } = this.state
+        return new Promise((resolve, reject) => {
+            xhr('post', paths.leasePath + '/assetcs/selectAssetById', { assetid }, (res) => {
+                if (res.result == 'success') {
+                    // 如果获取数据成功，返回获取到的数据
+                    resolve(res.data)
+                } else {
+                    // 如果获取数据失败，直接报错,不需要返回数据
+                    errHandler(res.msg)
+                }
+            })
+        })
+
     }
 
     /**
@@ -64,12 +164,11 @@ class AssetForm extends Component {
      *  返回处理后的数据
      * 
      */
-    handleSubmitArgument() {
+    handleSubmit() {
         const { getFieldsValue, validateFieldsAndScroll } = this.props.form
         // 待提交的字段
         let submitValues = getFieldsValue()
-
-
+        console.log('submitValues:', submitValues)
         validateFieldsAndScroll((err, values) => {
             if (!err) {
                 /**
@@ -90,9 +189,16 @@ class AssetForm extends Component {
 
                 // id
                 submitValues.assetid = this.state.assetid
-                console.log('待提交的字段：', submitValues)
+                console.log('待提交的字段1111111：', submitValues)
 
-                return submitValues
+                xhr('post', paths.leasePath + '/assetcs/submitAssetFlowModel', submitValues, (res) => {
+                    if (res.result == 'success') {
+                        this.handleCancel()
+                    } else {
+                        errHandler(res.msg)
+                    }
+                })
+                // return submitValues
             }
         })
 
@@ -102,10 +208,10 @@ class AssetForm extends Component {
      * 提交
      * 
      */
-    handleSubmit() {
+    handleSubmitArgument() {
         // 处理后的参数
         const formInfo = this.handleSubmitArgument()
-
+        console.log('formInfo:', formInfo)
         xhr('post', paths.leasePath + '/assetcs/submitAssetFlowModel', formInfo, (res) => {
             if (res.result == 'success') {
                 this.handleCancel()
@@ -139,15 +245,16 @@ class AssetForm extends Component {
             submitValues.enabledate = submitValues.enabledate.format('YYYY-MM-DD HH:mm:ss')
         }
 
-        // 临时使用，待删除
-        submitValues.amount = '3'
-
         // id
         submitValues.assetid = this.state.assetid
         console.log('待保存的字段：', submitValues)
 
         xhr('post', paths.leasePath + '/assetcs/insertAsset', submitValues, (res) => {
-
+            if (res.result == 'success') {
+                history.back()
+            } else {
+                errHandler(res.msg)
+            }
         })
     }
 
@@ -160,24 +267,6 @@ class AssetForm extends Component {
         history.back()
     }
 
-    /**
-     * 初始化
-     *  需要现在这里获取、设置一些初始化的数据
-     */
-    componentWillMount() {
-        const { setFieldsValue, setFields } = this.props.form
-        setFieldsValue({
-            landunit: '平方米',
-            coveredunit: '平方米'
-        })
-
-        // 资产类型
-        this.fetchAssetTypeData()
-        // 区域类型
-        this.fetchAssetAreaData()
-        // 台账编号、录入时间
-        this.fetchInfo()
-    }
 
     /**
      * 查询资产分类数据
@@ -443,7 +532,7 @@ class AssetForm extends Component {
                     <Col { ...colAttr }>
                         <FormItem label="价格/元" { ...formItemLayout }>
                             {getFieldDecorator('originalprice', {
-                                rules: [{ required: true, message: '必须填写资产价格' }]
+                                rules: [{ type: 'string', required: true, message: '必须填写资产价格' }]
                             })(<Input placeholder="请输入资产价格" />)}
                         </FormItem>
                     </Col>
@@ -542,7 +631,7 @@ class AssetForm extends Component {
                     <Col { ...colAttr }>
                         <FormItem label="质保期/年" { ...formItemLayout }>
                             {getFieldDecorator('guaranteeperiod', {
-                                rules: [{}]
+                                rules: [{ type: 'string' }]
                             })(
                                 <Input placeholder="请输入保质期/年" />
                                 )}

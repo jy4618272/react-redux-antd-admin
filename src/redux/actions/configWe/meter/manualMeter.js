@@ -257,14 +257,13 @@ export const ACTION_HANDLERS = {
     },
     [EDIT_MANUAL_METER]: (list, { payload: res }) => {
         list.tableData.map(item => {
-            if (item.metertype === res.sub.metertype) {
+            if (item.roommeterid === res.sub.roommeterid) {
                 item.metercode = res.sub.metercode,
                 item.metername = res.sub.metername,
                 item.readtype = res.sub.readtype,
                 item.chargetype = res.sub.chargetype,
                 item.meterrate = res.sub.meterrate,
-                item.defaultreadout = res.sub.defaultreadout,
-                item.roommeterid = res.sub.roommeterid
+                item.defaultreadout = res.sub.defaultreadout
             }
         });
         list.modalForm[3].options = [];

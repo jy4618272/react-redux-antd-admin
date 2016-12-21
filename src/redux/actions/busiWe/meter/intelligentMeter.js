@@ -8,107 +8,65 @@ import { errHandler, paths } from 'SERVICE/config'
 // ================================
 // Action Type
 // ================================
-const REQUEST_RATE_LIST = 'REQUEST_RATE_LIST'
-const RECEIVE_RATE_LIST = 'RECEIVE_RATE_LIST'
-const RECEIVE_RATE_ADD = 'RECEIVE_RATE_ADD'
-const RECEIVE_RATE_EDIT = 'RECEIVE_RATE_EDIT'
+const REQUEST_INTELLIGENT_METER = 'REQUEST_INTELLIGENT_METER';
+const RECEIVE_INTELLIGENT_METER = 'RECEIVE_INTELLIGENT_METER';
+const RECEIVE_REMINDERS = 'RECEIVE_REMINDERS';
 
 // ================================
 // Action Creator
 // ================================
 // 请求页面数据
-const requestRateList = () => ({
-    type: REQUEST_RATE_LIST
+const requestIntelligentMeter = () => ({
+    type: REQUEST_INTELLIGENT_METER
 })
 
-const receiveRateList = (res) => ({
-    type: RECEIVE_RATE_LIST,
+const receiveIntelligentMeter = (res) => ({
+    type: RECEIVE_INTELLIGENT_METER,
     payload: res
 })
-
-let pageInfo
 
 // 列表
-const fetchRateList = (data) => {
+const fetchIntelligentMeter = (data) => {
     return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/selectListBySite', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            pageInfo = Object.assign({}, data, {
-                skipCount: 0
-            })
+        dispatch(requestIntelligentMeter())
+        xhr('post', paths.leasePath + '/roommetercs/selectNoopsycheMeterByKeyword', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('水电配置之单价倍率配置列表', newRes)
+            console.log('水电业务之房间智能表', newRes)
             if (res.result === 'success') {
                 hide()
-                dispatch(receiveRateList(newRes))
+                dispatch(receiveIntelligentMeter(newRes))
             } else {
                 hide()
-                dispatch(receiveRateList({}))
+                dispatch(receiveIntelligentMeter({}))
                 errHandler(res.msg)
             }
         })
     }
 }
 
-const receiveRateAdd = (res) => ({
-    type: RECEIVE_RATE_ADD,
+// 催交
+const receiveReminders = (res) => ({
+    type: RECEIVE_REMINDERS,
     payload: res
 })
 
-// 新增
-const fetchRateAdd = (data) => {
+const fetchReminders = (data) => {
     return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/insertMeterChangeType', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
+        xhr('post', paths.leasePath + '/roommetercs/callById', data, function(res) {
+            const hide = message.loading('正在查询...', 0);
             const newRes = Object.assign({}, res, {
                 sub: data
             })
-            console.log('水电配置之单价倍率配置新增', newRes)
+            console.log('水电业务之催交', newRes)
             if (res.result === 'success') {
                 hide()
-                notification.success({
-                    message: '新增成功',
-                    description: '单价倍率配置新增数据成功'
-                });
-                dispatch(receiveRateAdd(newRes))
-                dispatch(fetchRateList(pageInfo))
+                dispatch(receiveReminders(newRes))
             } else {
                 hide()
-                dispatch(receiveRateAdd({}))
-                errHandler(res.msg)
-            }
-        })
-    }
-}
-
-const receiveRateEdit = (res) => ({
-    type: RECEIVE_RATE_EDIT,
-    payload: res
-})
-// 修改
-const fetchRateEdit = (data) => {
-    return dispatch => {
-        dispatch(requestRateList())
-        xhr('post', paths.leasePath + '/meterchangetypecs/updateMeterChangeType', data, function(res) {
-            const hide = message.loading('正在查询...', 0)
-            const newRes = Object.assign({}, res, {
-                sub: data
-            })
-            console.log('水电配置之单价倍率配置修改', newRes)
-            if (res.result === 'success') {
-                hide()
-                notification.success({
-                    message: '修改成功',
-                    description: '单价倍率配置修改数据成功'
-                });
-                dispatch(receiveRateEdit(newRes))
-            } else {
-                hide()
-                dispatch(receiveRateEdit({}))
+                dispatch(receiveReminders({}))
                 errHandler(res.msg)
             }
         })
@@ -118,18 +76,17 @@ const fetchRateEdit = (data) => {
 
 /* default 导出所有 Actions Creator */
 export default {
-    fetchRateList,
-    fetchRateAdd,
-    fetchRateEdit
+    fetchIntelligentMeter,
+    fetchReminders
 }
 
 export const ACTION_HANDLERS = {
-    [REQUEST_RATE_LIST]: (list) => ({
+    [REQUEST_INTELLIGENT_METER]: (list) => ({
         ...list,
         tableLoading: true,
         tableData: list.tableData
     }),
-    [RECEIVE_RATE_LIST]: (list, { payload: res }) => ({
+    [RECEIVE_INTELLIGENT_METER]: (list, { payload: res }) => ({
         ...list,
         tableLoading: false,
         tableData: res.data,
@@ -137,32 +94,8 @@ export const ACTION_HANDLERS = {
         pageSize: res.sub.pageSize,
         skipCount: res.sub.skipCount <= 1 ? 1 : (parseInt(res.sub.skipCount) / (res.sub.pageSize) + 1)
     }),
-    [RECEIVE_RATE_ADD]: (list, { payload: res }) => {
-        if (res.sub) {
-            list.tableData.unshift(res.sub)
-        }
-        return {
-            ...list,
-            tableLoading: false,
-            tableData: list.tableData
-        }
-    },
-    [RECEIVE_RATE_EDIT]: (list, { payload: res }) => {
-        const obj = list.tableData
-        obj.map(item => {
-            if (item.meterchangetypeid === res.sub.meterchangetypeid) {
-                item.metertype  = res.sub.metertype,
-                item.chargetype = res.sub.chargetype,
-                item.meterprice = res.sub.meterprice,
-                item.meterrate  = res.sub.meterrate
-            }
-        })
-        
-        return {
-            ...list,
-            tableLoading: false,
-            tableData: obj
-        }
-    }
+    [RECEIVE_REMINDERS]: (list) => ({
+        ...list
+    })
 }
 

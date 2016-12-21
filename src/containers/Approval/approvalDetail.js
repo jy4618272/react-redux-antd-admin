@@ -28,6 +28,9 @@ import {
     ApprovalOpinions
 } from 'COMPONENT'
 
+// 各种资产的审核
+import CheckAsset from 'CONTAINER/BusiAsset/checkAsset'
+
 import xhr from 'SERVICE'
 import { errHandler, rootPaths, paths } from 'SERVICE/config'
 import { filterQueryObj } from 'UTIL'
@@ -662,6 +665,13 @@ class ApprovalDetail extends Component {
                         {approvalContent}
                     </Form>
                 </section>
+            )
+        } else if (/^asset/.test(type)) { // 以asset开头的都是资产审核
+            // 资产的各种审核，props带上业务号this.props.params.id
+            return (
+                <div>
+                    <CheckAsset id={this.props.params.id} />
+                </div>
             )
         } else {
             return <Err errorMsg="敬请期待！" />

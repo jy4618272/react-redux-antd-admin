@@ -16,9 +16,7 @@ class IntelligentMeter extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            queryObj: {},
-            clickedRowKeys: [],
-            clickedRows: []
+            queryObj: {}
         }
         this.initFetchSchema(props)
         console.log('水电业务-智能表props：', props)
@@ -39,24 +37,55 @@ class IntelligentMeter extends Component {
     }
 
     // 查询
-    handleFormSubmit = () => {
-
+    handleFormSubmit = (newObj) => {
+        const { actionBusi } = this.props;
+        this.setState({
+            queryObj: newObj
+        });
+        pageChange(newObj, 30, 0, actionBusi.fetchIntelligentMeter);
     }
 
     // 分页
     handlePageChange = (skipCount) => {
-        const { actionBusi, pageSize } = this.props
-        pageChange(this.state.queryObj, pageSize, skipCount, actionBusi.fetchRateList)
+        const { actionBusi, pageSize } = this.props;
+        pageChange(this.state.queryObj, pageSize, skipCount, actionBusi.fetchIntelligentMeter)
+    }
+
+    // 催交
+    handleReminders = (text, record, index) => {
+        this.props.actionBusi.fetchReminders({
+            roommeterid: record.roommeterid
+        });
     }
 
     componentDidMount() {
         const { actionBusi } = this.props
-        pageChange({}, 10, 0, actionBusi.fetchRateList)
+        pageChange({}, 30, 0, actionBusi.fetchIntelligentMeter)
     }
 
     render() {
         const data = this.props
+        const tableColumns = data.tableColumns.concat([
+            {
+                dateIndex: 'operation',
+                key: 'operation',
+                title: '操作',
+                render: (text, record, index) => {
+                    let showReminderButton
+                    if ((record.receivemessage === '1') && record.surplusnumber && record.firstthreshold && (parseInt(record.surplusnumber) < parseInt(record.firstthreshold))) {
+                        showReminderButton = <a href="javascript:;" className="s-blue g-mr10" onClick={this.handleReminders.bind(this, text, record, index)}>催交</a>
+                    } else {
+                        showReminderButton = ''
+                    }
 
+                    return (
+                        <div class="button-group">
+                            {showReminderButton}
+                        </div>
+                    )
+                }
+            }
+        ])
         return (
             <section className="m-config-cont">
                 {/* 查询 */}
@@ -70,7 +99,7 @@ class IntelligentMeter extends Component {
                 {/* 表格及分页 */}
                 <InnerTable
                     loading={data.tableLoading}
-                    columns={data.tableColumns}
+                    columns={tableColumns}
                     dataSource={data.tableData}
                     bordered={true}
                     pagination={false} />

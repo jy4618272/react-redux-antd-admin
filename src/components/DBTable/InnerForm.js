@@ -25,6 +25,7 @@ class InnerForm extends Component {
                         parentHandleBlur={this.props.parentHandleBlur}
                         parentHandleSelect={this.props.parentHandleSelect}
                         parentHandleSubmit={this.props.parentHandleSubmit}
+                        parentHandleClick= {this.props.parentHandleClick}
                         parentHandleSave ={this.props.parentHandleSave}
                         setFields={this.props.setFields}
                         sessionShouldGet={this.props.sessionShouldGet}>
